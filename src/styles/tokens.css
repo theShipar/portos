@@ -1,0 +1,87 @@
+/* Source of truth: src/styles/tokens.json (copy of PORTOS_Codex_Master_Kit/assets/tokens.json). See docs/DECISIONS.md D-002. */
+:root {
+  --color-accent: #e96722;
+  --color-accent-hover: #c65117;
+  --color-accent-subtle: #fff2e9;
+
+  --color-app: #f6f7f8;
+  --color-panel: #ffffff;
+  --color-panel-secondary: #f1f3f5;
+  --color-border: #dde1e5;
+  --color-border-strong: #c7cdd3;
+  --color-map-ocean: #061a28;
+  --color-map-ocean-mid: #102837;
+  --color-map-land: #1f3b48;
+  --color-map-land-outline: #4d6974;
+  --color-route-base: #82b8c9;
+  --color-route-selected: #ff905b;
+
+  --color-ink: #111827;
+  --color-ink-secondary: #52606d;
+  --color-ink-muted: #77838e;
+  --color-ink-on-dark: #f7fafc;
+
+  --color-healthy: #18784e;
+  --color-healthy-subtle: #e7f3ed;
+  --color-warning: #b96516;
+  --color-warning-subtle: #fbf0e4;
+  --color-critical: #b42318;
+  --color-critical-subtle: #fbeceb;
+  --color-info: #2e658b;
+  --color-info-subtle: #e8f0f6;
+  --color-unknown: #687482;
+  --color-unknown-subtle: #eef0f2;
+  --color-selected: #e96722;
+
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-16: 16px;
+  --text-18: 18px;
+  --text-20: 20px;
+  --text-24: 24px;
+  --text-28: 28px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+
+  --radius-input: 6px;
+  --radius-panel: 10px;
+  --radius-chip: 4px;
+  --radius-pill: 999px;
+
+  --shell-header-h: 64px;
+  --inspector-w: 408px;
+  --inspector-w-expanded: 420px;
+  --replay-rail-h: 60px;
+  --map-control-gap: 12px;
+  --panel-radius: var(--radius-panel);
+
+  --shadow-panel: 0 1px 2px rgba(13, 31, 42, 0.06), 0 4px 14px rgba(13, 31, 42, 0.06);
+  --shadow-drawer: 0 10px 30px rgba(13, 31, 42, 0.1);
+  --focus-ring: 0 0 0 2px var(--color-panel), 0 0 0 4px var(--color-accent);
+
+  --motion-hover: 100ms;
+  --motion-panel: 180ms;
+  --motion-scope: 900ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-hover: 0ms;
+    --motion-panel: 0ms;
+    --motion-scope: 0ms;
+  }
+}

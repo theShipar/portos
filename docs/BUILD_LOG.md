@@ -18,3 +18,33 @@ blockers. Status values: implemented / tested / blocked.
 - **Licensing:** skill is GPL-3.0-or-later; derived map code will carry SPDX + attribution. Port centroids are
   approximate; all operational data synthetic.
 - **Blockers:** none. Basemap provider deferred to Phase 4 (D-007).
+
+## Phase 1 — Foundation
+
+- **Implemented:**
+  - Scaffold: Vite 7, Vue 3, TS strict, Pinia, vue-router, Vitest, Playwright config (`package.json`, `vite.config.ts`,
+    `tsconfig.json`, `playwright.config.ts`).
+  - Core: `src/core/{types,geo,time,format,places,layers}.ts`.
+  - Data: `src/data/{catalog,loader}.ts` (referential validation, indexes, sorted tracks/events).
+  - Engines: `src/engines/{tracks,eta,exposure,congestion,weatherRisk,search,snapshot,kpis}.ts` (pure; no map/UI imports).
+  - Stores: `catalog`, `clock` (D-008), `snapshot`, `view` (scope/selection/layers/inspector), `session` (demo role),
+    `notices`, versioned localStorage helper (`portos:*:v1`).
+  - Router: all eight route families plus `in`/`t`/`layers` query; routes render an empty outlet so the map stays
+    mounted; invalid IDs redirect to nearest parent with a notice.
+  - Styles: `src/styles/tokens.{json,css,ts}` (tokens.json copy, `statusStyle()`), `base.css`.
+  - Shell: `AppHeader` (logo, `SearchCombobox`, `SimulationStamp`, `UserMenu`), `KpiRow`, `InspectorDrawer`,
+    `VesselInspector`, `SummaryInspector` (voyage/incident/corridor), `NoticeStack`, `TempCanvasMap` (Phase 1 stand-in).
+- **Tested:**
+  - `npx vue-tsc --noEmit` → exit 0.
+  - `npx vitest run` → exit 0, 30 tests (geo, engines incl. +18h/$24,000, determinism, KPI de-dup, congestion,
+    WX-0001 affected voyages, search, token parity, layer URL codec, vessel inspector model).
+  - `npm run build` → exit 0 (three/maplibre chunks empty until Phase 2/4).
+- **Browser evidence (dev server, 1440×900 emulated):**
+  - Typing `VSL-0001` + Enter → `/vessel/VSL-0001`, inspector heading "MV Pacific Horizon", ETA shift `+18.0 h`,
+    exposure `$24,000`, formula `18 h ÷ 24 × $32,000/day = $24,000`, INC-0001 banner, focus moved to heading.
+  - `/vessel/VSL-0001?t=2026-11-09T08:00:00Z` → stamp "Replay · paused", no incident banner, KPIs at 08:00.
+  - `/vessel/VSL-9999` → redirected to `/operations` with "Vessel VSL-9999 is not in the simulated dataset."
+  - Screenshot: `docs/screenshots/phase1-vessel-inspector.png`.
+  - Fixed during verification: header right side wrapped the Simulated stamp onto three lines at 1440px.
+- **Not yet run:** Playwright `tests/e2e/gate.spec.ts` (browser binaries installed in Phase 8).
+- **Blockers:** none.

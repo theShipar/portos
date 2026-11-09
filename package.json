@@ -1,0 +1,41 @@
+{
+  "name": "portos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "PORTOS — map-first maritime exception management prototype (synthetic data, not live AIS).",
+  "license": "GPL-3.0-or-later",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5173",
+    "build": "vue-tsc --noEmit && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "data:generate": "python3 scripts/generate_demo_data.py",
+    "data:validate": "python3 scripts/validate_data.py"
+  },
+  "dependencies": {
+    "gsap": "^3.15.1",
+    "maplibre-gl": "^5.24.0",
+    "pinia": "^3.0.4",
+    "three": "^0.176.0",
+    "vue": "^3.5.45",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^22.20.5",
+    "@types/three": "^0.176.0",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "@vue/test-utils": "^2.5.1",
+    "jsdom": "^26.1.0",
+    "typescript": "~5.9",
+    "vite": "^7.3.8",
+    "vitest": "^3.2.7",
+    "vue-tsc": "^3.3.14"
+  }
+}

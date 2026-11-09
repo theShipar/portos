@@ -61,6 +61,13 @@ root copies are edited. The kit folder is not modified.
   VYG-0001 to exercise exposure de-duplication.
 - Users: `title`, `defaultWorkspace`, `permissionFlags` (`action.{resource}.{verb}`), `locale`, `timeZone`.
 
+## D-008 Simulation clock: "Now" pinned to the anchor
+The clock spec says "Now (simulated)" advances from session start, but the fixture has no samples after
+`2026-11-09T12:00Z`; advancing would make every vessel stale after 30 minutes and invent unknowns. "Now (simulated)" is
+therefore fixed at the anchor, and motion is shown only in replay (`00:00–12:00Z`, 1×/10×/60×/600×). The clock store
+commits reactive time at most every 100 ms; render loops read `frameTimeMs()` per frame. Local workflow decisions
+apply only at "Now"; replay shows fixture history.
+
 ## D-007 Port 2D basemap
 Deferred to Phase 4 (see BUILD_LOG). MapLibre style URL is configurable; without tiles the port view shows an honest
 "basemap unavailable" state and still renders fixture geometry on a plain background.
