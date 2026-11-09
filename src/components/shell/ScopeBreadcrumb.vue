@@ -50,7 +50,7 @@ defineExpose({ up, canGoUp });
     <ol>
       <li v-for="(s, i) in trail" :key="scopeKey(s)">
         <Icon v-if="i > 0" name="chevron-right" :size="12" class="crumbs__sep" />
-        <button v-if="i < trail.length - 1 || entityLabel" type="button" class="crumbs__link" @click="nav.openScope(s)">
+        <button v-if="i < trail.length - 1 || entityLabel" type="button" class="crumbs__link" @click="i === trail.length - 1 ? nav.closeSelection() : nav.openScope(s)">
           <Icon v-if="s.level === 'earth'" name="globe" :size="13" />{{ scopeLabel(s) }}
         </button>
         <span v-else class="crumbs__current" aria-current="location"><Icon v-if="s.level === 'earth'" name="globe" :size="13" />{{ scopeLabel(s) }}</span>

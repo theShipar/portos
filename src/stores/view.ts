@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { DEFAULT_LAYERS, LAYERS, type LayerId, type ScopeLevel } from '@/core/layers';
-import { scopeKey, type Scope } from '@/core/scope';
+import { scopeKey, type Scope, type ViewMode } from '@/core/scope';
 import type { EntityKind, EntityRef } from '@/core/types';
 import { isRecord, loadStored, saveStored, STORAGE_KEYS } from './persist';
 
@@ -9,7 +9,7 @@ export type { Scope } from '@/core/scope';
 export { scopeKey } from '@/core/scope';
 
 export type InspectorTab = 'overview' | 'voyage' | 'events' | 'documents';
-export type ViewMode = '3d' | '2d';
+export type { ViewMode } from '@/core/scope';
 
 const isLayerState = (v: unknown): v is Record<LayerId, boolean> => isRecord(v) && LAYERS.every((l) => typeof v[l.id] === 'boolean');
 
@@ -28,6 +28,7 @@ export const useViewStore = defineStore('view', () => {
   const inspectorTab = ref<InspectorTab>('overview');
   const inspectorExpanded = ref(false);
   const viewMode = ref<ViewMode>('3d');
+  const queueShelfOpen = ref(true);
   /** Element that opened the inspector, so closing it can return focus. */
   let returnFocusEl: HTMLElement | null = null;
 
@@ -89,6 +90,7 @@ export const useViewStore = defineStore('view', () => {
     inspectorExpanded,
     inspectorOpen,
     viewMode,
+    queueShelfOpen,
     select,
     clearSelection,
     setHover,

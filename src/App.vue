@@ -9,6 +9,8 @@ import { useViewStore } from '@/stores/view';
 import AppHeader from '@/components/shell/AppHeader.vue';
 import KpiRow from '@/components/shell/KpiRow.vue';
 import NoticeStack from '@/components/shell/NoticeStack.vue';
+import PortKpiRow from '@/components/shell/PortKpiRow.vue';
+import PortQueueShelf from '@/features/port/PortQueueShelf.vue';
 import ScopeBreadcrumb from '@/components/shell/ScopeBreadcrumb.vue';
 import EntityInspector from '@/features/inspectors/EntityInspector.vue';
 import MapWorkspace from '@/map/MapWorkspace.vue';
@@ -60,7 +62,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
       <MapWorkspace v-if="catalog.status === 'ready'" />
       <div v-if="catalog.status === 'ready'" class="overlay overlay--tl">
         <ScopeBreadcrumb ref="crumbs" />
-        <KpiRow :kpis="snap.globalKpis" />
+        <PortKpiRow v-if="snap.portView" :vm="snap.portView" />
+        <KpiRow v-else :kpis="snap.globalKpis" />
+        <PortQueueShelf v-if="snap.portView" />
       </div>
       <EntityInspector v-if="catalog.status === 'ready'" />
       <div v-if="catalog.status === 'loading' || catalog.status === 'idle'" class="state" role="status">
@@ -99,9 +103,16 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
 .overlay--tl {
   top: var(--map-control-gap);
   left: var(--map-control-gap);
+  bottom: 40px;
   display: grid;
+  grid-template-rows: auto auto minmax(0, auto);
+  align-content: start;
   justify-items: start;
   gap: 8px;
+  pointer-events: none;
+}
+.overlay--tl > :deep(*) {
+  pointer-events: auto;
 }
 .state {
   position: absolute;

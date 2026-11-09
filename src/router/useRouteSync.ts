@@ -2,13 +2,14 @@ import { watch } from 'vue';
 import { useRoute, useRouter, type LocationQueryRaw, type RouteLocationNormalizedLoaded } from 'vue-router';
 import { decodeLayers } from '@/core/layers';
 import { formatUtc } from '@/core/format';
+import { defaultViewMode, supportsViewMode, type ViewMode } from '@/core/scope';
 import type { EntityRef } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import { useCatalogStore } from '@/stores/catalog';
 import { useClockStore } from '@/stores/clock';
 import { useNoticeStore } from '@/stores/notices';
 import { useViewStore, type Scope } from '@/stores/view';
-import { decodeScope, routeForEntity, routeForScope } from './navigation';
+import { decodeScope, routeForEntity, routeForScope, routeForScopeKeepingSelection, viewModeQuery } from './navigation';
 
 const param = (r: RouteLocationNormalizedLoaded, k: string) => {
   const v = r.params[k];
@@ -35,6 +36,14 @@ export function useRouteSync() {
   }
 
   function apply(r: RouteLocationNormalizedLoaded) {
+    if (!catalog.catalog) return;
+    applyRoute(r);
+    const q = r.query.view;
+    const requested = q === '2d' || q === '3d' ? q : null;
+    view.viewMode = requested && supportsViewMode(view.scope, requested) ? requested : defaultViewMode(view.scope);
+  }
+
+  function applyRoute(r: RouteLocationNormalizedLoaded) {
     const c = catalog.catalog;
     if (!c) return;
 
@@ -120,17 +129,37 @@ export function useNavigation() {
   const clock = useClockStore();
 
   const timeQuery = (): LocationQueryRaw => (clock.mode === 'replay' ? { t: clock.iso } : {});
+  /** Selections inside a scope keep the current 3D/2D mode; scope changes fall back to the target's default. */
+  const modeQuery = (): LocationQueryRaw => {
+    const q = viewModeQuery(view.scope, view.viewMode);
+    return q ? { view: q } : {};
+  };
 
   return {
     openEntity(ref: EntityRef) {
-      return router.push(routeForEntity(ref, view.scope, timeQuery()));
+      return router.push(routeForEntity(ref, view.scope, { ...timeQuery(), ...modeQuery() }));
     },
+    /** Scope changes keep the open selection (spec: selection survives Earth ↔ region ↔ port and 3D ↔ 2D). */
     openScope(scope: Scope) {
-      return router.push(routeForScope(scope, timeQuery()));
+      return router.push(routeForScopeKeepingSelection(view.selection, scope, timeQuery()));
+    },
+    /** Global view with nothing selected. */
+    home() {
+      view.clearSelection();
+      return router.push(routeForScope({ level: 'earth' }, timeQuery()));
     },
     closeSelection() {
       view.clearSelection();
-      return router.push(routeForScope(view.scope, timeQuery()));
+      return router.push(routeForScope(view.scope, { ...timeQuery(), ...modeQuery() }));
+    },
+    setViewMode(mode: ViewMode) {
+      if (!supportsViewMode(view.scope, mode) || mode === view.viewMode) return;
+      const cur = router.currentRoute.value;
+      const query = { ...cur.query };
+      const q = viewModeQuery(view.scope, mode);
+      if (q) query.view = q;
+      else delete query.view;
+      return router.replace({ name: cur.name ?? undefined, params: cur.params, query });
     },
   };
 }

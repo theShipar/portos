@@ -133,3 +133,70 @@ blockers. Status values: implemented / tested / blocked.
     - Hazard fills and incident rings dominated the map; deck details hid status colour; port labels overlapped;
       cluster badges covered port and region labels; stale tooltip survived a scope change.
 - **Blockers:** none.
+
+## Phase 4 — Port 2D (OpenFreeMap), anchorage, berths, queue, 3D/2D switch
+
+- **Decision:** basemap = OpenFreeMap vector tiles restyled to the PORTOS palette (user choice; D-011). Selection
+  now survives scope changes (D-012).
+- **Implemented:**
+  - `src/selectors/port.ts` (pure): `buildPortViewModel` on top of `computePortCongestion`: KPIs (in berth queue, at
+    anchor, arrivals next 24 h, median known wait with sample size), queue rows (status, elapsed wait, berth
+    confirmed only with berth + time, terminal/berth names, anchorage membership, evidence), anchorage summaries
+    from positions inside the polygon (occupancy vs capacity estimate, crowded ≥ 80 %, median, p90 only with ≥ 5
+    known waits, unknown-start count), berths with occupant/scheduled names and 7-day linked calls, terminals,
+    arrivals, berth-feed availability, layout bounds. Shared through `useSnapshotStore().portView` (and shared
+    `markers`) so the map, shelf, KPI row and inspector read one model.
+  - `src/map/port2d/`: `basemapStyle.ts` (config + PORTOS style), `features.ts` (GeoJSON builders, antimeridian
+    unwrap, pinned/clustered vessel split), `icons.ts` (canvas vessel chevrons, heading-free anchored glyphs, stale
+    variants, berth status icons with "?" for unknown), `PortMap2D.vue` (lazy MapLibre: hazards, anchorage zone,
+    corridors, recorded track, berths, clustered + pinned vessels, incident rings, orange selection halo; DOM
+    terminal/anchorage/port labels and cluster badges with collision placement; hover tooltips; click priority
+    vessel > berth > anchorage > hazard > corridor; berth/terminal/anchorage cards; selection highlights its berth
+    and zone and is kept on screen; padding for shelf and inspector; basemap-unavailable and WebGL-error states).
+  - `PortQueueShelf.vue`: port name, UTC + local time, filter chips (all / at anchor / not anchored / berth
+    unconfirmed) with counts, "N of M in queue", "Sorted by elapsed wait — not berth priority", rows without rank
+    (status, terminal, elapsed wait or "Wait start unknown", berth "in 26.0 h" or "Unconfirmed"), arrivals next
+    24 h, sample-size footnote; selected row highlighted and scrolled into view. Shown at port scope in both modes.
+  - `PortKpiRow.vue` replaces the global KPIs at port scope; definitions and source in each tooltip.
+  - `ViewModeSwitch.vue` (3D | 2D, `aria-pressed`, 2D disabled at Earth with reason); `MapWorkspace` orchestrates the
+    lazy 2D map, cross-fade (none under reduced motion), camera hand-off both ways (`src/map/viewport.ts`), 2D
+    attribution footer, reset per mode. `PortosEarthView` gains `active`: hides labels, stops/starts its loop.
+  - Routing: `view` query (only when not the scope default), `setViewMode` (replace), `openScope` keeps the
+    selection (`in=earth|region:…|port:…`), `home()` for the brand link, breadcrumb current-scope click closes the
+    selection.
+- **Tested:**
+  - `npx vitest run` → exit 0, 86 tests (+21 in `tests/unit/port.test.ts`: KPI ↔ queue reconciliation, median over
+    known waits only, sort with unknown last and no rank, berth confirmation rule and Pacific Horizon → W-1, unknown
+    berth not free, linked calls, anchorage summary vs point-in-polygon, layout bounds, zoom/degree round-trip,
+    globe distance inverse, zoom clamps, default modes and `view` query, selection-keeping scope routes, antimeridian
+    unwrap, pinned split, anchored/stale icons, anchorage ring closure, basemap config incl. `none`).
+  - `npm run typecheck` → exit 0. `npm run build` → exit 0; MapLibre is a lazy chunk (1.05 MB / 285 kB gzip) not
+    referenced from `index.html`.
+- **Browser evidence (dev server, 1440×900):**
+  - **Gate:** Earth → click "Southeast Asia" → click "Singapore" (opens 2D, `/port/PRT-SIN`) → queue row Pacific
+    Horizon (`/vessel/VSL-0001?in=port:PRT-SIN`) → 3D (`&view=3d`) → 2D → breadcrumb Southeast Asia
+    (`/vessel/VSL-0001?in=region:REG-SEA`, 3D) → 2D (`&view=2d`) → breadcrumb Earth (`/vessel/VSL-0001?in=earth`).
+    The inspector shows MV Pacific Horizon (+18.0 h, $24,000) at every step; 2D → 3D keeps the map centre
+    (103.891, 1.255).
+  - Queue/inspector reconciliation: KPI "In berth queue 41" = 41 rows; "At anchor 41"; "Median known wait 23.0 h,
+    37/41 known" = footnote; Pacific Horizon row "2.8 h waiting · Berth in 26.0 h" = berth card West Berth 1
+    "Next scheduled MV Pacific Horizon 2026-11-10 14:00 UTC · 22:00 local"; East Berth 3 card "Unknown — not counted
+    as free".
+  - Tile failure: OpenFreeMap blocked → "Basemap unavailable" banner, plain water background, overlays/labels/queue
+    intact; unblocking + "Retry tiles" restores the basemap and re-adds all overlays.
+  - Region 2D: 22 cluster badges, 9 of 11 port labels placed (Laem Chabang and Tanjung Pelepas yield to Bangkok and
+    Singapore), hazards and corridors drawn.
+  - 2D pan/zoom (two 1.5 s eases, z 11 → 13.5 → 10): p50 8.3 ms, p95 9.2 ms, p99 9.3 ms, no frame > 50 ms.
+  - Screenshots: `docs/screenshots/phase4-port-2d.png`, `phase4-port-2d-selection.png`,
+    `phase4-port-3d-selection.png`, `phase4-region-2d.png`, `phase4-basemap-unavailable.png`.
+  - Fixed during verification:
+    - Cluster badges at z 11 came from retained lower-zoom tiles (`querySourceFeatures`) → read from a hidden rendered
+      cluster layer on `idle`.
+    - Terminal labels overlapped each other and hid under the shelf/inspector → candidate offsets with collision
+      rectangles incl. the inset panels; port name prefix dropped from terminal labels.
+    - Region 2D: the Singapore label was covered by its own cluster badge → labels placed first, badges step ±24 px.
+    - Queue showed "Berth 14:00 UTC" for a slot on the next day → relative "in 26.0 h" with the full UTC on hover.
+    - Breadcrumb navigation cleared the selection, failing the gate → D-012.
+- **Known limitations:** the 3D globe offsets only for the right inspector, not for the left queue shelf; 3D cannot
+  zoom as close as 2D, so 2D → 3D at high zoom lands at the port's minimum globe distance.
+- **Blockers:** none.

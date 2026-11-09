@@ -13,7 +13,6 @@ import {
   buildHazards,
   buildPortMarkers,
   buildRouteLines,
-  buildVesselMarkers,
   clusterVessels,
   describeVesselMarker,
   focusForSelection,
@@ -35,6 +34,7 @@ import { MaritimeOverlay, type OverlayLayers } from './earth/MaritimeOverlay';
 import { loadWorld } from './earth/worldGeo';
 import { buildRegionRegistry } from './regions';
 
+const props = withDefaults(defineProps<{ active?: boolean }>(), { active: true });
 const emit = defineEmits<{ ready: [EarthScene] }>();
 
 const catalog = useCatalogStore();
@@ -65,7 +65,7 @@ let scoping = false;
 let pendingPortId: string | null = null;
 let unsubs: (() => void)[] = [];
 
-const markers = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildVesselMarkers(catalog.catalog, snapStore.snapshot)) : []));
+const markers = computed(() => snapStore.markers);
 const ports = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildPortMarkers(catalog.catalog, snapStore.snapshot)) : []));
 const routeLines = computed(() => (catalog.catalog ? markRaw(buildRouteLines(catalog.catalog)) : []));
 const hazards = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildHazards(catalog.catalog, snapStore.snapshot)) : []));
@@ -455,7 +455,7 @@ async function init() {
     sc.onFrame(onFrame),
   ];
   sc.setRightInset(view.inspectorOpen ? inspectorInset() : 0);
-  sc.start();
+  if (props.active) sc.start();
   if (import.meta.env.DEV) (window as unknown as { __portos?: unknown }).__portos = { scene: sc, overlay: ov };
   state.value = 'ready';
   emit('ready', sc);
@@ -490,6 +490,20 @@ watch(
 watch(
   () => session.reducedMotion,
   (v) => scene.value?.setReducedMotion(v),
+);
+/** Hidden behind the 2D map: stop rendering entirely; resume with a fresh frame. */
+watch(
+  () => props.active,
+  (active) => {
+    const sc = scene.value;
+    if (!sc) return;
+    stackMenu.value = null;
+    tooltip.value = null;
+    if (active) {
+      sc.resize();
+      sc.start();
+    } else sc.stop();
+  },
 );
 watch(markers, (m) => overlay.value?.setVessels(m));
 watch(ports, (p) => overlay.value?.setPorts(p));
@@ -531,9 +545,9 @@ defineExpose({ resetCamera, scene, overlay });
 </script>
 
 <template>
-  <div class="earth">
+  <div class="earth" :inert="!active || undefined" :aria-hidden="!active || undefined">
     <div ref="host" class="earth__host" />
-    <div v-if="state === 'ready'" class="earth__labels">
+    <div v-if="state === 'ready'" v-show="active" class="earth__labels">
       <button
         v-for="cl in clusters.clusters"
         :key="cl.id"

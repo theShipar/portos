@@ -1,29 +1,88 @@
 <script setup lang="ts">
-import { ref, shallowRef } from 'vue';
+import { computed, defineAsyncComponent, ref, shallowRef, watch } from 'vue';
+import { scopeKey } from '@/core/scope';
 import { TONE_LABEL, type MarkerTone } from '@/selectors/mapLayers';
 import { useViewStore } from '@/stores/view';
+import { EARTH_RADIUS } from './earth/camera';
 import type { EarthScene } from './earth/EarthScene';
+import { degreesPerPx } from './earth/lod';
 import LayerMenu from './LayerMenu.vue';
 import PortosEarthView from './PortosEarthView.vue';
+import { basemapConfig } from './port2d/basemapStyle';
 import { cssHex, markerColors } from './theme';
+import ViewModeSwitch from './ViewModeSwitch.vue';
+import { degPerPxForZoom, distanceForDegPerPx, zoomForDegPerPx, type MapView2D } from './viewport';
 import Icon from '@/components/ui/Icon.vue';
 
+const PortMap2D = defineAsyncComponent(() => import('./port2d/PortMap2D.vue'));
+
 const earthView = ref<InstanceType<typeof PortosEarthView> | null>(null);
+const map2d = ref<{ getView(): MapView2D | null; resetView(): void } | null>(null);
 const earth = shallowRef<EarthScene | null>(null);
 const view = useViewStore();
+const basemap = basemapConfig();
+
+const SHELF_W = 340;
+const show2d = computed(() => view.viewMode === '2d' && view.scope.level !== 'earth');
+const insetLeft = computed(() => (view.scope.level === 'port' ? (view.queueShelfOpen ? SHELF_W + 16 : 0) : 0));
+const insetRight = computed(() => (view.inspectorOpen ? 408 + 24 : 0));
+const initialView = ref<MapView2D | null>(null);
+/** Ports already framed once in 2D; the first visit fits the port layout instead of copying the globe zoom. */
+const framedPorts = new Set<string>();
+
+function viewFromGlobe(): MapView2D | null {
+  const sc = earth.value;
+  if (!sc) return null;
+  const pose = sc.getPose();
+  return { center: { lat: pose.lat, lon: pose.lon }, zoom: zoomForDegPerPx(degreesPerPx(pose.distance, EARTH_RADIUS, sc.pxToWorld), pose.lat) };
+}
+
+function globeFromView(v: MapView2D) {
+  const sc = earth.value;
+  if (!sc) return;
+  sc.jumpToPose({ lat: v.center.lat, lon: v.center.lon, distance: distanceForDegPerPx(degPerPxForZoom(v.zoom, v.center.lat), EARTH_RADIUS, sc.pxToWorld) });
+}
+
+/** Mode switches hand the camera across; scope changes are left to each view's own framing. */
+watch(
+  () => [show2d.value, scopeKey(view.scope)] as const,
+  ([on, key], prev) => {
+    const sameScope = prev && prev[1] === key;
+    if (on && !prev?.[0]) {
+      const s = view.scope;
+      const firstPortVisit = s.level === 'port' && !framedPorts.has(key);
+      initialView.value = sameScope && !firstPortVisit ? viewFromGlobe() : null;
+      if (s.level === 'port') framedPorts.add(key);
+    } else if (on && view.scope.level === 'port') framedPorts.add(key);
+    else if (!on && prev?.[0] && sameScope) {
+      const v = map2d.value?.getView();
+      if (v) globeFromView(v);
+    }
+  },
+  { immediate: true },
+);
+
+function reset() {
+  if (show2d.value) map2d.value?.resetView();
+  else earthView.value?.resetCamera();
+}
 
 const legendTones: MarkerTone[] = ['incident', 'atRisk', 'delayed', 'onPlan', 'ambient'];
 const legend = legendTones.map((t) => ({ tone: t, label: t === 'delayed' ? 'Late forecast' : t === 'onPlan' ? 'On plan' : TONE_LABEL[t], color: cssHex(markerColors[t]) }));
 
-defineExpose({ earth, earthView });
+defineExpose({ earth, earthView, map2d });
 </script>
 
 <template>
-  <div class="workspace-map" :class="{ 'workspace-map--inspector': view.inspectorOpen }" data-testid="map-workspace">
-    <PortosEarthView ref="earthView" @ready="earth = $event" />
+  <div class="workspace-map" :class="{ 'workspace-map--inspector': view.inspectorOpen }" :data-view-mode="show2d ? '2d' : '3d'" data-testid="map-workspace">
+    <PortosEarthView ref="earthView" :active="!show2d" @ready="earth = $event" />
+    <Transition name="mode-fade">
+      <PortMap2D v-if="show2d" ref="map2d" class="workspace-map__2d" :initial-view="initialView" :inset-left="insetLeft" :inset-right="insetRight" />
+    </Transition>
     <div class="map-tools" role="toolbar" aria-label="Map tools">
+      <ViewModeSwitch />
       <LayerMenu />
-      <button type="button" class="map-tool" title="Reset view for this scope" aria-label="Reset camera for this scope" @click="earthView?.resetCamera()">
+      <button type="button" class="map-tool" title="Reset view for this scope" aria-label="Reset view for this scope" @click="reset">
         <Icon name="reset" :size="16" />
       </button>
     </div>
@@ -33,7 +92,12 @@ defineExpose({ earth, earthView });
         {{ l.label }}
       </li>
     </ul>
-    <p class="attribution">
+    <!-- eslint-disable-next-line vue/no-v-html -->
+    <p v-if="show2d" class="attribution" data-testid="attribution-2d">
+      <span v-if="basemap.attribution" v-html="basemap.attribution" /><span v-else>No basemap configured</span> · Port layout, vessels &amp; queues synthetic · not for
+      navigation
+    </p>
+    <p v-else class="attribution">
       Earth textures &amp; country outlines via
       <a href="https://github.com/songsummer920-dazzle/three-scope-map-skill" target="_blank" rel="noopener">three-scope-map</a> (GPL-3.0) · Natural
       Earth-derived boundaries · All vessel data synthetic
@@ -46,12 +110,30 @@ defineExpose({ earth, earthView });
   position: absolute;
   inset: 0;
 }
+.workspace-map__2d {
+  z-index: 5;
+}
+.mode-fade-enter-active,
+.mode-fade-leave-active {
+  transition: opacity 220ms ease;
+}
+.mode-fade-enter-from,
+.mode-fade-leave-to {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mode-fade-enter-active,
+  .mode-fade-leave-active {
+    transition: none;
+  }
+}
 .map-tools {
   position: absolute;
   right: var(--map-control-gap);
   bottom: 40px;
   z-index: 20;
   display: grid;
+  justify-items: end;
   gap: 6px;
 }
 .map-legend {
@@ -97,7 +179,7 @@ defineExpose({ earth, earthView });
 .workspace-map--inspector .attribution {
   right: calc(var(--inspector-w) + var(--map-control-gap) * 2);
 }
-.attribution a {
+.attribution :deep(a) {
   color: inherit;
 }
 </style>

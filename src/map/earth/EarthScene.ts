@@ -479,6 +479,13 @@ export class EarthScene {
     return this.flyTo({ id: 'restore', scope: 'earth', center: { lat: pose.lat, lon: pose.lon }, distance: pose.distance, minDistance: limits.min, maxDistance: limits.max });
   }
 
+  /** Instant move within the current scope limits (2D → 3D hand-off). */
+  jumpToPose(pose: CameraPose): Promise<boolean> {
+    const { min, max } = this.distanceLimits;
+    const distance = Math.max(min, Math.min(max, pose.distance));
+    return this.flyTo({ id: 'handoff', scope: 'earth', center: { lat: pose.lat, lon: pose.lon }, distance, minDistance: min, maxDistance: max }, { duration: 0 });
+  }
+
   /** True when the point is on the near hemisphere and inside the central part of the free map area. */
   isComfortablyInView(lat: number, lon: number, margin = 0.12): boolean {
     const s = this.project(lat, lon);

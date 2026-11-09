@@ -89,6 +89,30 @@ overcrowding and expose item list"):
   least 6 vessels, pinned vessels (selection, open incidents) never absorbed. Clicking a stack opens a picker (worst
   state first, 8 rows, "Zoom to area"), because vessels moored metres apart cannot be separated by zooming.
 
+## D-011 2D basemap: OpenFreeMap vector tiles in the PORTOS palette
+Chosen at Phase 4 (user decision). MapLibre GL 5 renders OpenFreeMap's OpenMapTiles-schema `planet` tiles (free, no
+key, OSM data under ODbL) through a PORTOS-owned style (`src/map/port2d/basemapStyle.ts`): ocean `#061A28`, land
+`#1F3B48`, port/industrial landuse a lighter neutral so terminals read, roads and buildings muted, English labels in
+Noto Sans. The basemap is reference only; every operational element (vessels, berths, anchorage, corridors, hazards,
+queue) is a PORTOS overlay from the fixture.
+- Config: `VITE_PORT_BASEMAP_STYLE_URL` (full style, used as-is), `VITE_PORT_BASEMAP_TILES_URL` (TileJSON for the
+  PORTOS style; default OpenFreeMap), `VITE_PORT_BASEMAP_GLYPHS_URL`; `none` disables tiles.
+- Attribution: "OpenFreeMap · © OpenMapTiles · Data © OpenStreetMap contributors · Port layout, vessels & queues
+  synthetic · not for navigation" in the map footer whenever 2D is shown.
+- Failure: a basemap source error, or no tile within 12 s, shows "Basemap unavailable" with a retry; the background
+  switches to plain water so land is never implied. Overlays, the queue and the inspector keep working.
+- Vessel and berth icons are canvas-drawn (`icons.ts`) and labels are DOM, so nothing operational depends on the tile
+  or glyph server.
+- 2D exists at region and port scope only (Earth has no 2D). Port opens in 2D by default, region in 3D; the URL
+  carries `view=` only when the mode differs from the default. Switching hands the camera across by matching ground
+  resolution at the view centre (`src/map/viewport.ts`), clamped to each mode's zoom range; the first 2D visit to a
+  port fits the port layout. The 3D render loop is stopped while 2D is shown.
+
+## D-012 Selection survives scope changes
+The acceptance path "Earth → Southeast Asia → Singapore → 2D → 3D region → Earth retains the selected vessel" needs
+scope navigation that does not clear the inspector. `openScope` now keeps the open entity and moves the scope into
+`in=` (`/vessel/VSL-0001?in=region:REG-SEA`, explicit `in=earth` at Earth). Clicking the current scope's breadcrumb,
+Esc, or the back button closes the selection; the PORTOS brand link goes home with nothing selected.
+
 ## D-007 Port 2D basemap
-Deferred to Phase 4 (see BUILD_LOG). MapLibre style URL is configurable; without tiles the port view shows an honest
-"basemap unavailable" state and still renders fixture geometry on a plain background.
+Superseded by D-011 (OpenFreeMap, decided at Phase 4).
