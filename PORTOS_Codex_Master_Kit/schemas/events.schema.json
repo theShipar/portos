@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/events.schema.json",
+  "title": "PORTOS synthetic events collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "entityRefs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "kind"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "eventId": {
+        "type": "string"
+      },
+      "ingestedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "occurredAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "payload": {
+        "type": "object",
+        "properties": {
+          "hazardId": {
+            "type": "string"
+          },
+          "incidentId": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "lon": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "lat",
+              "lon"
+            ],
+            "additionalProperties": false
+          },
+          "newEtaShiftHours": {
+            "type": "integer"
+          },
+          "portId": {
+            "type": "string"
+          },
+          "previousEtaShiftHours": {
+            "type": "integer"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "vesselId": {
+            "type": "string"
+          },
+          "voyageId": {
+            "type": "string"
+          },
+          "waitingEstimateHours": {
+            "type": "integer"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "entityRefs",
+      "eventId",
+      "ingestedAtUtc",
+      "occurredAtUtc",
+      "payload",
+      "sourceType",
+      "type"
+    ],
+    "additionalProperties": false
+  }
+}

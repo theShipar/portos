@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/anchorages.schema.json",
+  "title": "PORTOS synthetic anchorages collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "anchorageId": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "polygon": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lon": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lat",
+            "lon"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "portId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "anchorageId",
+      "name",
+      "polygon",
+      "portId",
+      "sourceType"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,1756 @@
+[
+  {
+    "incidentId": "INC-0001",
+    "title": "Forecast ETA shift after anchorage wait",
+    "vesselId": "VSL-0001",
+    "voyageId": "VYG-0001",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "port_congestion",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:59:00Z",
+    "detectedAtUtc": "2026-11-09T10:57:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0001",
+      "EVD-0002",
+      "EVD-0003",
+      "EVD-0004",
+      "EVD-0005"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_SINGAPORE_CONGESTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0002",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0007",
+    "voyageId": "VYG-0007",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0007"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0007"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T06:21:00Z",
+    "detectedAtUtc": "2026-11-09T06:19:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0006"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_INDIAN_OCEAN_WEATHER",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0003",
+    "title": "Berth equipment availability issue",
+    "vesselId": "VSL-0013",
+    "voyageId": "VYG-0013",
+    "portId": "PRT-RTM",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0013"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0013"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-RTM"
+      }
+    ],
+    "category": "berth_equipment",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T08:45:00Z",
+    "detectedAtUtc": "2026-11-09T08:43:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0007"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_ROTTERDAM_BERTH",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0004",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0006",
+    "voyageId": "VYG-0006",
+    "portId": "PRT-NYC",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0006"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0006"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-NYC"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T09:28:00Z",
+    "detectedAtUtc": "2026-11-09T09:26:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0008"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_NORTH_SEA_TRANSIT",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0005",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0017",
+    "voyageId": "VYG-0017",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0017"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0017"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T06:45:00Z",
+    "detectedAtUtc": "2026-11-09T06:43:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0009"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0006",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0020",
+    "voyageId": "VYG-0020",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0020"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0020"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T11:08:00Z",
+    "detectedAtUtc": "2026-11-09T11:06:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0010"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0007",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0023",
+    "voyageId": "VYG-0023",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0023"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0023"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "acknowledged",
+    "openedAtUtc": "2026-11-09T09:46:00Z",
+    "detectedAtUtc": "2026-11-09T09:44:00Z",
+    "acknowledgedAtUtc": "2026-11-09T10:08:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-005",
+    "evidenceIds": [
+      "EVD-0011"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0008",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0026",
+    "voyageId": "VYG-0026",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0026"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0026"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:07:00Z",
+    "detectedAtUtc": "2026-11-09T10:05:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0012"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0009",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0029",
+    "voyageId": "VYG-0029",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0029"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0029"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T02:18:00Z",
+    "detectedAtUtc": "2026-11-09T02:16:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0013"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0010",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0032",
+    "voyageId": "VYG-0032",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0032"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0032"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:03:00Z",
+    "detectedAtUtc": "2026-11-09T10:01:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0014"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0011",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0035",
+    "voyageId": "VYG-0035",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0035"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0035"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "high",
+    "status": "investigating",
+    "openedAtUtc": "2026-11-09T05:11:00Z",
+    "detectedAtUtc": "2026-11-09T05:09:00Z",
+    "acknowledgedAtUtc": "2026-11-09T05:42:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-005",
+    "evidenceIds": [
+      "EVD-0015"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0012",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0038",
+    "voyageId": "VYG-0038",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0038"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0038"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T00:59:00Z",
+    "detectedAtUtc": "2026-11-09T00:57:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0016"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0013",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0041",
+    "voyageId": "VYG-0041",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0041"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0041"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "resolved",
+    "openedAtUtc": "2026-11-09T04:10:00Z",
+    "detectedAtUtc": "2026-11-09T04:08:00Z",
+    "acknowledgedAtUtc": "2026-11-09T04:19:00Z",
+    "resolvedAtUtc": "2026-11-09T04:56:00Z",
+    "ownerUserId": "USR-001",
+    "evidenceIds": [
+      "EVD-0017"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0014",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0044",
+    "voyageId": "VYG-0044",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0044"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0044"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "critical",
+    "status": "acknowledged",
+    "openedAtUtc": "2026-11-09T02:24:00Z",
+    "detectedAtUtc": "2026-11-09T02:22:00Z",
+    "acknowledgedAtUtc": "2026-11-09T03:01:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-002",
+    "evidenceIds": [
+      "EVD-0018"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0015",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0047",
+    "voyageId": "VYG-0047",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0047"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0047"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T01:54:00Z",
+    "detectedAtUtc": "2026-11-09T01:52:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0019"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0016",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0050",
+    "voyageId": "VYG-0050",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0050"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0050"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T04:34:00Z",
+    "detectedAtUtc": "2026-11-09T04:32:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0020"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0017",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0053",
+    "voyageId": "VYG-0053",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0053"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0053"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T01:19:00Z",
+    "detectedAtUtc": "2026-11-09T01:17:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0021"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0018",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0056",
+    "voyageId": "VYG-0056",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0056"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0056"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T11:31:00Z",
+    "detectedAtUtc": "2026-11-09T11:29:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0022"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0019",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0059",
+    "voyageId": "VYG-0059",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0059"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0059"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T05:17:00Z",
+    "detectedAtUtc": "2026-11-09T05:15:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0023"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0020",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0062",
+    "voyageId": "VYG-0062",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0062"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0062"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T05:56:00Z",
+    "detectedAtUtc": "2026-11-09T05:54:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0024"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0021",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0065",
+    "voyageId": "VYG-0065",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0065"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0065"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "acknowledged",
+    "openedAtUtc": "2026-11-09T01:00:00Z",
+    "detectedAtUtc": "2026-11-09T00:58:00Z",
+    "acknowledgedAtUtc": "2026-11-09T01:33:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-001",
+    "evidenceIds": [
+      "EVD-0025"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0022",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0068",
+    "voyageId": "VYG-0068",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0068"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0068"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "investigating",
+    "openedAtUtc": "2026-11-09T03:52:00Z",
+    "detectedAtUtc": "2026-11-09T03:50:00Z",
+    "acknowledgedAtUtc": "2026-11-09T04:19:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-001",
+    "evidenceIds": [
+      "EVD-0026"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0023",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0071",
+    "voyageId": "VYG-0071",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0071"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0071"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T00:32:00Z",
+    "detectedAtUtc": "2026-11-09T00:30:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0027"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0024",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0074",
+    "voyageId": "VYG-0074",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0074"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0074"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T07:49:00Z",
+    "detectedAtUtc": "2026-11-09T07:47:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0028"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0025",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0077",
+    "voyageId": "VYG-0077",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0077"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0077"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T02:08:00Z",
+    "detectedAtUtc": "2026-11-09T02:06:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0029"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0026",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0080",
+    "voyageId": "VYG-0080",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0080"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0080"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "medium",
+    "status": "resolved",
+    "openedAtUtc": "2026-11-09T04:03:00Z",
+    "detectedAtUtc": "2026-11-09T04:01:00Z",
+    "acknowledgedAtUtc": "2026-11-09T04:17:00Z",
+    "resolvedAtUtc": "2026-11-09T04:39:00Z",
+    "ownerUserId": "USR-001",
+    "evidenceIds": [
+      "EVD-0030"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0027",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0083",
+    "voyageId": "VYG-0083",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0083"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0083"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T01:29:00Z",
+    "detectedAtUtc": "2026-11-09T01:27:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0031"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0028",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0086",
+    "voyageId": "VYG-0086",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0086"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0086"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "acknowledged",
+    "openedAtUtc": "2026-11-09T03:14:00Z",
+    "detectedAtUtc": "2026-11-09T03:12:00Z",
+    "acknowledgedAtUtc": "2026-11-09T03:32:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-002",
+    "evidenceIds": [
+      "EVD-0032"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0029",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0089",
+    "voyageId": "VYG-0089",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0089"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0089"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T00:58:00Z",
+    "detectedAtUtc": "2026-11-09T00:56:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0033"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0030",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0092",
+    "voyageId": "VYG-0092",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0092"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0092"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T07:55:00Z",
+    "detectedAtUtc": "2026-11-09T07:53:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0034"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0031",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0095",
+    "voyageId": "VYG-0095",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0095"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0095"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T01:50:00Z",
+    "detectedAtUtc": "2026-11-09T01:48:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0035"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0032",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0098",
+    "voyageId": "VYG-0098",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0098"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0098"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T09:03:00Z",
+    "detectedAtUtc": "2026-11-09T09:01:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0036"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0033",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0101",
+    "voyageId": "VYG-0101",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0101"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0101"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "high",
+    "status": "investigating",
+    "openedAtUtc": "2026-11-09T04:50:00Z",
+    "detectedAtUtc": "2026-11-09T04:48:00Z",
+    "acknowledgedAtUtc": "2026-11-09T05:23:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-005",
+    "evidenceIds": [
+      "EVD-0037"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0034",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0104",
+    "voyageId": "VYG-0104",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0104"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0104"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T03:01:00Z",
+    "detectedAtUtc": "2026-11-09T02:59:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0038"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0035",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0107",
+    "voyageId": "VYG-0107",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0107"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0107"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "critical",
+    "status": "acknowledged",
+    "openedAtUtc": "2026-11-09T10:34:00Z",
+    "detectedAtUtc": "2026-11-09T10:32:00Z",
+    "acknowledgedAtUtc": "2026-11-09T10:42:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-002",
+    "evidenceIds": [
+      "EVD-0039"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0036",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0110",
+    "voyageId": "VYG-0110",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0110"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0110"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T09:13:00Z",
+    "detectedAtUtc": "2026-11-09T09:11:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0040"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0037",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0113",
+    "voyageId": "VYG-0113",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0113"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0113"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T01:34:00Z",
+    "detectedAtUtc": "2026-11-09T01:32:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0041"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0038",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0116",
+    "voyageId": "VYG-0116",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0116"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0116"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T03:55:00Z",
+    "detectedAtUtc": "2026-11-09T03:53:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0042"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0039",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0119",
+    "voyageId": "VYG-0119",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0119"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0119"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "resolved",
+    "openedAtUtc": "2026-11-09T11:14:00Z",
+    "detectedAtUtc": "2026-11-09T11:12:00Z",
+    "acknowledgedAtUtc": "2026-11-09T11:49:00Z",
+    "resolvedAtUtc": "2026-11-09T11:59:00Z",
+    "ownerUserId": "USR-005",
+    "evidenceIds": [
+      "EVD-0043"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0040",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0122",
+    "voyageId": "VYG-0122",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0122"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0122"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T02:52:00Z",
+    "detectedAtUtc": "2026-11-09T02:50:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0044"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0041",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0125",
+    "voyageId": "VYG-0125",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0125"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0125"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T00:51:00Z",
+    "detectedAtUtc": "2026-11-09T00:49:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0045"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0042",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0128",
+    "voyageId": "VYG-0128",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0128"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0128"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "critical",
+    "status": "acknowledged",
+    "openedAtUtc": "2026-11-09T04:30:00Z",
+    "detectedAtUtc": "2026-11-09T04:28:00Z",
+    "acknowledgedAtUtc": "2026-11-09T04:41:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-002",
+    "evidenceIds": [
+      "EVD-0046"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0043",
+    "title": "Port wait forecast above plan",
+    "vesselId": "VSL-0131",
+    "voyageId": "VYG-0131",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0131"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0131"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T11:07:00Z",
+    "detectedAtUtc": "2026-11-09T11:05:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0047"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0044",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0134",
+    "voyageId": "VYG-0134",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0134"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0134"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "investigating",
+    "openedAtUtc": "2026-11-09T08:51:00Z",
+    "detectedAtUtc": "2026-11-09T08:49:00Z",
+    "acknowledgedAtUtc": "2026-11-09T09:00:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-002",
+    "evidenceIds": [
+      "EVD-0048"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0045",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0137",
+    "voyageId": "VYG-0137",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0137"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0137"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T08:25:00Z",
+    "detectedAtUtc": "2026-11-09T08:23:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0049"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0046",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0140",
+    "voyageId": "VYG-0140",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0140"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0140"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T08:06:00Z",
+    "detectedAtUtc": "2026-11-09T08:04:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0050"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0047",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0143",
+    "voyageId": "VYG-0143",
+    "portId": "PRT-MNL",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0143"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0143"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-MNL"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:07:00Z",
+    "detectedAtUtc": "2026-11-09T10:05:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0051"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0048",
+    "title": "Position reports stale",
+    "vesselId": "VSL-0146",
+    "voyageId": "VYG-0146",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0146"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0146"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "data_quality",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T06:52:00Z",
+    "detectedAtUtc": "2026-11-09T06:50:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0052"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0049",
+    "title": "Route crosses forecast hazard window",
+    "vesselId": "VSL-0149",
+    "voyageId": "VYG-0149",
+    "portId": "PRT-SHA",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0149"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0149"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SHA"
+      }
+    ],
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "acknowledged",
+    "openedAtUtc": "2026-11-09T05:53:00Z",
+    "detectedAtUtc": "2026-11-09T05:51:00Z",
+    "acknowledgedAtUtc": "2026-11-09T06:08:00Z",
+    "resolvedAtUtc": null,
+    "ownerUserId": "USR-001",
+    "evidenceIds": [
+      "EVD-0053"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0050",
+    "title": "Forecast ETA deviates from schedule",
+    "vesselId": "VSL-0001",
+    "voyageId": "VYG-0001",
+    "portId": "PRT-SIN",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T11:30:00Z",
+    "detectedAtUtc": "2026-11-09T11:28:00Z",
+    "acknowledgedAtUtc": null,
+    "resolvedAtUtc": null,
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0054"
+    ],
+    "actionIds": [],
+    "scenarioId": "SCENARIO_SINGAPORE_CONGESTION",
+    "sourceType": "synthetic-incident"
+  }
+]

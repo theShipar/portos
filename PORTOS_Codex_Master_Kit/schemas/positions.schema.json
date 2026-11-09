@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/positions.schema.json",
+  "title": "PORTOS synthetic positions collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "cogDeg": {
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "location": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number"
+          },
+          "lon": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "additionalProperties": false
+      },
+      "navStatus": {
+        "type": "string"
+      },
+      "positionId": {
+        "type": "string"
+      },
+      "sogKn": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "timestampUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "vesselId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "cogDeg",
+      "location",
+      "navStatus",
+      "positionId",
+      "sogKn",
+      "sourceType",
+      "timestampUtc",
+      "vesselId"
+    ],
+    "additionalProperties": false
+  }
+}

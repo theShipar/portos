@@ -1,0 +1,50 @@
+{
+  "dataset": "PORTOS Synthetic Maritime Operations Demo",
+  "version": "1.1.0",
+  "seed": 92026,
+  "fixedScenarioTimeUtc": "2026-11-09T12:00:00Z",
+  "generatedAtUtc": "2026-11-09T12:00:00Z",
+  "replayRange": {
+    "startUtc": "2026-11-09T00:00:00Z",
+    "endUtc": "2026-11-09T12:00:00Z"
+  },
+  "sourceDisclosure": "Illustrative simulation, not live AIS, port, weather or nautical navigation data",
+  "counts": {
+    "regions": 11,
+    "ports": 100,
+    "terminals": 102,
+    "berths": 208,
+    "anchorages": 100,
+    "routes": 13,
+    "vessels": 500,
+    "voyages": 200,
+    "positions": 12789,
+    "portCalls": 261,
+    "incidents": 50,
+    "evidence": 54,
+    "weatherHazards": 15,
+    "events": 352,
+    "users": 5
+  },
+  "scenario": {
+    "vesselId": "VSL-0001",
+    "vesselName": "MV Pacific Horizon",
+    "voyageId": "VYG-0001",
+    "incidentId": "INC-0001",
+    "portId": "PRT-SIN",
+    "destinationPortId": "PRT-RTM",
+    "routeId": "RTE-SIN-RTM",
+    "alternativeRouteId": "RTE-SIN-RTM-CAPE",
+    "weatherHazardId": "WX-0001",
+    "etaShiftHours": 18,
+    "dailyDelayCostUsd": 32000,
+    "expectedEstimatedExposureUsd": 24000
+  },
+  "scenarios": [
+    "SCENARIO_SINGAPORE_CONGESTION",
+    "SCENARIO_INDIAN_OCEAN_WEATHER",
+    "SCENARIO_ROTTERDAM_BERTH",
+    "SCENARIO_NORTH_SEA_TRANSIT",
+    "SCENARIO_GENERAL_DISRUPTION"
+  ]
+}

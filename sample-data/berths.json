@@ -1,0 +1,3538 @@
+[
+  {
+    "berthId": "BRH-SIN-W-1",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-W",
+    "name": "West Berth 1",
+    "location": {
+      "lon": 103.752,
+      "lat": 1.276
+    },
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0253",
+    "scheduledVesselId": "VSL-0001",
+    "scheduledWindowStartUtc": "2026-11-10T14:00:00Z",
+    "scheduledWindowEndUtc": "2026-11-11T08:00:00Z",
+    "lastUpdatedUtc": "2026-11-09T11:33:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-W-2",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-W",
+    "name": "West Berth 2",
+    "location": {
+      "lon": 103.758,
+      "lat": 1.274
+    },
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0254",
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:51:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-W-3",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-W",
+    "name": "West Berth 3",
+    "location": {
+      "lon": 103.764,
+      "lat": 1.272
+    },
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0255",
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:36:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-W-4",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-W",
+    "name": "West Berth 4",
+    "location": {
+      "lon": 103.77,
+      "lat": 1.27
+    },
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0256",
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:50:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-C-1",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-C",
+    "name": "Central Berth 1",
+    "location": {
+      "lon": 103.828,
+      "lat": 1.263
+    },
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0257",
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:23:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-C-2",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-C",
+    "name": "Central Berth 2",
+    "location": {
+      "lon": 103.834,
+      "lat": 1.261
+    },
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0258",
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:30:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-C-3",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-C",
+    "name": "Central Berth 3",
+    "location": {
+      "lon": 103.84,
+      "lat": 1.259
+    },
+    "status": "unavailable",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-E-1",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-E",
+    "name": "East Berth 1",
+    "location": {
+      "lon": 103.848,
+      "lat": 1.262
+    },
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0259",
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:38:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-E-2",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-E",
+    "name": "East Berth 2",
+    "location": {
+      "lon": 103.853,
+      "lat": 1.261
+    },
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0260",
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:50:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SIN-E-3",
+    "portId": "PRT-SIN",
+    "terminalId": "TRM-SIN-E",
+    "name": "East Berth 3",
+    "location": {
+      "lon": 103.858,
+      "lat": 1.26
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:37:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-RTM-1",
+    "portId": "PRT-RTM",
+    "terminalId": "TRM-RTM",
+    "name": "Berth 1",
+    "location": {
+      "lon": 4.49,
+      "lat": 51.925
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-RTM-2",
+    "portId": "PRT-RTM",
+    "terminalId": "TRM-RTM",
+    "name": "Berth 2",
+    "location": {
+      "lon": 4.5,
+      "lat": 51.925
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SHA-1",
+    "portId": "PRT-SHA",
+    "terminalId": "TRM-SHA",
+    "name": "Berth 1",
+    "location": {
+      "lon": 121.5,
+      "lat": 31.235
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:17:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SHA-2",
+    "portId": "PRT-SHA",
+    "terminalId": "TRM-SHA",
+    "name": "Berth 2",
+    "location": {
+      "lon": 121.51,
+      "lat": 31.235
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:55:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SZX-1",
+    "portId": "PRT-SZX",
+    "terminalId": "TRM-SZX",
+    "name": "Berth 1",
+    "location": {
+      "lon": 114.13,
+      "lat": 22.535
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SZX-2",
+    "portId": "PRT-SZX",
+    "terminalId": "TRM-SZX",
+    "name": "Berth 2",
+    "location": {
+      "lon": 114.14,
+      "lat": 22.535
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-NGB-1",
+    "portId": "PRT-NGB",
+    "terminalId": "TRM-NGB",
+    "name": "Berth 1",
+    "location": {
+      "lon": 121.57,
+      "lat": 29.885
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:15:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-NGB-2",
+    "portId": "PRT-NGB",
+    "terminalId": "TRM-NGB",
+    "name": "Berth 2",
+    "location": {
+      "lon": 121.58,
+      "lat": 29.885
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:48:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BUS-1",
+    "portId": "PRT-BUS",
+    "terminalId": "TRM-BUS",
+    "name": "Berth 1",
+    "location": {
+      "lon": 129.05,
+      "lat": 35.105
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:29:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BUS-2",
+    "portId": "PRT-BUS",
+    "terminalId": "TRM-BUS",
+    "name": "Berth 2",
+    "location": {
+      "lon": 129.06,
+      "lat": 35.105
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:51:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HKG-1",
+    "portId": "PRT-HKG",
+    "terminalId": "TRM-HKG",
+    "name": "Berth 1",
+    "location": {
+      "lon": 114.18,
+      "lat": 22.305
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:34:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HKG-2",
+    "portId": "PRT-HKG",
+    "terminalId": "TRM-HKG",
+    "name": "Berth 2",
+    "location": {
+      "lon": 114.19,
+      "lat": 22.305
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:35:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-JEA-1",
+    "portId": "PRT-JEA",
+    "terminalId": "TRM-JEA",
+    "name": "Berth 1",
+    "location": {
+      "lon": 55.08,
+      "lat": 24.995
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:25:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-JEA-2",
+    "portId": "PRT-JEA",
+    "terminalId": "TRM-JEA",
+    "name": "Berth 2",
+    "location": {
+      "lon": 55.09,
+      "lat": 24.995
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:36:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LAX-1",
+    "portId": "PRT-LAX",
+    "terminalId": "TRM-LAX",
+    "name": "Berth 1",
+    "location": {
+      "lon": -118.26,
+      "lat": 33.735
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:36:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LAX-2",
+    "portId": "PRT-LAX",
+    "terminalId": "TRM-LAX",
+    "name": "Berth 2",
+    "location": {
+      "lon": -118.25,
+      "lat": 33.735
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LGB-1",
+    "portId": "PRT-LGB",
+    "terminalId": "TRM-LGB",
+    "name": "Berth 1",
+    "location": {
+      "lon": -118.18,
+      "lat": 33.755
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:22:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LGB-2",
+    "portId": "PRT-LGB",
+    "terminalId": "TRM-LGB",
+    "name": "Berth 2",
+    "location": {
+      "lon": -118.17,
+      "lat": 33.755
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:16:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-NYC-1",
+    "portId": "PRT-NYC",
+    "terminalId": "TRM-NYC",
+    "name": "Berth 1",
+    "location": {
+      "lon": -74.04,
+      "lat": 40.675
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:29:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-NYC-2",
+    "portId": "PRT-NYC",
+    "terminalId": "TRM-NYC",
+    "name": "Berth 2",
+    "location": {
+      "lon": -74.03,
+      "lat": 40.675
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HAM-1",
+    "portId": "PRT-HAM",
+    "terminalId": "TRM-HAM",
+    "name": "Berth 1",
+    "location": {
+      "lon": 9.97,
+      "lat": 53.545
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:16:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HAM-2",
+    "portId": "PRT-HAM",
+    "terminalId": "TRM-HAM",
+    "name": "Berth 2",
+    "location": {
+      "lon": 9.98,
+      "lat": 53.545
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:26:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ANR-1",
+    "portId": "PRT-ANR",
+    "terminalId": "TRM-ANR",
+    "name": "Berth 1",
+    "location": {
+      "lon": 4.41,
+      "lat": 51.265
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:28:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ANR-2",
+    "portId": "PRT-ANR",
+    "terminalId": "TRM-ANR",
+    "name": "Berth 2",
+    "location": {
+      "lon": 4.42,
+      "lat": 51.265
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-VLC-1",
+    "portId": "PRT-VLC",
+    "terminalId": "TRM-VLC",
+    "name": "Berth 1",
+    "location": {
+      "lon": -0.31,
+      "lat": 39.445
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:47:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-VLC-2",
+    "portId": "PRT-VLC",
+    "terminalId": "TRM-VLC",
+    "name": "Berth 2",
+    "location": {
+      "lon": -0.3,
+      "lat": 39.445
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:46:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ALG-1",
+    "portId": "PRT-ALG",
+    "terminalId": "TRM-ALG",
+    "name": "Berth 1",
+    "location": {
+      "lon": -5.44,
+      "lat": 36.135
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:23:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ALG-2",
+    "portId": "PRT-ALG",
+    "terminalId": "TRM-ALG",
+    "name": "Berth 2",
+    "location": {
+      "lon": -5.43,
+      "lat": 36.135
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-FLX-1",
+    "portId": "PRT-FLX",
+    "terminalId": "TRM-FLX",
+    "name": "Berth 1",
+    "location": {
+      "lon": 1.36,
+      "lat": 51.965
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:31:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-FLX-2",
+    "portId": "PRT-FLX",
+    "terminalId": "TRM-FLX",
+    "name": "Berth 2",
+    "location": {
+      "lon": 1.37,
+      "lat": 51.965
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:36:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SOU-1",
+    "portId": "PRT-SOU",
+    "terminalId": "TRM-SOU",
+    "name": "Berth 1",
+    "location": {
+      "lon": -1.39,
+      "lat": 50.905
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:47:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SOU-2",
+    "portId": "PRT-SOU",
+    "terminalId": "TRM-SOU",
+    "name": "Berth 2",
+    "location": {
+      "lon": -1.38,
+      "lat": 50.905
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:51:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LHV-1",
+    "portId": "PRT-LHV",
+    "terminalId": "TRM-LHV",
+    "name": "Berth 1",
+    "location": {
+      "lon": 0.13,
+      "lat": 49.495
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:45:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LHV-2",
+    "portId": "PRT-LHV",
+    "terminalId": "TRM-LHV",
+    "name": "Berth 2",
+    "location": {
+      "lon": 0.14,
+      "lat": 49.495
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:16:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MRS-1",
+    "portId": "PRT-MRS",
+    "terminalId": "TRM-MRS",
+    "name": "Berth 1",
+    "location": {
+      "lon": 5.37,
+      "lat": 43.305
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:17:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MRS-2",
+    "portId": "PRT-MRS",
+    "terminalId": "TRM-MRS",
+    "name": "Berth 2",
+    "location": {
+      "lon": 5.38,
+      "lat": 43.305
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:52:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-PIR-1",
+    "portId": "PRT-PIR",
+    "terminalId": "TRM-PIR",
+    "name": "Berth 1",
+    "location": {
+      "lon": 23.64,
+      "lat": 37.945
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:31:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-PIR-2",
+    "portId": "PRT-PIR",
+    "terminalId": "TRM-PIR",
+    "name": "Berth 2",
+    "location": {
+      "lon": 23.65,
+      "lat": 37.945
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:23:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-IST-1",
+    "portId": "PRT-IST",
+    "terminalId": "TRM-IST",
+    "name": "Berth 1",
+    "location": {
+      "lon": 28.98,
+      "lat": 41.015
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:32:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-IST-2",
+    "portId": "PRT-IST",
+    "terminalId": "TRM-IST",
+    "name": "Berth 2",
+    "location": {
+      "lon": 28.99,
+      "lat": 41.015
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-GOA-1",
+    "portId": "PRT-GOA",
+    "terminalId": "TRM-GOA",
+    "name": "Berth 1",
+    "location": {
+      "lon": 8.93,
+      "lat": 44.405
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:27:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-GOA-2",
+    "portId": "PRT-GOA",
+    "terminalId": "TRM-GOA",
+    "name": "Berth 2",
+    "location": {
+      "lon": 8.94,
+      "lat": 44.405
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:29:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BCN-1",
+    "portId": "PRT-BCN",
+    "terminalId": "TRM-BCN",
+    "name": "Berth 1",
+    "location": {
+      "lon": 2.17,
+      "lat": 41.355
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:49:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BCN-2",
+    "portId": "PRT-BCN",
+    "terminalId": "TRM-BCN",
+    "name": "Berth 2",
+    "location": {
+      "lon": 2.18,
+      "lat": 41.355
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:32:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ALX-1",
+    "portId": "PRT-ALX",
+    "terminalId": "TRM-ALX",
+    "name": "Berth 1",
+    "location": {
+      "lon": 29.89,
+      "lat": 31.205
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:18:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ALX-2",
+    "portId": "PRT-ALX",
+    "terminalId": "TRM-ALX",
+    "name": "Berth 2",
+    "location": {
+      "lon": 29.9,
+      "lat": 31.205
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-PSD-1",
+    "portId": "PRT-PSD",
+    "terminalId": "TRM-PSD",
+    "name": "Berth 1",
+    "location": {
+      "lon": 32.32,
+      "lat": 31.265
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:37:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-PSD-2",
+    "portId": "PRT-PSD",
+    "terminalId": "TRM-PSD",
+    "name": "Berth 2",
+    "location": {
+      "lon": 32.33,
+      "lat": 31.265
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-DUR-1",
+    "portId": "PRT-DUR",
+    "terminalId": "TRM-DUR",
+    "name": "Berth 1",
+    "location": {
+      "lon": 31.04,
+      "lat": -29.865
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:39:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-DUR-2",
+    "portId": "PRT-DUR",
+    "terminalId": "TRM-DUR",
+    "name": "Berth 2",
+    "location": {
+      "lon": 31.05,
+      "lat": -29.865
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:24:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CPT-1",
+    "portId": "PRT-CPT",
+    "terminalId": "TRM-CPT",
+    "name": "Berth 1",
+    "location": {
+      "lon": 18.45,
+      "lat": -33.915
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:55:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CPT-2",
+    "portId": "PRT-CPT",
+    "terminalId": "TRM-CPT",
+    "name": "Berth 2",
+    "location": {
+      "lon": 18.46,
+      "lat": -33.915
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:48:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LAG-1",
+    "portId": "PRT-LAG",
+    "terminalId": "TRM-LAG",
+    "name": "Berth 1",
+    "location": {
+      "lon": 3.4,
+      "lat": 6.455
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:58:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LAG-2",
+    "portId": "PRT-LAG",
+    "terminalId": "TRM-LAG",
+    "name": "Berth 2",
+    "location": {
+      "lon": 3.41,
+      "lat": 6.455
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:52:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MBA-1",
+    "portId": "PRT-MBA",
+    "terminalId": "TRM-MBA",
+    "name": "Berth 1",
+    "location": {
+      "lon": 39.67,
+      "lat": -4.055
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:57:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MBA-2",
+    "portId": "PRT-MBA",
+    "terminalId": "TRM-MBA",
+    "name": "Berth 2",
+    "location": {
+      "lon": 39.68,
+      "lat": -4.055
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:56:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-DJB-1",
+    "portId": "PRT-DJB",
+    "terminalId": "TRM-DJB",
+    "name": "Berth 1",
+    "location": {
+      "lon": 43.15,
+      "lat": 11.595
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-DJB-2",
+    "portId": "PRT-DJB",
+    "terminalId": "TRM-DJB",
+    "name": "Berth 2",
+    "location": {
+      "lon": 43.16,
+      "lat": 11.595
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:26:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CMB-1",
+    "portId": "PRT-CMB",
+    "terminalId": "TRM-CMB",
+    "name": "Berth 1",
+    "location": {
+      "lon": 79.86,
+      "lat": 6.945
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:23:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CMB-2",
+    "portId": "PRT-CMB",
+    "terminalId": "TRM-CMB",
+    "name": "Berth 2",
+    "location": {
+      "lon": 79.87,
+      "lat": 6.945
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:57:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MUM-1",
+    "portId": "PRT-MUM",
+    "terminalId": "TRM-MUM",
+    "name": "Berth 1",
+    "location": {
+      "lon": 72.86,
+      "lat": 18.945
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:15:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MUM-2",
+    "portId": "PRT-MUM",
+    "terminalId": "TRM-MUM",
+    "name": "Berth 2",
+    "location": {
+      "lon": 72.87,
+      "lat": 18.945
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:25:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MAA-1",
+    "portId": "PRT-MAA",
+    "terminalId": "TRM-MAA",
+    "name": "Berth 1",
+    "location": {
+      "lon": 80.31,
+      "lat": 13.095
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:18:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MAA-2",
+    "portId": "PRT-MAA",
+    "terminalId": "TRM-MAA",
+    "name": "Berth 2",
+    "location": {
+      "lon": 80.32,
+      "lat": 13.095
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:27:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MUN-1",
+    "portId": "PRT-MUN",
+    "terminalId": "TRM-MUN",
+    "name": "Berth 1",
+    "location": {
+      "lon": 69.71,
+      "lat": 22.745
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:32:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MUN-2",
+    "portId": "PRT-MUN",
+    "terminalId": "TRM-MUN",
+    "name": "Berth 2",
+    "location": {
+      "lon": 69.72,
+      "lat": 22.745
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:38:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-KHI-1",
+    "portId": "PRT-KHI",
+    "terminalId": "TRM-KHI",
+    "name": "Berth 1",
+    "location": {
+      "lon": 67.02,
+      "lat": 24.855
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:45:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-KHI-2",
+    "portId": "PRT-KHI",
+    "terminalId": "TRM-KHI",
+    "name": "Berth 2",
+    "location": {
+      "lon": 67.03,
+      "lat": 24.855
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:40:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CGP-1",
+    "portId": "PRT-CGP",
+    "terminalId": "TRM-CGP",
+    "name": "Berth 1",
+    "location": {
+      "lon": 91.83,
+      "lat": 22.325
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:31:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CGP-2",
+    "portId": "PRT-CGP",
+    "terminalId": "TRM-CGP",
+    "name": "Berth 2",
+    "location": {
+      "lon": 91.84,
+      "lat": 22.325
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:28:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-RGN-1",
+    "portId": "PRT-RGN",
+    "terminalId": "TRM-RGN",
+    "name": "Berth 1",
+    "location": {
+      "lon": 96.18,
+      "lat": 16.785
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:54:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-RGN-2",
+    "portId": "PRT-RGN",
+    "terminalId": "TRM-RGN",
+    "name": "Berth 2",
+    "location": {
+      "lon": 96.19,
+      "lat": 16.785
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:18:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BKK-1",
+    "portId": "PRT-BKK",
+    "terminalId": "TRM-BKK",
+    "name": "Berth 1",
+    "location": {
+      "lon": 100.58,
+      "lat": 13.705
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:18:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BKK-2",
+    "portId": "PRT-BKK",
+    "terminalId": "TRM-BKK",
+    "name": "Berth 2",
+    "location": {
+      "lon": 100.59,
+      "lat": 13.705
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:36:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LCH-1",
+    "portId": "PRT-LCH",
+    "terminalId": "TRM-LCH",
+    "name": "Berth 1",
+    "location": {
+      "lon": 100.89,
+      "lat": 13.095
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:15:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LCH-2",
+    "portId": "PRT-LCH",
+    "terminalId": "TRM-LCH",
+    "name": "Berth 2",
+    "location": {
+      "lon": 100.9,
+      "lat": 13.095
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:59:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-PKG-1",
+    "portId": "PRT-PKG",
+    "terminalId": "TRM-PKG",
+    "name": "Berth 1",
+    "location": {
+      "lon": 101.37,
+      "lat": 3.005
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-PKG-2",
+    "portId": "PRT-PKG",
+    "terminalId": "TRM-PKG",
+    "name": "Berth 2",
+    "location": {
+      "lon": 101.38,
+      "lat": 3.005
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:47:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TPP-1",
+    "portId": "PRT-TPP",
+    "terminalId": "TRM-TPP",
+    "name": "Berth 1",
+    "location": {
+      "lon": 103.56,
+      "lat": 1.365
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:37:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TPP-2",
+    "portId": "PRT-TPP",
+    "terminalId": "TRM-TPP",
+    "name": "Berth 2",
+    "location": {
+      "lon": 103.57,
+      "lat": 1.365
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:59:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-JKT-1",
+    "portId": "PRT-JKT",
+    "terminalId": "TRM-JKT",
+    "name": "Berth 1",
+    "location": {
+      "lon": 106.89,
+      "lat": -6.105
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-JKT-2",
+    "portId": "PRT-JKT",
+    "terminalId": "TRM-JKT",
+    "name": "Berth 2",
+    "location": {
+      "lon": 106.9,
+      "lat": -6.105
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:50:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SBY-1",
+    "portId": "PRT-SBY",
+    "terminalId": "TRM-SBY",
+    "name": "Berth 1",
+    "location": {
+      "lon": 112.74,
+      "lat": -7.205
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:28:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SBY-2",
+    "portId": "PRT-SBY",
+    "terminalId": "TRM-SBY",
+    "name": "Berth 2",
+    "location": {
+      "lon": 112.75,
+      "lat": -7.205
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:46:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MNL-1",
+    "portId": "PRT-MNL",
+    "terminalId": "TRM-MNL",
+    "name": "Berth 1",
+    "location": {
+      "lon": 120.97,
+      "lat": 14.595
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:47:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MNL-2",
+    "portId": "PRT-MNL",
+    "terminalId": "TRM-MNL",
+    "name": "Berth 2",
+    "location": {
+      "lon": 120.98,
+      "lat": 14.595
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:33:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HCM-1",
+    "portId": "PRT-HCM",
+    "terminalId": "TRM-HCM",
+    "name": "Berth 1",
+    "location": {
+      "lon": 106.76,
+      "lat": 10.795
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:22:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HCM-2",
+    "portId": "PRT-HCM",
+    "terminalId": "TRM-HCM",
+    "name": "Berth 2",
+    "location": {
+      "lon": 106.77,
+      "lat": 10.795
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:55:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HPH-1",
+    "portId": "PRT-HPH",
+    "terminalId": "TRM-HPH",
+    "name": "Berth 1",
+    "location": {
+      "lon": 106.71,
+      "lat": 20.855
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:16:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HPH-2",
+    "portId": "PRT-HPH",
+    "terminalId": "TRM-HPH",
+    "name": "Berth 2",
+    "location": {
+      "lon": 106.72,
+      "lat": 20.855
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TAO-1",
+    "portId": "PRT-TAO",
+    "terminalId": "TRM-TAO",
+    "name": "Berth 1",
+    "location": {
+      "lon": 120.39,
+      "lat": 36.075
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:54:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TAO-2",
+    "portId": "PRT-TAO",
+    "terminalId": "TRM-TAO",
+    "name": "Berth 2",
+    "location": {
+      "lon": 120.4,
+      "lat": 36.075
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:49:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TSN-1",
+    "portId": "PRT-TSN",
+    "terminalId": "TRM-TSN",
+    "name": "Berth 1",
+    "location": {
+      "lon": 117.75,
+      "lat": 38.985
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:30:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TSN-2",
+    "portId": "PRT-TSN",
+    "terminalId": "TRM-TSN",
+    "name": "Berth 2",
+    "location": {
+      "lon": 117.76,
+      "lat": 38.985
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:29:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-DLC-1",
+    "portId": "PRT-DLC",
+    "terminalId": "TRM-DLC",
+    "name": "Berth 1",
+    "location": {
+      "lon": 121.63,
+      "lat": 38.915
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:52:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-DLC-2",
+    "portId": "PRT-DLC",
+    "terminalId": "TRM-DLC",
+    "name": "Berth 2",
+    "location": {
+      "lon": 121.64,
+      "lat": 38.915
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:54:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-XMN-1",
+    "portId": "PRT-XMN",
+    "terminalId": "TRM-XMN",
+    "name": "Berth 1",
+    "location": {
+      "lon": 118.09,
+      "lat": 24.485
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:22:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-XMN-2",
+    "portId": "PRT-XMN",
+    "terminalId": "TRM-XMN",
+    "name": "Berth 2",
+    "location": {
+      "lon": 118.1,
+      "lat": 24.485
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:34:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-KHH-1",
+    "portId": "PRT-KHH",
+    "terminalId": "TRM-KHH",
+    "name": "Berth 1",
+    "location": {
+      "lon": 120.29,
+      "lat": 22.625
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:52:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-KHH-2",
+    "portId": "PRT-KHH",
+    "terminalId": "TRM-KHH",
+    "name": "Berth 2",
+    "location": {
+      "lon": 120.3,
+      "lat": 22.625
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:15:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TYO-1",
+    "portId": "PRT-TYO",
+    "terminalId": "TRM-TYO",
+    "name": "Berth 1",
+    "location": {
+      "lon": 139.78,
+      "lat": 35.615
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:57:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TYO-2",
+    "portId": "PRT-TYO",
+    "terminalId": "TRM-TYO",
+    "name": "Berth 2",
+    "location": {
+      "lon": 139.79,
+      "lat": 35.615
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:55:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-YOK-1",
+    "portId": "PRT-YOK",
+    "terminalId": "TRM-YOK",
+    "name": "Berth 1",
+    "location": {
+      "lon": 139.65,
+      "lat": 35.455
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:45:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-YOK-2",
+    "portId": "PRT-YOK",
+    "terminalId": "TRM-YOK",
+    "name": "Berth 2",
+    "location": {
+      "lon": 139.66,
+      "lat": 35.455
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:33:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-UKB-1",
+    "portId": "PRT-UKB",
+    "terminalId": "TRM-UKB",
+    "name": "Berth 1",
+    "location": {
+      "lon": 135.19,
+      "lat": 34.695
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:22:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-UKB-2",
+    "portId": "PRT-UKB",
+    "terminalId": "TRM-UKB",
+    "name": "Berth 2",
+    "location": {
+      "lon": 135.2,
+      "lat": 34.695
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-OSA-1",
+    "portId": "PRT-OSA",
+    "terminalId": "TRM-OSA",
+    "name": "Berth 1",
+    "location": {
+      "lon": 135.44,
+      "lat": 34.655
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:26:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-OSA-2",
+    "portId": "PRT-OSA",
+    "terminalId": "TRM-OSA",
+    "name": "Berth 2",
+    "location": {
+      "lon": 135.45,
+      "lat": 34.655
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:34:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-NGO-1",
+    "portId": "PRT-NGO",
+    "terminalId": "TRM-NGO",
+    "name": "Berth 1",
+    "location": {
+      "lon": 136.89,
+      "lat": 35.095
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:18:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-NGO-2",
+    "portId": "PRT-NGO",
+    "terminalId": "TRM-NGO",
+    "name": "Berth 2",
+    "location": {
+      "lon": 136.9,
+      "lat": 35.095
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MEL-1",
+    "portId": "PRT-MEL",
+    "terminalId": "TRM-MEL",
+    "name": "Berth 1",
+    "location": {
+      "lon": 144.93,
+      "lat": -37.835
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:40:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MEL-2",
+    "portId": "PRT-MEL",
+    "terminalId": "TRM-MEL",
+    "name": "Berth 2",
+    "location": {
+      "lon": 144.94,
+      "lat": -37.835
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:39:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SYD-1",
+    "portId": "PRT-SYD",
+    "terminalId": "TRM-SYD",
+    "name": "Berth 1",
+    "location": {
+      "lon": 151.21,
+      "lat": -33.855
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:47:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SYD-2",
+    "portId": "PRT-SYD",
+    "terminalId": "TRM-SYD",
+    "name": "Berth 2",
+    "location": {
+      "lon": 151.22,
+      "lat": -33.855
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:47:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BNE-1",
+    "portId": "PRT-BNE",
+    "terminalId": "TRM-BNE",
+    "name": "Berth 1",
+    "location": {
+      "lon": 153.04,
+      "lat": -27.375
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BNE-2",
+    "portId": "PRT-BNE",
+    "terminalId": "TRM-BNE",
+    "name": "Berth 2",
+    "location": {
+      "lon": 153.05,
+      "lat": -27.375
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:27:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-FRE-1",
+    "portId": "PRT-FRE",
+    "terminalId": "TRM-FRE",
+    "name": "Berth 1",
+    "location": {
+      "lon": 115.76,
+      "lat": -32.045
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:50:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-FRE-2",
+    "portId": "PRT-FRE",
+    "terminalId": "TRM-FRE",
+    "name": "Berth 2",
+    "location": {
+      "lon": 115.77,
+      "lat": -32.045
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-AKL-1",
+    "portId": "PRT-AKL",
+    "terminalId": "TRM-AKL",
+    "name": "Berth 1",
+    "location": {
+      "lon": 174.78,
+      "lat": -36.835
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:21:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-AKL-2",
+    "portId": "PRT-AKL",
+    "terminalId": "TRM-AKL",
+    "name": "Berth 2",
+    "location": {
+      "lon": 174.79,
+      "lat": -36.835
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:47:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TRG-1",
+    "portId": "PRT-TRG",
+    "terminalId": "TRM-TRG",
+    "name": "Berth 1",
+    "location": {
+      "lon": 176.18,
+      "lat": -37.655
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:26:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TRG-2",
+    "portId": "PRT-TRG",
+    "terminalId": "TRM-TRG",
+    "name": "Berth 2",
+    "location": {
+      "lon": 176.19,
+      "lat": -37.655
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:52:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-WLG-1",
+    "portId": "PRT-WLG",
+    "terminalId": "TRM-WLG",
+    "name": "Berth 1",
+    "location": {
+      "lon": 174.79,
+      "lat": -41.265
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:21:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-WLG-2",
+    "portId": "PRT-WLG",
+    "terminalId": "TRM-WLG",
+    "name": "Berth 2",
+    "location": {
+      "lon": 174.8,
+      "lat": -41.265
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:55:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-YVR-1",
+    "portId": "PRT-YVR",
+    "terminalId": "TRM-YVR",
+    "name": "Berth 1",
+    "location": {
+      "lon": -123.1,
+      "lat": 49.305
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:59:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-YVR-2",
+    "portId": "PRT-YVR",
+    "terminalId": "TRM-YVR",
+    "name": "Berth 2",
+    "location": {
+      "lon": -123.09,
+      "lat": 49.305
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:58:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-PRR-1",
+    "portId": "PRT-PRR",
+    "terminalId": "TRM-PRR",
+    "name": "Berth 1",
+    "location": {
+      "lon": -130.31,
+      "lat": 54.315
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:53:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-PRR-2",
+    "portId": "PRT-PRR",
+    "terminalId": "TRM-PRR",
+    "name": "Berth 2",
+    "location": {
+      "lon": -130.3,
+      "lat": 54.315
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:35:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SEA-1",
+    "portId": "PRT-SEA",
+    "terminalId": "TRM-SEA",
+    "name": "Berth 1",
+    "location": {
+      "lon": -122.34,
+      "lat": 47.605
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:25:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SEA-2",
+    "portId": "PRT-SEA",
+    "terminalId": "TRM-SEA",
+    "name": "Berth 2",
+    "location": {
+      "lon": -122.33,
+      "lat": 47.605
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:30:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TAC-1",
+    "portId": "PRT-TAC",
+    "terminalId": "TRM-TAC",
+    "name": "Berth 1",
+    "location": {
+      "lon": -122.43,
+      "lat": 47.265
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:25:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TAC-2",
+    "portId": "PRT-TAC",
+    "terminalId": "TRM-TAC",
+    "name": "Berth 2",
+    "location": {
+      "lon": -122.42,
+      "lat": 47.265
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:31:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-OAK-1",
+    "portId": "PRT-OAK",
+    "terminalId": "TRM-OAK",
+    "name": "Berth 1",
+    "location": {
+      "lon": -122.3,
+      "lat": 37.805
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:48:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-OAK-2",
+    "portId": "PRT-OAK",
+    "terminalId": "TRM-OAK",
+    "name": "Berth 2",
+    "location": {
+      "lon": -122.29,
+      "lat": 37.805
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SFO-1",
+    "portId": "PRT-SFO",
+    "terminalId": "TRM-SFO",
+    "name": "Berth 1",
+    "location": {
+      "lon": -122.39,
+      "lat": 37.795
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:31:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SFO-2",
+    "portId": "PRT-SFO",
+    "terminalId": "TRM-SFO",
+    "name": "Berth 2",
+    "location": {
+      "lon": -122.38,
+      "lat": 37.795
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:28:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HOU-1",
+    "portId": "PRT-HOU",
+    "terminalId": "TRM-HOU",
+    "name": "Berth 1",
+    "location": {
+      "lon": -95.27,
+      "lat": 29.735
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:36:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HOU-2",
+    "portId": "PRT-HOU",
+    "terminalId": "TRM-HOU",
+    "name": "Berth 2",
+    "location": {
+      "lon": -95.26,
+      "lat": 29.735
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:46:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MSY-1",
+    "portId": "PRT-MSY",
+    "terminalId": "TRM-MSY",
+    "name": "Berth 1",
+    "location": {
+      "lon": -90.05,
+      "lat": 29.965
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:57:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MSY-2",
+    "portId": "PRT-MSY",
+    "terminalId": "TRM-MSY",
+    "name": "Berth 2",
+    "location": {
+      "lon": -90.04,
+      "lat": 29.965
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:51:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MIA-1",
+    "portId": "PRT-MIA",
+    "terminalId": "TRM-MIA",
+    "name": "Berth 1",
+    "location": {
+      "lon": -80.17,
+      "lat": 25.765
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:53:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MIA-2",
+    "portId": "PRT-MIA",
+    "terminalId": "TRM-MIA",
+    "name": "Berth 2",
+    "location": {
+      "lon": -80.16,
+      "lat": 25.765
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:23:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SAV-1",
+    "portId": "PRT-SAV",
+    "terminalId": "TRM-SAV",
+    "name": "Berth 1",
+    "location": {
+      "lon": -81.08,
+      "lat": 32.085
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:55:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SAV-2",
+    "portId": "PRT-SAV",
+    "terminalId": "TRM-SAV",
+    "name": "Berth 2",
+    "location": {
+      "lon": -81.07,
+      "lat": 32.085
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:27:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CHS-1",
+    "portId": "PRT-CHS",
+    "terminalId": "TRM-CHS",
+    "name": "Berth 1",
+    "location": {
+      "lon": -79.93,
+      "lat": 32.785
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:50:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CHS-2",
+    "portId": "PRT-CHS",
+    "terminalId": "TRM-CHS",
+    "name": "Berth 2",
+    "location": {
+      "lon": -79.92,
+      "lat": 32.785
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:31:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ORF-1",
+    "portId": "PRT-ORF",
+    "terminalId": "TRM-ORF",
+    "name": "Berth 1",
+    "location": {
+      "lon": -76.29,
+      "lat": 36.855
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ORF-2",
+    "portId": "PRT-ORF",
+    "terminalId": "TRM-ORF",
+    "name": "Berth 2",
+    "location": {
+      "lon": -76.28,
+      "lat": 36.855
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BAL-1",
+    "portId": "PRT-BAL",
+    "terminalId": "TRM-BAL",
+    "name": "Berth 1",
+    "location": {
+      "lon": -76.59,
+      "lat": 39.275
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BAL-2",
+    "portId": "PRT-BAL",
+    "terminalId": "TRM-BAL",
+    "name": "Berth 2",
+    "location": {
+      "lon": -76.58,
+      "lat": 39.275
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:30:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HFX-1",
+    "portId": "PRT-HFX",
+    "terminalId": "TRM-HFX",
+    "name": "Berth 1",
+    "location": {
+      "lon": -63.56,
+      "lat": 44.655
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:48:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-HFX-2",
+    "portId": "PRT-HFX",
+    "terminalId": "TRM-HFX",
+    "name": "Berth 2",
+    "location": {
+      "lon": -63.55,
+      "lat": 44.655
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-YMQ-1",
+    "portId": "PRT-YMQ",
+    "terminalId": "TRM-YMQ",
+    "name": "Berth 1",
+    "location": {
+      "lon": -73.53,
+      "lat": 45.515
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:26:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-YMQ-2",
+    "portId": "PRT-YMQ",
+    "terminalId": "TRM-YMQ",
+    "name": "Berth 2",
+    "location": {
+      "lon": -73.52,
+      "lat": 45.515
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:22:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SSZ-1",
+    "portId": "PRT-SSZ",
+    "terminalId": "TRM-SSZ",
+    "name": "Berth 1",
+    "location": {
+      "lon": -46.32,
+      "lat": -23.935
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:25:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SSZ-2",
+    "portId": "PRT-SSZ",
+    "terminalId": "TRM-SSZ",
+    "name": "Berth 2",
+    "location": {
+      "lon": -46.31,
+      "lat": -23.935
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-RIO-1",
+    "portId": "PRT-RIO",
+    "terminalId": "TRM-RIO",
+    "name": "Berth 1",
+    "location": {
+      "lon": -43.17,
+      "lat": -22.905
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-RIO-2",
+    "portId": "PRT-RIO",
+    "terminalId": "TRM-RIO",
+    "name": "Berth 2",
+    "location": {
+      "lon": -43.16,
+      "lat": -22.905
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BUE-1",
+    "portId": "PRT-BUE",
+    "terminalId": "TRM-BUE",
+    "name": "Berth 1",
+    "location": {
+      "lon": -58.35,
+      "lat": -34.585
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BUE-2",
+    "portId": "PRT-BUE",
+    "terminalId": "TRM-BUE",
+    "name": "Berth 2",
+    "location": {
+      "lon": -58.34,
+      "lat": -34.585
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:21:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MVD-1",
+    "portId": "PRT-MVD",
+    "terminalId": "TRM-MVD",
+    "name": "Berth 1",
+    "location": {
+      "lon": -56.2,
+      "lat": -34.895
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MVD-2",
+    "portId": "PRT-MVD",
+    "terminalId": "TRM-MVD",
+    "name": "Berth 2",
+    "location": {
+      "lon": -56.19,
+      "lat": -34.895
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:47:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-VAP-1",
+    "portId": "PRT-VAP",
+    "terminalId": "TRM-VAP",
+    "name": "Berth 1",
+    "location": {
+      "lon": -71.61,
+      "lat": -33.035
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:33:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-VAP-2",
+    "portId": "PRT-VAP",
+    "terminalId": "TRM-VAP",
+    "name": "Berth 2",
+    "location": {
+      "lon": -71.6,
+      "lat": -33.035
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:19:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SAI-1",
+    "portId": "PRT-SAI",
+    "terminalId": "TRM-SAI",
+    "name": "Berth 1",
+    "location": {
+      "lon": -71.6,
+      "lat": -33.585
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:59:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-SAI-2",
+    "portId": "PRT-SAI",
+    "terminalId": "TRM-SAI",
+    "name": "Berth 2",
+    "location": {
+      "lon": -71.59,
+      "lat": -33.585
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:59:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CLL-1",
+    "portId": "PRT-CLL",
+    "terminalId": "TRM-CLL",
+    "name": "Berth 1",
+    "location": {
+      "lon": -77.14,
+      "lat": -12.035
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:22:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CLL-2",
+    "portId": "PRT-CLL",
+    "terminalId": "TRM-CLL",
+    "name": "Berth 2",
+    "location": {
+      "lon": -77.13,
+      "lat": -12.035
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:17:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-GYE-1",
+    "portId": "PRT-GYE",
+    "terminalId": "TRM-GYE",
+    "name": "Berth 1",
+    "location": {
+      "lon": -79.91,
+      "lat": -2.215
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:17:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-GYE-2",
+    "portId": "PRT-GYE",
+    "terminalId": "TRM-GYE",
+    "name": "Berth 2",
+    "location": {
+      "lon": -79.9,
+      "lat": -2.215
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:33:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CTG-1",
+    "portId": "PRT-CTG",
+    "terminalId": "TRM-CTG",
+    "name": "Berth 1",
+    "location": {
+      "lon": -75.52,
+      "lat": 10.395
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:45:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CTG-2",
+    "portId": "PRT-CTG",
+    "terminalId": "TRM-CTG",
+    "name": "Berth 2",
+    "location": {
+      "lon": -75.51,
+      "lat": 10.395
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:50:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BALB-1",
+    "portId": "PRT-BALB",
+    "terminalId": "TRM-BALB",
+    "name": "Berth 1",
+    "location": {
+      "lon": -79.56,
+      "lat": 8.955
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:52:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-BALB-2",
+    "portId": "PRT-BALB",
+    "terminalId": "TRM-BALB",
+    "name": "Berth 2",
+    "location": {
+      "lon": -79.55,
+      "lat": 8.955
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:44:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CRB-1",
+    "portId": "PRT-CRB",
+    "terminalId": "TRM-CRB",
+    "name": "Berth 1",
+    "location": {
+      "lon": -79.9,
+      "lat": 9.355
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:35:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CRB-2",
+    "portId": "PRT-CRB",
+    "terminalId": "TRM-CRB",
+    "name": "Berth 2",
+    "location": {
+      "lon": -79.89,
+      "lat": 9.355
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:41:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-KIN-1",
+    "portId": "PRT-KIN",
+    "terminalId": "TRM-KIN",
+    "name": "Berth 1",
+    "location": {
+      "lon": -76.78,
+      "lat": 17.975
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:39:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-KIN-2",
+    "portId": "PRT-KIN",
+    "terminalId": "TRM-KIN",
+    "name": "Berth 2",
+    "location": {
+      "lon": -76.77,
+      "lat": 17.975
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-VER-1",
+    "portId": "PRT-VER",
+    "terminalId": "TRM-VER",
+    "name": "Berth 1",
+    "location": {
+      "lon": -96.13,
+      "lat": 19.195
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:21:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-VER-2",
+    "portId": "PRT-VER",
+    "terminalId": "TRM-VER",
+    "name": "Berth 2",
+    "location": {
+      "lon": -96.12,
+      "lat": 19.195
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:35:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MAN-1",
+    "portId": "PRT-MAN",
+    "terminalId": "TRM-MAN",
+    "name": "Berth 1",
+    "location": {
+      "lon": -104.31,
+      "lat": 19.065
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:39:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-MAN-2",
+    "portId": "PRT-MAN",
+    "terminalId": "TRM-MAN",
+    "name": "Berth 2",
+    "location": {
+      "lon": -104.3,
+      "lat": 19.065
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:50:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ENS-1",
+    "portId": "PRT-ENS",
+    "terminalId": "TRM-ENS",
+    "name": "Berth 1",
+    "location": {
+      "lon": -116.61,
+      "lat": 31.865
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:25:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ENS-2",
+    "portId": "PRT-ENS",
+    "terminalId": "TRM-ENS",
+    "name": "Berth 2",
+    "location": {
+      "lon": -116.6,
+      "lat": 31.865
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:28:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LZC-1",
+    "portId": "PRT-LZC",
+    "terminalId": "TRM-LZC",
+    "name": "Berth 1",
+    "location": {
+      "lon": -102.17,
+      "lat": 17.965
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:59:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LZC-2",
+    "portId": "PRT-LZC",
+    "terminalId": "TRM-LZC",
+    "name": "Berth 2",
+    "location": {
+      "lon": -102.16,
+      "lat": 17.965
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:54:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-COL-1",
+    "portId": "PRT-COL",
+    "terminalId": "TRM-COL",
+    "name": "Berth 1",
+    "location": {
+      "lon": -79.89,
+      "lat": 9.365
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:15:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-COL-2",
+    "portId": "PRT-COL",
+    "terminalId": "TRM-COL",
+    "name": "Berth 2",
+    "location": {
+      "lon": -79.88,
+      "lat": 9.365
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:41:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TNG-1",
+    "portId": "PRT-TNG",
+    "terminalId": "TRM-TNG",
+    "name": "Berth 1",
+    "location": {
+      "lon": -5.49,
+      "lat": 35.885
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TNG-2",
+    "portId": "PRT-TNG",
+    "terminalId": "TRM-TNG",
+    "name": "Berth 2",
+    "location": {
+      "lon": -5.48,
+      "lat": 35.885
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:30:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CAS-1",
+    "portId": "PRT-CAS",
+    "terminalId": "TRM-CAS",
+    "name": "Berth 1",
+    "location": {
+      "lon": -7.6,
+      "lat": 33.615
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:48:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-CAS-2",
+    "portId": "PRT-CAS",
+    "terminalId": "TRM-CAS",
+    "name": "Berth 2",
+    "location": {
+      "lon": -7.59,
+      "lat": 33.615
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:24:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ABJ-1",
+    "portId": "PRT-ABJ",
+    "terminalId": "TRM-ABJ",
+    "name": "Berth 1",
+    "location": {
+      "lon": -4.0,
+      "lat": 5.315
+    },
+    "status": "scheduled",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:18:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-ABJ-2",
+    "portId": "PRT-ABJ",
+    "terminalId": "TRM-ABJ",
+    "name": "Berth 2",
+    "location": {
+      "lon": -3.99,
+      "lat": 5.315
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:18:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TEM-1",
+    "portId": "PRT-TEM",
+    "terminalId": "TRM-TEM",
+    "name": "Berth 1",
+    "location": {
+      "lon": 0.02,
+      "lat": 5.635
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:50:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-TEM-2",
+    "portId": "PRT-TEM",
+    "terminalId": "TRM-TEM",
+    "name": "Berth 2",
+    "location": {
+      "lon": 0.03,
+      "lat": 5.635
+    },
+    "status": "free",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:32:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LAD-1",
+    "portId": "PRT-LAD",
+    "terminalId": "TRM-LAD",
+    "name": "Berth 1",
+    "location": {
+      "lon": 13.24,
+      "lat": -8.815
+    },
+    "status": "unknown",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "berthId": "BRH-LAD-2",
+    "portId": "PRT-LAD",
+    "terminalId": "TRM-LAD",
+    "name": "Berth 2",
+    "location": {
+      "lon": 13.25,
+      "lat": -8.815
+    },
+    "status": "occupied",
+    "occupiedByVesselId": null,
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
+    "lastUpdatedUtc": "2026-11-09T11:51:00Z",
+    "sourceType": "synthetic-layout"
+  }
+]

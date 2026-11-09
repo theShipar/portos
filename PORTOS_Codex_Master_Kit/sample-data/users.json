@@ -1,0 +1,37 @@
+[
+  {
+    "userId": "USR-001",
+    "displayName": "Avery Morgan",
+    "role": "manager",
+    "organizationId": "ORG-DEMO-01",
+    "sourceType": "fictional-demo-user"
+  },
+  {
+    "userId": "USR-002",
+    "displayName": "Jordan Lee",
+    "role": "dispatcher",
+    "organizationId": "ORG-DEMO-01",
+    "sourceType": "fictional-demo-user"
+  },
+  {
+    "userId": "USR-003",
+    "displayName": "Mina Rahman",
+    "role": "analyst",
+    "organizationId": "ORG-DEMO-01",
+    "sourceType": "fictional-demo-user"
+  },
+  {
+    "userId": "USR-004",
+    "displayName": "Sam Ellis",
+    "role": "viewer",
+    "organizationId": "ORG-DEMO-01",
+    "sourceType": "fictional-demo-user"
+  },
+  {
+    "userId": "USR-005",
+    "displayName": "Taylor Cruz",
+    "role": "dispatcher",
+    "organizationId": "ORG-DEMO-01",
+    "sourceType": "fictional-demo-user"
+  }
+]

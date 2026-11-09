@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/voyages.schema.json",
+  "title": "PORTOS synthetic voyages collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "currentStage": {
+        "type": "string"
+      },
+      "dailyDelayCostUsd": {
+        "type": "integer"
+      },
+      "departedAtUtc": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "Z$"
+      },
+      "destinationPortId": {
+        "type": "string"
+      },
+      "estimatedArrivalUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "estimatedAsOfUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "estimatedDepartureUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "etaConfidence": {
+        "type": "string"
+      },
+      "originPortId": {
+        "type": "string"
+      },
+      "plannedArrivalUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "plannedDepartureUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "remainingNmAsOf": {
+        "type": "number"
+      },
+      "routeId": {
+        "type": "string"
+      },
+      "routeProgressAsOf": {
+        "type": "number"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "vesselId": {
+        "type": "string"
+      },
+      "voyageId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "currentStage",
+      "dailyDelayCostUsd",
+      "departedAtUtc",
+      "destinationPortId",
+      "estimatedArrivalUtc",
+      "estimatedAsOfUtc",
+      "estimatedDepartureUtc",
+      "etaConfidence",
+      "originPortId",
+      "plannedArrivalUtc",
+      "plannedDepartureUtc",
+      "remainingNmAsOf",
+      "routeId",
+      "routeProgressAsOf",
+      "sourceType",
+      "vesselId",
+      "voyageId"
+    ],
+    "additionalProperties": false
+  }
+}

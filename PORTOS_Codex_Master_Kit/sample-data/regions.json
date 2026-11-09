@@ -1,0 +1,130 @@
+[
+  {
+    "regionId": "REG-SEA",
+    "name": "Southeast Asia",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 75,
+      "south": -13,
+      "east": 142,
+      "north": 26
+    },
+    "center": {
+      "lon": 110,
+      "lat": 7
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-EAS",
+    "name": "East Asia",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 103,
+      "south": 15,
+      "east": 155,
+      "north": 52
+    },
+    "center": {
+      "lon": 128,
+      "lat": 33
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-IO",
+    "name": "Indian Ocean",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 34,
+      "south": -41,
+      "east": 110,
+      "north": 27
+    },
+    "center": {
+      "lon": 75,
+      "lat": -6
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-MED",
+    "name": "Mediterranean",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -8,
+      "south": 28,
+      "east": 38,
+      "north": 46
+    },
+    "center": {
+      "lon": 18,
+      "lat": 37
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-NS",
+    "name": "North Sea",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -12,
+      "south": 48,
+      "east": 18,
+      "north": 61
+    },
+    "center": {
+      "lon": 3,
+      "lat": 54
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-ATL",
+    "name": "Atlantic Ocean",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -85,
+      "south": -48,
+      "east": 15,
+      "north": 58
+    },
+    "center": {
+      "lon": -35,
+      "lat": 8
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-PAC",
+    "name": "Pacific Ocean",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 120,
+      "south": -45,
+      "east": -110,
+      "north": 60
+    },
+    "center": {
+      "lon": -165,
+      "lat": 12
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-GULF",
+    "name": "Arabian Gulf",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 42,
+      "south": 17,
+      "east": 62,
+      "north": 33
+    },
+    "center": {
+      "lon": 51,
+      "lat": 25
+    },
+    "sourceType": "conceptual-bounds"
+  }
+]

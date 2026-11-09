@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PORTOS fixture manifest",
+  "type": "object",
+  "properties": {
+    "dataset": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "fixedScenarioTimeUtc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "sourceDisclosure": {
+      "type": "string"
+    },
+    "counts": {
+      "type": "object"
+    },
+    "scenario": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "dataset",
+    "version",
+    "seed",
+    "fixedScenarioTimeUtc",
+    "counts",
+    "scenario"
+  ],
+  "additionalProperties": true
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/terminals.schema.json",
+  "title": "PORTOS synthetic terminals collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "portId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "terminalId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "name",
+      "portId",
+      "sourceType",
+      "terminalId"
+    ],
+    "additionalProperties": false
+  }
+}

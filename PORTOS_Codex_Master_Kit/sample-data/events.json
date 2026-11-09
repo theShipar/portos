@@ -1,0 +1,5034 @@
+[
+  {
+    "eventId": "EVT-0131",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:03:00Z",
+    "ingestedAtUtc": "2026-11-09T06:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0133"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0133"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0183",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:05:00Z",
+    "ingestedAtUtc": "2026-11-09T06:07:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0185"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0185"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0017",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:06:00Z",
+    "ingestedAtUtc": "2026-11-09T06:08:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0019"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0019"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0067",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:07:00Z",
+    "ingestedAtUtc": "2026-11-09T06:09:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0069"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0069"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0212",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:08:00Z",
+    "ingestedAtUtc": "2026-11-09T06:10:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0015"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0015"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0073",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:11:00Z",
+    "ingestedAtUtc": "2026-11-09T06:13:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0075"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0075"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0165",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T06:11:00Z",
+    "ingestedAtUtc": "2026-11-09T06:13:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0167"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0167"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0027",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:12:00Z",
+    "ingestedAtUtc": "2026-11-09T06:14:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0029"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0029"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0108",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:12:00Z",
+    "ingestedAtUtc": "2026-11-09T06:14:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0110"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0110"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0186",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:13:00Z",
+    "ingestedAtUtc": "2026-11-09T06:15:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0188"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0188"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0239",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:13:00Z",
+    "ingestedAtUtc": "2026-11-09T06:15:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0042"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0042"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0159",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:14:00Z",
+    "ingestedAtUtc": "2026-11-09T06:16:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0161"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0161"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0095",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T06:16:00Z",
+    "ingestedAtUtc": "2026-11-09T06:18:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0097"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0097"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0223",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:18:00Z",
+    "ingestedAtUtc": "2026-11-09T06:20:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0026"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0026"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0226",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:19:00Z",
+    "ingestedAtUtc": "2026-11-09T06:21:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0029"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0029"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0026",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:20:00Z",
+    "ingestedAtUtc": "2026-11-09T06:22:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0028"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0028"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0197",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:21:00Z",
+    "ingestedAtUtc": "2026-11-09T06:23:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0199"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0199"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0066",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T06:22:00Z",
+    "ingestedAtUtc": "2026-11-09T06:24:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0068"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0068"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0072",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:24:00Z",
+    "ingestedAtUtc": "2026-11-09T06:26:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0074"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0074"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0075",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:27:00Z",
+    "ingestedAtUtc": "2026-11-09T06:29:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0077"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0077"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0141",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:30:00Z",
+    "ingestedAtUtc": "2026-11-09T06:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0143"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0143"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0234",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:31:00Z",
+    "ingestedAtUtc": "2026-11-09T06:33:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0037"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0037"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0227",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:32:00Z",
+    "ingestedAtUtc": "2026-11-09T06:34:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0030"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0030"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0053",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:33:00Z",
+    "ingestedAtUtc": "2026-11-09T06:35:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0055"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0055"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0069",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:34:00Z",
+    "ingestedAtUtc": "2026-11-09T06:36:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0071"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0071"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0174",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T06:35:00Z",
+    "ingestedAtUtc": "2026-11-09T06:37:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0176"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0176"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0211",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T06:36:00Z",
+    "ingestedAtUtc": "2026-11-09T06:38:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0014"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0014"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0023",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T06:39:00Z",
+    "ingestedAtUtc": "2026-11-09T06:41:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0025"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0025"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0080",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:40:00Z",
+    "ingestedAtUtc": "2026-11-09T06:42:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0082"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0082"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0146",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T06:40:00Z",
+    "ingestedAtUtc": "2026-11-09T06:42:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0148"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0148"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0217",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:40:00Z",
+    "ingestedAtUtc": "2026-11-09T06:42:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0020"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0020"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0045",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:41:00Z",
+    "ingestedAtUtc": "2026-11-09T06:43:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0047"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0047"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0054",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T06:41:00Z",
+    "ingestedAtUtc": "2026-11-09T06:43:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0056"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0056"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0122",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T06:41:00Z",
+    "ingestedAtUtc": "2026-11-09T06:43:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0124"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0124"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0107",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:46:00Z",
+    "ingestedAtUtc": "2026-11-09T06:48:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0109"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0109"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0115",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:47:00Z",
+    "ingestedAtUtc": "2026-11-09T06:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0117"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0117"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0163",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T06:47:00Z",
+    "ingestedAtUtc": "2026-11-09T06:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0165"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0165"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0166",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T06:50:00Z",
+    "ingestedAtUtc": "2026-11-09T06:52:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0168"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0168"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0103",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T06:52:00Z",
+    "ingestedAtUtc": "2026-11-09T06:54:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0105"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0105"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0219",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T06:52:00Z",
+    "ingestedAtUtc": "2026-11-09T06:54:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0022"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0022"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0184",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T06:53:00Z",
+    "ingestedAtUtc": "2026-11-09T06:55:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0186"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0186"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0248",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T06:56:00Z",
+    "ingestedAtUtc": "2026-11-09T06:58:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0051"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0051"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0136",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T06:59:00Z",
+    "ingestedAtUtc": "2026-11-09T07:01:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0138"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0138"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0213",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:00:00Z",
+    "ingestedAtUtc": "2026-11-09T07:02:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0016"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0016"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0056",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T07:03:00Z",
+    "ingestedAtUtc": "2026-11-09T07:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0058"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0058"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0145",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:03:00Z",
+    "ingestedAtUtc": "2026-11-09T07:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0147"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0147"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0205",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:03:00Z",
+    "ingestedAtUtc": "2026-11-09T07:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0008"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0008"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0098",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T07:05:00Z",
+    "ingestedAtUtc": "2026-11-09T07:07:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0100"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0100"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0246",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:05:00Z",
+    "ingestedAtUtc": "2026-11-09T07:07:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0049"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0049"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0230",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:07:00Z",
+    "ingestedAtUtc": "2026-11-09T07:09:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0033"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0033"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0064",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:08:00Z",
+    "ingestedAtUtc": "2026-11-09T07:10:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0066"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0066"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0236",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:08:00Z",
+    "ingestedAtUtc": "2026-11-09T07:10:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0039"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0039"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0100",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:09:00Z",
+    "ingestedAtUtc": "2026-11-09T07:11:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0102"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0102"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0176",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T07:13:00Z",
+    "ingestedAtUtc": "2026-11-09T07:15:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0178"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0178"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0208",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T07:13:00Z",
+    "ingestedAtUtc": "2026-11-09T07:15:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0011"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0011"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0157",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:14:00Z",
+    "ingestedAtUtc": "2026-11-09T07:16:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0159"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0159"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0179",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:17:00Z",
+    "ingestedAtUtc": "2026-11-09T07:19:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0181"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0181"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0231",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:17:00Z",
+    "ingestedAtUtc": "2026-11-09T07:19:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0034"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0034"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0029",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:18:00Z",
+    "ingestedAtUtc": "2026-11-09T07:20:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0031"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0031"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0134",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:18:00Z",
+    "ingestedAtUtc": "2026-11-09T07:20:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0136"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0136"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0032",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:22:00Z",
+    "ingestedAtUtc": "2026-11-09T07:24:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0034"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0034"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0059",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:22:00Z",
+    "ingestedAtUtc": "2026-11-09T07:24:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0061"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0061"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0169",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:24:00Z",
+    "ingestedAtUtc": "2026-11-09T07:26:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0171"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0171"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0144",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:25:00Z",
+    "ingestedAtUtc": "2026-11-09T07:27:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0146"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0146"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0020",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:26:00Z",
+    "ingestedAtUtc": "2026-11-09T07:28:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0022"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0022"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0022",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:26:00Z",
+    "ingestedAtUtc": "2026-11-09T07:28:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0024"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0024"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0042",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:28:00Z",
+    "ingestedAtUtc": "2026-11-09T07:30:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0044"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0044"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0125",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:30:00Z",
+    "ingestedAtUtc": "2026-11-09T07:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0127"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0127"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0232",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:31:00Z",
+    "ingestedAtUtc": "2026-11-09T07:33:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0035"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0035"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0117",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:35:00Z",
+    "ingestedAtUtc": "2026-11-09T07:37:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0119"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0119"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0138",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:37:00Z",
+    "ingestedAtUtc": "2026-11-09T07:39:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0140"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0140"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0190",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:37:00Z",
+    "ingestedAtUtc": "2026-11-09T07:39:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0192"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0192"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0110",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:41:00Z",
+    "ingestedAtUtc": "2026-11-09T07:43:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0112"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0112"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0206",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:42:00Z",
+    "ingestedAtUtc": "2026-11-09T07:44:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0009"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0009"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0092",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:43:00Z",
+    "ingestedAtUtc": "2026-11-09T07:45:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0094"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0094"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0221",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:43:00Z",
+    "ingestedAtUtc": "2026-11-09T07:45:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0024"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0024"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0055",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T07:45:00Z",
+    "ingestedAtUtc": "2026-11-09T07:47:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0057"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0057"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0112",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:46:00Z",
+    "ingestedAtUtc": "2026-11-09T07:48:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0114"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0114"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0008",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:47:00Z",
+    "ingestedAtUtc": "2026-11-09T07:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0010"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0010"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0084",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:48:00Z",
+    "ingestedAtUtc": "2026-11-09T07:50:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0086"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0086"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0225",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:51:00Z",
+    "ingestedAtUtc": "2026-11-09T07:53:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0028"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0028"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0093",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:53:00Z",
+    "ingestedAtUtc": "2026-11-09T07:55:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0095"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0095"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0178",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:53:00Z",
+    "ingestedAtUtc": "2026-11-09T07:55:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0180"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0180"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0094",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:54:00Z",
+    "ingestedAtUtc": "2026-11-09T07:56:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0096"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0096"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0124",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T07:55:00Z",
+    "ingestedAtUtc": "2026-11-09T07:57:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0126"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0126"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0040",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:57:00Z",
+    "ingestedAtUtc": "2026-11-09T07:59:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0042"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0042"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0224",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T07:57:00Z",
+    "ingestedAtUtc": "2026-11-09T07:59:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0027"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0027"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0079",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:58:00Z",
+    "ingestedAtUtc": "2026-11-09T08:00:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0081"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0081"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0204",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:58:00Z",
+    "ingestedAtUtc": "2026-11-09T08:00:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0007"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0007"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0104",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T07:59:00Z",
+    "ingestedAtUtc": "2026-11-09T08:01:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0106"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0106"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0121",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:59:00Z",
+    "ingestedAtUtc": "2026-11-09T08:01:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0123"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0123"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0149",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T07:59:00Z",
+    "ingestedAtUtc": "2026-11-09T08:01:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0151"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0151"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0172",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T07:59:00Z",
+    "ingestedAtUtc": "2026-11-09T08:01:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0174"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0174"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0233",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:01:00Z",
+    "ingestedAtUtc": "2026-11-09T08:03:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0036"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0036"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0235",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:03:00Z",
+    "ingestedAtUtc": "2026-11-09T08:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0038"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0038"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0241",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T08:03:00Z",
+    "ingestedAtUtc": "2026-11-09T08:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0044"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0044"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0150",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T08:04:00Z",
+    "ingestedAtUtc": "2026-11-09T08:06:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0152"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0152"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0194",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:05:00Z",
+    "ingestedAtUtc": "2026-11-09T08:07:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0196"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0196"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0142",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:11:00Z",
+    "ingestedAtUtc": "2026-11-09T08:13:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0144"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0144"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0209",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:11:00Z",
+    "ingestedAtUtc": "2026-11-09T08:13:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0012"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0012"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0087",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:12:00Z",
+    "ingestedAtUtc": "2026-11-09T08:14:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0089"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0089"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0229",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:14:00Z",
+    "ingestedAtUtc": "2026-11-09T08:16:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0032"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0032"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0014",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:15:00Z",
+    "ingestedAtUtc": "2026-11-09T08:17:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0016"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0016"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0180",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:16:00Z",
+    "ingestedAtUtc": "2026-11-09T08:18:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0182"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0182"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0130",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:17:00Z",
+    "ingestedAtUtc": "2026-11-09T08:19:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0132"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0132"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0068",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:18:00Z",
+    "ingestedAtUtc": "2026-11-09T08:20:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0070"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0070"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0116",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:19:00Z",
+    "ingestedAtUtc": "2026-11-09T08:21:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0118"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0118"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0182",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:20:00Z",
+    "ingestedAtUtc": "2026-11-09T08:22:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0184"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0184"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0137",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:21:00Z",
+    "ingestedAtUtc": "2026-11-09T08:23:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0139"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0139"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0249",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:21:00Z",
+    "ingestedAtUtc": "2026-11-09T08:23:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0052"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0052"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0041",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:24:00Z",
+    "ingestedAtUtc": "2026-11-09T08:26:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0043"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0043"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0062",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:25:00Z",
+    "ingestedAtUtc": "2026-11-09T08:27:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0064"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0064"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0185",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:27:00Z",
+    "ingestedAtUtc": "2026-11-09T08:29:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0187"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0187"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0096",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:29:00Z",
+    "ingestedAtUtc": "2026-11-09T08:31:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0098"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0098"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0113",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T08:30:00Z",
+    "ingestedAtUtc": "2026-11-09T08:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0115"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0115"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0215",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:30:00Z",
+    "ingestedAtUtc": "2026-11-09T08:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0018"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0018"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0216",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:30:00Z",
+    "ingestedAtUtc": "2026-11-09T08:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0019"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0019"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0028",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T08:32:00Z",
+    "ingestedAtUtc": "2026-11-09T08:34:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0030"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0030"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0111",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:33:00Z",
+    "ingestedAtUtc": "2026-11-09T08:35:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0113"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0113"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0089",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:36:00Z",
+    "ingestedAtUtc": "2026-11-09T08:38:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0091"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0091"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0129",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:39:00Z",
+    "ingestedAtUtc": "2026-11-09T08:41:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0131"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0131"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0071",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T08:43:00Z",
+    "ingestedAtUtc": "2026-11-09T08:45:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0073"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0073"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0085",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:44:00Z",
+    "ingestedAtUtc": "2026-11-09T08:46:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0087"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0087"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0078",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:47:00Z",
+    "ingestedAtUtc": "2026-11-09T08:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0080"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0080"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0168",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:47:00Z",
+    "ingestedAtUtc": "2026-11-09T08:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0170"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0170"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0189",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T08:49:00Z",
+    "ingestedAtUtc": "2026-11-09T08:51:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0191"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0191"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0099",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:51:00Z",
+    "ingestedAtUtc": "2026-11-09T08:53:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0101"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0101"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0153",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:54:00Z",
+    "ingestedAtUtc": "2026-11-09T08:56:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0155"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0155"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0119",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T08:56:00Z",
+    "ingestedAtUtc": "2026-11-09T08:58:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0121"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0121"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0147",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T08:56:00Z",
+    "ingestedAtUtc": "2026-11-09T08:58:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0149"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0149"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0238",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T08:58:00Z",
+    "ingestedAtUtc": "2026-11-09T09:00:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0041"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0041"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0001",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:00:00Z",
+    "ingestedAtUtc": "2026-11-09T09:03:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "payload": {
+      "voyageId": "VYG-0001",
+      "previousEtaShiftHours": 8,
+      "newEtaShiftHours": 18
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0070",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:03:00Z",
+    "ingestedAtUtc": "2026-11-09T09:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0072"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0072"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0191",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:03:00Z",
+    "ingestedAtUtc": "2026-11-09T09:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0193"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0193"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0086",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:04:00Z",
+    "ingestedAtUtc": "2026-11-09T09:06:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0088"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0088"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0128",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:04:00Z",
+    "ingestedAtUtc": "2026-11-09T09:06:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0130"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0130"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0109",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:07:00Z",
+    "ingestedAtUtc": "2026-11-09T09:09:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0111"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0111"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0016",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T09:08:00Z",
+    "ingestedAtUtc": "2026-11-09T09:10:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0018"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0018"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0031",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:13:00Z",
+    "ingestedAtUtc": "2026-11-09T09:15:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0033"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0033"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0002",
+    "type": "ANCHORAGE_ENTER",
+    "occurredAtUtc": "2026-11-09T09:15:00Z",
+    "ingestedAtUtc": "2026-11-09T09:18:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "payload": {
+      "portId": "PRT-SIN",
+      "vesselId": "VSL-0001"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0156",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:16:00Z",
+    "ingestedAtUtc": "2026-11-09T09:18:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0158"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0158"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0140",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:17:00Z",
+    "ingestedAtUtc": "2026-11-09T09:19:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0142"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0142"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0049",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:19:00Z",
+    "ingestedAtUtc": "2026-11-09T09:21:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0051"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0051"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0007",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T09:21:00Z",
+    "ingestedAtUtc": "2026-11-09T09:23:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0009"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0009"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0063",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T09:21:00Z",
+    "ingestedAtUtc": "2026-11-09T09:23:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0065"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0065"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0188",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:21:00Z",
+    "ingestedAtUtc": "2026-11-09T09:23:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0190"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0190"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0195",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:23:00Z",
+    "ingestedAtUtc": "2026-11-09T09:25:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0197"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0197"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0120",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:26:00Z",
+    "ingestedAtUtc": "2026-11-09T09:28:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0122"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0122"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0152",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:27:00Z",
+    "ingestedAtUtc": "2026-11-09T09:29:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0154"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0154"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0058",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:28:00Z",
+    "ingestedAtUtc": "2026-11-09T09:30:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0060"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0060"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0160",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:28:00Z",
+    "ingestedAtUtc": "2026-11-09T09:30:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0162"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0162"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0214",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:28:00Z",
+    "ingestedAtUtc": "2026-11-09T09:30:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0017"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0017"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0196",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:29:00Z",
+    "ingestedAtUtc": "2026-11-09T09:31:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0198"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0198"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0018",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:30:00Z",
+    "ingestedAtUtc": "2026-11-09T09:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0020"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0020"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0025",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:30:00Z",
+    "ingestedAtUtc": "2026-11-09T09:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0027"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0027"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0011",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:31:00Z",
+    "ingestedAtUtc": "2026-11-09T09:33:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0013"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0013"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0088",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:31:00Z",
+    "ingestedAtUtc": "2026-11-09T09:33:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0090"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0090"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0148",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:32:00Z",
+    "ingestedAtUtc": "2026-11-09T09:34:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0150"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0150"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0154",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T09:33:00Z",
+    "ingestedAtUtc": "2026-11-09T09:35:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0156"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0156"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0162",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:36:00Z",
+    "ingestedAtUtc": "2026-11-09T09:38:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0164"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0164"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0171",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:37:00Z",
+    "ingestedAtUtc": "2026-11-09T09:39:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0173"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0173"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0003",
+    "type": "WEATHER_WARNING_ISSUED",
+    "occurredAtUtc": "2026-11-09T09:40:00Z",
+    "ingestedAtUtc": "2026-11-09T09:43:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "payload": {
+      "hazardId": "WX-0001"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0081",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:40:00Z",
+    "ingestedAtUtc": "2026-11-09T09:42:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0083"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0083"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0050",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:47:00Z",
+    "ingestedAtUtc": "2026-11-09T09:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0052"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0052"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0135",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:47:00Z",
+    "ingestedAtUtc": "2026-11-09T09:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0137"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0137"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0155",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T09:47:00Z",
+    "ingestedAtUtc": "2026-11-09T09:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0157"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0157"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0044",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T09:48:00Z",
+    "ingestedAtUtc": "2026-11-09T09:50:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0046"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0046"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0139",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T09:49:00Z",
+    "ingestedAtUtc": "2026-11-09T09:51:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0141"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0141"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0175",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:49:00Z",
+    "ingestedAtUtc": "2026-11-09T09:51:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0177"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0177"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0201",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:55:00Z",
+    "ingestedAtUtc": "2026-11-09T09:57:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0004"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0004"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0240",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T09:56:00Z",
+    "ingestedAtUtc": "2026-11-09T09:58:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0043"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0043"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0060",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T09:57:00Z",
+    "ingestedAtUtc": "2026-11-09T09:59:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0062"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0062"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0127",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T09:58:00Z",
+    "ingestedAtUtc": "2026-11-09T10:00:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0129"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0129"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0243",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T09:59:00Z",
+    "ingestedAtUtc": "2026-11-09T10:01:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0046"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0046"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0199",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T10:00:00Z",
+    "ingestedAtUtc": "2026-11-09T10:02:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0002"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0002"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0057",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:01:00Z",
+    "ingestedAtUtc": "2026-11-09T10:03:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0059"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0059"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0218",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:03:00Z",
+    "ingestedAtUtc": "2026-11-09T10:05:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0021"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0021"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0250",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:07:00Z",
+    "ingestedAtUtc": "2026-11-09T10:09:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0053"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0053"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0173",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T10:08:00Z",
+    "ingestedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0175"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0175"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0193",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T10:11:00Z",
+    "ingestedAtUtc": "2026-11-09T10:13:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0195"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0195"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0051",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:12:00Z",
+    "ingestedAtUtc": "2026-11-09T10:14:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0053"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0053"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0083",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:13:00Z",
+    "ingestedAtUtc": "2026-11-09T10:15:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0085"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0085"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0034",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:15:00Z",
+    "ingestedAtUtc": "2026-11-09T10:17:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0036"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0036"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0074",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:18:00Z",
+    "ingestedAtUtc": "2026-11-09T10:20:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0076"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0076"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0133",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:18:00Z",
+    "ingestedAtUtc": "2026-11-09T10:20:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0135"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0135"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0244",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:18:00Z",
+    "ingestedAtUtc": "2026-11-09T10:20:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0047"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0047"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0091",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:20:00Z",
+    "ingestedAtUtc": "2026-11-09T10:22:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0093"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0093"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0192",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:20:00Z",
+    "ingestedAtUtc": "2026-11-09T10:22:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0194"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0194"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0043",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:21:00Z",
+    "ingestedAtUtc": "2026-11-09T10:23:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0045"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0045"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0247",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T10:23:00Z",
+    "ingestedAtUtc": "2026-11-09T10:25:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0050"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0050"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0048",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:26:00Z",
+    "ingestedAtUtc": "2026-11-09T10:28:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0050"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0050"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0126",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:28:00Z",
+    "ingestedAtUtc": "2026-11-09T10:30:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0128"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0128"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0198",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:30:00Z",
+    "ingestedAtUtc": "2026-11-09T10:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0200"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0200"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0200",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:30:00Z",
+    "ingestedAtUtc": "2026-11-09T10:32:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0003"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0003"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0207",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:31:00Z",
+    "ingestedAtUtc": "2026-11-09T10:33:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0010"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0010"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0039",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:33:00Z",
+    "ingestedAtUtc": "2026-11-09T10:35:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0041"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0041"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0151",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:33:00Z",
+    "ingestedAtUtc": "2026-11-09T10:35:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0153"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0153"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0161",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T10:36:00Z",
+    "ingestedAtUtc": "2026-11-09T10:38:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0163"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0163"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0106",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:39:00Z",
+    "ingestedAtUtc": "2026-11-09T10:41:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0108"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0108"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0245",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:39:00Z",
+    "ingestedAtUtc": "2026-11-09T10:41:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0048"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0048"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0114",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T10:40:00Z",
+    "ingestedAtUtc": "2026-11-09T10:42:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0116"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0116"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0222",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:42:00Z",
+    "ingestedAtUtc": "2026-11-09T10:44:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0025"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0025"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0024",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:45:00Z",
+    "ingestedAtUtc": "2026-11-09T10:47:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0026"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0026"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0052",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:45:00Z",
+    "ingestedAtUtc": "2026-11-09T10:47:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0054"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0054"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0101",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:46:00Z",
+    "ingestedAtUtc": "2026-11-09T10:48:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0103"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0103"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0065",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:47:00Z",
+    "ingestedAtUtc": "2026-11-09T10:49:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0067"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0067"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0158",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:49:00Z",
+    "ingestedAtUtc": "2026-11-09T10:51:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0160"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0160"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0047",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:52:00Z",
+    "ingestedAtUtc": "2026-11-09T10:54:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0049"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0049"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0118",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:54:00Z",
+    "ingestedAtUtc": "2026-11-09T10:56:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0120"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0120"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0038",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:55:00Z",
+    "ingestedAtUtc": "2026-11-09T10:57:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0040"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0040"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0009",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:56:00Z",
+    "ingestedAtUtc": "2026-11-09T10:58:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0011"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0011"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0123",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T10:56:00Z",
+    "ingestedAtUtc": "2026-11-09T10:58:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0125"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0125"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0102",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:57:00Z",
+    "ingestedAtUtc": "2026-11-09T10:59:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0104"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0104"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0164",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T10:58:00Z",
+    "ingestedAtUtc": "2026-11-09T11:00:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0166"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0166"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0004",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T10:59:00Z",
+    "ingestedAtUtc": "2026-11-09T11:02:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "payload": {
+      "incidentId": "INC-0001"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0010",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T10:59:00Z",
+    "ingestedAtUtc": "2026-11-09T11:01:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0012"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0012"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0202",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:01:00Z",
+    "ingestedAtUtc": "2026-11-09T11:03:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0005"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0005"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0105",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:05:00Z",
+    "ingestedAtUtc": "2026-11-09T11:07:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0107"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0107"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0170",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:07:00Z",
+    "ingestedAtUtc": "2026-11-09T11:09:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0172"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0172"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0036",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:08:00Z",
+    "ingestedAtUtc": "2026-11-09T11:10:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0038"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0038"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0167",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:09:00Z",
+    "ingestedAtUtc": "2026-11-09T11:11:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0169"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0169"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0097",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:10:00Z",
+    "ingestedAtUtc": "2026-11-09T11:12:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0099"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0099"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0132",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T11:18:00Z",
+    "ingestedAtUtc": "2026-11-09T11:20:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0134"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0134"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0177",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:21:00Z",
+    "ingestedAtUtc": "2026-11-09T11:23:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0179"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0179"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0005",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:22:00Z",
+    "ingestedAtUtc": "2026-11-09T11:25:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "payload": {
+      "portId": "PRT-SIN",
+      "waitingEstimateHours": 26
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0220",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:22:00Z",
+    "ingestedAtUtc": "2026-11-09T11:24:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0023"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0023"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0013",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:24:00Z",
+    "ingestedAtUtc": "2026-11-09T11:26:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0015"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0015"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0030",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:24:00Z",
+    "ingestedAtUtc": "2026-11-09T11:26:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0032"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0032"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0210",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:24:00Z",
+    "ingestedAtUtc": "2026-11-09T11:26:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0013"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0013"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0033",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:25:00Z",
+    "ingestedAtUtc": "2026-11-09T11:27:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0035"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0035"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0077",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:27:00Z",
+    "ingestedAtUtc": "2026-11-09T11:29:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0079"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0079"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0237",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T11:27:00Z",
+    "ingestedAtUtc": "2026-11-09T11:29:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0040"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0040"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0181",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:31:00Z",
+    "ingestedAtUtc": "2026-11-09T11:33:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0183"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0183"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0061",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:33:00Z",
+    "ingestedAtUtc": "2026-11-09T11:35:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0063"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0063"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0082",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:33:00Z",
+    "ingestedAtUtc": "2026-11-09T11:35:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0084"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0084"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0012",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:36:00Z",
+    "ingestedAtUtc": "2026-11-09T11:38:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0014"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0014"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0076",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T11:40:00Z",
+    "ingestedAtUtc": "2026-11-09T11:42:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0078"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0078"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0228",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T11:42:00Z",
+    "ingestedAtUtc": "2026-11-09T11:44:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0031"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0031"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0037",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:44:00Z",
+    "ingestedAtUtc": "2026-11-09T11:46:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0039"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0039"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0203",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:45:00Z",
+    "ingestedAtUtc": "2026-11-09T11:47:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0006"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0006"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0242",
+    "type": "INCIDENT_OPENED",
+    "occurredAtUtc": "2026-11-09T11:46:00Z",
+    "ingestedAtUtc": "2026-11-09T11:48:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0045"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0045"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0015",
+    "type": "ETA_REVISED",
+    "occurredAtUtc": "2026-11-09T11:49:00Z",
+    "ingestedAtUtc": "2026-11-09T11:51:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0017"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0017"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0046",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:49:00Z",
+    "ingestedAtUtc": "2026-11-09T11:51:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0048"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0048"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0021",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:50:00Z",
+    "ingestedAtUtc": "2026-11-09T11:52:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0023"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0023"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0187",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:51:00Z",
+    "ingestedAtUtc": "2026-11-09T11:53:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0189"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0189"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0019",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:53:00Z",
+    "ingestedAtUtc": "2026-11-09T11:55:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0021"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0021"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0090",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:53:00Z",
+    "ingestedAtUtc": "2026-11-09T11:55:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0092"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0092"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0035",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:54:00Z",
+    "ingestedAtUtc": "2026-11-09T11:56:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0037"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0037"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0006",
+    "type": "AIS_REPORT",
+    "occurredAtUtc": "2026-11-09T11:55:00Z",
+    "ingestedAtUtc": "2026-11-09T11:58:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "payload": {
+      "vesselId": "VSL-0001",
+      "location": {
+        "lon": 103.91,
+        "lat": 1.18
+      }
+    },
+    "sourceType": "synthetic-event"
+  },
+  {
+    "eventId": "EVT-0143",
+    "type": "PORT_WAIT_UPDATED",
+    "occurredAtUtc": "2026-11-09T11:55:00Z",
+    "ingestedAtUtc": "2026-11-09T11:57:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0145"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0145"
+      }
+    ],
+    "payload": {
+      "reason": "synthetic scheduled event"
+    },
+    "sourceType": "synthetic-event"
+  }
+]

@@ -1,0 +1,95 @@
+[
+  {
+    "userId": "USR-001",
+    "displayName": "Avery Morgan",
+    "role": "manager",
+    "title": "Fleet Operations Manager",
+    "organizationId": "ORG-DEMO-01",
+    "defaultWorkspace": "operations",
+    "permissionFlags": [
+      "action.entity.view",
+      "action.incident.acknowledge",
+      "action.incident.note",
+      "action.incident.assign",
+      "action.incident.transition",
+      "action.incident.resolve",
+      "action.task.create",
+      "action.scenario.propose",
+      "action.scenario.accept"
+    ],
+    "locale": "en-GB",
+    "timeZone": "UTC",
+    "sourceType": "fictional-demo-user"
+  },
+  {
+    "userId": "USR-002",
+    "displayName": "Jordan Lee",
+    "role": "dispatcher",
+    "title": "Fleet Ops Dispatcher",
+    "organizationId": "ORG-DEMO-01",
+    "defaultWorkspace": "operations",
+    "permissionFlags": [
+      "action.entity.view",
+      "action.incident.acknowledge",
+      "action.incident.note",
+      "action.incident.assign",
+      "action.incident.transition",
+      "action.task.create",
+      "action.scenario.propose"
+    ],
+    "locale": "en-GB",
+    "timeZone": "UTC",
+    "sourceType": "fictional-demo-user"
+  },
+  {
+    "userId": "USR-003",
+    "displayName": "Mina Rahman",
+    "role": "analyst",
+    "title": "Marine Operations Analyst",
+    "organizationId": "ORG-DEMO-01",
+    "defaultWorkspace": "compare",
+    "permissionFlags": [
+      "action.entity.view",
+      "action.incident.acknowledge",
+      "action.incident.note",
+      "action.scenario.propose"
+    ],
+    "locale": "en-GB",
+    "timeZone": "UTC",
+    "sourceType": "fictional-demo-user"
+  },
+  {
+    "userId": "USR-004",
+    "displayName": "Sam Ellis",
+    "role": "viewer",
+    "title": "Customer Service Coordinator",
+    "organizationId": "ORG-DEMO-01",
+    "defaultWorkspace": "operations",
+    "permissionFlags": [
+      "action.entity.view"
+    ],
+    "locale": "en-GB",
+    "timeZone": "UTC",
+    "sourceType": "fictional-demo-user"
+  },
+  {
+    "userId": "USR-005",
+    "displayName": "Taylor Cruz",
+    "role": "dispatcher",
+    "title": "Port Call Coordinator",
+    "organizationId": "ORG-DEMO-01",
+    "defaultWorkspace": "port",
+    "permissionFlags": [
+      "action.entity.view",
+      "action.incident.acknowledge",
+      "action.incident.note",
+      "action.incident.assign",
+      "action.incident.transition",
+      "action.task.create",
+      "action.scenario.propose"
+    ],
+    "locale": "en-GB",
+    "timeZone": "UTC",
+    "sourceType": "fictional-demo-user"
+  }
+]

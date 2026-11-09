@@ -1,0 +1,605 @@
+[
+  {
+    "hazardId": "WX-0001",
+    "type": "high_waves",
+    "severity": "high",
+    "polygon": [
+      {
+        "lon": 72.0,
+        "lat": 5.4
+      },
+      {
+        "lon": 80.0,
+        "lat": 5.4
+      },
+      {
+        "lon": 80.0,
+        "lat": 11.8
+      },
+      {
+        "lon": 72.0,
+        "lat": 11.8
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T06:00:00Z",
+    "validFromUtc": "2026-11-09T08:00:00Z",
+    "validToUtc": "2026-11-10T18:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-RTM",
+      "RTE-SIN-JEA",
+      "RTE-HAM-SIN",
+      "RTE-MUM-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0007",
+      "VYG-0008",
+      "VYG-0020",
+      "VYG-0025",
+      "VYG-0027",
+      "VYG-0032",
+      "VYG-0039",
+      "VYG-0044",
+      "VYG-0061",
+      "VYG-0075",
+      "VYG-0099",
+      "VYG-0111",
+      "VYG-0115",
+      "VYG-0116",
+      "VYG-0128",
+      "VYG-0147",
+      "VYG-0164",
+      "VYG-0188",
+      "VYG-0195",
+      "VYG-0199",
+      "VYG-0200"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "medium"
+  },
+  {
+    "hazardId": "WX-0002",
+    "type": "storm_warning",
+    "severity": "moderate",
+    "polygon": [
+      {
+        "lon": 111.2,
+        "lat": 13.16
+      },
+      {
+        "lon": 115.8,
+        "lat": 13.16
+      },
+      {
+        "lon": 115.8,
+        "lat": 16.84
+      },
+      {
+        "lon": 111.2,
+        "lat": 16.84
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T10:00:00Z",
+    "validFromUtc": "2026-11-09T13:00:00Z",
+    "validToUtc": "2026-11-10T07:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SHA-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0002",
+      "VYG-0038",
+      "VYG-0122",
+      "VYG-0134",
+      "VYG-0170",
+      "VYG-0194"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "medium"
+  },
+  {
+    "hazardId": "WX-0003",
+    "type": "storm_warning",
+    "severity": "severe",
+    "polygon": [
+      {
+        "lon": 92.2,
+        "lat": 4.46
+      },
+      {
+        "lon": 96.8,
+        "lat": 4.46
+      },
+      {
+        "lon": 96.8,
+        "lat": 8.14
+      },
+      {
+        "lon": 92.2,
+        "lat": 8.14
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T07:00:00Z",
+    "validFromUtc": "2026-11-09T07:00:00Z",
+    "validToUtc": "2026-11-09T13:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-RTM",
+      "RTE-SIN-RTM-CAPE",
+      "RTE-SIN-JEA",
+      "RTE-SIN-CPT",
+      "RTE-HAM-SIN",
+      "RTE-MUM-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0135",
+      "VYG-0176",
+      "VYG-0183",
+      "VYG-0184"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "low"
+  },
+  {
+    "hazardId": "WX-0004",
+    "type": "poor_visibility",
+    "severity": "moderate",
+    "polygon": [
+      {
+        "lon": 97.3,
+        "lat": 2.06
+      },
+      {
+        "lon": 101.9,
+        "lat": 2.06
+      },
+      {
+        "lon": 101.9,
+        "lat": 5.74
+      },
+      {
+        "lon": 97.3,
+        "lat": 5.74
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T03:00:00Z",
+    "validFromUtc": "2026-11-09T05:00:00Z",
+    "validToUtc": "2026-11-09T11:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-RTM",
+      "RTE-SIN-RTM-CAPE",
+      "RTE-SIN-JEA",
+      "RTE-SIN-CPT",
+      "RTE-HAM-SIN",
+      "RTE-MUM-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0080"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "low"
+  },
+  {
+    "hazardId": "WX-0005",
+    "type": "high_waves",
+    "severity": "moderate",
+    "polygon": [
+      {
+        "lon": 170.7,
+        "lat": 37.16
+      },
+      {
+        "lon": 175.3,
+        "lat": 37.16
+      },
+      {
+        "lon": 175.3,
+        "lat": 40.84
+      },
+      {
+        "lon": 170.7,
+        "lat": 40.84
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T02:00:00Z",
+    "validFromUtc": "2026-11-09T02:00:00Z",
+    "validToUtc": "2026-11-09T14:00:00Z",
+    "affectedRouteIds": [
+      "RTE-LAX-SHA"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0197"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "medium"
+  },
+  {
+    "hazardId": "WX-0006",
+    "type": "poor_visibility",
+    "severity": "moderate",
+    "polygon": [
+      {
+        "lon": -27.3,
+        "lat": 45.66
+      },
+      {
+        "lon": -22.7,
+        "lat": 45.66
+      },
+      {
+        "lon": -22.7,
+        "lat": 49.34
+      },
+      {
+        "lon": -27.3,
+        "lat": 49.34
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T02:00:00Z",
+    "validFromUtc": "2026-11-09T05:00:00Z",
+    "validToUtc": "2026-11-10T05:00:00Z",
+    "affectedRouteIds": [
+      "RTE-RTM-NYC"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0042",
+      "VYG-0054",
+      "VYG-0102",
+      "VYG-0138"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "low"
+  },
+  {
+    "hazardId": "WX-0007",
+    "type": "storm_warning",
+    "severity": "severe",
+    "polygon": [
+      {
+        "lon": -0.7,
+        "lat": 49.16
+      },
+      {
+        "lon": 3.9,
+        "lat": 49.16
+      },
+      {
+        "lon": 3.9,
+        "lat": 52.84
+      },
+      {
+        "lon": -0.7,
+        "lat": 52.84
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T07:00:00Z",
+    "validFromUtc": "2026-11-09T09:00:00Z",
+    "validToUtc": "2026-11-10T09:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-RTM",
+      "RTE-SIN-RTM-CAPE",
+      "RTE-RTM-NYC",
+      "RTE-HAM-SIN"
+    ],
+    "affectedVoyageIds": [],
+    "sourceType": "synthetic-forecast",
+    "confidence": "medium"
+  },
+  {
+    "hazardId": "WX-0008",
+    "type": "poor_visibility",
+    "severity": "severe",
+    "polygon": [
+      {
+        "lon": 78.7,
+        "lat": 3.56
+      },
+      {
+        "lon": 83.3,
+        "lat": 3.56
+      },
+      {
+        "lon": 83.3,
+        "lat": 7.24
+      },
+      {
+        "lon": 78.7,
+        "lat": 7.24
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T08:00:00Z",
+    "validFromUtc": "2026-11-09T10:00:00Z",
+    "validToUtc": "2026-11-09T16:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-RTM",
+      "RTE-SIN-JEA",
+      "RTE-HAM-SIN",
+      "RTE-MUM-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0025",
+      "VYG-0032",
+      "VYG-0067",
+      "VYG-0099",
+      "VYG-0104",
+      "VYG-0139",
+      "VYG-0151",
+      "VYG-0164"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "high"
+  },
+  {
+    "hazardId": "WX-0009",
+    "type": "storm_warning",
+    "severity": "severe",
+    "polygon": [
+      {
+        "lon": 147.7,
+        "lat": 36.66
+      },
+      {
+        "lon": 152.3,
+        "lat": 36.66
+      },
+      {
+        "lon": 152.3,
+        "lat": 40.34
+      },
+      {
+        "lon": 147.7,
+        "lat": 40.34
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T07:00:00Z",
+    "validFromUtc": "2026-11-09T09:00:00Z",
+    "validToUtc": "2026-11-10T21:00:00Z",
+    "affectedRouteIds": [
+      "RTE-BUS-LAX"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0045",
+      "VYG-0069"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "high"
+  },
+  {
+    "hazardId": "WX-0010",
+    "type": "high_waves",
+    "severity": "high",
+    "polygon": [
+      {
+        "lon": 122.7,
+        "lat": -37.04
+      },
+      {
+        "lon": 127.3,
+        "lat": -37.04
+      },
+      {
+        "lon": 127.3,
+        "lat": -33.36
+      },
+      {
+        "lon": 122.7,
+        "lat": -33.36
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T09:00:00Z",
+    "validFromUtc": "2026-11-09T09:00:00Z",
+    "validToUtc": "2026-11-10T03:00:00Z",
+    "affectedRouteIds": [
+      "RTE-MEL-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0010"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "high"
+  },
+  {
+    "hazardId": "WX-0011",
+    "type": "storm_warning",
+    "severity": "severe",
+    "polygon": [
+      {
+        "lon": 112.2,
+        "lat": 6.76
+      },
+      {
+        "lon": 116.8,
+        "lat": 6.76
+      },
+      {
+        "lon": 116.8,
+        "lat": 10.44
+      },
+      {
+        "lon": 112.2,
+        "lat": 10.44
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T08:00:00Z",
+    "validFromUtc": "2026-11-09T09:00:00Z",
+    "validToUtc": "2026-11-10T21:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-MNL"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0011",
+      "VYG-0023",
+      "VYG-0047",
+      "VYG-0059",
+      "VYG-0083",
+      "VYG-0107",
+      "VYG-0119",
+      "VYG-0131",
+      "VYG-0143",
+      "VYG-0179"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "medium"
+  },
+  {
+    "hazardId": "WX-0012",
+    "type": "high_waves",
+    "severity": "moderate",
+    "polygon": [
+      {
+        "lon": -1.9,
+        "lat": 36.96
+      },
+      {
+        "lon": 2.7,
+        "lat": 36.96
+      },
+      {
+        "lon": 2.7,
+        "lat": 40.64
+      },
+      {
+        "lon": -1.9,
+        "lat": 40.64
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T05:00:00Z",
+    "validFromUtc": "2026-11-09T05:00:00Z",
+    "validToUtc": "2026-11-09T11:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-RTM",
+      "RTE-HAM-SIN",
+      "RTE-ALG-VLC"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0168"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "high"
+  },
+  {
+    "hazardId": "WX-0013",
+    "type": "high_wind",
+    "severity": "high",
+    "polygon": [
+      {
+        "lon": 97.3,
+        "lat": 2.06
+      },
+      {
+        "lon": 101.9,
+        "lat": 2.06
+      },
+      {
+        "lon": 101.9,
+        "lat": 5.74
+      },
+      {
+        "lon": 97.3,
+        "lat": 5.74
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T06:00:00Z",
+    "validFromUtc": "2026-11-09T06:00:00Z",
+    "validToUtc": "2026-11-10T18:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-RTM",
+      "RTE-SIN-RTM-CAPE",
+      "RTE-SIN-JEA",
+      "RTE-SIN-CPT",
+      "RTE-HAM-SIN",
+      "RTE-MUM-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0056",
+      "VYG-0080",
+      "VYG-0087",
+      "VYG-0140",
+      "VYG-0176"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "high"
+  },
+  {
+    "hazardId": "WX-0014",
+    "type": "poor_visibility",
+    "severity": "severe",
+    "polygon": [
+      {
+        "lon": 111.2,
+        "lat": 13.16
+      },
+      {
+        "lon": 115.8,
+        "lat": 13.16
+      },
+      {
+        "lon": 115.8,
+        "lat": 16.84
+      },
+      {
+        "lon": 111.2,
+        "lat": 16.84
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T07:00:00Z",
+    "validFromUtc": "2026-11-09T08:00:00Z",
+    "validToUtc": "2026-11-10T08:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SHA-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0002",
+      "VYG-0038",
+      "VYG-0122",
+      "VYG-0134",
+      "VYG-0170",
+      "VYG-0194"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "medium"
+  },
+  {
+    "hazardId": "WX-0015",
+    "type": "high_waves",
+    "severity": "moderate",
+    "polygon": [
+      {
+        "lon": 92.2,
+        "lat": 4.46
+      },
+      {
+        "lon": 96.8,
+        "lat": 4.46
+      },
+      {
+        "lon": 96.8,
+        "lat": 8.14
+      },
+      {
+        "lon": 92.2,
+        "lat": 8.14
+      }
+    ],
+    "issuedAtUtc": "2026-11-09T07:00:00Z",
+    "validFromUtc": "2026-11-09T07:00:00Z",
+    "validToUtc": "2026-11-10T07:00:00Z",
+    "affectedRouteIds": [
+      "RTE-SIN-RTM",
+      "RTE-SIN-RTM-CAPE",
+      "RTE-SIN-JEA",
+      "RTE-SIN-CPT",
+      "RTE-HAM-SIN",
+      "RTE-MUM-SIN"
+    ],
+    "affectedVoyageIds": [
+      "VYG-0056",
+      "VYG-0087",
+      "VYG-0135",
+      "VYG-0140",
+      "VYG-0152",
+      "VYG-0176",
+      "VYG-0183",
+      "VYG-0184"
+    ],
+    "sourceType": "synthetic-forecast",
+    "confidence": "high"
+  }
+]

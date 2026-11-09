@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/weatherHazards.schema.json",
+  "title": "PORTOS synthetic weatherHazards collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "affectedRouteIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "affectedVoyageIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "confidence": {
+        "type": "string"
+      },
+      "hazardId": {
+        "type": "string"
+      },
+      "issuedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "polygon": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lon": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lat",
+            "lon"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "severity": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string"
+      },
+      "validFromUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "validToUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      }
+    },
+    "required": [
+      "affectedRouteIds",
+      "affectedVoyageIds",
+      "confidence",
+      "hazardId",
+      "issuedAtUtc",
+      "polygon",
+      "severity",
+      "sourceType",
+      "type",
+      "validFromUtc",
+      "validToUtc"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,815 @@
+[
+  {
+    "evidenceId": "EVD-0001",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0004",
+    "observedAtUtc": "2026-11-09T09:00:00Z",
+    "receivedAtUtc": "2026-11-09T09:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0001"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T02:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0002",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0007",
+    "observedAtUtc": "2026-11-09T11:22:00Z",
+    "receivedAtUtc": "2026-11-09T11:25:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-SIN"
+    },
+    "field": "waitingEstimateHours",
+    "value": 26,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0003",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0009",
+    "observedAtUtc": "2026-11-09T11:55:00Z",
+    "receivedAtUtc": "2026-11-09T11:58:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0001"
+    },
+    "field": "lastKnownPosition",
+    "value": {
+      "lon": 103.95,
+      "lat": 1.25
+    },
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0004",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0008",
+    "observedAtUtc": "2026-11-09T11:40:00Z",
+    "receivedAtUtc": "2026-11-09T11:43:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-SIN"
+    },
+    "field": "estimatedBerthUtc",
+    "value": "2026-11-10T14:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0005",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0001",
+    "observedAtUtc": "2026-11-06T00:00:00Z",
+    "receivedAtUtc": "2026-11-06T00:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0001"
+    },
+    "field": "dailyDelayCostUsd",
+    "value": 32000,
+    "unit": "USD/day",
+    "quality": "assumption"
+  },
+  {
+    "evidenceId": "EVD-0006",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0007"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0007",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-RTM",
+    "observedAtUtc": "2026-11-09T08:15:00Z",
+    "receivedAtUtc": "2026-11-09T08:18:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-RTM"
+    },
+    "field": "waitingEstimateHours",
+    "value": 20,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0008",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0006",
+    "observedAtUtc": "2026-11-09T09:08:00Z",
+    "receivedAtUtc": "2026-11-09T09:11:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0006"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-21T01:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0009",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0017"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0010",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-SIN",
+    "observedAtUtc": "2026-11-09T10:38:00Z",
+    "receivedAtUtc": "2026-11-09T10:41:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-SIN"
+    },
+    "field": "waitingEstimateHours",
+    "value": 16,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0011",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0011",
+    "observedAtUtc": "2026-11-09T08:00:00Z",
+    "receivedAtUtc": "2026-11-09T08:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0023"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0011",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0012",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0026",
+    "observedAtUtc": "2026-11-09T12:00:00Z",
+    "receivedAtUtc": "2026-11-09T12:03:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0026"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T12:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0013",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0029",
+    "observedAtUtc": "2026-11-09T01:58:00Z",
+    "receivedAtUtc": "2026-11-09T02:01:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0029"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-19T20:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0014",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0032",
+    "observedAtUtc": "2026-11-09T09:43:00Z",
+    "receivedAtUtc": "2026-11-09T09:46:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0032"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-23T20:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0015",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-MNL",
+    "observedAtUtc": "2026-11-09T04:41:00Z",
+    "receivedAtUtc": "2026-11-09T04:44:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-MNL"
+    },
+    "field": "waitingEstimateHours",
+    "value": 20,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0016",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0002",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0038"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0002",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0017",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0041"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0018",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0044",
+    "observedAtUtc": "2026-11-09T11:58:00Z",
+    "receivedAtUtc": "2026-11-09T12:01:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0044"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T11:58:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0019",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0047",
+    "observedAtUtc": "2026-11-09T01:34:00Z",
+    "receivedAtUtc": "2026-11-09T01:37:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0047"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T18:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0020",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-SIN",
+    "observedAtUtc": "2026-11-09T04:04:00Z",
+    "receivedAtUtc": "2026-11-09T04:07:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-SIN"
+    },
+    "field": "waitingEstimateHours",
+    "value": 8,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0021",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0053",
+    "observedAtUtc": "2026-11-09T00:59:00Z",
+    "receivedAtUtc": "2026-11-09T01:02:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0053"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T19:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0022",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0056",
+    "observedAtUtc": "2026-11-09T11:25:00Z",
+    "receivedAtUtc": "2026-11-09T11:28:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0056"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T11:25:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0023",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-MNL",
+    "observedAtUtc": "2026-11-09T04:47:00Z",
+    "receivedAtUtc": "2026-11-09T04:50:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-MNL"
+    },
+    "field": "waitingEstimateHours",
+    "value": 16,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0024",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0062",
+    "observedAtUtc": "2026-11-09T05:36:00Z",
+    "receivedAtUtc": "2026-11-09T05:39:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0062"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-26T16:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0025",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0065"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0026",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0068",
+    "observedAtUtc": "2026-11-09T03:32:00Z",
+    "receivedAtUtc": "2026-11-09T03:35:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0068"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-28T16:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0027",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-MNL",
+    "observedAtUtc": "2026-11-09T00:02:00Z",
+    "receivedAtUtc": "2026-11-09T00:05:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-MNL"
+    },
+    "field": "waitingEstimateHours",
+    "value": 8,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0028",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0074"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0029",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0077",
+    "observedAtUtc": "2026-11-09T01:48:00Z",
+    "receivedAtUtc": "2026-11-09T01:51:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0077"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-21T04:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0030",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0080",
+    "observedAtUtc": "2026-11-09T10:25:00Z",
+    "receivedAtUtc": "2026-11-09T10:28:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0080"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T10:25:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0031",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0011",
+    "observedAtUtc": "2026-11-09T08:00:00Z",
+    "receivedAtUtc": "2026-11-09T08:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0083"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0011",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0032",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-SIN",
+    "observedAtUtc": "2026-11-09T02:44:00Z",
+    "receivedAtUtc": "2026-11-09T02:47:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-SIN"
+    },
+    "field": "waitingEstimateHours",
+    "value": 12,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0033",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0089",
+    "observedAtUtc": "2026-11-09T00:38:00Z",
+    "receivedAtUtc": "2026-11-09T00:41:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0089"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T15:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0034",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0092",
+    "observedAtUtc": "2026-11-09T07:35:00Z",
+    "receivedAtUtc": "2026-11-09T07:38:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0092"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-11T08:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0035",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0095"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0036",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0098",
+    "observedAtUtc": "2026-11-09T11:35:00Z",
+    "receivedAtUtc": "2026-11-09T11:38:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0098"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T11:35:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0037",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0101",
+    "observedAtUtc": "2026-11-09T11:52:00Z",
+    "receivedAtUtc": "2026-11-09T11:55:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0101"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T11:52:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0038",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0104",
+    "observedAtUtc": "2026-11-09T02:41:00Z",
+    "receivedAtUtc": "2026-11-09T02:44:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0104"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T19:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0039",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0107",
+    "observedAtUtc": "2026-11-09T11:52:00Z",
+    "receivedAtUtc": "2026-11-09T11:55:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0107"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T11:52:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0040",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0110"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0041",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0113",
+    "observedAtUtc": "2026-11-09T01:14:00Z",
+    "receivedAtUtc": "2026-11-09T01:17:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0113"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T03:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0042",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0116",
+    "observedAtUtc": "2026-11-09T03:35:00Z",
+    "receivedAtUtc": "2026-11-09T03:38:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0116"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-26T17:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0043",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-MNL",
+    "observedAtUtc": "2026-11-09T10:44:00Z",
+    "receivedAtUtc": "2026-11-09T10:47:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-MNL"
+    },
+    "field": "waitingEstimateHours",
+    "value": 20,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0044",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-SIN",
+    "observedAtUtc": "2026-11-09T02:22:00Z",
+    "receivedAtUtc": "2026-11-09T02:25:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-SIN"
+    },
+    "field": "waitingEstimateHours",
+    "value": 12,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0045",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0125",
+    "observedAtUtc": "2026-11-09T11:25:00Z",
+    "receivedAtUtc": "2026-11-09T11:28:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0125"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T11:25:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0046",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-SIN",
+    "observedAtUtc": "2026-11-09T04:00:00Z",
+    "receivedAtUtc": "2026-11-09T04:03:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-SIN"
+    },
+    "field": "waitingEstimateHours",
+    "value": 16,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0047",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "PRT-MNL",
+    "observedAtUtc": "2026-11-09T10:37:00Z",
+    "receivedAtUtc": "2026-11-09T10:40:00Z",
+    "entityRef": {
+      "kind": "port",
+      "id": "PRT-MNL"
+    },
+    "field": "waitingEstimateHours",
+    "value": 12,
+    "unit": "h",
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0048",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0134",
+    "observedAtUtc": "2026-11-09T08:31:00Z",
+    "receivedAtUtc": "2026-11-09T08:34:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0134"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-20T01:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0049",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0137"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0050",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0013",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0140"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0013",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0051",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0143",
+    "observedAtUtc": "2026-11-09T11:25:00Z",
+    "receivedAtUtc": "2026-11-09T11:28:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0143"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T11:25:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0052",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VSL-0146",
+    "observedAtUtc": "2026-11-09T11:55:00Z",
+    "receivedAtUtc": "2026-11-09T11:58:00Z",
+    "entityRef": {
+      "kind": "vessel",
+      "id": "VSL-0146"
+    },
+    "field": "lastReportedAtUtc",
+    "value": "2026-11-09T11:55:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0053",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0149"
+    },
+    "field": "hazardIntersection",
+    "value": "WX-0001",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0054",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "VYG-0001",
+    "observedAtUtc": "2026-11-09T11:10:00Z",
+    "receivedAtUtc": "2026-11-09T11:13:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0001"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T02:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  }
+]

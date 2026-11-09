@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/incidents.schema.json",
+  "title": "PORTOS synthetic incidents collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "category": {
+        "type": "string"
+      },
+      "evidenceIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "incidentId": {
+        "type": "string"
+      },
+      "openedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "ownerUserId": {
+        "type": "null"
+      },
+      "portId": {
+        "type": "string"
+      },
+      "scenarioId": {
+        "type": "string"
+      },
+      "severity": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "vesselId": {
+        "type": "string"
+      },
+      "voyageId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "category",
+      "evidenceIds",
+      "incidentId",
+      "openedAtUtc",
+      "ownerUserId",
+      "portId",
+      "scenarioId",
+      "severity",
+      "sourceType",
+      "status",
+      "vesselId",
+      "voyageId"
+    ],
+    "additionalProperties": false
+  }
+}

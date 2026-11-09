@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/routes.schema.json",
+  "title": "PORTOS synthetic routes collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "corridorId": {
+        "type": "string"
+      },
+      "corridorName": {
+        "type": "string"
+      },
+      "destinationPortId": {
+        "type": "string"
+      },
+      "distanceNmEstimate": {
+        "type": "number"
+      },
+      "originPortId": {
+        "type": "string"
+      },
+      "routeId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "waypoints": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "lat": {
+              "type": "number"
+            },
+            "lon": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "lat",
+            "lon"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "corridorId",
+      "corridorName",
+      "destinationPortId",
+      "distanceNmEstimate",
+      "originPortId",
+      "routeId",
+      "sourceType",
+      "waypoints"
+    ],
+    "additionalProperties": false
+  }
+}

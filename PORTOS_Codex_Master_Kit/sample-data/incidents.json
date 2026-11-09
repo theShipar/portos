@@ -1,0 +1,802 @@
+[
+  {
+    "incidentId": "INC-0001",
+    "vesselId": "VSL-0001",
+    "voyageId": "VYG-0001",
+    "portId": "PRT-SIN",
+    "category": "port_congestion",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:59:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0001"
+    ],
+    "scenarioId": "SCENARIO_SINGAPORE_CONGESTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0002",
+    "vesselId": "VSL-0003",
+    "voyageId": "VYG-0003",
+    "portId": "PRT-JEA",
+    "category": "data_quality",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:58:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0002"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0003",
+    "vesselId": "VSL-0004",
+    "voyageId": "VYG-0004",
+    "portId": "PRT-CPT",
+    "category": "data_quality",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:57:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0003"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0004",
+    "vesselId": "VSL-0005",
+    "voyageId": "VYG-0005",
+    "portId": "PRT-SHA",
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:56:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0004"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0005",
+    "vesselId": "VSL-0006",
+    "voyageId": "VYG-0006",
+    "portId": "PRT-NYC",
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:55:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0005"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0006",
+    "vesselId": "VSL-0007",
+    "voyageId": "VYG-0007",
+    "portId": "PRT-SIN",
+    "category": "data_quality",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:54:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0006"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0007",
+    "vesselId": "VSL-0008",
+    "voyageId": "VYG-0008",
+    "portId": "PRT-SIN",
+    "category": "data_quality",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:53:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0007"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0008",
+    "vesselId": "VSL-0009",
+    "voyageId": "VYG-0009",
+    "portId": "PRT-LAX",
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:52:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0008"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0009",
+    "vesselId": "VSL-0010",
+    "voyageId": "VYG-0010",
+    "portId": "PRT-SIN",
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:51:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0009"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0010",
+    "vesselId": "VSL-0011",
+    "voyageId": "VYG-0011",
+    "portId": "PRT-MNL",
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:50:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0010"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0011",
+    "vesselId": "VSL-0012",
+    "voyageId": "VYG-0012",
+    "portId": "PRT-VLC",
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:49:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0011"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0012",
+    "vesselId": "VSL-0013",
+    "voyageId": "VYG-0013",
+    "portId": "PRT-RTM",
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:48:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0012"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0013",
+    "vesselId": "VSL-0014",
+    "voyageId": "VYG-0014",
+    "portId": "PRT-SIN",
+    "category": "schedule_variance",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:47:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0013"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0014",
+    "vesselId": "VSL-0015",
+    "voyageId": "VYG-0015",
+    "portId": "PRT-JEA",
+    "category": "weather_exposure",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:46:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0014"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0015",
+    "vesselId": "VSL-0016",
+    "voyageId": "VYG-0016",
+    "portId": "PRT-CPT",
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:45:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0015"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0016",
+    "vesselId": "VSL-0017",
+    "voyageId": "VYG-0017",
+    "portId": "PRT-SHA",
+    "category": "weather_exposure",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:44:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0016"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0017",
+    "vesselId": "VSL-0018",
+    "voyageId": "VYG-0018",
+    "portId": "PRT-NYC",
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:43:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0017"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0018",
+    "vesselId": "VSL-0019",
+    "voyageId": "VYG-0019",
+    "portId": "PRT-SIN",
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:42:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0018"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0019",
+    "vesselId": "VSL-0020",
+    "voyageId": "VYG-0020",
+    "portId": "PRT-SIN",
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:41:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0019"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0020",
+    "vesselId": "VSL-0021",
+    "voyageId": "VYG-0021",
+    "portId": "PRT-LAX",
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:40:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0020"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0021",
+    "vesselId": "VSL-0022",
+    "voyageId": "VYG-0022",
+    "portId": "PRT-SIN",
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:39:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0021"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0022",
+    "vesselId": "VSL-0023",
+    "voyageId": "VYG-0023",
+    "portId": "PRT-MNL",
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:38:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0022"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0023",
+    "vesselId": "VSL-0024",
+    "voyageId": "VYG-0024",
+    "portId": "PRT-VLC",
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:37:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0023"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0024",
+    "vesselId": "VSL-0025",
+    "voyageId": "VYG-0025",
+    "portId": "PRT-RTM",
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:36:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0024"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0025",
+    "vesselId": "VSL-0026",
+    "voyageId": "VYG-0026",
+    "portId": "PRT-SIN",
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:35:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0025"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0026",
+    "vesselId": "VSL-0027",
+    "voyageId": "VYG-0027",
+    "portId": "PRT-JEA",
+    "category": "port_delay",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:34:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0026"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0027",
+    "vesselId": "VSL-0028",
+    "voyageId": "VYG-0028",
+    "portId": "PRT-CPT",
+    "category": "data_quality",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:33:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0027"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0028",
+    "vesselId": "VSL-0029",
+    "voyageId": "VYG-0029",
+    "portId": "PRT-SHA",
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:32:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0028"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0029",
+    "vesselId": "VSL-0030",
+    "voyageId": "VYG-0030",
+    "portId": "PRT-NYC",
+    "category": "data_quality",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:31:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0029"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0030",
+    "vesselId": "VSL-0031",
+    "voyageId": "VYG-0031",
+    "portId": "PRT-SIN",
+    "category": "data_quality",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:30:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0030"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0031",
+    "vesselId": "VSL-0032",
+    "voyageId": "VYG-0032",
+    "portId": "PRT-SIN",
+    "category": "data_quality",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:29:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0031"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0032",
+    "vesselId": "VSL-0033",
+    "voyageId": "VYG-0033",
+    "portId": "PRT-LAX",
+    "category": "data_quality",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:28:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0032"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0033",
+    "vesselId": "VSL-0034",
+    "voyageId": "VYG-0034",
+    "portId": "PRT-SIN",
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:27:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0033"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0034",
+    "vesselId": "VSL-0035",
+    "voyageId": "VYG-0035",
+    "portId": "PRT-MNL",
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:26:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0034"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0035",
+    "vesselId": "VSL-0036",
+    "voyageId": "VYG-0036",
+    "portId": "PRT-VLC",
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:25:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0035"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0036",
+    "vesselId": "VSL-0037",
+    "voyageId": "VYG-0037",
+    "portId": "PRT-RTM",
+    "category": "schedule_variance",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:24:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0036"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0037",
+    "vesselId": "VSL-0038",
+    "voyageId": "VYG-0038",
+    "portId": "PRT-SIN",
+    "category": "weather_exposure",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:23:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0037"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0038",
+    "vesselId": "VSL-0039",
+    "voyageId": "VYG-0039",
+    "portId": "PRT-JEA",
+    "category": "port_delay",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:22:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0038"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0039",
+    "vesselId": "VSL-0040",
+    "voyageId": "VYG-0040",
+    "portId": "PRT-CPT",
+    "category": "port_delay",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:21:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0039"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0040",
+    "vesselId": "VSL-0041",
+    "voyageId": "VYG-0041",
+    "portId": "PRT-SHA",
+    "category": "data_quality",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:20:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0040"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0041",
+    "vesselId": "VSL-0042",
+    "voyageId": "VYG-0042",
+    "portId": "PRT-NYC",
+    "category": "weather_exposure",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:19:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0041"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0042",
+    "vesselId": "VSL-0043",
+    "voyageId": "VYG-0043",
+    "portId": "PRT-SIN",
+    "category": "weather_exposure",
+    "severity": "high",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:18:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0042"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0043",
+    "vesselId": "VSL-0044",
+    "voyageId": "VYG-0044",
+    "portId": "PRT-SIN",
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:17:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0043"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0044",
+    "vesselId": "VSL-0045",
+    "voyageId": "VYG-0045",
+    "portId": "PRT-LAX",
+    "category": "data_quality",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:16:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0044"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0045",
+    "vesselId": "VSL-0046",
+    "voyageId": "VYG-0046",
+    "portId": "PRT-SIN",
+    "category": "data_quality",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:15:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0045"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0046",
+    "vesselId": "VSL-0047",
+    "voyageId": "VYG-0047",
+    "portId": "PRT-MNL",
+    "category": "data_quality",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:14:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0046"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0047",
+    "vesselId": "VSL-0048",
+    "voyageId": "VYG-0048",
+    "portId": "PRT-VLC",
+    "category": "port_delay",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:13:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0047"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0048",
+    "vesselId": "VSL-0049",
+    "voyageId": "VYG-0049",
+    "portId": "PRT-RTM",
+    "category": "schedule_variance",
+    "severity": "critical",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:12:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0048"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0049",
+    "vesselId": "VSL-0050",
+    "voyageId": "VYG-0050",
+    "portId": "PRT-SIN",
+    "category": "schedule_variance",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T10:11:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0049"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  },
+  {
+    "incidentId": "INC-0050",
+    "vesselId": "VSL-0051",
+    "voyageId": "VYG-0051",
+    "portId": "PRT-JEA",
+    "category": "port_delay",
+    "severity": "medium",
+    "status": "open",
+    "openedAtUtc": "2026-11-09T11:00:00Z",
+    "ownerUserId": null,
+    "evidenceIds": [
+      "EVD-0050"
+    ],
+    "scenarioId": "SCENARIO_GENERAL_DISRUPTION",
+    "sourceType": "synthetic-incident"
+  }
+]

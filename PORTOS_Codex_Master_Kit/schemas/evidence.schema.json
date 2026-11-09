@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/evidence.schema.json",
+  "title": "PORTOS synthetic evidence collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "entityRef": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "evidenceId": {
+        "type": "string"
+      },
+      "field": {
+        "type": "string"
+      },
+      "observedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "quality": {
+        "type": "string"
+      },
+      "receivedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "sourceId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "unit": {
+        "type": "null"
+      },
+      "value": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "entityRef",
+      "evidenceId",
+      "field",
+      "observedAtUtc",
+      "quality",
+      "receivedAtUtc",
+      "sourceId",
+      "sourceType",
+      "unit",
+      "value"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,1704 @@
+[
+  {
+    "portId": "PRT-SIN",
+    "name": "Singapore",
+    "countryIso2": "SG",
+    "location": {
+      "lon": 103.83,
+      "lat": 1.27
+    },
+    "timeZone": "Asia/Singapore",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-SIN-W",
+      "TRM-SIN-C",
+      "TRM-SIN-E"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:29:00Z"
+  },
+  {
+    "portId": "PRT-RTM",
+    "name": "Rotterdam",
+    "countryIso2": "NL",
+    "location": {
+      "lon": 4.48,
+      "lat": 51.92
+    },
+    "timeZone": "Europe/Amsterdam",
+    "regionId": "REG-NEU",
+    "terminalIds": [
+      "TRM-RTM"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:00:00Z"
+  },
+  {
+    "portId": "PRT-SHA",
+    "name": "Shanghai",
+    "countryIso2": "CN",
+    "location": {
+      "lon": 121.49,
+      "lat": 31.23
+    },
+    "timeZone": "Asia/Shanghai",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-SHA"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:26:00Z"
+  },
+  {
+    "portId": "PRT-SZX",
+    "name": "Shenzhen",
+    "countryIso2": "CN",
+    "location": {
+      "lon": 114.12,
+      "lat": 22.53
+    },
+    "timeZone": "Asia/Shanghai",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-SZX"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:34:00Z"
+  },
+  {
+    "portId": "PRT-NGB",
+    "name": "Ningbo",
+    "countryIso2": "CN",
+    "location": {
+      "lon": 121.56,
+      "lat": 29.88
+    },
+    "timeZone": "Asia/Shanghai",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-NGB"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:08:00Z"
+  },
+  {
+    "portId": "PRT-BUS",
+    "name": "Busan",
+    "countryIso2": "KR",
+    "location": {
+      "lon": 129.04,
+      "lat": 35.1
+    },
+    "timeZone": "Asia/Seoul",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-BUS"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:46:00Z"
+  },
+  {
+    "portId": "PRT-HKG",
+    "name": "Hong Kong",
+    "countryIso2": "HK",
+    "location": {
+      "lon": 114.17,
+      "lat": 22.3
+    },
+    "timeZone": "Asia/Hong_Kong",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-HKG"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:23:00Z"
+  },
+  {
+    "portId": "PRT-JEA",
+    "name": "Jebel Ali",
+    "countryIso2": "AE",
+    "location": {
+      "lon": 55.07,
+      "lat": 24.99
+    },
+    "timeZone": "Asia/Dubai",
+    "regionId": "REG-GULF",
+    "terminalIds": [
+      "TRM-JEA"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:37:00Z"
+  },
+  {
+    "portId": "PRT-LAX",
+    "name": "Los Angeles",
+    "countryIso2": "US",
+    "location": {
+      "lon": -118.27,
+      "lat": 33.73
+    },
+    "timeZone": "America/Los_Angeles",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-LAX"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:38:00Z"
+  },
+  {
+    "portId": "PRT-LGB",
+    "name": "Long Beach",
+    "countryIso2": "US",
+    "location": {
+      "lon": -118.19,
+      "lat": 33.75
+    },
+    "timeZone": "America/Los_Angeles",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-LGB"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:00:00Z"
+  },
+  {
+    "portId": "PRT-NYC",
+    "name": "New York New Jersey",
+    "countryIso2": "US",
+    "location": {
+      "lon": -74.05,
+      "lat": 40.67
+    },
+    "timeZone": "America/New_York",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-NYC"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:37:00Z"
+  },
+  {
+    "portId": "PRT-HAM",
+    "name": "Hamburg",
+    "countryIso2": "DE",
+    "location": {
+      "lon": 9.96,
+      "lat": 53.54
+    },
+    "timeZone": "Europe/Berlin",
+    "regionId": "REG-NEU",
+    "terminalIds": [
+      "TRM-HAM"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:45:00Z"
+  },
+  {
+    "portId": "PRT-ANR",
+    "name": "Antwerp",
+    "countryIso2": "BE",
+    "location": {
+      "lon": 4.4,
+      "lat": 51.26
+    },
+    "timeZone": "Europe/Brussels",
+    "regionId": "REG-NEU",
+    "terminalIds": [
+      "TRM-ANR"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:32:00Z"
+  },
+  {
+    "portId": "PRT-VLC",
+    "name": "Valencia",
+    "countryIso2": "ES",
+    "location": {
+      "lon": -0.32,
+      "lat": 39.44
+    },
+    "timeZone": "Europe/Madrid",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-VLC"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:58:00Z"
+  },
+  {
+    "portId": "PRT-ALG",
+    "name": "Algeciras",
+    "countryIso2": "ES",
+    "location": {
+      "lon": -5.45,
+      "lat": 36.13
+    },
+    "timeZone": "Europe/Madrid",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-ALG"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:43:00Z"
+  },
+  {
+    "portId": "PRT-FLX",
+    "name": "Felixstowe",
+    "countryIso2": "GB",
+    "location": {
+      "lon": 1.35,
+      "lat": 51.96
+    },
+    "timeZone": "Europe/London",
+    "regionId": "REG-NEU",
+    "terminalIds": [
+      "TRM-FLX"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:09:00Z"
+  },
+  {
+    "portId": "PRT-SOU",
+    "name": "Southampton",
+    "countryIso2": "GB",
+    "location": {
+      "lon": -1.4,
+      "lat": 50.9
+    },
+    "timeZone": "Europe/London",
+    "regionId": "REG-NEU",
+    "terminalIds": [
+      "TRM-SOU"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:10:00Z"
+  },
+  {
+    "portId": "PRT-LHV",
+    "name": "Le Havre",
+    "countryIso2": "FR",
+    "location": {
+      "lon": 0.12,
+      "lat": 49.49
+    },
+    "timeZone": "Europe/Paris",
+    "regionId": "REG-NEU",
+    "terminalIds": [
+      "TRM-LHV"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:48:00Z"
+  },
+  {
+    "portId": "PRT-MRS",
+    "name": "Marseille",
+    "countryIso2": "FR",
+    "location": {
+      "lon": 5.36,
+      "lat": 43.3
+    },
+    "timeZone": "Europe/Paris",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-MRS"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:12:00Z"
+  },
+  {
+    "portId": "PRT-PIR",
+    "name": "Piraeus",
+    "countryIso2": "GR",
+    "location": {
+      "lon": 23.63,
+      "lat": 37.94
+    },
+    "timeZone": "Europe/Athens",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-PIR"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:19:00Z"
+  },
+  {
+    "portId": "PRT-IST",
+    "name": "Istanbul",
+    "countryIso2": "TR",
+    "location": {
+      "lon": 28.97,
+      "lat": 41.01
+    },
+    "timeZone": "Europe/Istanbul",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-IST"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:41:00Z"
+  },
+  {
+    "portId": "PRT-GOA",
+    "name": "Genoa",
+    "countryIso2": "IT",
+    "location": {
+      "lon": 8.92,
+      "lat": 44.4
+    },
+    "timeZone": "Europe/Rome",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-GOA"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:45:00Z"
+  },
+  {
+    "portId": "PRT-BCN",
+    "name": "Barcelona",
+    "countryIso2": "ES",
+    "location": {
+      "lon": 2.16,
+      "lat": 41.35
+    },
+    "timeZone": "Europe/Madrid",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-BCN"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:54:00Z"
+  },
+  {
+    "portId": "PRT-ALX",
+    "name": "Alexandria",
+    "countryIso2": "EG",
+    "location": {
+      "lon": 29.88,
+      "lat": 31.2
+    },
+    "timeZone": "Africa/Cairo",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-ALX"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:40:00Z"
+  },
+  {
+    "portId": "PRT-PSD",
+    "name": "Port Said",
+    "countryIso2": "EG",
+    "location": {
+      "lon": 32.31,
+      "lat": 31.26
+    },
+    "timeZone": "Africa/Cairo",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-PSD"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:36:00Z"
+  },
+  {
+    "portId": "PRT-DUR",
+    "name": "Durban",
+    "countryIso2": "ZA",
+    "location": {
+      "lon": 31.03,
+      "lat": -29.87
+    },
+    "timeZone": "Africa/Johannesburg",
+    "regionId": "REG-IO",
+    "terminalIds": [
+      "TRM-DUR"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:39:00Z"
+  },
+  {
+    "portId": "PRT-CPT",
+    "name": "Cape Town",
+    "countryIso2": "ZA",
+    "location": {
+      "lon": 18.44,
+      "lat": -33.92
+    },
+    "timeZone": "Africa/Johannesburg",
+    "regionId": "REG-WAF",
+    "terminalIds": [
+      "TRM-CPT"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:32:00Z"
+  },
+  {
+    "portId": "PRT-LAG",
+    "name": "Lagos",
+    "countryIso2": "NG",
+    "location": {
+      "lon": 3.39,
+      "lat": 6.45
+    },
+    "timeZone": "Africa/Lagos",
+    "regionId": "REG-WAF",
+    "terminalIds": [
+      "TRM-LAG"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:24:00Z"
+  },
+  {
+    "portId": "PRT-MBA",
+    "name": "Mombasa",
+    "countryIso2": "KE",
+    "location": {
+      "lon": 39.66,
+      "lat": -4.06
+    },
+    "timeZone": "Africa/Nairobi",
+    "regionId": "REG-IO",
+    "terminalIds": [
+      "TRM-MBA"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:02:00Z"
+  },
+  {
+    "portId": "PRT-DJB",
+    "name": "Djibouti",
+    "countryIso2": "DJ",
+    "location": {
+      "lon": 43.14,
+      "lat": 11.59
+    },
+    "timeZone": "Africa/Djibouti",
+    "regionId": "REG-GULF",
+    "terminalIds": [
+      "TRM-DJB"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:41:00Z"
+  },
+  {
+    "portId": "PRT-CMB",
+    "name": "Colombo",
+    "countryIso2": "LK",
+    "location": {
+      "lon": 79.85,
+      "lat": 6.94
+    },
+    "timeZone": "Asia/Colombo",
+    "regionId": "REG-IO",
+    "terminalIds": [
+      "TRM-CMB"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:46:00Z"
+  },
+  {
+    "portId": "PRT-MUM",
+    "name": "Mumbai",
+    "countryIso2": "IN",
+    "location": {
+      "lon": 72.85,
+      "lat": 18.94
+    },
+    "timeZone": "Asia/Kolkata",
+    "regionId": "REG-IO",
+    "terminalIds": [
+      "TRM-MUM"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:28:00Z"
+  },
+  {
+    "portId": "PRT-MAA",
+    "name": "Chennai",
+    "countryIso2": "IN",
+    "location": {
+      "lon": 80.3,
+      "lat": 13.09
+    },
+    "timeZone": "Asia/Kolkata",
+    "regionId": "REG-IO",
+    "terminalIds": [
+      "TRM-MAA"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:31:00Z"
+  },
+  {
+    "portId": "PRT-MUN",
+    "name": "Mundra",
+    "countryIso2": "IN",
+    "location": {
+      "lon": 69.7,
+      "lat": 22.74
+    },
+    "timeZone": "Asia/Kolkata",
+    "regionId": "REG-IO",
+    "terminalIds": [
+      "TRM-MUN"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:30:00Z"
+  },
+  {
+    "portId": "PRT-KHI",
+    "name": "Karachi",
+    "countryIso2": "PK",
+    "location": {
+      "lon": 67.01,
+      "lat": 24.85
+    },
+    "timeZone": "Asia/Karachi",
+    "regionId": "REG-IO",
+    "terminalIds": [
+      "TRM-KHI"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:56:00Z"
+  },
+  {
+    "portId": "PRT-CGP",
+    "name": "Chattogram",
+    "countryIso2": "BD",
+    "location": {
+      "lon": 91.82,
+      "lat": 22.32
+    },
+    "timeZone": "Asia/Dhaka",
+    "regionId": "REG-IO",
+    "terminalIds": [
+      "TRM-CGP"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:11:00Z"
+  },
+  {
+    "portId": "PRT-RGN",
+    "name": "Yangon",
+    "countryIso2": "MM",
+    "location": {
+      "lon": 96.17,
+      "lat": 16.78
+    },
+    "timeZone": "Asia/Yangon",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-RGN"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:41:00Z"
+  },
+  {
+    "portId": "PRT-BKK",
+    "name": "Bangkok",
+    "countryIso2": "TH",
+    "location": {
+      "lon": 100.57,
+      "lat": 13.7
+    },
+    "timeZone": "Asia/Bangkok",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-BKK"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:35:00Z"
+  },
+  {
+    "portId": "PRT-LCH",
+    "name": "Laem Chabang",
+    "countryIso2": "TH",
+    "location": {
+      "lon": 100.88,
+      "lat": 13.09
+    },
+    "timeZone": "Asia/Bangkok",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-LCH"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:41:00Z"
+  },
+  {
+    "portId": "PRT-PKG",
+    "name": "Port Klang",
+    "countryIso2": "MY",
+    "location": {
+      "lon": 101.36,
+      "lat": 3.0
+    },
+    "timeZone": "Asia/Kuala_Lumpur",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-PKG"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:29:00Z"
+  },
+  {
+    "portId": "PRT-TPP",
+    "name": "Tanjung Pelepas",
+    "countryIso2": "MY",
+    "location": {
+      "lon": 103.55,
+      "lat": 1.36
+    },
+    "timeZone": "Asia/Kuala_Lumpur",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-TPP"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:57:00Z"
+  },
+  {
+    "portId": "PRT-JKT",
+    "name": "Jakarta",
+    "countryIso2": "ID",
+    "location": {
+      "lon": 106.88,
+      "lat": -6.11
+    },
+    "timeZone": "Asia/Jakarta",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-JKT"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:43:00Z"
+  },
+  {
+    "portId": "PRT-SBY",
+    "name": "Surabaya",
+    "countryIso2": "ID",
+    "location": {
+      "lon": 112.73,
+      "lat": -7.21
+    },
+    "timeZone": "Asia/Jakarta",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-SBY"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:38:00Z"
+  },
+  {
+    "portId": "PRT-MNL",
+    "name": "Manila",
+    "countryIso2": "PH",
+    "location": {
+      "lon": 120.96,
+      "lat": 14.59
+    },
+    "timeZone": "Asia/Manila",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-MNL"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:31:00Z"
+  },
+  {
+    "portId": "PRT-HCM",
+    "name": "Ho Chi Minh City",
+    "countryIso2": "VN",
+    "location": {
+      "lon": 106.75,
+      "lat": 10.79
+    },
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-HCM"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:40:00Z"
+  },
+  {
+    "portId": "PRT-HPH",
+    "name": "Haiphong",
+    "countryIso2": "VN",
+    "location": {
+      "lon": 106.7,
+      "lat": 20.85
+    },
+    "timeZone": "Asia/Ho_Chi_Minh",
+    "regionId": "REG-SEA",
+    "terminalIds": [
+      "TRM-HPH"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:57:00Z"
+  },
+  {
+    "portId": "PRT-TAO",
+    "name": "Qingdao",
+    "countryIso2": "CN",
+    "location": {
+      "lon": 120.38,
+      "lat": 36.07
+    },
+    "timeZone": "Asia/Shanghai",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-TAO"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:33:00Z"
+  },
+  {
+    "portId": "PRT-TSN",
+    "name": "Tianjin",
+    "countryIso2": "CN",
+    "location": {
+      "lon": 117.74,
+      "lat": 38.98
+    },
+    "timeZone": "Asia/Shanghai",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-TSN"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:56:00Z"
+  },
+  {
+    "portId": "PRT-DLC",
+    "name": "Dalian",
+    "countryIso2": "CN",
+    "location": {
+      "lon": 121.62,
+      "lat": 38.91
+    },
+    "timeZone": "Asia/Shanghai",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-DLC"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:48:00Z"
+  },
+  {
+    "portId": "PRT-XMN",
+    "name": "Xiamen",
+    "countryIso2": "CN",
+    "location": {
+      "lon": 118.08,
+      "lat": 24.48
+    },
+    "timeZone": "Asia/Shanghai",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-XMN"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:37:00Z"
+  },
+  {
+    "portId": "PRT-KHH",
+    "name": "Kaohsiung",
+    "countryIso2": "TW",
+    "location": {
+      "lon": 120.28,
+      "lat": 22.62
+    },
+    "timeZone": "Asia/Taipei",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-KHH"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:32:00Z"
+  },
+  {
+    "portId": "PRT-TYO",
+    "name": "Tokyo",
+    "countryIso2": "JP",
+    "location": {
+      "lon": 139.77,
+      "lat": 35.61
+    },
+    "timeZone": "Asia/Tokyo",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-TYO"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:30:00Z"
+  },
+  {
+    "portId": "PRT-YOK",
+    "name": "Yokohama",
+    "countryIso2": "JP",
+    "location": {
+      "lon": 139.64,
+      "lat": 35.45
+    },
+    "timeZone": "Asia/Tokyo",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-YOK"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:35:00Z"
+  },
+  {
+    "portId": "PRT-UKB",
+    "name": "Kobe",
+    "countryIso2": "JP",
+    "location": {
+      "lon": 135.18,
+      "lat": 34.69
+    },
+    "timeZone": "Asia/Tokyo",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-UKB"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:54:00Z"
+  },
+  {
+    "portId": "PRT-OSA",
+    "name": "Osaka",
+    "countryIso2": "JP",
+    "location": {
+      "lon": 135.43,
+      "lat": 34.65
+    },
+    "timeZone": "Asia/Tokyo",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-OSA"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:47:00Z"
+  },
+  {
+    "portId": "PRT-NGO",
+    "name": "Nagoya",
+    "countryIso2": "JP",
+    "location": {
+      "lon": 136.88,
+      "lat": 35.09
+    },
+    "timeZone": "Asia/Tokyo",
+    "regionId": "REG-EAS",
+    "terminalIds": [
+      "TRM-NGO"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:37:00Z"
+  },
+  {
+    "portId": "PRT-MEL",
+    "name": "Melbourne",
+    "countryIso2": "AU",
+    "location": {
+      "lon": 144.92,
+      "lat": -37.84
+    },
+    "timeZone": "Australia/Melbourne",
+    "regionId": "REG-OCE",
+    "terminalIds": [
+      "TRM-MEL"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:21:00Z"
+  },
+  {
+    "portId": "PRT-SYD",
+    "name": "Sydney",
+    "countryIso2": "AU",
+    "location": {
+      "lon": 151.2,
+      "lat": -33.86
+    },
+    "timeZone": "Australia/Sydney",
+    "regionId": "REG-OCE",
+    "terminalIds": [
+      "TRM-SYD"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:59:00Z"
+  },
+  {
+    "portId": "PRT-BNE",
+    "name": "Brisbane",
+    "countryIso2": "AU",
+    "location": {
+      "lon": 153.03,
+      "lat": -27.38
+    },
+    "timeZone": "Australia/Brisbane",
+    "regionId": "REG-OCE",
+    "terminalIds": [
+      "TRM-BNE"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:30:00Z"
+  },
+  {
+    "portId": "PRT-FRE",
+    "name": "Fremantle",
+    "countryIso2": "AU",
+    "location": {
+      "lon": 115.75,
+      "lat": -32.05
+    },
+    "timeZone": "Australia/Perth",
+    "regionId": "REG-OCE",
+    "terminalIds": [
+      "TRM-FRE"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:56:00Z"
+  },
+  {
+    "portId": "PRT-AKL",
+    "name": "Auckland",
+    "countryIso2": "NZ",
+    "location": {
+      "lon": 174.77,
+      "lat": -36.84
+    },
+    "timeZone": "Pacific/Auckland",
+    "regionId": "REG-OCE",
+    "terminalIds": [
+      "TRM-AKL"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:42:00Z"
+  },
+  {
+    "portId": "PRT-TRG",
+    "name": "Tauranga",
+    "countryIso2": "NZ",
+    "location": {
+      "lon": 176.17,
+      "lat": -37.66
+    },
+    "timeZone": "Pacific/Auckland",
+    "regionId": "REG-OCE",
+    "terminalIds": [
+      "TRM-TRG"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:32:00Z"
+  },
+  {
+    "portId": "PRT-WLG",
+    "name": "Wellington",
+    "countryIso2": "NZ",
+    "location": {
+      "lon": 174.78,
+      "lat": -41.27
+    },
+    "timeZone": "Pacific/Auckland",
+    "regionId": "REG-OCE",
+    "terminalIds": [
+      "TRM-WLG"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:41:00Z"
+  },
+  {
+    "portId": "PRT-YVR",
+    "name": "Vancouver",
+    "countryIso2": "CA",
+    "location": {
+      "lon": -123.11,
+      "lat": 49.3
+    },
+    "timeZone": "America/Vancouver",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-YVR"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:42:00Z"
+  },
+  {
+    "portId": "PRT-PRR",
+    "name": "Prince Rupert",
+    "countryIso2": "CA",
+    "location": {
+      "lon": -130.32,
+      "lat": 54.31
+    },
+    "timeZone": "America/Vancouver",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-PRR"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:33:00Z"
+  },
+  {
+    "portId": "PRT-SEA",
+    "name": "Seattle",
+    "countryIso2": "US",
+    "location": {
+      "lon": -122.35,
+      "lat": 47.6
+    },
+    "timeZone": "America/Los_Angeles",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-SEA"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:37:00Z"
+  },
+  {
+    "portId": "PRT-TAC",
+    "name": "Tacoma",
+    "countryIso2": "US",
+    "location": {
+      "lon": -122.44,
+      "lat": 47.26
+    },
+    "timeZone": "America/Los_Angeles",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-TAC"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:48:00Z"
+  },
+  {
+    "portId": "PRT-OAK",
+    "name": "Oakland",
+    "countryIso2": "US",
+    "location": {
+      "lon": -122.31,
+      "lat": 37.8
+    },
+    "timeZone": "America/Los_Angeles",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-OAK"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:47:00Z"
+  },
+  {
+    "portId": "PRT-SFO",
+    "name": "San Francisco",
+    "countryIso2": "US",
+    "location": {
+      "lon": -122.4,
+      "lat": 37.79
+    },
+    "timeZone": "America/Los_Angeles",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-SFO"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:42:00Z"
+  },
+  {
+    "portId": "PRT-HOU",
+    "name": "Houston",
+    "countryIso2": "US",
+    "location": {
+      "lon": -95.28,
+      "lat": 29.73
+    },
+    "timeZone": "America/Chicago",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-HOU"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z"
+  },
+  {
+    "portId": "PRT-MSY",
+    "name": "New Orleans",
+    "countryIso2": "US",
+    "location": {
+      "lon": -90.06,
+      "lat": 29.96
+    },
+    "timeZone": "America/Chicago",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-MSY"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:58:00Z"
+  },
+  {
+    "portId": "PRT-MIA",
+    "name": "Miami",
+    "countryIso2": "US",
+    "location": {
+      "lon": -80.18,
+      "lat": 25.76
+    },
+    "timeZone": "America/New_York",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-MIA"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:38:00Z"
+  },
+  {
+    "portId": "PRT-SAV",
+    "name": "Savannah",
+    "countryIso2": "US",
+    "location": {
+      "lon": -81.09,
+      "lat": 32.08
+    },
+    "timeZone": "America/New_York",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-SAV"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:50:00Z"
+  },
+  {
+    "portId": "PRT-CHS",
+    "name": "Charleston",
+    "countryIso2": "US",
+    "location": {
+      "lon": -79.94,
+      "lat": 32.78
+    },
+    "timeZone": "America/New_York",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-CHS"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:13:00Z"
+  },
+  {
+    "portId": "PRT-ORF",
+    "name": "Norfolk",
+    "countryIso2": "US",
+    "location": {
+      "lon": -76.3,
+      "lat": 36.85
+    },
+    "timeZone": "America/New_York",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-ORF"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:45:00Z"
+  },
+  {
+    "portId": "PRT-BAL",
+    "name": "Baltimore",
+    "countryIso2": "US",
+    "location": {
+      "lon": -76.6,
+      "lat": 39.27
+    },
+    "timeZone": "America/New_York",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-BAL"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:54:00Z"
+  },
+  {
+    "portId": "PRT-HFX",
+    "name": "Halifax",
+    "countryIso2": "CA",
+    "location": {
+      "lon": -63.57,
+      "lat": 44.65
+    },
+    "timeZone": "America/Halifax",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-HFX"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:14:00Z"
+  },
+  {
+    "portId": "PRT-YMQ",
+    "name": "Montreal",
+    "countryIso2": "CA",
+    "location": {
+      "lon": -73.54,
+      "lat": 45.51
+    },
+    "timeZone": "America/Toronto",
+    "regionId": "REG-NAA",
+    "terminalIds": [
+      "TRM-YMQ"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:33:00Z"
+  },
+  {
+    "portId": "PRT-SSZ",
+    "name": "Santos",
+    "countryIso2": "BR",
+    "location": {
+      "lon": -46.33,
+      "lat": -23.94
+    },
+    "timeZone": "America/Sao_Paulo",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-SSZ"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:44:00Z"
+  },
+  {
+    "portId": "PRT-RIO",
+    "name": "Rio de Janeiro",
+    "countryIso2": "BR",
+    "location": {
+      "lon": -43.18,
+      "lat": -22.91
+    },
+    "timeZone": "America/Sao_Paulo",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-RIO"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:59:00Z"
+  },
+  {
+    "portId": "PRT-BUE",
+    "name": "Buenos Aires",
+    "countryIso2": "AR",
+    "location": {
+      "lon": -58.36,
+      "lat": -34.59
+    },
+    "timeZone": "America/Argentina/Buenos_Aires",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-BUE"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:25:00Z"
+  },
+  {
+    "portId": "PRT-MVD",
+    "name": "Montevideo",
+    "countryIso2": "UY",
+    "location": {
+      "lon": -56.21,
+      "lat": -34.9
+    },
+    "timeZone": "America/Montevideo",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-MVD"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:46:00Z"
+  },
+  {
+    "portId": "PRT-VAP",
+    "name": "Valparaiso",
+    "countryIso2": "CL",
+    "location": {
+      "lon": -71.62,
+      "lat": -33.04
+    },
+    "timeZone": "America/Santiago",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-VAP"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:15:00Z"
+  },
+  {
+    "portId": "PRT-SAI",
+    "name": "San Antonio Chile",
+    "countryIso2": "CL",
+    "location": {
+      "lon": -71.61,
+      "lat": -33.59
+    },
+    "timeZone": "America/Santiago",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-SAI"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:56:00Z"
+  },
+  {
+    "portId": "PRT-CLL",
+    "name": "Callao",
+    "countryIso2": "PE",
+    "location": {
+      "lon": -77.15,
+      "lat": -12.04
+    },
+    "timeZone": "America/Lima",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-CLL"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:41:00Z"
+  },
+  {
+    "portId": "PRT-GYE",
+    "name": "Guayaquil",
+    "countryIso2": "EC",
+    "location": {
+      "lon": -79.92,
+      "lat": -2.22
+    },
+    "timeZone": "America/Guayaquil",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-GYE"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:18:00Z"
+  },
+  {
+    "portId": "PRT-CTG",
+    "name": "Cartagena",
+    "countryIso2": "CO",
+    "location": {
+      "lon": -75.53,
+      "lat": 10.39
+    },
+    "timeZone": "America/Bogota",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-CTG"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:40:00Z"
+  },
+  {
+    "portId": "PRT-BALB",
+    "name": "Balboa",
+    "countryIso2": "PA",
+    "location": {
+      "lon": -79.57,
+      "lat": 8.95
+    },
+    "timeZone": "America/Panama",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-BALB"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:52:00Z"
+  },
+  {
+    "portId": "PRT-CRB",
+    "name": "Cristobal",
+    "countryIso2": "PA",
+    "location": {
+      "lon": -79.91,
+      "lat": 9.35
+    },
+    "timeZone": "America/Panama",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-CRB"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:20:00Z"
+  },
+  {
+    "portId": "PRT-KIN",
+    "name": "Kingston",
+    "countryIso2": "JM",
+    "location": {
+      "lon": -76.79,
+      "lat": 17.97
+    },
+    "timeZone": "America/Jamaica",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-KIN"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:45:00Z"
+  },
+  {
+    "portId": "PRT-VER",
+    "name": "Veracruz",
+    "countryIso2": "MX",
+    "location": {
+      "lon": -96.14,
+      "lat": 19.19
+    },
+    "timeZone": "America/Mexico_City",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-VER"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:46:00Z"
+  },
+  {
+    "portId": "PRT-MAN",
+    "name": "Manzanillo Mexico",
+    "countryIso2": "MX",
+    "location": {
+      "lon": -104.32,
+      "lat": 19.06
+    },
+    "timeZone": "America/Mexico_City",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-MAN"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:01:00Z"
+  },
+  {
+    "portId": "PRT-ENS",
+    "name": "Ensenada",
+    "countryIso2": "MX",
+    "location": {
+      "lon": -116.62,
+      "lat": 31.86
+    },
+    "timeZone": "America/Tijuana",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-ENS"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:54:00Z"
+  },
+  {
+    "portId": "PRT-LZC",
+    "name": "Lazaro Cardenas",
+    "countryIso2": "MX",
+    "location": {
+      "lon": -102.18,
+      "lat": 17.96
+    },
+    "timeZone": "America/Mexico_City",
+    "regionId": "REG-NAP",
+    "terminalIds": [
+      "TRM-LZC"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:41:00Z"
+  },
+  {
+    "portId": "PRT-COL",
+    "name": "Colon",
+    "countryIso2": "PA",
+    "location": {
+      "lon": -79.9,
+      "lat": 9.36
+    },
+    "timeZone": "America/Panama",
+    "regionId": "REG-LAT",
+    "terminalIds": [
+      "TRM-COL"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:30:00Z"
+  },
+  {
+    "portId": "PRT-TNG",
+    "name": "Tangier Med",
+    "countryIso2": "MA",
+    "location": {
+      "lon": -5.5,
+      "lat": 35.88
+    },
+    "timeZone": "Africa/Casablanca",
+    "regionId": "REG-MED",
+    "terminalIds": [
+      "TRM-TNG"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:31:00Z"
+  },
+  {
+    "portId": "PRT-CAS",
+    "name": "Casablanca",
+    "countryIso2": "MA",
+    "location": {
+      "lon": -7.61,
+      "lat": 33.61
+    },
+    "timeZone": "Africa/Casablanca",
+    "regionId": "REG-WAF",
+    "terminalIds": [
+      "TRM-CAS"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:52:00Z"
+  },
+  {
+    "portId": "PRT-ABJ",
+    "name": "Abidjan",
+    "countryIso2": "CI",
+    "location": {
+      "lon": -4.01,
+      "lat": 5.31
+    },
+    "timeZone": "Africa/Abidjan",
+    "regionId": "REG-WAF",
+    "terminalIds": [
+      "TRM-ABJ"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:46:00Z"
+  },
+  {
+    "portId": "PRT-TEM",
+    "name": "Tema",
+    "countryIso2": "GH",
+    "location": {
+      "lon": 0.01,
+      "lat": 5.63
+    },
+    "timeZone": "Africa/Accra",
+    "regionId": "REG-WAF",
+    "terminalIds": [
+      "TRM-TEM"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T10:54:00Z"
+  },
+  {
+    "portId": "PRT-LAD",
+    "name": "Luanda",
+    "countryIso2": "AO",
+    "location": {
+      "lon": 13.23,
+      "lat": -8.82
+    },
+    "timeZone": "Africa/Luanda",
+    "regionId": "REG-WAF",
+    "terminalIds": [
+      "TRM-LAD"
+    ],
+    "sourceType": "approximate-demo-centroid",
+    "syntheticOperationalData": true,
+    "lastUpdatedUtc": "2026-11-09T11:24:00Z"
+  }
+]

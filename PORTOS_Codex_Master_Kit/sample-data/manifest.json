@@ -1,0 +1,35 @@
+{
+  "dataset": "PORTOS Synthetic Maritime Operations Demo",
+  "version": "1.0.0",
+  "seed": 92026,
+  "fixedScenarioTimeUtc": "2026-11-09T12:00:00Z",
+  "sourceDisclosure": "Illustrative simulation, not live AIS, port, weather or nautical navigation data",
+  "counts": {
+    "regions": 8,
+    "ports": 100,
+    "terminals": 100,
+    "berths": 200,
+    "anchorages": 100,
+    "routes": 12,
+    "vessels": 500,
+    "voyages": 200,
+    "positions": 6500,
+    "portCalls": 240,
+    "incidents": 50,
+    "evidence": 50,
+    "weatherHazards": 15,
+    "events": 250,
+    "users": 5
+  },
+  "scenario": {
+    "vesselId": "VSL-0001",
+    "vesselName": "MV Pacific Horizon",
+    "voyageId": "VYG-0001",
+    "incidentId": "INC-0001",
+    "portId": "PRT-SIN",
+    "destinationPortId": "PRT-RTM",
+    "etaShiftHours": 18,
+    "dailyDelayCostUsd": 32000,
+    "expectedEstimatedExposureUsd": 24000
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/vessels.schema.json",
+  "title": "PORTOS synthetic vessels collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "beamMeters": {
+        "type": "integer"
+      },
+      "cogDeg": {
+        "type": [
+          "integer",
+          "null"
+        ]
+      },
+      "currentVoyageId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "flagCountryIso2": {
+        "type": "string"
+      },
+      "lastKnownPosition": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number"
+          },
+          "lon": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "additionalProperties": false
+      },
+      "lastReportedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "lengthMeters": {
+        "type": "integer"
+      },
+      "name": {
+        "type": "string"
+      },
+      "navStatus": {
+        "type": "string"
+      },
+      "sogKn": {
+        "type": [
+          "number",
+          "null"
+        ]
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "vesselId": {
+        "type": "string"
+      },
+      "vesselType": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "beamMeters",
+      "cogDeg",
+      "currentVoyageId",
+      "flagCountryIso2",
+      "lastKnownPosition",
+      "lastReportedAtUtc",
+      "lengthMeters",
+      "name",
+      "navStatus",
+      "sogKn",
+      "sourceType",
+      "vesselId",
+      "vesselType"
+    ],
+    "additionalProperties": false
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/portCalls.schema.json",
+  "title": "PORTOS synthetic portCalls collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "arrivalAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "berthId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "estimatedBerthUtc": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "Z$"
+      },
+      "portCallId": {
+        "type": "string"
+      },
+      "portId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "terminalId": {
+        "type": "string"
+      },
+      "vesselId": {
+        "type": "string"
+      },
+      "voyageId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "waitingSinceUtc": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "Z$"
+      }
+    },
+    "required": [
+      "arrivalAtUtc",
+      "berthId",
+      "estimatedBerthUtc",
+      "portCallId",
+      "portId",
+      "sourceType",
+      "status",
+      "terminalId",
+      "vesselId",
+      "voyageId",
+      "waitingSinceUtc"
+    ],
+    "additionalProperties": false
+  }
+}

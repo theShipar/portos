@@ -1,0 +1,602 @@
+[
+  {
+    "terminalId": "TRM-SIN",
+    "portId": "PRT-SIN",
+    "name": "Singapore Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-RTM",
+    "portId": "PRT-RTM",
+    "name": "Rotterdam Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SHA",
+    "portId": "PRT-SHA",
+    "name": "Shanghai Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SZX",
+    "portId": "PRT-SZX",
+    "name": "Shenzhen Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-NGB",
+    "portId": "PRT-NGB",
+    "name": "Ningbo Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BUS",
+    "portId": "PRT-BUS",
+    "name": "Busan Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HKG",
+    "portId": "PRT-HKG",
+    "name": "Hong Kong Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-JEA",
+    "portId": "PRT-JEA",
+    "name": "Jebel Ali Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LAX",
+    "portId": "PRT-LAX",
+    "name": "Los Angeles Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LGB",
+    "portId": "PRT-LGB",
+    "name": "Long Beach Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-NYC",
+    "portId": "PRT-NYC",
+    "name": "New York New Jersey Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HAM",
+    "portId": "PRT-HAM",
+    "name": "Hamburg Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ANR",
+    "portId": "PRT-ANR",
+    "name": "Antwerp Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-VLC",
+    "portId": "PRT-VLC",
+    "name": "Valencia Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ALG",
+    "portId": "PRT-ALG",
+    "name": "Algeciras Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-FLX",
+    "portId": "PRT-FLX",
+    "name": "Felixstowe Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SOU",
+    "portId": "PRT-SOU",
+    "name": "Southampton Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LHV",
+    "portId": "PRT-LHV",
+    "name": "Le Havre Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MRS",
+    "portId": "PRT-MRS",
+    "name": "Marseille Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-PIR",
+    "portId": "PRT-PIR",
+    "name": "Piraeus Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-IST",
+    "portId": "PRT-IST",
+    "name": "Istanbul Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-GOA",
+    "portId": "PRT-GOA",
+    "name": "Genoa Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BCN",
+    "portId": "PRT-BCN",
+    "name": "Barcelona Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ALX",
+    "portId": "PRT-ALX",
+    "name": "Alexandria Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-PSD",
+    "portId": "PRT-PSD",
+    "name": "Port Said Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-DUR",
+    "portId": "PRT-DUR",
+    "name": "Durban Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CPT",
+    "portId": "PRT-CPT",
+    "name": "Cape Town Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LAG",
+    "portId": "PRT-LAG",
+    "name": "Lagos Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MBA",
+    "portId": "PRT-MBA",
+    "name": "Mombasa Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-DJB",
+    "portId": "PRT-DJB",
+    "name": "Djibouti Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CMB",
+    "portId": "PRT-CMB",
+    "name": "Colombo Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MUM",
+    "portId": "PRT-MUM",
+    "name": "Mumbai Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MAA",
+    "portId": "PRT-MAA",
+    "name": "Chennai Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MUN",
+    "portId": "PRT-MUN",
+    "name": "Mundra Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-KHI",
+    "portId": "PRT-KHI",
+    "name": "Karachi Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CGP",
+    "portId": "PRT-CGP",
+    "name": "Chattogram Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-RGN",
+    "portId": "PRT-RGN",
+    "name": "Yangon Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BKK",
+    "portId": "PRT-BKK",
+    "name": "Bangkok Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LCH",
+    "portId": "PRT-LCH",
+    "name": "Laem Chabang Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-PKG",
+    "portId": "PRT-PKG",
+    "name": "Port Klang Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TPP",
+    "portId": "PRT-TPP",
+    "name": "Tanjung Pelepas Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-JKT",
+    "portId": "PRT-JKT",
+    "name": "Jakarta Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SBY",
+    "portId": "PRT-SBY",
+    "name": "Surabaya Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MNL",
+    "portId": "PRT-MNL",
+    "name": "Manila Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HCM",
+    "portId": "PRT-HCM",
+    "name": "Ho Chi Minh City Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HPH",
+    "portId": "PRT-HPH",
+    "name": "Haiphong Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TAO",
+    "portId": "PRT-TAO",
+    "name": "Qingdao Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TSN",
+    "portId": "PRT-TSN",
+    "name": "Tianjin Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-DLC",
+    "portId": "PRT-DLC",
+    "name": "Dalian Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-XMN",
+    "portId": "PRT-XMN",
+    "name": "Xiamen Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-KHH",
+    "portId": "PRT-KHH",
+    "name": "Kaohsiung Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TYO",
+    "portId": "PRT-TYO",
+    "name": "Tokyo Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-YOK",
+    "portId": "PRT-YOK",
+    "name": "Yokohama Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-UKB",
+    "portId": "PRT-UKB",
+    "name": "Kobe Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-OSA",
+    "portId": "PRT-OSA",
+    "name": "Osaka Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-NGO",
+    "portId": "PRT-NGO",
+    "name": "Nagoya Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MEL",
+    "portId": "PRT-MEL",
+    "name": "Melbourne Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SYD",
+    "portId": "PRT-SYD",
+    "name": "Sydney Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BNE",
+    "portId": "PRT-BNE",
+    "name": "Brisbane Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-FRE",
+    "portId": "PRT-FRE",
+    "name": "Fremantle Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-AKL",
+    "portId": "PRT-AKL",
+    "name": "Auckland Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TRG",
+    "portId": "PRT-TRG",
+    "name": "Tauranga Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-WLG",
+    "portId": "PRT-WLG",
+    "name": "Wellington Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-YVR",
+    "portId": "PRT-YVR",
+    "name": "Vancouver Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-PRR",
+    "portId": "PRT-PRR",
+    "name": "Prince Rupert Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SEA",
+    "portId": "PRT-SEA",
+    "name": "Seattle Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TAC",
+    "portId": "PRT-TAC",
+    "name": "Tacoma Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-OAK",
+    "portId": "PRT-OAK",
+    "name": "Oakland Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SFO",
+    "portId": "PRT-SFO",
+    "name": "San Francisco Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HOU",
+    "portId": "PRT-HOU",
+    "name": "Houston Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MSY",
+    "portId": "PRT-MSY",
+    "name": "New Orleans Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MIA",
+    "portId": "PRT-MIA",
+    "name": "Miami Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SAV",
+    "portId": "PRT-SAV",
+    "name": "Savannah Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CHS",
+    "portId": "PRT-CHS",
+    "name": "Charleston Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ORF",
+    "portId": "PRT-ORF",
+    "name": "Norfolk Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BAL",
+    "portId": "PRT-BAL",
+    "name": "Baltimore Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HFX",
+    "portId": "PRT-HFX",
+    "name": "Halifax Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-YMQ",
+    "portId": "PRT-YMQ",
+    "name": "Montreal Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SSZ",
+    "portId": "PRT-SSZ",
+    "name": "Santos Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-RIO",
+    "portId": "PRT-RIO",
+    "name": "Rio de Janeiro Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BUE",
+    "portId": "PRT-BUE",
+    "name": "Buenos Aires Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MVD",
+    "portId": "PRT-MVD",
+    "name": "Montevideo Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-VAP",
+    "portId": "PRT-VAP",
+    "name": "Valparaiso Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SAI",
+    "portId": "PRT-SAI",
+    "name": "San Antonio Chile Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CLL",
+    "portId": "PRT-CLL",
+    "name": "Callao Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-GYE",
+    "portId": "PRT-GYE",
+    "name": "Guayaquil Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CTG",
+    "portId": "PRT-CTG",
+    "name": "Cartagena Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BALB",
+    "portId": "PRT-BALB",
+    "name": "Balboa Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CRB",
+    "portId": "PRT-CRB",
+    "name": "Cristobal Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-KIN",
+    "portId": "PRT-KIN",
+    "name": "Kingston Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-VER",
+    "portId": "PRT-VER",
+    "name": "Veracruz Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MAN",
+    "portId": "PRT-MAN",
+    "name": "Manzanillo Mexico Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ENS",
+    "portId": "PRT-ENS",
+    "name": "Ensenada Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LZC",
+    "portId": "PRT-LZC",
+    "name": "Lazaro Cardenas Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-COL",
+    "portId": "PRT-COL",
+    "name": "Colon Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TNG",
+    "portId": "PRT-TNG",
+    "name": "Tangier Med Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CAS",
+    "portId": "PRT-CAS",
+    "name": "Casablanca Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ABJ",
+    "portId": "PRT-ABJ",
+    "name": "Abidjan Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TEM",
+    "portId": "PRT-TEM",
+    "name": "Tema Demo Terminal",
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LAD",
+    "portId": "PRT-LAD",
+    "name": "Luanda Demo Terminal",
+    "sourceType": "synthetic-layout"
+  }
+]

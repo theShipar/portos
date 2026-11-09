@@ -1,0 +1,752 @@
+[
+  {
+    "evidenceId": "EVD-0001",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0001",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0001"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T02:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0002",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0002",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0003"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T15:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0003",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0003",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0004"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T02:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0004",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0004",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0005"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-14T07:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0005",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0005",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0006"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T18:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0006",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0006",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0007"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-14T14:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0007",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0007",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0008"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-14T01:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0008",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0008",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0009"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-23T05:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0009",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0009",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0010"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-15T19:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0010",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0010",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0011"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-23T20:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0011",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0011",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0012"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-21T16:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0012",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0012",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0013"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-12T23:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0013",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0013",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0014"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T13:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0014",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0014",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0015"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T01:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0015",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0015",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0016"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-21T06:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0016",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0016",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0017"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T14:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0017",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0017",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0018"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-24T16:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0018",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0018",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0019"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-16T11:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0019",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0019",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0020"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-18T10:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0020",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0020",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0021"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T01:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0021",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0021",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0022"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-21T01:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0022",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0022",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0023"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-20T14:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0023",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0023",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0024"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-25T06:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0024",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0024",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0025"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-21T17:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0025",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0025",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0026"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-26T07:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0026",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0026",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0027"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-11T11:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0027",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0027",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0028"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-14T15:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0028",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0028",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0029"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-20T08:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0029",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0029",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0030"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-16T07:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0030",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0030",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0031"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-15T08:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0031",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0031",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0032"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-11T04:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0032",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0032",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0033"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-22T07:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0033",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0033",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0034"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-19T22:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0034",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0034",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0035"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-16T01:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0035",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0035",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0036"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T22:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0036",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0036",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0037"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-24T12:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0037",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0037",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0038"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-21T21:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0038",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0038",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0039"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-26T03:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0039",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0039",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0040"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-16T06:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0040",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0040",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0041"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-16T02:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0041",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0041",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0042"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-25T07:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0042",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0042",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0043"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-15T21:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0043",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0043",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0044"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-22T17:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0044",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0044",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0045"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-21T06:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0045",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0045",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0046"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-19T23:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0046",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0046",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0047"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-29T03:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0047",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0047",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0048"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-12T03:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0048",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0048",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0049"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-10T14:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0049",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0049",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0050"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-27T07:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  },
+  {
+    "evidenceId": "EVD-0050",
+    "sourceType": "synthetic-scenario",
+    "sourceId": "EVT-0050",
+    "observedAtUtc": "2026-11-09T10:00:00Z",
+    "receivedAtUtc": "2026-11-09T10:10:00Z",
+    "entityRef": {
+      "kind": "voyage",
+      "id": "VYG-0051"
+    },
+    "field": "estimatedArrivalUtc",
+    "value": "2026-11-12T12:00:00Z",
+    "unit": null,
+    "quality": "synthetic"
+  }
+]

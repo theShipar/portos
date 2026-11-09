@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/berths.schema.json",
+  "title": "PORTOS synthetic berths collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "berthId": {
+        "type": "string"
+      },
+      "lastUpdatedUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "location": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number"
+          },
+          "lon": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "additionalProperties": false
+      },
+      "name": {
+        "type": "string"
+      },
+      "occupiedByVesselId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "portId": {
+        "type": "string"
+      },
+      "scheduledVesselId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "scheduledWindowEndUtc": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "Z$"
+      },
+      "scheduledWindowStartUtc": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "Z$"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "terminalId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "berthId",
+      "lastUpdatedUtc",
+      "location",
+      "name",
+      "occupiedByVesselId",
+      "portId",
+      "scheduledVesselId",
+      "scheduledWindowEndUtc",
+      "scheduledWindowStartUtc",
+      "sourceType",
+      "status",
+      "terminalId"
+    ],
+    "additionalProperties": false
+  }
+}

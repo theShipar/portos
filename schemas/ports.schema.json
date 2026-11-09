@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/ports.schema.json",
+  "title": "PORTOS synthetic ports collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "countryIso2": {
+        "type": "string",
+        "pattern": "^[A-Z]{2}$"
+      },
+      "lastUpdatedUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "location": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number"
+          },
+          "lon": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "additionalProperties": false
+      },
+      "name": {
+        "type": "string"
+      },
+      "portId": {
+        "type": "string"
+      },
+      "regionId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "syntheticOperationalData": {
+        "type": "boolean"
+      },
+      "terminalIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "timeZone": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "countryIso2",
+      "lastUpdatedUtc",
+      "location",
+      "name",
+      "portId",
+      "regionId",
+      "sourceType",
+      "syntheticOperationalData",
+      "terminalIds",
+      "timeZone"
+    ],
+    "additionalProperties": false
+  }
+}

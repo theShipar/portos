@@ -1,0 +1,4886 @@
+[
+  {
+    "anchorageId": "ANC-SIN",
+    "portId": "PRT-SIN",
+    "name": "Singapore Eastern Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 103.875,
+        "lat": 1.228
+      },
+      {
+        "lon": 104.025,
+        "lat": 1.226
+      },
+      {
+        "lon": 104.03,
+        "lat": 1.262
+      },
+      {
+        "lon": 103.985,
+        "lat": 1.282
+      },
+      {
+        "lon": 103.9,
+        "lat": 1.284
+      },
+      {
+        "lon": 103.872,
+        "lat": 1.262
+      }
+    ],
+    "capacityEstimate": 45,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-RTM",
+    "portId": "PRT-RTM",
+    "name": "Rotterdam Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 4.69,
+        "lat": 51.8
+      },
+      {
+        "lon": 4.676631,
+        "lat": 51.832916
+      },
+      {
+        "lon": 4.641631,
+        "lat": 51.853259
+      },
+      {
+        "lon": 4.598369,
+        "lat": 51.853259
+      },
+      {
+        "lon": 4.563369,
+        "lat": 51.832916
+      },
+      {
+        "lon": 4.55,
+        "lat": 51.8
+      },
+      {
+        "lon": 4.563369,
+        "lat": 51.767084
+      },
+      {
+        "lon": 4.598369,
+        "lat": 51.746741
+      },
+      {
+        "lon": 4.641631,
+        "lat": 51.746741
+      },
+      {
+        "lon": 4.676631,
+        "lat": 51.767084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SHA",
+    "portId": "PRT-SHA",
+    "name": "Shanghai Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 121.7,
+        "lat": 31.11
+      },
+      {
+        "lon": 121.686631,
+        "lat": 31.142916
+      },
+      {
+        "lon": 121.651631,
+        "lat": 31.163259
+      },
+      {
+        "lon": 121.608369,
+        "lat": 31.163259
+      },
+      {
+        "lon": 121.573369,
+        "lat": 31.142916
+      },
+      {
+        "lon": 121.56,
+        "lat": 31.11
+      },
+      {
+        "lon": 121.573369,
+        "lat": 31.077084
+      },
+      {
+        "lon": 121.608369,
+        "lat": 31.056741
+      },
+      {
+        "lon": 121.651631,
+        "lat": 31.056741
+      },
+      {
+        "lon": 121.686631,
+        "lat": 31.077084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SZX",
+    "portId": "PRT-SZX",
+    "name": "Shenzhen Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 114.33,
+        "lat": 22.41
+      },
+      {
+        "lon": 114.316631,
+        "lat": 22.442916
+      },
+      {
+        "lon": 114.281631,
+        "lat": 22.463259
+      },
+      {
+        "lon": 114.238369,
+        "lat": 22.463259
+      },
+      {
+        "lon": 114.203369,
+        "lat": 22.442916
+      },
+      {
+        "lon": 114.19,
+        "lat": 22.41
+      },
+      {
+        "lon": 114.203369,
+        "lat": 22.377084
+      },
+      {
+        "lon": 114.238369,
+        "lat": 22.356741
+      },
+      {
+        "lon": 114.281631,
+        "lat": 22.356741
+      },
+      {
+        "lon": 114.316631,
+        "lat": 22.377084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-NGB",
+    "portId": "PRT-NGB",
+    "name": "Ningbo Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 121.77,
+        "lat": 29.76
+      },
+      {
+        "lon": 121.756631,
+        "lat": 29.792916
+      },
+      {
+        "lon": 121.721631,
+        "lat": 29.813259
+      },
+      {
+        "lon": 121.678369,
+        "lat": 29.813259
+      },
+      {
+        "lon": 121.643369,
+        "lat": 29.792916
+      },
+      {
+        "lon": 121.63,
+        "lat": 29.76
+      },
+      {
+        "lon": 121.643369,
+        "lat": 29.727084
+      },
+      {
+        "lon": 121.678369,
+        "lat": 29.706741
+      },
+      {
+        "lon": 121.721631,
+        "lat": 29.706741
+      },
+      {
+        "lon": 121.756631,
+        "lat": 29.727084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-BUS",
+    "portId": "PRT-BUS",
+    "name": "Busan Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 129.25,
+        "lat": 34.98
+      },
+      {
+        "lon": 129.236631,
+        "lat": 35.012916
+      },
+      {
+        "lon": 129.201631,
+        "lat": 35.033259
+      },
+      {
+        "lon": 129.158369,
+        "lat": 35.033259
+      },
+      {
+        "lon": 129.123369,
+        "lat": 35.012916
+      },
+      {
+        "lon": 129.11,
+        "lat": 34.98
+      },
+      {
+        "lon": 129.123369,
+        "lat": 34.947084
+      },
+      {
+        "lon": 129.158369,
+        "lat": 34.926741
+      },
+      {
+        "lon": 129.201631,
+        "lat": 34.926741
+      },
+      {
+        "lon": 129.236631,
+        "lat": 34.947084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-HKG",
+    "portId": "PRT-HKG",
+    "name": "Hong Kong Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 114.38,
+        "lat": 22.18
+      },
+      {
+        "lon": 114.366631,
+        "lat": 22.212916
+      },
+      {
+        "lon": 114.331631,
+        "lat": 22.233259
+      },
+      {
+        "lon": 114.288369,
+        "lat": 22.233259
+      },
+      {
+        "lon": 114.253369,
+        "lat": 22.212916
+      },
+      {
+        "lon": 114.24,
+        "lat": 22.18
+      },
+      {
+        "lon": 114.253369,
+        "lat": 22.147084
+      },
+      {
+        "lon": 114.288369,
+        "lat": 22.126741
+      },
+      {
+        "lon": 114.331631,
+        "lat": 22.126741
+      },
+      {
+        "lon": 114.366631,
+        "lat": 22.147084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-JEA",
+    "portId": "PRT-JEA",
+    "name": "Jebel Ali Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 55.28,
+        "lat": 24.87
+      },
+      {
+        "lon": 55.266631,
+        "lat": 24.902916
+      },
+      {
+        "lon": 55.231631,
+        "lat": 24.923259
+      },
+      {
+        "lon": 55.188369,
+        "lat": 24.923259
+      },
+      {
+        "lon": 55.153369,
+        "lat": 24.902916
+      },
+      {
+        "lon": 55.14,
+        "lat": 24.87
+      },
+      {
+        "lon": 55.153369,
+        "lat": 24.837084
+      },
+      {
+        "lon": 55.188369,
+        "lat": 24.816741
+      },
+      {
+        "lon": 55.231631,
+        "lat": 24.816741
+      },
+      {
+        "lon": 55.266631,
+        "lat": 24.837084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-LAX",
+    "portId": "PRT-LAX",
+    "name": "Los Angeles Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -118.06,
+        "lat": 33.61
+      },
+      {
+        "lon": -118.073369,
+        "lat": 33.642916
+      },
+      {
+        "lon": -118.108369,
+        "lat": 33.663259
+      },
+      {
+        "lon": -118.151631,
+        "lat": 33.663259
+      },
+      {
+        "lon": -118.186631,
+        "lat": 33.642916
+      },
+      {
+        "lon": -118.2,
+        "lat": 33.61
+      },
+      {
+        "lon": -118.186631,
+        "lat": 33.577084
+      },
+      {
+        "lon": -118.151631,
+        "lat": 33.556741
+      },
+      {
+        "lon": -118.108369,
+        "lat": 33.556741
+      },
+      {
+        "lon": -118.073369,
+        "lat": 33.577084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-LGB",
+    "portId": "PRT-LGB",
+    "name": "Long Beach Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -117.98,
+        "lat": 33.63
+      },
+      {
+        "lon": -117.993369,
+        "lat": 33.662916
+      },
+      {
+        "lon": -118.028369,
+        "lat": 33.683259
+      },
+      {
+        "lon": -118.071631,
+        "lat": 33.683259
+      },
+      {
+        "lon": -118.106631,
+        "lat": 33.662916
+      },
+      {
+        "lon": -118.12,
+        "lat": 33.63
+      },
+      {
+        "lon": -118.106631,
+        "lat": 33.597084
+      },
+      {
+        "lon": -118.071631,
+        "lat": 33.576741
+      },
+      {
+        "lon": -118.028369,
+        "lat": 33.576741
+      },
+      {
+        "lon": -117.993369,
+        "lat": 33.597084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-NYC",
+    "portId": "PRT-NYC",
+    "name": "New York New Jersey Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -73.84,
+        "lat": 40.55
+      },
+      {
+        "lon": -73.853369,
+        "lat": 40.582916
+      },
+      {
+        "lon": -73.888369,
+        "lat": 40.603259
+      },
+      {
+        "lon": -73.931631,
+        "lat": 40.603259
+      },
+      {
+        "lon": -73.966631,
+        "lat": 40.582916
+      },
+      {
+        "lon": -73.98,
+        "lat": 40.55
+      },
+      {
+        "lon": -73.966631,
+        "lat": 40.517084
+      },
+      {
+        "lon": -73.931631,
+        "lat": 40.496741
+      },
+      {
+        "lon": -73.888369,
+        "lat": 40.496741
+      },
+      {
+        "lon": -73.853369,
+        "lat": 40.517084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-HAM",
+    "portId": "PRT-HAM",
+    "name": "Hamburg Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 10.17,
+        "lat": 53.42
+      },
+      {
+        "lon": 10.156631,
+        "lat": 53.452916
+      },
+      {
+        "lon": 10.121631,
+        "lat": 53.473259
+      },
+      {
+        "lon": 10.078369,
+        "lat": 53.473259
+      },
+      {
+        "lon": 10.043369,
+        "lat": 53.452916
+      },
+      {
+        "lon": 10.03,
+        "lat": 53.42
+      },
+      {
+        "lon": 10.043369,
+        "lat": 53.387084
+      },
+      {
+        "lon": 10.078369,
+        "lat": 53.366741
+      },
+      {
+        "lon": 10.121631,
+        "lat": 53.366741
+      },
+      {
+        "lon": 10.156631,
+        "lat": 53.387084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-ANR",
+    "portId": "PRT-ANR",
+    "name": "Antwerp Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 4.61,
+        "lat": 51.14
+      },
+      {
+        "lon": 4.596631,
+        "lat": 51.172916
+      },
+      {
+        "lon": 4.561631,
+        "lat": 51.193259
+      },
+      {
+        "lon": 4.518369,
+        "lat": 51.193259
+      },
+      {
+        "lon": 4.483369,
+        "lat": 51.172916
+      },
+      {
+        "lon": 4.47,
+        "lat": 51.14
+      },
+      {
+        "lon": 4.483369,
+        "lat": 51.107084
+      },
+      {
+        "lon": 4.518369,
+        "lat": 51.086741
+      },
+      {
+        "lon": 4.561631,
+        "lat": 51.086741
+      },
+      {
+        "lon": 4.596631,
+        "lat": 51.107084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-VLC",
+    "portId": "PRT-VLC",
+    "name": "Valencia Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -0.11,
+        "lat": 39.32
+      },
+      {
+        "lon": -0.123369,
+        "lat": 39.352916
+      },
+      {
+        "lon": -0.158369,
+        "lat": 39.373259
+      },
+      {
+        "lon": -0.201631,
+        "lat": 39.373259
+      },
+      {
+        "lon": -0.236631,
+        "lat": 39.352916
+      },
+      {
+        "lon": -0.25,
+        "lat": 39.32
+      },
+      {
+        "lon": -0.236631,
+        "lat": 39.287084
+      },
+      {
+        "lon": -0.201631,
+        "lat": 39.266741
+      },
+      {
+        "lon": -0.158369,
+        "lat": 39.266741
+      },
+      {
+        "lon": -0.123369,
+        "lat": 39.287084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-ALG",
+    "portId": "PRT-ALG",
+    "name": "Algeciras Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -5.24,
+        "lat": 36.01
+      },
+      {
+        "lon": -5.253369,
+        "lat": 36.042916
+      },
+      {
+        "lon": -5.288369,
+        "lat": 36.063259
+      },
+      {
+        "lon": -5.331631,
+        "lat": 36.063259
+      },
+      {
+        "lon": -5.366631,
+        "lat": 36.042916
+      },
+      {
+        "lon": -5.38,
+        "lat": 36.01
+      },
+      {
+        "lon": -5.366631,
+        "lat": 35.977084
+      },
+      {
+        "lon": -5.331631,
+        "lat": 35.956741
+      },
+      {
+        "lon": -5.288369,
+        "lat": 35.956741
+      },
+      {
+        "lon": -5.253369,
+        "lat": 35.977084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-FLX",
+    "portId": "PRT-FLX",
+    "name": "Felixstowe Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 1.56,
+        "lat": 51.84
+      },
+      {
+        "lon": 1.546631,
+        "lat": 51.872916
+      },
+      {
+        "lon": 1.511631,
+        "lat": 51.893259
+      },
+      {
+        "lon": 1.468369,
+        "lat": 51.893259
+      },
+      {
+        "lon": 1.433369,
+        "lat": 51.872916
+      },
+      {
+        "lon": 1.42,
+        "lat": 51.84
+      },
+      {
+        "lon": 1.433369,
+        "lat": 51.807084
+      },
+      {
+        "lon": 1.468369,
+        "lat": 51.786741
+      },
+      {
+        "lon": 1.511631,
+        "lat": 51.786741
+      },
+      {
+        "lon": 1.546631,
+        "lat": 51.807084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SOU",
+    "portId": "PRT-SOU",
+    "name": "Southampton Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -1.19,
+        "lat": 50.78
+      },
+      {
+        "lon": -1.203369,
+        "lat": 50.812916
+      },
+      {
+        "lon": -1.238369,
+        "lat": 50.833259
+      },
+      {
+        "lon": -1.281631,
+        "lat": 50.833259
+      },
+      {
+        "lon": -1.316631,
+        "lat": 50.812916
+      },
+      {
+        "lon": -1.33,
+        "lat": 50.78
+      },
+      {
+        "lon": -1.316631,
+        "lat": 50.747084
+      },
+      {
+        "lon": -1.281631,
+        "lat": 50.726741
+      },
+      {
+        "lon": -1.238369,
+        "lat": 50.726741
+      },
+      {
+        "lon": -1.203369,
+        "lat": 50.747084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-LHV",
+    "portId": "PRT-LHV",
+    "name": "Le Havre Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 0.33,
+        "lat": 49.37
+      },
+      {
+        "lon": 0.316631,
+        "lat": 49.402916
+      },
+      {
+        "lon": 0.281631,
+        "lat": 49.423259
+      },
+      {
+        "lon": 0.238369,
+        "lat": 49.423259
+      },
+      {
+        "lon": 0.203369,
+        "lat": 49.402916
+      },
+      {
+        "lon": 0.19,
+        "lat": 49.37
+      },
+      {
+        "lon": 0.203369,
+        "lat": 49.337084
+      },
+      {
+        "lon": 0.238369,
+        "lat": 49.316741
+      },
+      {
+        "lon": 0.281631,
+        "lat": 49.316741
+      },
+      {
+        "lon": 0.316631,
+        "lat": 49.337084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MRS",
+    "portId": "PRT-MRS",
+    "name": "Marseille Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 5.57,
+        "lat": 43.18
+      },
+      {
+        "lon": 5.556631,
+        "lat": 43.212916
+      },
+      {
+        "lon": 5.521631,
+        "lat": 43.233259
+      },
+      {
+        "lon": 5.478369,
+        "lat": 43.233259
+      },
+      {
+        "lon": 5.443369,
+        "lat": 43.212916
+      },
+      {
+        "lon": 5.43,
+        "lat": 43.18
+      },
+      {
+        "lon": 5.443369,
+        "lat": 43.147084
+      },
+      {
+        "lon": 5.478369,
+        "lat": 43.126741
+      },
+      {
+        "lon": 5.521631,
+        "lat": 43.126741
+      },
+      {
+        "lon": 5.556631,
+        "lat": 43.147084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-PIR",
+    "portId": "PRT-PIR",
+    "name": "Piraeus Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 23.84,
+        "lat": 37.82
+      },
+      {
+        "lon": 23.826631,
+        "lat": 37.852916
+      },
+      {
+        "lon": 23.791631,
+        "lat": 37.873259
+      },
+      {
+        "lon": 23.748369,
+        "lat": 37.873259
+      },
+      {
+        "lon": 23.713369,
+        "lat": 37.852916
+      },
+      {
+        "lon": 23.7,
+        "lat": 37.82
+      },
+      {
+        "lon": 23.713369,
+        "lat": 37.787084
+      },
+      {
+        "lon": 23.748369,
+        "lat": 37.766741
+      },
+      {
+        "lon": 23.791631,
+        "lat": 37.766741
+      },
+      {
+        "lon": 23.826631,
+        "lat": 37.787084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-IST",
+    "portId": "PRT-IST",
+    "name": "Istanbul Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 29.18,
+        "lat": 40.89
+      },
+      {
+        "lon": 29.166631,
+        "lat": 40.922916
+      },
+      {
+        "lon": 29.131631,
+        "lat": 40.943259
+      },
+      {
+        "lon": 29.088369,
+        "lat": 40.943259
+      },
+      {
+        "lon": 29.053369,
+        "lat": 40.922916
+      },
+      {
+        "lon": 29.04,
+        "lat": 40.89
+      },
+      {
+        "lon": 29.053369,
+        "lat": 40.857084
+      },
+      {
+        "lon": 29.088369,
+        "lat": 40.836741
+      },
+      {
+        "lon": 29.131631,
+        "lat": 40.836741
+      },
+      {
+        "lon": 29.166631,
+        "lat": 40.857084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-GOA",
+    "portId": "PRT-GOA",
+    "name": "Genoa Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 9.13,
+        "lat": 44.28
+      },
+      {
+        "lon": 9.116631,
+        "lat": 44.312916
+      },
+      {
+        "lon": 9.081631,
+        "lat": 44.333259
+      },
+      {
+        "lon": 9.038369,
+        "lat": 44.333259
+      },
+      {
+        "lon": 9.003369,
+        "lat": 44.312916
+      },
+      {
+        "lon": 8.99,
+        "lat": 44.28
+      },
+      {
+        "lon": 9.003369,
+        "lat": 44.247084
+      },
+      {
+        "lon": 9.038369,
+        "lat": 44.226741
+      },
+      {
+        "lon": 9.081631,
+        "lat": 44.226741
+      },
+      {
+        "lon": 9.116631,
+        "lat": 44.247084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-BCN",
+    "portId": "PRT-BCN",
+    "name": "Barcelona Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 2.37,
+        "lat": 41.23
+      },
+      {
+        "lon": 2.356631,
+        "lat": 41.262916
+      },
+      {
+        "lon": 2.321631,
+        "lat": 41.283259
+      },
+      {
+        "lon": 2.278369,
+        "lat": 41.283259
+      },
+      {
+        "lon": 2.243369,
+        "lat": 41.262916
+      },
+      {
+        "lon": 2.23,
+        "lat": 41.23
+      },
+      {
+        "lon": 2.243369,
+        "lat": 41.197084
+      },
+      {
+        "lon": 2.278369,
+        "lat": 41.176741
+      },
+      {
+        "lon": 2.321631,
+        "lat": 41.176741
+      },
+      {
+        "lon": 2.356631,
+        "lat": 41.197084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-ALX",
+    "portId": "PRT-ALX",
+    "name": "Alexandria Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 30.09,
+        "lat": 31.08
+      },
+      {
+        "lon": 30.076631,
+        "lat": 31.112916
+      },
+      {
+        "lon": 30.041631,
+        "lat": 31.133259
+      },
+      {
+        "lon": 29.998369,
+        "lat": 31.133259
+      },
+      {
+        "lon": 29.963369,
+        "lat": 31.112916
+      },
+      {
+        "lon": 29.95,
+        "lat": 31.08
+      },
+      {
+        "lon": 29.963369,
+        "lat": 31.047084
+      },
+      {
+        "lon": 29.998369,
+        "lat": 31.026741
+      },
+      {
+        "lon": 30.041631,
+        "lat": 31.026741
+      },
+      {
+        "lon": 30.076631,
+        "lat": 31.047084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-PSD",
+    "portId": "PRT-PSD",
+    "name": "Port Said Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 32.52,
+        "lat": 31.14
+      },
+      {
+        "lon": 32.506631,
+        "lat": 31.172916
+      },
+      {
+        "lon": 32.471631,
+        "lat": 31.193259
+      },
+      {
+        "lon": 32.428369,
+        "lat": 31.193259
+      },
+      {
+        "lon": 32.393369,
+        "lat": 31.172916
+      },
+      {
+        "lon": 32.38,
+        "lat": 31.14
+      },
+      {
+        "lon": 32.393369,
+        "lat": 31.107084
+      },
+      {
+        "lon": 32.428369,
+        "lat": 31.086741
+      },
+      {
+        "lon": 32.471631,
+        "lat": 31.086741
+      },
+      {
+        "lon": 32.506631,
+        "lat": 31.107084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-DUR",
+    "portId": "PRT-DUR",
+    "name": "Durban Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 31.24,
+        "lat": -29.99
+      },
+      {
+        "lon": 31.226631,
+        "lat": -29.957084
+      },
+      {
+        "lon": 31.191631,
+        "lat": -29.936741
+      },
+      {
+        "lon": 31.148369,
+        "lat": -29.936741
+      },
+      {
+        "lon": 31.113369,
+        "lat": -29.957084
+      },
+      {
+        "lon": 31.1,
+        "lat": -29.99
+      },
+      {
+        "lon": 31.113369,
+        "lat": -30.022916
+      },
+      {
+        "lon": 31.148369,
+        "lat": -30.043259
+      },
+      {
+        "lon": 31.191631,
+        "lat": -30.043259
+      },
+      {
+        "lon": 31.226631,
+        "lat": -30.022916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-CPT",
+    "portId": "PRT-CPT",
+    "name": "Cape Town Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 18.65,
+        "lat": -34.04
+      },
+      {
+        "lon": 18.636631,
+        "lat": -34.007084
+      },
+      {
+        "lon": 18.601631,
+        "lat": -33.986741
+      },
+      {
+        "lon": 18.558369,
+        "lat": -33.986741
+      },
+      {
+        "lon": 18.523369,
+        "lat": -34.007084
+      },
+      {
+        "lon": 18.51,
+        "lat": -34.04
+      },
+      {
+        "lon": 18.523369,
+        "lat": -34.072916
+      },
+      {
+        "lon": 18.558369,
+        "lat": -34.093259
+      },
+      {
+        "lon": 18.601631,
+        "lat": -34.093259
+      },
+      {
+        "lon": 18.636631,
+        "lat": -34.072916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-LAG",
+    "portId": "PRT-LAG",
+    "name": "Lagos Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 3.6,
+        "lat": 6.33
+      },
+      {
+        "lon": 3.586631,
+        "lat": 6.362916
+      },
+      {
+        "lon": 3.551631,
+        "lat": 6.383259
+      },
+      {
+        "lon": 3.508369,
+        "lat": 6.383259
+      },
+      {
+        "lon": 3.473369,
+        "lat": 6.362916
+      },
+      {
+        "lon": 3.46,
+        "lat": 6.33
+      },
+      {
+        "lon": 3.473369,
+        "lat": 6.297084
+      },
+      {
+        "lon": 3.508369,
+        "lat": 6.276741
+      },
+      {
+        "lon": 3.551631,
+        "lat": 6.276741
+      },
+      {
+        "lon": 3.586631,
+        "lat": 6.297084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MBA",
+    "portId": "PRT-MBA",
+    "name": "Mombasa Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 39.87,
+        "lat": -4.18
+      },
+      {
+        "lon": 39.856631,
+        "lat": -4.147084
+      },
+      {
+        "lon": 39.821631,
+        "lat": -4.126741
+      },
+      {
+        "lon": 39.778369,
+        "lat": -4.126741
+      },
+      {
+        "lon": 39.743369,
+        "lat": -4.147084
+      },
+      {
+        "lon": 39.73,
+        "lat": -4.18
+      },
+      {
+        "lon": 39.743369,
+        "lat": -4.212916
+      },
+      {
+        "lon": 39.778369,
+        "lat": -4.233259
+      },
+      {
+        "lon": 39.821631,
+        "lat": -4.233259
+      },
+      {
+        "lon": 39.856631,
+        "lat": -4.212916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-DJB",
+    "portId": "PRT-DJB",
+    "name": "Djibouti Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 43.35,
+        "lat": 11.47
+      },
+      {
+        "lon": 43.336631,
+        "lat": 11.502916
+      },
+      {
+        "lon": 43.301631,
+        "lat": 11.523259
+      },
+      {
+        "lon": 43.258369,
+        "lat": 11.523259
+      },
+      {
+        "lon": 43.223369,
+        "lat": 11.502916
+      },
+      {
+        "lon": 43.21,
+        "lat": 11.47
+      },
+      {
+        "lon": 43.223369,
+        "lat": 11.437084
+      },
+      {
+        "lon": 43.258369,
+        "lat": 11.416741
+      },
+      {
+        "lon": 43.301631,
+        "lat": 11.416741
+      },
+      {
+        "lon": 43.336631,
+        "lat": 11.437084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-CMB",
+    "portId": "PRT-CMB",
+    "name": "Colombo Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 80.06,
+        "lat": 6.82
+      },
+      {
+        "lon": 80.046631,
+        "lat": 6.852916
+      },
+      {
+        "lon": 80.011631,
+        "lat": 6.873259
+      },
+      {
+        "lon": 79.968369,
+        "lat": 6.873259
+      },
+      {
+        "lon": 79.933369,
+        "lat": 6.852916
+      },
+      {
+        "lon": 79.92,
+        "lat": 6.82
+      },
+      {
+        "lon": 79.933369,
+        "lat": 6.787084
+      },
+      {
+        "lon": 79.968369,
+        "lat": 6.766741
+      },
+      {
+        "lon": 80.011631,
+        "lat": 6.766741
+      },
+      {
+        "lon": 80.046631,
+        "lat": 6.787084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MUM",
+    "portId": "PRT-MUM",
+    "name": "Mumbai Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 73.06,
+        "lat": 18.82
+      },
+      {
+        "lon": 73.046631,
+        "lat": 18.852916
+      },
+      {
+        "lon": 73.011631,
+        "lat": 18.873259
+      },
+      {
+        "lon": 72.968369,
+        "lat": 18.873259
+      },
+      {
+        "lon": 72.933369,
+        "lat": 18.852916
+      },
+      {
+        "lon": 72.92,
+        "lat": 18.82
+      },
+      {
+        "lon": 72.933369,
+        "lat": 18.787084
+      },
+      {
+        "lon": 72.968369,
+        "lat": 18.766741
+      },
+      {
+        "lon": 73.011631,
+        "lat": 18.766741
+      },
+      {
+        "lon": 73.046631,
+        "lat": 18.787084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MAA",
+    "portId": "PRT-MAA",
+    "name": "Chennai Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 80.51,
+        "lat": 12.97
+      },
+      {
+        "lon": 80.496631,
+        "lat": 13.002916
+      },
+      {
+        "lon": 80.461631,
+        "lat": 13.023259
+      },
+      {
+        "lon": 80.418369,
+        "lat": 13.023259
+      },
+      {
+        "lon": 80.383369,
+        "lat": 13.002916
+      },
+      {
+        "lon": 80.37,
+        "lat": 12.97
+      },
+      {
+        "lon": 80.383369,
+        "lat": 12.937084
+      },
+      {
+        "lon": 80.418369,
+        "lat": 12.916741
+      },
+      {
+        "lon": 80.461631,
+        "lat": 12.916741
+      },
+      {
+        "lon": 80.496631,
+        "lat": 12.937084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MUN",
+    "portId": "PRT-MUN",
+    "name": "Mundra Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 69.91,
+        "lat": 22.62
+      },
+      {
+        "lon": 69.896631,
+        "lat": 22.652916
+      },
+      {
+        "lon": 69.861631,
+        "lat": 22.673259
+      },
+      {
+        "lon": 69.818369,
+        "lat": 22.673259
+      },
+      {
+        "lon": 69.783369,
+        "lat": 22.652916
+      },
+      {
+        "lon": 69.77,
+        "lat": 22.62
+      },
+      {
+        "lon": 69.783369,
+        "lat": 22.587084
+      },
+      {
+        "lon": 69.818369,
+        "lat": 22.566741
+      },
+      {
+        "lon": 69.861631,
+        "lat": 22.566741
+      },
+      {
+        "lon": 69.896631,
+        "lat": 22.587084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-KHI",
+    "portId": "PRT-KHI",
+    "name": "Karachi Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 67.22,
+        "lat": 24.73
+      },
+      {
+        "lon": 67.206631,
+        "lat": 24.762916
+      },
+      {
+        "lon": 67.171631,
+        "lat": 24.783259
+      },
+      {
+        "lon": 67.128369,
+        "lat": 24.783259
+      },
+      {
+        "lon": 67.093369,
+        "lat": 24.762916
+      },
+      {
+        "lon": 67.08,
+        "lat": 24.73
+      },
+      {
+        "lon": 67.093369,
+        "lat": 24.697084
+      },
+      {
+        "lon": 67.128369,
+        "lat": 24.676741
+      },
+      {
+        "lon": 67.171631,
+        "lat": 24.676741
+      },
+      {
+        "lon": 67.206631,
+        "lat": 24.697084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-CGP",
+    "portId": "PRT-CGP",
+    "name": "Chattogram Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 92.03,
+        "lat": 22.2
+      },
+      {
+        "lon": 92.016631,
+        "lat": 22.232916
+      },
+      {
+        "lon": 91.981631,
+        "lat": 22.253259
+      },
+      {
+        "lon": 91.938369,
+        "lat": 22.253259
+      },
+      {
+        "lon": 91.903369,
+        "lat": 22.232916
+      },
+      {
+        "lon": 91.89,
+        "lat": 22.2
+      },
+      {
+        "lon": 91.903369,
+        "lat": 22.167084
+      },
+      {
+        "lon": 91.938369,
+        "lat": 22.146741
+      },
+      {
+        "lon": 91.981631,
+        "lat": 22.146741
+      },
+      {
+        "lon": 92.016631,
+        "lat": 22.167084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-RGN",
+    "portId": "PRT-RGN",
+    "name": "Yangon Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 96.38,
+        "lat": 16.66
+      },
+      {
+        "lon": 96.366631,
+        "lat": 16.692916
+      },
+      {
+        "lon": 96.331631,
+        "lat": 16.713259
+      },
+      {
+        "lon": 96.288369,
+        "lat": 16.713259
+      },
+      {
+        "lon": 96.253369,
+        "lat": 16.692916
+      },
+      {
+        "lon": 96.24,
+        "lat": 16.66
+      },
+      {
+        "lon": 96.253369,
+        "lat": 16.627084
+      },
+      {
+        "lon": 96.288369,
+        "lat": 16.606741
+      },
+      {
+        "lon": 96.331631,
+        "lat": 16.606741
+      },
+      {
+        "lon": 96.366631,
+        "lat": 16.627084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-BKK",
+    "portId": "PRT-BKK",
+    "name": "Bangkok Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 100.78,
+        "lat": 13.58
+      },
+      {
+        "lon": 100.766631,
+        "lat": 13.612916
+      },
+      {
+        "lon": 100.731631,
+        "lat": 13.633259
+      },
+      {
+        "lon": 100.688369,
+        "lat": 13.633259
+      },
+      {
+        "lon": 100.653369,
+        "lat": 13.612916
+      },
+      {
+        "lon": 100.64,
+        "lat": 13.58
+      },
+      {
+        "lon": 100.653369,
+        "lat": 13.547084
+      },
+      {
+        "lon": 100.688369,
+        "lat": 13.526741
+      },
+      {
+        "lon": 100.731631,
+        "lat": 13.526741
+      },
+      {
+        "lon": 100.766631,
+        "lat": 13.547084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-LCH",
+    "portId": "PRT-LCH",
+    "name": "Laem Chabang Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 101.09,
+        "lat": 12.97
+      },
+      {
+        "lon": 101.076631,
+        "lat": 13.002916
+      },
+      {
+        "lon": 101.041631,
+        "lat": 13.023259
+      },
+      {
+        "lon": 100.998369,
+        "lat": 13.023259
+      },
+      {
+        "lon": 100.963369,
+        "lat": 13.002916
+      },
+      {
+        "lon": 100.95,
+        "lat": 12.97
+      },
+      {
+        "lon": 100.963369,
+        "lat": 12.937084
+      },
+      {
+        "lon": 100.998369,
+        "lat": 12.916741
+      },
+      {
+        "lon": 101.041631,
+        "lat": 12.916741
+      },
+      {
+        "lon": 101.076631,
+        "lat": 12.937084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-PKG",
+    "portId": "PRT-PKG",
+    "name": "Port Klang Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 101.57,
+        "lat": 2.88
+      },
+      {
+        "lon": 101.556631,
+        "lat": 2.912916
+      },
+      {
+        "lon": 101.521631,
+        "lat": 2.933259
+      },
+      {
+        "lon": 101.478369,
+        "lat": 2.933259
+      },
+      {
+        "lon": 101.443369,
+        "lat": 2.912916
+      },
+      {
+        "lon": 101.43,
+        "lat": 2.88
+      },
+      {
+        "lon": 101.443369,
+        "lat": 2.847084
+      },
+      {
+        "lon": 101.478369,
+        "lat": 2.826741
+      },
+      {
+        "lon": 101.521631,
+        "lat": 2.826741
+      },
+      {
+        "lon": 101.556631,
+        "lat": 2.847084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-TPP",
+    "portId": "PRT-TPP",
+    "name": "Tanjung Pelepas Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 103.76,
+        "lat": 1.24
+      },
+      {
+        "lon": 103.746631,
+        "lat": 1.272916
+      },
+      {
+        "lon": 103.711631,
+        "lat": 1.293259
+      },
+      {
+        "lon": 103.668369,
+        "lat": 1.293259
+      },
+      {
+        "lon": 103.633369,
+        "lat": 1.272916
+      },
+      {
+        "lon": 103.62,
+        "lat": 1.24
+      },
+      {
+        "lon": 103.633369,
+        "lat": 1.207084
+      },
+      {
+        "lon": 103.668369,
+        "lat": 1.186741
+      },
+      {
+        "lon": 103.711631,
+        "lat": 1.186741
+      },
+      {
+        "lon": 103.746631,
+        "lat": 1.207084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-JKT",
+    "portId": "PRT-JKT",
+    "name": "Jakarta Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 107.09,
+        "lat": -6.23
+      },
+      {
+        "lon": 107.076631,
+        "lat": -6.197084
+      },
+      {
+        "lon": 107.041631,
+        "lat": -6.176741
+      },
+      {
+        "lon": 106.998369,
+        "lat": -6.176741
+      },
+      {
+        "lon": 106.963369,
+        "lat": -6.197084
+      },
+      {
+        "lon": 106.95,
+        "lat": -6.23
+      },
+      {
+        "lon": 106.963369,
+        "lat": -6.262916
+      },
+      {
+        "lon": 106.998369,
+        "lat": -6.283259
+      },
+      {
+        "lon": 107.041631,
+        "lat": -6.283259
+      },
+      {
+        "lon": 107.076631,
+        "lat": -6.262916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SBY",
+    "portId": "PRT-SBY",
+    "name": "Surabaya Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 112.94,
+        "lat": -7.33
+      },
+      {
+        "lon": 112.926631,
+        "lat": -7.297084
+      },
+      {
+        "lon": 112.891631,
+        "lat": -7.276741
+      },
+      {
+        "lon": 112.848369,
+        "lat": -7.276741
+      },
+      {
+        "lon": 112.813369,
+        "lat": -7.297084
+      },
+      {
+        "lon": 112.8,
+        "lat": -7.33
+      },
+      {
+        "lon": 112.813369,
+        "lat": -7.362916
+      },
+      {
+        "lon": 112.848369,
+        "lat": -7.383259
+      },
+      {
+        "lon": 112.891631,
+        "lat": -7.383259
+      },
+      {
+        "lon": 112.926631,
+        "lat": -7.362916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MNL",
+    "portId": "PRT-MNL",
+    "name": "Manila Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 121.17,
+        "lat": 14.47
+      },
+      {
+        "lon": 121.156631,
+        "lat": 14.502916
+      },
+      {
+        "lon": 121.121631,
+        "lat": 14.523259
+      },
+      {
+        "lon": 121.078369,
+        "lat": 14.523259
+      },
+      {
+        "lon": 121.043369,
+        "lat": 14.502916
+      },
+      {
+        "lon": 121.03,
+        "lat": 14.47
+      },
+      {
+        "lon": 121.043369,
+        "lat": 14.437084
+      },
+      {
+        "lon": 121.078369,
+        "lat": 14.416741
+      },
+      {
+        "lon": 121.121631,
+        "lat": 14.416741
+      },
+      {
+        "lon": 121.156631,
+        "lat": 14.437084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-HCM",
+    "portId": "PRT-HCM",
+    "name": "Ho Chi Minh City Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 106.96,
+        "lat": 10.67
+      },
+      {
+        "lon": 106.946631,
+        "lat": 10.702916
+      },
+      {
+        "lon": 106.911631,
+        "lat": 10.723259
+      },
+      {
+        "lon": 106.868369,
+        "lat": 10.723259
+      },
+      {
+        "lon": 106.833369,
+        "lat": 10.702916
+      },
+      {
+        "lon": 106.82,
+        "lat": 10.67
+      },
+      {
+        "lon": 106.833369,
+        "lat": 10.637084
+      },
+      {
+        "lon": 106.868369,
+        "lat": 10.616741
+      },
+      {
+        "lon": 106.911631,
+        "lat": 10.616741
+      },
+      {
+        "lon": 106.946631,
+        "lat": 10.637084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-HPH",
+    "portId": "PRT-HPH",
+    "name": "Haiphong Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 106.91,
+        "lat": 20.73
+      },
+      {
+        "lon": 106.896631,
+        "lat": 20.762916
+      },
+      {
+        "lon": 106.861631,
+        "lat": 20.783259
+      },
+      {
+        "lon": 106.818369,
+        "lat": 20.783259
+      },
+      {
+        "lon": 106.783369,
+        "lat": 20.762916
+      },
+      {
+        "lon": 106.77,
+        "lat": 20.73
+      },
+      {
+        "lon": 106.783369,
+        "lat": 20.697084
+      },
+      {
+        "lon": 106.818369,
+        "lat": 20.676741
+      },
+      {
+        "lon": 106.861631,
+        "lat": 20.676741
+      },
+      {
+        "lon": 106.896631,
+        "lat": 20.697084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-TAO",
+    "portId": "PRT-TAO",
+    "name": "Qingdao Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 120.59,
+        "lat": 35.95
+      },
+      {
+        "lon": 120.576631,
+        "lat": 35.982916
+      },
+      {
+        "lon": 120.541631,
+        "lat": 36.003259
+      },
+      {
+        "lon": 120.498369,
+        "lat": 36.003259
+      },
+      {
+        "lon": 120.463369,
+        "lat": 35.982916
+      },
+      {
+        "lon": 120.45,
+        "lat": 35.95
+      },
+      {
+        "lon": 120.463369,
+        "lat": 35.917084
+      },
+      {
+        "lon": 120.498369,
+        "lat": 35.896741
+      },
+      {
+        "lon": 120.541631,
+        "lat": 35.896741
+      },
+      {
+        "lon": 120.576631,
+        "lat": 35.917084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-TSN",
+    "portId": "PRT-TSN",
+    "name": "Tianjin Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 117.95,
+        "lat": 38.86
+      },
+      {
+        "lon": 117.936631,
+        "lat": 38.892916
+      },
+      {
+        "lon": 117.901631,
+        "lat": 38.913259
+      },
+      {
+        "lon": 117.858369,
+        "lat": 38.913259
+      },
+      {
+        "lon": 117.823369,
+        "lat": 38.892916
+      },
+      {
+        "lon": 117.81,
+        "lat": 38.86
+      },
+      {
+        "lon": 117.823369,
+        "lat": 38.827084
+      },
+      {
+        "lon": 117.858369,
+        "lat": 38.806741
+      },
+      {
+        "lon": 117.901631,
+        "lat": 38.806741
+      },
+      {
+        "lon": 117.936631,
+        "lat": 38.827084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-DLC",
+    "portId": "PRT-DLC",
+    "name": "Dalian Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 121.83,
+        "lat": 38.79
+      },
+      {
+        "lon": 121.816631,
+        "lat": 38.822916
+      },
+      {
+        "lon": 121.781631,
+        "lat": 38.843259
+      },
+      {
+        "lon": 121.738369,
+        "lat": 38.843259
+      },
+      {
+        "lon": 121.703369,
+        "lat": 38.822916
+      },
+      {
+        "lon": 121.69,
+        "lat": 38.79
+      },
+      {
+        "lon": 121.703369,
+        "lat": 38.757084
+      },
+      {
+        "lon": 121.738369,
+        "lat": 38.736741
+      },
+      {
+        "lon": 121.781631,
+        "lat": 38.736741
+      },
+      {
+        "lon": 121.816631,
+        "lat": 38.757084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-XMN",
+    "portId": "PRT-XMN",
+    "name": "Xiamen Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 118.29,
+        "lat": 24.36
+      },
+      {
+        "lon": 118.276631,
+        "lat": 24.392916
+      },
+      {
+        "lon": 118.241631,
+        "lat": 24.413259
+      },
+      {
+        "lon": 118.198369,
+        "lat": 24.413259
+      },
+      {
+        "lon": 118.163369,
+        "lat": 24.392916
+      },
+      {
+        "lon": 118.15,
+        "lat": 24.36
+      },
+      {
+        "lon": 118.163369,
+        "lat": 24.327084
+      },
+      {
+        "lon": 118.198369,
+        "lat": 24.306741
+      },
+      {
+        "lon": 118.241631,
+        "lat": 24.306741
+      },
+      {
+        "lon": 118.276631,
+        "lat": 24.327084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-KHH",
+    "portId": "PRT-KHH",
+    "name": "Kaohsiung Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 120.49,
+        "lat": 22.5
+      },
+      {
+        "lon": 120.476631,
+        "lat": 22.532916
+      },
+      {
+        "lon": 120.441631,
+        "lat": 22.553259
+      },
+      {
+        "lon": 120.398369,
+        "lat": 22.553259
+      },
+      {
+        "lon": 120.363369,
+        "lat": 22.532916
+      },
+      {
+        "lon": 120.35,
+        "lat": 22.5
+      },
+      {
+        "lon": 120.363369,
+        "lat": 22.467084
+      },
+      {
+        "lon": 120.398369,
+        "lat": 22.446741
+      },
+      {
+        "lon": 120.441631,
+        "lat": 22.446741
+      },
+      {
+        "lon": 120.476631,
+        "lat": 22.467084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-TYO",
+    "portId": "PRT-TYO",
+    "name": "Tokyo Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 139.98,
+        "lat": 35.49
+      },
+      {
+        "lon": 139.966631,
+        "lat": 35.522916
+      },
+      {
+        "lon": 139.931631,
+        "lat": 35.543259
+      },
+      {
+        "lon": 139.888369,
+        "lat": 35.543259
+      },
+      {
+        "lon": 139.853369,
+        "lat": 35.522916
+      },
+      {
+        "lon": 139.84,
+        "lat": 35.49
+      },
+      {
+        "lon": 139.853369,
+        "lat": 35.457084
+      },
+      {
+        "lon": 139.888369,
+        "lat": 35.436741
+      },
+      {
+        "lon": 139.931631,
+        "lat": 35.436741
+      },
+      {
+        "lon": 139.966631,
+        "lat": 35.457084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-YOK",
+    "portId": "PRT-YOK",
+    "name": "Yokohama Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 139.85,
+        "lat": 35.33
+      },
+      {
+        "lon": 139.836631,
+        "lat": 35.362916
+      },
+      {
+        "lon": 139.801631,
+        "lat": 35.383259
+      },
+      {
+        "lon": 139.758369,
+        "lat": 35.383259
+      },
+      {
+        "lon": 139.723369,
+        "lat": 35.362916
+      },
+      {
+        "lon": 139.71,
+        "lat": 35.33
+      },
+      {
+        "lon": 139.723369,
+        "lat": 35.297084
+      },
+      {
+        "lon": 139.758369,
+        "lat": 35.276741
+      },
+      {
+        "lon": 139.801631,
+        "lat": 35.276741
+      },
+      {
+        "lon": 139.836631,
+        "lat": 35.297084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-UKB",
+    "portId": "PRT-UKB",
+    "name": "Kobe Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 135.39,
+        "lat": 34.57
+      },
+      {
+        "lon": 135.376631,
+        "lat": 34.602916
+      },
+      {
+        "lon": 135.341631,
+        "lat": 34.623259
+      },
+      {
+        "lon": 135.298369,
+        "lat": 34.623259
+      },
+      {
+        "lon": 135.263369,
+        "lat": 34.602916
+      },
+      {
+        "lon": 135.25,
+        "lat": 34.57
+      },
+      {
+        "lon": 135.263369,
+        "lat": 34.537084
+      },
+      {
+        "lon": 135.298369,
+        "lat": 34.516741
+      },
+      {
+        "lon": 135.341631,
+        "lat": 34.516741
+      },
+      {
+        "lon": 135.376631,
+        "lat": 34.537084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-OSA",
+    "portId": "PRT-OSA",
+    "name": "Osaka Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 135.64,
+        "lat": 34.53
+      },
+      {
+        "lon": 135.626631,
+        "lat": 34.562916
+      },
+      {
+        "lon": 135.591631,
+        "lat": 34.583259
+      },
+      {
+        "lon": 135.548369,
+        "lat": 34.583259
+      },
+      {
+        "lon": 135.513369,
+        "lat": 34.562916
+      },
+      {
+        "lon": 135.5,
+        "lat": 34.53
+      },
+      {
+        "lon": 135.513369,
+        "lat": 34.497084
+      },
+      {
+        "lon": 135.548369,
+        "lat": 34.476741
+      },
+      {
+        "lon": 135.591631,
+        "lat": 34.476741
+      },
+      {
+        "lon": 135.626631,
+        "lat": 34.497084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-NGO",
+    "portId": "PRT-NGO",
+    "name": "Nagoya Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 137.09,
+        "lat": 34.97
+      },
+      {
+        "lon": 137.076631,
+        "lat": 35.002916
+      },
+      {
+        "lon": 137.041631,
+        "lat": 35.023259
+      },
+      {
+        "lon": 136.998369,
+        "lat": 35.023259
+      },
+      {
+        "lon": 136.963369,
+        "lat": 35.002916
+      },
+      {
+        "lon": 136.95,
+        "lat": 34.97
+      },
+      {
+        "lon": 136.963369,
+        "lat": 34.937084
+      },
+      {
+        "lon": 136.998369,
+        "lat": 34.916741
+      },
+      {
+        "lon": 137.041631,
+        "lat": 34.916741
+      },
+      {
+        "lon": 137.076631,
+        "lat": 34.937084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MEL",
+    "portId": "PRT-MEL",
+    "name": "Melbourne Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 145.13,
+        "lat": -37.96
+      },
+      {
+        "lon": 145.116631,
+        "lat": -37.927084
+      },
+      {
+        "lon": 145.081631,
+        "lat": -37.906741
+      },
+      {
+        "lon": 145.038369,
+        "lat": -37.906741
+      },
+      {
+        "lon": 145.003369,
+        "lat": -37.927084
+      },
+      {
+        "lon": 144.99,
+        "lat": -37.96
+      },
+      {
+        "lon": 145.003369,
+        "lat": -37.992916
+      },
+      {
+        "lon": 145.038369,
+        "lat": -38.013259
+      },
+      {
+        "lon": 145.081631,
+        "lat": -38.013259
+      },
+      {
+        "lon": 145.116631,
+        "lat": -37.992916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SYD",
+    "portId": "PRT-SYD",
+    "name": "Sydney Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 151.41,
+        "lat": -33.98
+      },
+      {
+        "lon": 151.396631,
+        "lat": -33.947084
+      },
+      {
+        "lon": 151.361631,
+        "lat": -33.926741
+      },
+      {
+        "lon": 151.318369,
+        "lat": -33.926741
+      },
+      {
+        "lon": 151.283369,
+        "lat": -33.947084
+      },
+      {
+        "lon": 151.27,
+        "lat": -33.98
+      },
+      {
+        "lon": 151.283369,
+        "lat": -34.012916
+      },
+      {
+        "lon": 151.318369,
+        "lat": -34.033259
+      },
+      {
+        "lon": 151.361631,
+        "lat": -34.033259
+      },
+      {
+        "lon": 151.396631,
+        "lat": -34.012916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-BNE",
+    "portId": "PRT-BNE",
+    "name": "Brisbane Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 153.24,
+        "lat": -27.5
+      },
+      {
+        "lon": 153.226631,
+        "lat": -27.467084
+      },
+      {
+        "lon": 153.191631,
+        "lat": -27.446741
+      },
+      {
+        "lon": 153.148369,
+        "lat": -27.446741
+      },
+      {
+        "lon": 153.113369,
+        "lat": -27.467084
+      },
+      {
+        "lon": 153.1,
+        "lat": -27.5
+      },
+      {
+        "lon": 153.113369,
+        "lat": -27.532916
+      },
+      {
+        "lon": 153.148369,
+        "lat": -27.553259
+      },
+      {
+        "lon": 153.191631,
+        "lat": -27.553259
+      },
+      {
+        "lon": 153.226631,
+        "lat": -27.532916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-FRE",
+    "portId": "PRT-FRE",
+    "name": "Fremantle Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 115.96,
+        "lat": -32.17
+      },
+      {
+        "lon": 115.946631,
+        "lat": -32.137084
+      },
+      {
+        "lon": 115.911631,
+        "lat": -32.116741
+      },
+      {
+        "lon": 115.868369,
+        "lat": -32.116741
+      },
+      {
+        "lon": 115.833369,
+        "lat": -32.137084
+      },
+      {
+        "lon": 115.82,
+        "lat": -32.17
+      },
+      {
+        "lon": 115.833369,
+        "lat": -32.202916
+      },
+      {
+        "lon": 115.868369,
+        "lat": -32.223259
+      },
+      {
+        "lon": 115.911631,
+        "lat": -32.223259
+      },
+      {
+        "lon": 115.946631,
+        "lat": -32.202916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-AKL",
+    "portId": "PRT-AKL",
+    "name": "Auckland Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 174.98,
+        "lat": -36.96
+      },
+      {
+        "lon": 174.966631,
+        "lat": -36.927084
+      },
+      {
+        "lon": 174.931631,
+        "lat": -36.906741
+      },
+      {
+        "lon": 174.888369,
+        "lat": -36.906741
+      },
+      {
+        "lon": 174.853369,
+        "lat": -36.927084
+      },
+      {
+        "lon": 174.84,
+        "lat": -36.96
+      },
+      {
+        "lon": 174.853369,
+        "lat": -36.992916
+      },
+      {
+        "lon": 174.888369,
+        "lat": -37.013259
+      },
+      {
+        "lon": 174.931631,
+        "lat": -37.013259
+      },
+      {
+        "lon": 174.966631,
+        "lat": -36.992916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-TRG",
+    "portId": "PRT-TRG",
+    "name": "Tauranga Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 176.38,
+        "lat": -37.78
+      },
+      {
+        "lon": 176.366631,
+        "lat": -37.747084
+      },
+      {
+        "lon": 176.331631,
+        "lat": -37.726741
+      },
+      {
+        "lon": 176.288369,
+        "lat": -37.726741
+      },
+      {
+        "lon": 176.253369,
+        "lat": -37.747084
+      },
+      {
+        "lon": 176.24,
+        "lat": -37.78
+      },
+      {
+        "lon": 176.253369,
+        "lat": -37.812916
+      },
+      {
+        "lon": 176.288369,
+        "lat": -37.833259
+      },
+      {
+        "lon": 176.331631,
+        "lat": -37.833259
+      },
+      {
+        "lon": 176.366631,
+        "lat": -37.812916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-WLG",
+    "portId": "PRT-WLG",
+    "name": "Wellington Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 174.99,
+        "lat": -41.39
+      },
+      {
+        "lon": 174.976631,
+        "lat": -41.357084
+      },
+      {
+        "lon": 174.941631,
+        "lat": -41.336741
+      },
+      {
+        "lon": 174.898369,
+        "lat": -41.336741
+      },
+      {
+        "lon": 174.863369,
+        "lat": -41.357084
+      },
+      {
+        "lon": 174.85,
+        "lat": -41.39
+      },
+      {
+        "lon": 174.863369,
+        "lat": -41.422916
+      },
+      {
+        "lon": 174.898369,
+        "lat": -41.443259
+      },
+      {
+        "lon": 174.941631,
+        "lat": -41.443259
+      },
+      {
+        "lon": 174.976631,
+        "lat": -41.422916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-YVR",
+    "portId": "PRT-YVR",
+    "name": "Vancouver Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -122.9,
+        "lat": 49.18
+      },
+      {
+        "lon": -122.913369,
+        "lat": 49.212916
+      },
+      {
+        "lon": -122.948369,
+        "lat": 49.233259
+      },
+      {
+        "lon": -122.991631,
+        "lat": 49.233259
+      },
+      {
+        "lon": -123.026631,
+        "lat": 49.212916
+      },
+      {
+        "lon": -123.04,
+        "lat": 49.18
+      },
+      {
+        "lon": -123.026631,
+        "lat": 49.147084
+      },
+      {
+        "lon": -122.991631,
+        "lat": 49.126741
+      },
+      {
+        "lon": -122.948369,
+        "lat": 49.126741
+      },
+      {
+        "lon": -122.913369,
+        "lat": 49.147084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-PRR",
+    "portId": "PRT-PRR",
+    "name": "Prince Rupert Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -130.11,
+        "lat": 54.19
+      },
+      {
+        "lon": -130.123369,
+        "lat": 54.222916
+      },
+      {
+        "lon": -130.158369,
+        "lat": 54.243259
+      },
+      {
+        "lon": -130.201631,
+        "lat": 54.243259
+      },
+      {
+        "lon": -130.236631,
+        "lat": 54.222916
+      },
+      {
+        "lon": -130.25,
+        "lat": 54.19
+      },
+      {
+        "lon": -130.236631,
+        "lat": 54.157084
+      },
+      {
+        "lon": -130.201631,
+        "lat": 54.136741
+      },
+      {
+        "lon": -130.158369,
+        "lat": 54.136741
+      },
+      {
+        "lon": -130.123369,
+        "lat": 54.157084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SEA",
+    "portId": "PRT-SEA",
+    "name": "Seattle Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -122.14,
+        "lat": 47.48
+      },
+      {
+        "lon": -122.153369,
+        "lat": 47.512916
+      },
+      {
+        "lon": -122.188369,
+        "lat": 47.533259
+      },
+      {
+        "lon": -122.231631,
+        "lat": 47.533259
+      },
+      {
+        "lon": -122.266631,
+        "lat": 47.512916
+      },
+      {
+        "lon": -122.28,
+        "lat": 47.48
+      },
+      {
+        "lon": -122.266631,
+        "lat": 47.447084
+      },
+      {
+        "lon": -122.231631,
+        "lat": 47.426741
+      },
+      {
+        "lon": -122.188369,
+        "lat": 47.426741
+      },
+      {
+        "lon": -122.153369,
+        "lat": 47.447084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-TAC",
+    "portId": "PRT-TAC",
+    "name": "Tacoma Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -122.23,
+        "lat": 47.14
+      },
+      {
+        "lon": -122.243369,
+        "lat": 47.172916
+      },
+      {
+        "lon": -122.278369,
+        "lat": 47.193259
+      },
+      {
+        "lon": -122.321631,
+        "lat": 47.193259
+      },
+      {
+        "lon": -122.356631,
+        "lat": 47.172916
+      },
+      {
+        "lon": -122.37,
+        "lat": 47.14
+      },
+      {
+        "lon": -122.356631,
+        "lat": 47.107084
+      },
+      {
+        "lon": -122.321631,
+        "lat": 47.086741
+      },
+      {
+        "lon": -122.278369,
+        "lat": 47.086741
+      },
+      {
+        "lon": -122.243369,
+        "lat": 47.107084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-OAK",
+    "portId": "PRT-OAK",
+    "name": "Oakland Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -122.1,
+        "lat": 37.68
+      },
+      {
+        "lon": -122.113369,
+        "lat": 37.712916
+      },
+      {
+        "lon": -122.148369,
+        "lat": 37.733259
+      },
+      {
+        "lon": -122.191631,
+        "lat": 37.733259
+      },
+      {
+        "lon": -122.226631,
+        "lat": 37.712916
+      },
+      {
+        "lon": -122.24,
+        "lat": 37.68
+      },
+      {
+        "lon": -122.226631,
+        "lat": 37.647084
+      },
+      {
+        "lon": -122.191631,
+        "lat": 37.626741
+      },
+      {
+        "lon": -122.148369,
+        "lat": 37.626741
+      },
+      {
+        "lon": -122.113369,
+        "lat": 37.647084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SFO",
+    "portId": "PRT-SFO",
+    "name": "San Francisco Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -122.19,
+        "lat": 37.67
+      },
+      {
+        "lon": -122.203369,
+        "lat": 37.702916
+      },
+      {
+        "lon": -122.238369,
+        "lat": 37.723259
+      },
+      {
+        "lon": -122.281631,
+        "lat": 37.723259
+      },
+      {
+        "lon": -122.316631,
+        "lat": 37.702916
+      },
+      {
+        "lon": -122.33,
+        "lat": 37.67
+      },
+      {
+        "lon": -122.316631,
+        "lat": 37.637084
+      },
+      {
+        "lon": -122.281631,
+        "lat": 37.616741
+      },
+      {
+        "lon": -122.238369,
+        "lat": 37.616741
+      },
+      {
+        "lon": -122.203369,
+        "lat": 37.637084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-HOU",
+    "portId": "PRT-HOU",
+    "name": "Houston Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -95.07,
+        "lat": 29.61
+      },
+      {
+        "lon": -95.083369,
+        "lat": 29.642916
+      },
+      {
+        "lon": -95.118369,
+        "lat": 29.663259
+      },
+      {
+        "lon": -95.161631,
+        "lat": 29.663259
+      },
+      {
+        "lon": -95.196631,
+        "lat": 29.642916
+      },
+      {
+        "lon": -95.21,
+        "lat": 29.61
+      },
+      {
+        "lon": -95.196631,
+        "lat": 29.577084
+      },
+      {
+        "lon": -95.161631,
+        "lat": 29.556741
+      },
+      {
+        "lon": -95.118369,
+        "lat": 29.556741
+      },
+      {
+        "lon": -95.083369,
+        "lat": 29.577084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MSY",
+    "portId": "PRT-MSY",
+    "name": "New Orleans Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -89.85,
+        "lat": 29.84
+      },
+      {
+        "lon": -89.863369,
+        "lat": 29.872916
+      },
+      {
+        "lon": -89.898369,
+        "lat": 29.893259
+      },
+      {
+        "lon": -89.941631,
+        "lat": 29.893259
+      },
+      {
+        "lon": -89.976631,
+        "lat": 29.872916
+      },
+      {
+        "lon": -89.99,
+        "lat": 29.84
+      },
+      {
+        "lon": -89.976631,
+        "lat": 29.807084
+      },
+      {
+        "lon": -89.941631,
+        "lat": 29.786741
+      },
+      {
+        "lon": -89.898369,
+        "lat": 29.786741
+      },
+      {
+        "lon": -89.863369,
+        "lat": 29.807084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MIA",
+    "portId": "PRT-MIA",
+    "name": "Miami Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -79.97,
+        "lat": 25.64
+      },
+      {
+        "lon": -79.983369,
+        "lat": 25.672916
+      },
+      {
+        "lon": -80.018369,
+        "lat": 25.693259
+      },
+      {
+        "lon": -80.061631,
+        "lat": 25.693259
+      },
+      {
+        "lon": -80.096631,
+        "lat": 25.672916
+      },
+      {
+        "lon": -80.11,
+        "lat": 25.64
+      },
+      {
+        "lon": -80.096631,
+        "lat": 25.607084
+      },
+      {
+        "lon": -80.061631,
+        "lat": 25.586741
+      },
+      {
+        "lon": -80.018369,
+        "lat": 25.586741
+      },
+      {
+        "lon": -79.983369,
+        "lat": 25.607084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SAV",
+    "portId": "PRT-SAV",
+    "name": "Savannah Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -80.88,
+        "lat": 31.96
+      },
+      {
+        "lon": -80.893369,
+        "lat": 31.992916
+      },
+      {
+        "lon": -80.928369,
+        "lat": 32.013259
+      },
+      {
+        "lon": -80.971631,
+        "lat": 32.013259
+      },
+      {
+        "lon": -81.006631,
+        "lat": 31.992916
+      },
+      {
+        "lon": -81.02,
+        "lat": 31.96
+      },
+      {
+        "lon": -81.006631,
+        "lat": 31.927084
+      },
+      {
+        "lon": -80.971631,
+        "lat": 31.906741
+      },
+      {
+        "lon": -80.928369,
+        "lat": 31.906741
+      },
+      {
+        "lon": -80.893369,
+        "lat": 31.927084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-CHS",
+    "portId": "PRT-CHS",
+    "name": "Charleston Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -79.73,
+        "lat": 32.66
+      },
+      {
+        "lon": -79.743369,
+        "lat": 32.692916
+      },
+      {
+        "lon": -79.778369,
+        "lat": 32.713259
+      },
+      {
+        "lon": -79.821631,
+        "lat": 32.713259
+      },
+      {
+        "lon": -79.856631,
+        "lat": 32.692916
+      },
+      {
+        "lon": -79.87,
+        "lat": 32.66
+      },
+      {
+        "lon": -79.856631,
+        "lat": 32.627084
+      },
+      {
+        "lon": -79.821631,
+        "lat": 32.606741
+      },
+      {
+        "lon": -79.778369,
+        "lat": 32.606741
+      },
+      {
+        "lon": -79.743369,
+        "lat": 32.627084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-ORF",
+    "portId": "PRT-ORF",
+    "name": "Norfolk Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -76.09,
+        "lat": 36.73
+      },
+      {
+        "lon": -76.103369,
+        "lat": 36.762916
+      },
+      {
+        "lon": -76.138369,
+        "lat": 36.783259
+      },
+      {
+        "lon": -76.181631,
+        "lat": 36.783259
+      },
+      {
+        "lon": -76.216631,
+        "lat": 36.762916
+      },
+      {
+        "lon": -76.23,
+        "lat": 36.73
+      },
+      {
+        "lon": -76.216631,
+        "lat": 36.697084
+      },
+      {
+        "lon": -76.181631,
+        "lat": 36.676741
+      },
+      {
+        "lon": -76.138369,
+        "lat": 36.676741
+      },
+      {
+        "lon": -76.103369,
+        "lat": 36.697084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-BAL",
+    "portId": "PRT-BAL",
+    "name": "Baltimore Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -76.39,
+        "lat": 39.15
+      },
+      {
+        "lon": -76.403369,
+        "lat": 39.182916
+      },
+      {
+        "lon": -76.438369,
+        "lat": 39.203259
+      },
+      {
+        "lon": -76.481631,
+        "lat": 39.203259
+      },
+      {
+        "lon": -76.516631,
+        "lat": 39.182916
+      },
+      {
+        "lon": -76.53,
+        "lat": 39.15
+      },
+      {
+        "lon": -76.516631,
+        "lat": 39.117084
+      },
+      {
+        "lon": -76.481631,
+        "lat": 39.096741
+      },
+      {
+        "lon": -76.438369,
+        "lat": 39.096741
+      },
+      {
+        "lon": -76.403369,
+        "lat": 39.117084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-HFX",
+    "portId": "PRT-HFX",
+    "name": "Halifax Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -63.36,
+        "lat": 44.53
+      },
+      {
+        "lon": -63.373369,
+        "lat": 44.562916
+      },
+      {
+        "lon": -63.408369,
+        "lat": 44.583259
+      },
+      {
+        "lon": -63.451631,
+        "lat": 44.583259
+      },
+      {
+        "lon": -63.486631,
+        "lat": 44.562916
+      },
+      {
+        "lon": -63.5,
+        "lat": 44.53
+      },
+      {
+        "lon": -63.486631,
+        "lat": 44.497084
+      },
+      {
+        "lon": -63.451631,
+        "lat": 44.476741
+      },
+      {
+        "lon": -63.408369,
+        "lat": 44.476741
+      },
+      {
+        "lon": -63.373369,
+        "lat": 44.497084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-YMQ",
+    "portId": "PRT-YMQ",
+    "name": "Montreal Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -73.33,
+        "lat": 45.39
+      },
+      {
+        "lon": -73.343369,
+        "lat": 45.422916
+      },
+      {
+        "lon": -73.378369,
+        "lat": 45.443259
+      },
+      {
+        "lon": -73.421631,
+        "lat": 45.443259
+      },
+      {
+        "lon": -73.456631,
+        "lat": 45.422916
+      },
+      {
+        "lon": -73.47,
+        "lat": 45.39
+      },
+      {
+        "lon": -73.456631,
+        "lat": 45.357084
+      },
+      {
+        "lon": -73.421631,
+        "lat": 45.336741
+      },
+      {
+        "lon": -73.378369,
+        "lat": 45.336741
+      },
+      {
+        "lon": -73.343369,
+        "lat": 45.357084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SSZ",
+    "portId": "PRT-SSZ",
+    "name": "Santos Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -46.12,
+        "lat": -24.06
+      },
+      {
+        "lon": -46.133369,
+        "lat": -24.027084
+      },
+      {
+        "lon": -46.168369,
+        "lat": -24.006741
+      },
+      {
+        "lon": -46.211631,
+        "lat": -24.006741
+      },
+      {
+        "lon": -46.246631,
+        "lat": -24.027084
+      },
+      {
+        "lon": -46.26,
+        "lat": -24.06
+      },
+      {
+        "lon": -46.246631,
+        "lat": -24.092916
+      },
+      {
+        "lon": -46.211631,
+        "lat": -24.113259
+      },
+      {
+        "lon": -46.168369,
+        "lat": -24.113259
+      },
+      {
+        "lon": -46.133369,
+        "lat": -24.092916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-RIO",
+    "portId": "PRT-RIO",
+    "name": "Rio de Janeiro Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -42.97,
+        "lat": -23.03
+      },
+      {
+        "lon": -42.983369,
+        "lat": -22.997084
+      },
+      {
+        "lon": -43.018369,
+        "lat": -22.976741
+      },
+      {
+        "lon": -43.061631,
+        "lat": -22.976741
+      },
+      {
+        "lon": -43.096631,
+        "lat": -22.997084
+      },
+      {
+        "lon": -43.11,
+        "lat": -23.03
+      },
+      {
+        "lon": -43.096631,
+        "lat": -23.062916
+      },
+      {
+        "lon": -43.061631,
+        "lat": -23.083259
+      },
+      {
+        "lon": -43.018369,
+        "lat": -23.083259
+      },
+      {
+        "lon": -42.983369,
+        "lat": -23.062916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-BUE",
+    "portId": "PRT-BUE",
+    "name": "Buenos Aires Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -58.15,
+        "lat": -34.71
+      },
+      {
+        "lon": -58.163369,
+        "lat": -34.677084
+      },
+      {
+        "lon": -58.198369,
+        "lat": -34.656741
+      },
+      {
+        "lon": -58.241631,
+        "lat": -34.656741
+      },
+      {
+        "lon": -58.276631,
+        "lat": -34.677084
+      },
+      {
+        "lon": -58.29,
+        "lat": -34.71
+      },
+      {
+        "lon": -58.276631,
+        "lat": -34.742916
+      },
+      {
+        "lon": -58.241631,
+        "lat": -34.763259
+      },
+      {
+        "lon": -58.198369,
+        "lat": -34.763259
+      },
+      {
+        "lon": -58.163369,
+        "lat": -34.742916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MVD",
+    "portId": "PRT-MVD",
+    "name": "Montevideo Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -56.0,
+        "lat": -35.02
+      },
+      {
+        "lon": -56.013369,
+        "lat": -34.987084
+      },
+      {
+        "lon": -56.048369,
+        "lat": -34.966741
+      },
+      {
+        "lon": -56.091631,
+        "lat": -34.966741
+      },
+      {
+        "lon": -56.126631,
+        "lat": -34.987084
+      },
+      {
+        "lon": -56.14,
+        "lat": -35.02
+      },
+      {
+        "lon": -56.126631,
+        "lat": -35.052916
+      },
+      {
+        "lon": -56.091631,
+        "lat": -35.073259
+      },
+      {
+        "lon": -56.048369,
+        "lat": -35.073259
+      },
+      {
+        "lon": -56.013369,
+        "lat": -35.052916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-VAP",
+    "portId": "PRT-VAP",
+    "name": "Valparaiso Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -71.41,
+        "lat": -33.16
+      },
+      {
+        "lon": -71.423369,
+        "lat": -33.127084
+      },
+      {
+        "lon": -71.458369,
+        "lat": -33.106741
+      },
+      {
+        "lon": -71.501631,
+        "lat": -33.106741
+      },
+      {
+        "lon": -71.536631,
+        "lat": -33.127084
+      },
+      {
+        "lon": -71.55,
+        "lat": -33.16
+      },
+      {
+        "lon": -71.536631,
+        "lat": -33.192916
+      },
+      {
+        "lon": -71.501631,
+        "lat": -33.213259
+      },
+      {
+        "lon": -71.458369,
+        "lat": -33.213259
+      },
+      {
+        "lon": -71.423369,
+        "lat": -33.192916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-SAI",
+    "portId": "PRT-SAI",
+    "name": "San Antonio Chile Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -71.4,
+        "lat": -33.71
+      },
+      {
+        "lon": -71.413369,
+        "lat": -33.677084
+      },
+      {
+        "lon": -71.448369,
+        "lat": -33.656741
+      },
+      {
+        "lon": -71.491631,
+        "lat": -33.656741
+      },
+      {
+        "lon": -71.526631,
+        "lat": -33.677084
+      },
+      {
+        "lon": -71.54,
+        "lat": -33.71
+      },
+      {
+        "lon": -71.526631,
+        "lat": -33.742916
+      },
+      {
+        "lon": -71.491631,
+        "lat": -33.763259
+      },
+      {
+        "lon": -71.448369,
+        "lat": -33.763259
+      },
+      {
+        "lon": -71.413369,
+        "lat": -33.742916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-CLL",
+    "portId": "PRT-CLL",
+    "name": "Callao Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -76.94,
+        "lat": -12.16
+      },
+      {
+        "lon": -76.953369,
+        "lat": -12.127084
+      },
+      {
+        "lon": -76.988369,
+        "lat": -12.106741
+      },
+      {
+        "lon": -77.031631,
+        "lat": -12.106741
+      },
+      {
+        "lon": -77.066631,
+        "lat": -12.127084
+      },
+      {
+        "lon": -77.08,
+        "lat": -12.16
+      },
+      {
+        "lon": -77.066631,
+        "lat": -12.192916
+      },
+      {
+        "lon": -77.031631,
+        "lat": -12.213259
+      },
+      {
+        "lon": -76.988369,
+        "lat": -12.213259
+      },
+      {
+        "lon": -76.953369,
+        "lat": -12.192916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-GYE",
+    "portId": "PRT-GYE",
+    "name": "Guayaquil Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -79.71,
+        "lat": -2.34
+      },
+      {
+        "lon": -79.723369,
+        "lat": -2.307084
+      },
+      {
+        "lon": -79.758369,
+        "lat": -2.286741
+      },
+      {
+        "lon": -79.801631,
+        "lat": -2.286741
+      },
+      {
+        "lon": -79.836631,
+        "lat": -2.307084
+      },
+      {
+        "lon": -79.85,
+        "lat": -2.34
+      },
+      {
+        "lon": -79.836631,
+        "lat": -2.372916
+      },
+      {
+        "lon": -79.801631,
+        "lat": -2.393259
+      },
+      {
+        "lon": -79.758369,
+        "lat": -2.393259
+      },
+      {
+        "lon": -79.723369,
+        "lat": -2.372916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-CTG",
+    "portId": "PRT-CTG",
+    "name": "Cartagena Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -75.32,
+        "lat": 10.27
+      },
+      {
+        "lon": -75.333369,
+        "lat": 10.302916
+      },
+      {
+        "lon": -75.368369,
+        "lat": 10.323259
+      },
+      {
+        "lon": -75.411631,
+        "lat": 10.323259
+      },
+      {
+        "lon": -75.446631,
+        "lat": 10.302916
+      },
+      {
+        "lon": -75.46,
+        "lat": 10.27
+      },
+      {
+        "lon": -75.446631,
+        "lat": 10.237084
+      },
+      {
+        "lon": -75.411631,
+        "lat": 10.216741
+      },
+      {
+        "lon": -75.368369,
+        "lat": 10.216741
+      },
+      {
+        "lon": -75.333369,
+        "lat": 10.237084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-BALB",
+    "portId": "PRT-BALB",
+    "name": "Balboa Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -79.36,
+        "lat": 8.83
+      },
+      {
+        "lon": -79.373369,
+        "lat": 8.862916
+      },
+      {
+        "lon": -79.408369,
+        "lat": 8.883259
+      },
+      {
+        "lon": -79.451631,
+        "lat": 8.883259
+      },
+      {
+        "lon": -79.486631,
+        "lat": 8.862916
+      },
+      {
+        "lon": -79.5,
+        "lat": 8.83
+      },
+      {
+        "lon": -79.486631,
+        "lat": 8.797084
+      },
+      {
+        "lon": -79.451631,
+        "lat": 8.776741
+      },
+      {
+        "lon": -79.408369,
+        "lat": 8.776741
+      },
+      {
+        "lon": -79.373369,
+        "lat": 8.797084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-CRB",
+    "portId": "PRT-CRB",
+    "name": "Cristobal Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -79.7,
+        "lat": 9.23
+      },
+      {
+        "lon": -79.713369,
+        "lat": 9.262916
+      },
+      {
+        "lon": -79.748369,
+        "lat": 9.283259
+      },
+      {
+        "lon": -79.791631,
+        "lat": 9.283259
+      },
+      {
+        "lon": -79.826631,
+        "lat": 9.262916
+      },
+      {
+        "lon": -79.84,
+        "lat": 9.23
+      },
+      {
+        "lon": -79.826631,
+        "lat": 9.197084
+      },
+      {
+        "lon": -79.791631,
+        "lat": 9.176741
+      },
+      {
+        "lon": -79.748369,
+        "lat": 9.176741
+      },
+      {
+        "lon": -79.713369,
+        "lat": 9.197084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-KIN",
+    "portId": "PRT-KIN",
+    "name": "Kingston Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -76.58,
+        "lat": 17.85
+      },
+      {
+        "lon": -76.593369,
+        "lat": 17.882916
+      },
+      {
+        "lon": -76.628369,
+        "lat": 17.903259
+      },
+      {
+        "lon": -76.671631,
+        "lat": 17.903259
+      },
+      {
+        "lon": -76.706631,
+        "lat": 17.882916
+      },
+      {
+        "lon": -76.72,
+        "lat": 17.85
+      },
+      {
+        "lon": -76.706631,
+        "lat": 17.817084
+      },
+      {
+        "lon": -76.671631,
+        "lat": 17.796741
+      },
+      {
+        "lon": -76.628369,
+        "lat": 17.796741
+      },
+      {
+        "lon": -76.593369,
+        "lat": 17.817084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-VER",
+    "portId": "PRT-VER",
+    "name": "Veracruz Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -95.93,
+        "lat": 19.07
+      },
+      {
+        "lon": -95.943369,
+        "lat": 19.102916
+      },
+      {
+        "lon": -95.978369,
+        "lat": 19.123259
+      },
+      {
+        "lon": -96.021631,
+        "lat": 19.123259
+      },
+      {
+        "lon": -96.056631,
+        "lat": 19.102916
+      },
+      {
+        "lon": -96.07,
+        "lat": 19.07
+      },
+      {
+        "lon": -96.056631,
+        "lat": 19.037084
+      },
+      {
+        "lon": -96.021631,
+        "lat": 19.016741
+      },
+      {
+        "lon": -95.978369,
+        "lat": 19.016741
+      },
+      {
+        "lon": -95.943369,
+        "lat": 19.037084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-MAN",
+    "portId": "PRT-MAN",
+    "name": "Manzanillo Mexico Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -104.11,
+        "lat": 18.94
+      },
+      {
+        "lon": -104.123369,
+        "lat": 18.972916
+      },
+      {
+        "lon": -104.158369,
+        "lat": 18.993259
+      },
+      {
+        "lon": -104.201631,
+        "lat": 18.993259
+      },
+      {
+        "lon": -104.236631,
+        "lat": 18.972916
+      },
+      {
+        "lon": -104.25,
+        "lat": 18.94
+      },
+      {
+        "lon": -104.236631,
+        "lat": 18.907084
+      },
+      {
+        "lon": -104.201631,
+        "lat": 18.886741
+      },
+      {
+        "lon": -104.158369,
+        "lat": 18.886741
+      },
+      {
+        "lon": -104.123369,
+        "lat": 18.907084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-ENS",
+    "portId": "PRT-ENS",
+    "name": "Ensenada Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -116.41,
+        "lat": 31.74
+      },
+      {
+        "lon": -116.423369,
+        "lat": 31.772916
+      },
+      {
+        "lon": -116.458369,
+        "lat": 31.793259
+      },
+      {
+        "lon": -116.501631,
+        "lat": 31.793259
+      },
+      {
+        "lon": -116.536631,
+        "lat": 31.772916
+      },
+      {
+        "lon": -116.55,
+        "lat": 31.74
+      },
+      {
+        "lon": -116.536631,
+        "lat": 31.707084
+      },
+      {
+        "lon": -116.501631,
+        "lat": 31.686741
+      },
+      {
+        "lon": -116.458369,
+        "lat": 31.686741
+      },
+      {
+        "lon": -116.423369,
+        "lat": 31.707084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-LZC",
+    "portId": "PRT-LZC",
+    "name": "Lazaro Cardenas Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -101.97,
+        "lat": 17.84
+      },
+      {
+        "lon": -101.983369,
+        "lat": 17.872916
+      },
+      {
+        "lon": -102.018369,
+        "lat": 17.893259
+      },
+      {
+        "lon": -102.061631,
+        "lat": 17.893259
+      },
+      {
+        "lon": -102.096631,
+        "lat": 17.872916
+      },
+      {
+        "lon": -102.11,
+        "lat": 17.84
+      },
+      {
+        "lon": -102.096631,
+        "lat": 17.807084
+      },
+      {
+        "lon": -102.061631,
+        "lat": 17.786741
+      },
+      {
+        "lon": -102.018369,
+        "lat": 17.786741
+      },
+      {
+        "lon": -101.983369,
+        "lat": 17.807084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-COL",
+    "portId": "PRT-COL",
+    "name": "Colon Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -79.69,
+        "lat": 9.24
+      },
+      {
+        "lon": -79.703369,
+        "lat": 9.272916
+      },
+      {
+        "lon": -79.738369,
+        "lat": 9.293259
+      },
+      {
+        "lon": -79.781631,
+        "lat": 9.293259
+      },
+      {
+        "lon": -79.816631,
+        "lat": 9.272916
+      },
+      {
+        "lon": -79.83,
+        "lat": 9.24
+      },
+      {
+        "lon": -79.816631,
+        "lat": 9.207084
+      },
+      {
+        "lon": -79.781631,
+        "lat": 9.186741
+      },
+      {
+        "lon": -79.738369,
+        "lat": 9.186741
+      },
+      {
+        "lon": -79.703369,
+        "lat": 9.207084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-TNG",
+    "portId": "PRT-TNG",
+    "name": "Tangier Med Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -5.29,
+        "lat": 35.76
+      },
+      {
+        "lon": -5.303369,
+        "lat": 35.792916
+      },
+      {
+        "lon": -5.338369,
+        "lat": 35.813259
+      },
+      {
+        "lon": -5.381631,
+        "lat": 35.813259
+      },
+      {
+        "lon": -5.416631,
+        "lat": 35.792916
+      },
+      {
+        "lon": -5.43,
+        "lat": 35.76
+      },
+      {
+        "lon": -5.416631,
+        "lat": 35.727084
+      },
+      {
+        "lon": -5.381631,
+        "lat": 35.706741
+      },
+      {
+        "lon": -5.338369,
+        "lat": 35.706741
+      },
+      {
+        "lon": -5.303369,
+        "lat": 35.727084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-CAS",
+    "portId": "PRT-CAS",
+    "name": "Casablanca Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -7.4,
+        "lat": 33.49
+      },
+      {
+        "lon": -7.413369,
+        "lat": 33.522916
+      },
+      {
+        "lon": -7.448369,
+        "lat": 33.543259
+      },
+      {
+        "lon": -7.491631,
+        "lat": 33.543259
+      },
+      {
+        "lon": -7.526631,
+        "lat": 33.522916
+      },
+      {
+        "lon": -7.54,
+        "lat": 33.49
+      },
+      {
+        "lon": -7.526631,
+        "lat": 33.457084
+      },
+      {
+        "lon": -7.491631,
+        "lat": 33.436741
+      },
+      {
+        "lon": -7.448369,
+        "lat": 33.436741
+      },
+      {
+        "lon": -7.413369,
+        "lat": 33.457084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-ABJ",
+    "portId": "PRT-ABJ",
+    "name": "Abidjan Demo Anchorage",
+    "polygon": [
+      {
+        "lon": -3.8,
+        "lat": 5.19
+      },
+      {
+        "lon": -3.813369,
+        "lat": 5.222916
+      },
+      {
+        "lon": -3.848369,
+        "lat": 5.243259
+      },
+      {
+        "lon": -3.891631,
+        "lat": 5.243259
+      },
+      {
+        "lon": -3.926631,
+        "lat": 5.222916
+      },
+      {
+        "lon": -3.94,
+        "lat": 5.19
+      },
+      {
+        "lon": -3.926631,
+        "lat": 5.157084
+      },
+      {
+        "lon": -3.891631,
+        "lat": 5.136741
+      },
+      {
+        "lon": -3.848369,
+        "lat": 5.136741
+      },
+      {
+        "lon": -3.813369,
+        "lat": 5.157084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-TEM",
+    "portId": "PRT-TEM",
+    "name": "Tema Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 0.22,
+        "lat": 5.51
+      },
+      {
+        "lon": 0.206631,
+        "lat": 5.542916
+      },
+      {
+        "lon": 0.171631,
+        "lat": 5.563259
+      },
+      {
+        "lon": 0.128369,
+        "lat": 5.563259
+      },
+      {
+        "lon": 0.093369,
+        "lat": 5.542916
+      },
+      {
+        "lon": 0.08,
+        "lat": 5.51
+      },
+      {
+        "lon": 0.093369,
+        "lat": 5.477084
+      },
+      {
+        "lon": 0.128369,
+        "lat": 5.456741
+      },
+      {
+        "lon": 0.171631,
+        "lat": 5.456741
+      },
+      {
+        "lon": 0.206631,
+        "lat": 5.477084
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  },
+  {
+    "anchorageId": "ANC-LAD",
+    "portId": "PRT-LAD",
+    "name": "Luanda Demo Anchorage",
+    "polygon": [
+      {
+        "lon": 13.44,
+        "lat": -8.94
+      },
+      {
+        "lon": 13.426631,
+        "lat": -8.907084
+      },
+      {
+        "lon": 13.391631,
+        "lat": -8.886741
+      },
+      {
+        "lon": 13.348369,
+        "lat": -8.886741
+      },
+      {
+        "lon": 13.313369,
+        "lat": -8.907084
+      },
+      {
+        "lon": 13.3,
+        "lat": -8.94
+      },
+      {
+        "lon": 13.313369,
+        "lat": -8.972916
+      },
+      {
+        "lon": 13.348369,
+        "lat": -8.993259
+      },
+      {
+        "lon": 13.391631,
+        "lat": -8.993259
+      },
+      {
+        "lon": 13.426631,
+        "lat": -8.972916
+      }
+    ],
+    "capacityEstimate": null,
+    "sourceType": "synthetic-not-for-navigation"
+  }
+]

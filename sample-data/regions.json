@@ -1,0 +1,471 @@
+[
+  {
+    "regionId": "REG-SEA",
+    "name": "Southeast Asia",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 92,
+      "south": -11,
+      "east": 128,
+      "north": 22
+    },
+    "center": {
+      "lon": 108,
+      "lat": 5
+    },
+    "countryIso3": [
+      "SGP",
+      "MYS",
+      "IDN",
+      "THA",
+      "VNM",
+      "PHL",
+      "MMR",
+      "KHM",
+      "LAO",
+      "BRN",
+      "TLS"
+    ],
+    "portIds": [
+      "PRT-BKK",
+      "PRT-HCM",
+      "PRT-HPH",
+      "PRT-JKT",
+      "PRT-LCH",
+      "PRT-MNL",
+      "PRT-PKG",
+      "PRT-RGN",
+      "PRT-SBY",
+      "PRT-SIN",
+      "PRT-TPP"
+    ],
+    "cameraPreset": {
+      "distance": 210,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-EAS",
+    "name": "East Asia",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 105,
+      "south": 18,
+      "east": 146,
+      "north": 45
+    },
+    "center": {
+      "lon": 125,
+      "lat": 31
+    },
+    "countryIso3": [
+      "CHN",
+      "TWN",
+      "JPN",
+      "KOR",
+      "PRK",
+      "HKG",
+      "MAC"
+    ],
+    "portIds": [
+      "PRT-BUS",
+      "PRT-DLC",
+      "PRT-HKG",
+      "PRT-KHH",
+      "PRT-NGB",
+      "PRT-NGO",
+      "PRT-OSA",
+      "PRT-SHA",
+      "PRT-SZX",
+      "PRT-TAO",
+      "PRT-TSN",
+      "PRT-TYO",
+      "PRT-UKB",
+      "PRT-XMN",
+      "PRT-YOK"
+    ],
+    "cameraPreset": {
+      "distance": 220,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-IO",
+    "name": "Indian Ocean",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 40,
+      "south": -35,
+      "east": 100,
+      "north": 25
+    },
+    "center": {
+      "lon": 72,
+      "lat": -2
+    },
+    "countryIso3": [
+      "IND",
+      "LKA",
+      "PAK",
+      "BGD",
+      "MDV",
+      "KEN",
+      "TZA",
+      "MOZ",
+      "MDG",
+      "SOM"
+    ],
+    "portIds": [
+      "PRT-CGP",
+      "PRT-CMB",
+      "PRT-DUR",
+      "PRT-KHI",
+      "PRT-MAA",
+      "PRT-MBA",
+      "PRT-MUM",
+      "PRT-MUN"
+    ],
+    "cameraPreset": {
+      "distance": 260,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-GULF",
+    "name": "Arabian Gulf & Red Sea",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 32,
+      "south": 10,
+      "east": 62,
+      "north": 31
+    },
+    "center": {
+      "lon": 47,
+      "lat": 21
+    },
+    "countryIso3": [
+      "ARE",
+      "SAU",
+      "QAT",
+      "OMN",
+      "KWT",
+      "BHR",
+      "IRN",
+      "JOR",
+      "DJI",
+      "YEM",
+      "ERI"
+    ],
+    "portIds": [
+      "PRT-DJB",
+      "PRT-JEA"
+    ],
+    "cameraPreset": {
+      "distance": 200,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-MED",
+    "name": "Mediterranean",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -8,
+      "south": 29,
+      "east": 37,
+      "north": 47
+    },
+    "center": {
+      "lon": 16,
+      "lat": 38
+    },
+    "countryIso3": [
+      "ESP",
+      "ITA",
+      "GRC",
+      "TUR",
+      "EGY",
+      "MAR",
+      "TUN",
+      "DZA",
+      "LBY",
+      "FRA",
+      "HRV",
+      "CYP",
+      "MLT",
+      "ISR",
+      "LBN"
+    ],
+    "portIds": [
+      "PRT-ALG",
+      "PRT-ALX",
+      "PRT-BCN",
+      "PRT-GOA",
+      "PRT-IST",
+      "PRT-MRS",
+      "PRT-PIR",
+      "PRT-PSD",
+      "PRT-TNG",
+      "PRT-VLC"
+    ],
+    "cameraPreset": {
+      "distance": 210,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-NEU",
+    "name": "North Europe",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -12,
+      "south": 47,
+      "east": 16,
+      "north": 61
+    },
+    "center": {
+      "lon": 3,
+      "lat": 53
+    },
+    "countryIso3": [
+      "NLD",
+      "DEU",
+      "GBR",
+      "BEL",
+      "FRA",
+      "DNK",
+      "NOR",
+      "IRL"
+    ],
+    "portIds": [
+      "PRT-ANR",
+      "PRT-FLX",
+      "PRT-HAM",
+      "PRT-LHV",
+      "PRT-RTM",
+      "PRT-SOU"
+    ],
+    "cameraPreset": {
+      "distance": 190,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-NAP",
+    "name": "North America Pacific",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -135,
+      "south": 15,
+      "east": -100,
+      "north": 58
+    },
+    "center": {
+      "lon": -120,
+      "lat": 37
+    },
+    "countryIso3": [
+      "USA",
+      "CAN",
+      "MEX"
+    ],
+    "portIds": [
+      "PRT-ENS",
+      "PRT-LAX",
+      "PRT-LGB",
+      "PRT-LZC",
+      "PRT-MAN",
+      "PRT-OAK",
+      "PRT-PRR",
+      "PRT-SEA",
+      "PRT-SFO",
+      "PRT-TAC",
+      "PRT-YVR"
+    ],
+    "cameraPreset": {
+      "distance": 230,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-NAA",
+    "name": "North America Atlantic",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -100,
+      "south": 15,
+      "east": -55,
+      "north": 50
+    },
+    "center": {
+      "lon": -78,
+      "lat": 33
+    },
+    "countryIso3": [
+      "USA",
+      "CAN",
+      "CUB",
+      "BHS"
+    ],
+    "portIds": [
+      "PRT-BAL",
+      "PRT-CHS",
+      "PRT-HFX",
+      "PRT-HOU",
+      "PRT-MIA",
+      "PRT-MSY",
+      "PRT-NYC",
+      "PRT-ORF",
+      "PRT-SAV",
+      "PRT-YMQ"
+    ],
+    "cameraPreset": {
+      "distance": 230,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-LAT",
+    "name": "Latin America",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -92,
+      "south": -45,
+      "east": -30,
+      "north": 20
+    },
+    "center": {
+      "lon": -65,
+      "lat": -12
+    },
+    "countryIso3": [
+      "BRA",
+      "ARG",
+      "URY",
+      "CHL",
+      "PER",
+      "ECU",
+      "COL",
+      "PAN",
+      "JAM",
+      "MEX",
+      "VEN",
+      "CRI"
+    ],
+    "portIds": [
+      "PRT-BALB",
+      "PRT-BUE",
+      "PRT-CLL",
+      "PRT-COL",
+      "PRT-CRB",
+      "PRT-CTG",
+      "PRT-GYE",
+      "PRT-KIN",
+      "PRT-MVD",
+      "PRT-RIO",
+      "PRT-SAI",
+      "PRT-SSZ",
+      "PRT-VAP",
+      "PRT-VER"
+    ],
+    "cameraPreset": {
+      "distance": 270,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-WAF",
+    "name": "West & Southern Africa",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": -25,
+      "south": -36,
+      "east": 20,
+      "north": 37
+    },
+    "center": {
+      "lon": -2,
+      "lat": 4
+    },
+    "countryIso3": [
+      "NGA",
+      "GHA",
+      "CIV",
+      "AGO",
+      "MAR",
+      "ZAF",
+      "SEN",
+      "CMR",
+      "NAM"
+    ],
+    "portIds": [
+      "PRT-ABJ",
+      "PRT-CAS",
+      "PRT-CPT",
+      "PRT-LAD",
+      "PRT-LAG",
+      "PRT-TEM"
+    ],
+    "cameraPreset": {
+      "distance": 260,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  },
+  {
+    "regionId": "REG-OCE",
+    "name": "Oceania",
+    "kind": "maritime-region",
+    "bounds": {
+      "west": 110,
+      "south": -48,
+      "east": -178,
+      "north": -8
+    },
+    "center": {
+      "lon": 150,
+      "lat": -30
+    },
+    "countryIso3": [
+      "AUS",
+      "NZL",
+      "PNG",
+      "FJI"
+    ],
+    "portIds": [
+      "PRT-AKL",
+      "PRT-BNE",
+      "PRT-FRE",
+      "PRT-MEL",
+      "PRT-SYD",
+      "PRT-TRG",
+      "PRT-WLG"
+    ],
+    "cameraPreset": {
+      "distance": 260,
+      "headingDeg": 0,
+      "pitchDeg": 0
+    },
+    "sourceType": "conceptual-bounds"
+  }
+]

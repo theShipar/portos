@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/voyages.schema.json",
+  "title": "PORTOS synthetic voyages collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "currentStage": {
+        "type": "string"
+      },
+      "dailyDelayCostUsd": {
+        "type": "integer"
+      },
+      "departedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "destinationPortId": {
+        "type": "string"
+      },
+      "estimatedArrivalUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "estimatedAsOfUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "etaConfidence": {
+        "type": "string"
+      },
+      "originPortId": {
+        "type": "string"
+      },
+      "plannedArrivalUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "routeId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "vesselId": {
+        "type": "string"
+      },
+      "voyageId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "currentStage",
+      "dailyDelayCostUsd",
+      "departedAtUtc",
+      "destinationPortId",
+      "estimatedArrivalUtc",
+      "estimatedAsOfUtc",
+      "etaConfidence",
+      "originPortId",
+      "plannedArrivalUtc",
+      "routeId",
+      "sourceType",
+      "vesselId",
+      "voyageId"
+    ],
+    "additionalProperties": false
+  }
+}

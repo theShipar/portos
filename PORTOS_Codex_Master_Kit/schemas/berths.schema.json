@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/berths.schema.json",
+  "title": "PORTOS synthetic berths collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "berthId": {
+        "type": "string"
+      },
+      "lastUpdatedUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "portId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "terminalId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "berthId",
+      "lastUpdatedUtc",
+      "portId",
+      "sourceType",
+      "status",
+      "terminalId"
+    ],
+    "additionalProperties": false
+  }
+}

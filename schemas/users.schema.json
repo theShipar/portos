@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/users.schema.json",
+  "title": "PORTOS synthetic users collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "defaultWorkspace": {
+        "type": "string"
+      },
+      "displayName": {
+        "type": "string"
+      },
+      "locale": {
+        "type": "string"
+      },
+      "organizationId": {
+        "type": "string"
+      },
+      "permissionFlags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "role": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "timeZone": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "userId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "defaultWorkspace",
+      "displayName",
+      "locale",
+      "organizationId",
+      "permissionFlags",
+      "role",
+      "sourceType",
+      "timeZone",
+      "title",
+      "userId"
+    ],
+    "additionalProperties": false
+  }
+}

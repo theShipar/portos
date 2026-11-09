@@ -1,0 +1,1434 @@
+[
+  {
+    "terminalId": "TRM-SIN-W",
+    "portId": "PRT-SIN",
+    "name": "Singapore Demo Terminal West",
+    "location": {
+      "lon": 103.762,
+      "lat": 1.272
+    },
+    "berthIds": [
+      "BRH-SIN-W-1",
+      "BRH-SIN-W-2",
+      "BRH-SIN-W-3",
+      "BRH-SIN-W-4"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SIN-C",
+    "portId": "PRT-SIN",
+    "name": "Singapore Demo Terminal Central",
+    "location": {
+      "lon": 103.834,
+      "lat": 1.262
+    },
+    "berthIds": [
+      "BRH-SIN-C-1",
+      "BRH-SIN-C-2",
+      "BRH-SIN-C-3"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SIN-E",
+    "portId": "PRT-SIN",
+    "name": "Singapore Demo Terminal East",
+    "location": {
+      "lon": 103.853,
+      "lat": 1.262
+    },
+    "berthIds": [
+      "BRH-SIN-E-1",
+      "BRH-SIN-E-2",
+      "BRH-SIN-E-3"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-RTM",
+    "portId": "PRT-RTM",
+    "name": "Rotterdam Demo Terminal",
+    "location": {
+      "lon": 4.495,
+      "lat": 51.925
+    },
+    "berthIds": [
+      "BRH-RTM-1",
+      "BRH-RTM-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SHA",
+    "portId": "PRT-SHA",
+    "name": "Shanghai Demo Terminal",
+    "location": {
+      "lon": 121.505,
+      "lat": 31.235
+    },
+    "berthIds": [
+      "BRH-SHA-1",
+      "BRH-SHA-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SZX",
+    "portId": "PRT-SZX",
+    "name": "Shenzhen Demo Terminal",
+    "location": {
+      "lon": 114.135,
+      "lat": 22.535
+    },
+    "berthIds": [
+      "BRH-SZX-1",
+      "BRH-SZX-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-NGB",
+    "portId": "PRT-NGB",
+    "name": "Ningbo Demo Terminal",
+    "location": {
+      "lon": 121.575,
+      "lat": 29.885
+    },
+    "berthIds": [
+      "BRH-NGB-1",
+      "BRH-NGB-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BUS",
+    "portId": "PRT-BUS",
+    "name": "Busan Demo Terminal",
+    "location": {
+      "lon": 129.055,
+      "lat": 35.105
+    },
+    "berthIds": [
+      "BRH-BUS-1",
+      "BRH-BUS-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HKG",
+    "portId": "PRT-HKG",
+    "name": "Hong Kong Demo Terminal",
+    "location": {
+      "lon": 114.185,
+      "lat": 22.305
+    },
+    "berthIds": [
+      "BRH-HKG-1",
+      "BRH-HKG-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-JEA",
+    "portId": "PRT-JEA",
+    "name": "Jebel Ali Demo Terminal",
+    "location": {
+      "lon": 55.085,
+      "lat": 24.995
+    },
+    "berthIds": [
+      "BRH-JEA-1",
+      "BRH-JEA-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LAX",
+    "portId": "PRT-LAX",
+    "name": "Los Angeles Demo Terminal",
+    "location": {
+      "lon": -118.255,
+      "lat": 33.735
+    },
+    "berthIds": [
+      "BRH-LAX-1",
+      "BRH-LAX-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LGB",
+    "portId": "PRT-LGB",
+    "name": "Long Beach Demo Terminal",
+    "location": {
+      "lon": -118.175,
+      "lat": 33.755
+    },
+    "berthIds": [
+      "BRH-LGB-1",
+      "BRH-LGB-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-NYC",
+    "portId": "PRT-NYC",
+    "name": "New York New Jersey Demo Terminal",
+    "location": {
+      "lon": -74.035,
+      "lat": 40.675
+    },
+    "berthIds": [
+      "BRH-NYC-1",
+      "BRH-NYC-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HAM",
+    "portId": "PRT-HAM",
+    "name": "Hamburg Demo Terminal",
+    "location": {
+      "lon": 9.975,
+      "lat": 53.545
+    },
+    "berthIds": [
+      "BRH-HAM-1",
+      "BRH-HAM-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ANR",
+    "portId": "PRT-ANR",
+    "name": "Antwerp Demo Terminal",
+    "location": {
+      "lon": 4.415,
+      "lat": 51.265
+    },
+    "berthIds": [
+      "BRH-ANR-1",
+      "BRH-ANR-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-VLC",
+    "portId": "PRT-VLC",
+    "name": "Valencia Demo Terminal",
+    "location": {
+      "lon": -0.305,
+      "lat": 39.445
+    },
+    "berthIds": [
+      "BRH-VLC-1",
+      "BRH-VLC-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ALG",
+    "portId": "PRT-ALG",
+    "name": "Algeciras Demo Terminal",
+    "location": {
+      "lon": -5.435,
+      "lat": 36.135
+    },
+    "berthIds": [
+      "BRH-ALG-1",
+      "BRH-ALG-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-FLX",
+    "portId": "PRT-FLX",
+    "name": "Felixstowe Demo Terminal",
+    "location": {
+      "lon": 1.365,
+      "lat": 51.965
+    },
+    "berthIds": [
+      "BRH-FLX-1",
+      "BRH-FLX-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SOU",
+    "portId": "PRT-SOU",
+    "name": "Southampton Demo Terminal",
+    "location": {
+      "lon": -1.385,
+      "lat": 50.905
+    },
+    "berthIds": [
+      "BRH-SOU-1",
+      "BRH-SOU-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LHV",
+    "portId": "PRT-LHV",
+    "name": "Le Havre Demo Terminal",
+    "location": {
+      "lon": 0.135,
+      "lat": 49.495
+    },
+    "berthIds": [
+      "BRH-LHV-1",
+      "BRH-LHV-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MRS",
+    "portId": "PRT-MRS",
+    "name": "Marseille Demo Terminal",
+    "location": {
+      "lon": 5.375,
+      "lat": 43.305
+    },
+    "berthIds": [
+      "BRH-MRS-1",
+      "BRH-MRS-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-PIR",
+    "portId": "PRT-PIR",
+    "name": "Piraeus Demo Terminal",
+    "location": {
+      "lon": 23.645,
+      "lat": 37.945
+    },
+    "berthIds": [
+      "BRH-PIR-1",
+      "BRH-PIR-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-IST",
+    "portId": "PRT-IST",
+    "name": "Istanbul Demo Terminal",
+    "location": {
+      "lon": 28.985,
+      "lat": 41.015
+    },
+    "berthIds": [
+      "BRH-IST-1",
+      "BRH-IST-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-GOA",
+    "portId": "PRT-GOA",
+    "name": "Genoa Demo Terminal",
+    "location": {
+      "lon": 8.935,
+      "lat": 44.405
+    },
+    "berthIds": [
+      "BRH-GOA-1",
+      "BRH-GOA-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BCN",
+    "portId": "PRT-BCN",
+    "name": "Barcelona Demo Terminal",
+    "location": {
+      "lon": 2.175,
+      "lat": 41.355
+    },
+    "berthIds": [
+      "BRH-BCN-1",
+      "BRH-BCN-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ALX",
+    "portId": "PRT-ALX",
+    "name": "Alexandria Demo Terminal",
+    "location": {
+      "lon": 29.895,
+      "lat": 31.205
+    },
+    "berthIds": [
+      "BRH-ALX-1",
+      "BRH-ALX-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-PSD",
+    "portId": "PRT-PSD",
+    "name": "Port Said Demo Terminal",
+    "location": {
+      "lon": 32.325,
+      "lat": 31.265
+    },
+    "berthIds": [
+      "BRH-PSD-1",
+      "BRH-PSD-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-DUR",
+    "portId": "PRT-DUR",
+    "name": "Durban Demo Terminal",
+    "location": {
+      "lon": 31.045,
+      "lat": -29.865
+    },
+    "berthIds": [
+      "BRH-DUR-1",
+      "BRH-DUR-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CPT",
+    "portId": "PRT-CPT",
+    "name": "Cape Town Demo Terminal",
+    "location": {
+      "lon": 18.455,
+      "lat": -33.915
+    },
+    "berthIds": [
+      "BRH-CPT-1",
+      "BRH-CPT-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LAG",
+    "portId": "PRT-LAG",
+    "name": "Lagos Demo Terminal",
+    "location": {
+      "lon": 3.405,
+      "lat": 6.455
+    },
+    "berthIds": [
+      "BRH-LAG-1",
+      "BRH-LAG-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MBA",
+    "portId": "PRT-MBA",
+    "name": "Mombasa Demo Terminal",
+    "location": {
+      "lon": 39.675,
+      "lat": -4.055
+    },
+    "berthIds": [
+      "BRH-MBA-1",
+      "BRH-MBA-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-DJB",
+    "portId": "PRT-DJB",
+    "name": "Djibouti Demo Terminal",
+    "location": {
+      "lon": 43.155,
+      "lat": 11.595
+    },
+    "berthIds": [
+      "BRH-DJB-1",
+      "BRH-DJB-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CMB",
+    "portId": "PRT-CMB",
+    "name": "Colombo Demo Terminal",
+    "location": {
+      "lon": 79.865,
+      "lat": 6.945
+    },
+    "berthIds": [
+      "BRH-CMB-1",
+      "BRH-CMB-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MUM",
+    "portId": "PRT-MUM",
+    "name": "Mumbai Demo Terminal",
+    "location": {
+      "lon": 72.865,
+      "lat": 18.945
+    },
+    "berthIds": [
+      "BRH-MUM-1",
+      "BRH-MUM-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MAA",
+    "portId": "PRT-MAA",
+    "name": "Chennai Demo Terminal",
+    "location": {
+      "lon": 80.315,
+      "lat": 13.095
+    },
+    "berthIds": [
+      "BRH-MAA-1",
+      "BRH-MAA-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MUN",
+    "portId": "PRT-MUN",
+    "name": "Mundra Demo Terminal",
+    "location": {
+      "lon": 69.715,
+      "lat": 22.745
+    },
+    "berthIds": [
+      "BRH-MUN-1",
+      "BRH-MUN-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-KHI",
+    "portId": "PRT-KHI",
+    "name": "Karachi Demo Terminal",
+    "location": {
+      "lon": 67.025,
+      "lat": 24.855
+    },
+    "berthIds": [
+      "BRH-KHI-1",
+      "BRH-KHI-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CGP",
+    "portId": "PRT-CGP",
+    "name": "Chattogram Demo Terminal",
+    "location": {
+      "lon": 91.835,
+      "lat": 22.325
+    },
+    "berthIds": [
+      "BRH-CGP-1",
+      "BRH-CGP-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-RGN",
+    "portId": "PRT-RGN",
+    "name": "Yangon Demo Terminal",
+    "location": {
+      "lon": 96.185,
+      "lat": 16.785
+    },
+    "berthIds": [
+      "BRH-RGN-1",
+      "BRH-RGN-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BKK",
+    "portId": "PRT-BKK",
+    "name": "Bangkok Demo Terminal",
+    "location": {
+      "lon": 100.585,
+      "lat": 13.705
+    },
+    "berthIds": [
+      "BRH-BKK-1",
+      "BRH-BKK-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LCH",
+    "portId": "PRT-LCH",
+    "name": "Laem Chabang Demo Terminal",
+    "location": {
+      "lon": 100.895,
+      "lat": 13.095
+    },
+    "berthIds": [
+      "BRH-LCH-1",
+      "BRH-LCH-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-PKG",
+    "portId": "PRT-PKG",
+    "name": "Port Klang Demo Terminal",
+    "location": {
+      "lon": 101.375,
+      "lat": 3.005
+    },
+    "berthIds": [
+      "BRH-PKG-1",
+      "BRH-PKG-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TPP",
+    "portId": "PRT-TPP",
+    "name": "Tanjung Pelepas Demo Terminal",
+    "location": {
+      "lon": 103.565,
+      "lat": 1.365
+    },
+    "berthIds": [
+      "BRH-TPP-1",
+      "BRH-TPP-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-JKT",
+    "portId": "PRT-JKT",
+    "name": "Jakarta Demo Terminal",
+    "location": {
+      "lon": 106.895,
+      "lat": -6.105
+    },
+    "berthIds": [
+      "BRH-JKT-1",
+      "BRH-JKT-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SBY",
+    "portId": "PRT-SBY",
+    "name": "Surabaya Demo Terminal",
+    "location": {
+      "lon": 112.745,
+      "lat": -7.205
+    },
+    "berthIds": [
+      "BRH-SBY-1",
+      "BRH-SBY-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MNL",
+    "portId": "PRT-MNL",
+    "name": "Manila Demo Terminal",
+    "location": {
+      "lon": 120.975,
+      "lat": 14.595
+    },
+    "berthIds": [
+      "BRH-MNL-1",
+      "BRH-MNL-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HCM",
+    "portId": "PRT-HCM",
+    "name": "Ho Chi Minh City Demo Terminal",
+    "location": {
+      "lon": 106.765,
+      "lat": 10.795
+    },
+    "berthIds": [
+      "BRH-HCM-1",
+      "BRH-HCM-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HPH",
+    "portId": "PRT-HPH",
+    "name": "Haiphong Demo Terminal",
+    "location": {
+      "lon": 106.715,
+      "lat": 20.855
+    },
+    "berthIds": [
+      "BRH-HPH-1",
+      "BRH-HPH-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TAO",
+    "portId": "PRT-TAO",
+    "name": "Qingdao Demo Terminal",
+    "location": {
+      "lon": 120.395,
+      "lat": 36.075
+    },
+    "berthIds": [
+      "BRH-TAO-1",
+      "BRH-TAO-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TSN",
+    "portId": "PRT-TSN",
+    "name": "Tianjin Demo Terminal",
+    "location": {
+      "lon": 117.755,
+      "lat": 38.985
+    },
+    "berthIds": [
+      "BRH-TSN-1",
+      "BRH-TSN-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-DLC",
+    "portId": "PRT-DLC",
+    "name": "Dalian Demo Terminal",
+    "location": {
+      "lon": 121.635,
+      "lat": 38.915
+    },
+    "berthIds": [
+      "BRH-DLC-1",
+      "BRH-DLC-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-XMN",
+    "portId": "PRT-XMN",
+    "name": "Xiamen Demo Terminal",
+    "location": {
+      "lon": 118.095,
+      "lat": 24.485
+    },
+    "berthIds": [
+      "BRH-XMN-1",
+      "BRH-XMN-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-KHH",
+    "portId": "PRT-KHH",
+    "name": "Kaohsiung Demo Terminal",
+    "location": {
+      "lon": 120.295,
+      "lat": 22.625
+    },
+    "berthIds": [
+      "BRH-KHH-1",
+      "BRH-KHH-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TYO",
+    "portId": "PRT-TYO",
+    "name": "Tokyo Demo Terminal",
+    "location": {
+      "lon": 139.785,
+      "lat": 35.615
+    },
+    "berthIds": [
+      "BRH-TYO-1",
+      "BRH-TYO-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-YOK",
+    "portId": "PRT-YOK",
+    "name": "Yokohama Demo Terminal",
+    "location": {
+      "lon": 139.655,
+      "lat": 35.455
+    },
+    "berthIds": [
+      "BRH-YOK-1",
+      "BRH-YOK-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-UKB",
+    "portId": "PRT-UKB",
+    "name": "Kobe Demo Terminal",
+    "location": {
+      "lon": 135.195,
+      "lat": 34.695
+    },
+    "berthIds": [
+      "BRH-UKB-1",
+      "BRH-UKB-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-OSA",
+    "portId": "PRT-OSA",
+    "name": "Osaka Demo Terminal",
+    "location": {
+      "lon": 135.445,
+      "lat": 34.655
+    },
+    "berthIds": [
+      "BRH-OSA-1",
+      "BRH-OSA-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-NGO",
+    "portId": "PRT-NGO",
+    "name": "Nagoya Demo Terminal",
+    "location": {
+      "lon": 136.895,
+      "lat": 35.095
+    },
+    "berthIds": [
+      "BRH-NGO-1",
+      "BRH-NGO-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MEL",
+    "portId": "PRT-MEL",
+    "name": "Melbourne Demo Terminal",
+    "location": {
+      "lon": 144.935,
+      "lat": -37.835
+    },
+    "berthIds": [
+      "BRH-MEL-1",
+      "BRH-MEL-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SYD",
+    "portId": "PRT-SYD",
+    "name": "Sydney Demo Terminal",
+    "location": {
+      "lon": 151.215,
+      "lat": -33.855
+    },
+    "berthIds": [
+      "BRH-SYD-1",
+      "BRH-SYD-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BNE",
+    "portId": "PRT-BNE",
+    "name": "Brisbane Demo Terminal",
+    "location": {
+      "lon": 153.045,
+      "lat": -27.375
+    },
+    "berthIds": [
+      "BRH-BNE-1",
+      "BRH-BNE-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-FRE",
+    "portId": "PRT-FRE",
+    "name": "Fremantle Demo Terminal",
+    "location": {
+      "lon": 115.765,
+      "lat": -32.045
+    },
+    "berthIds": [
+      "BRH-FRE-1",
+      "BRH-FRE-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-AKL",
+    "portId": "PRT-AKL",
+    "name": "Auckland Demo Terminal",
+    "location": {
+      "lon": 174.785,
+      "lat": -36.835
+    },
+    "berthIds": [
+      "BRH-AKL-1",
+      "BRH-AKL-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TRG",
+    "portId": "PRT-TRG",
+    "name": "Tauranga Demo Terminal",
+    "location": {
+      "lon": 176.185,
+      "lat": -37.655
+    },
+    "berthIds": [
+      "BRH-TRG-1",
+      "BRH-TRG-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-WLG",
+    "portId": "PRT-WLG",
+    "name": "Wellington Demo Terminal",
+    "location": {
+      "lon": 174.795,
+      "lat": -41.265
+    },
+    "berthIds": [
+      "BRH-WLG-1",
+      "BRH-WLG-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-YVR",
+    "portId": "PRT-YVR",
+    "name": "Vancouver Demo Terminal",
+    "location": {
+      "lon": -123.095,
+      "lat": 49.305
+    },
+    "berthIds": [
+      "BRH-YVR-1",
+      "BRH-YVR-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-PRR",
+    "portId": "PRT-PRR",
+    "name": "Prince Rupert Demo Terminal",
+    "location": {
+      "lon": -130.305,
+      "lat": 54.315
+    },
+    "berthIds": [
+      "BRH-PRR-1",
+      "BRH-PRR-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SEA",
+    "portId": "PRT-SEA",
+    "name": "Seattle Demo Terminal",
+    "location": {
+      "lon": -122.335,
+      "lat": 47.605
+    },
+    "berthIds": [
+      "BRH-SEA-1",
+      "BRH-SEA-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TAC",
+    "portId": "PRT-TAC",
+    "name": "Tacoma Demo Terminal",
+    "location": {
+      "lon": -122.425,
+      "lat": 47.265
+    },
+    "berthIds": [
+      "BRH-TAC-1",
+      "BRH-TAC-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-OAK",
+    "portId": "PRT-OAK",
+    "name": "Oakland Demo Terminal",
+    "location": {
+      "lon": -122.295,
+      "lat": 37.805
+    },
+    "berthIds": [
+      "BRH-OAK-1",
+      "BRH-OAK-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SFO",
+    "portId": "PRT-SFO",
+    "name": "San Francisco Demo Terminal",
+    "location": {
+      "lon": -122.385,
+      "lat": 37.795
+    },
+    "berthIds": [
+      "BRH-SFO-1",
+      "BRH-SFO-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HOU",
+    "portId": "PRT-HOU",
+    "name": "Houston Demo Terminal",
+    "location": {
+      "lon": -95.265,
+      "lat": 29.735
+    },
+    "berthIds": [
+      "BRH-HOU-1",
+      "BRH-HOU-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MSY",
+    "portId": "PRT-MSY",
+    "name": "New Orleans Demo Terminal",
+    "location": {
+      "lon": -90.045,
+      "lat": 29.965
+    },
+    "berthIds": [
+      "BRH-MSY-1",
+      "BRH-MSY-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MIA",
+    "portId": "PRT-MIA",
+    "name": "Miami Demo Terminal",
+    "location": {
+      "lon": -80.165,
+      "lat": 25.765
+    },
+    "berthIds": [
+      "BRH-MIA-1",
+      "BRH-MIA-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SAV",
+    "portId": "PRT-SAV",
+    "name": "Savannah Demo Terminal",
+    "location": {
+      "lon": -81.075,
+      "lat": 32.085
+    },
+    "berthIds": [
+      "BRH-SAV-1",
+      "BRH-SAV-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CHS",
+    "portId": "PRT-CHS",
+    "name": "Charleston Demo Terminal",
+    "location": {
+      "lon": -79.925,
+      "lat": 32.785
+    },
+    "berthIds": [
+      "BRH-CHS-1",
+      "BRH-CHS-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ORF",
+    "portId": "PRT-ORF",
+    "name": "Norfolk Demo Terminal",
+    "location": {
+      "lon": -76.285,
+      "lat": 36.855
+    },
+    "berthIds": [
+      "BRH-ORF-1",
+      "BRH-ORF-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BAL",
+    "portId": "PRT-BAL",
+    "name": "Baltimore Demo Terminal",
+    "location": {
+      "lon": -76.585,
+      "lat": 39.275
+    },
+    "berthIds": [
+      "BRH-BAL-1",
+      "BRH-BAL-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-HFX",
+    "portId": "PRT-HFX",
+    "name": "Halifax Demo Terminal",
+    "location": {
+      "lon": -63.555,
+      "lat": 44.655
+    },
+    "berthIds": [
+      "BRH-HFX-1",
+      "BRH-HFX-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-YMQ",
+    "portId": "PRT-YMQ",
+    "name": "Montreal Demo Terminal",
+    "location": {
+      "lon": -73.525,
+      "lat": 45.515
+    },
+    "berthIds": [
+      "BRH-YMQ-1",
+      "BRH-YMQ-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SSZ",
+    "portId": "PRT-SSZ",
+    "name": "Santos Demo Terminal",
+    "location": {
+      "lon": -46.315,
+      "lat": -23.935
+    },
+    "berthIds": [
+      "BRH-SSZ-1",
+      "BRH-SSZ-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-RIO",
+    "portId": "PRT-RIO",
+    "name": "Rio de Janeiro Demo Terminal",
+    "location": {
+      "lon": -43.165,
+      "lat": -22.905
+    },
+    "berthIds": [
+      "BRH-RIO-1",
+      "BRH-RIO-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BUE",
+    "portId": "PRT-BUE",
+    "name": "Buenos Aires Demo Terminal",
+    "location": {
+      "lon": -58.345,
+      "lat": -34.585
+    },
+    "berthIds": [
+      "BRH-BUE-1",
+      "BRH-BUE-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MVD",
+    "portId": "PRT-MVD",
+    "name": "Montevideo Demo Terminal",
+    "location": {
+      "lon": -56.195,
+      "lat": -34.895
+    },
+    "berthIds": [
+      "BRH-MVD-1",
+      "BRH-MVD-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-VAP",
+    "portId": "PRT-VAP",
+    "name": "Valparaiso Demo Terminal",
+    "location": {
+      "lon": -71.605,
+      "lat": -33.035
+    },
+    "berthIds": [
+      "BRH-VAP-1",
+      "BRH-VAP-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-SAI",
+    "portId": "PRT-SAI",
+    "name": "San Antonio Chile Demo Terminal",
+    "location": {
+      "lon": -71.595,
+      "lat": -33.585
+    },
+    "berthIds": [
+      "BRH-SAI-1",
+      "BRH-SAI-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CLL",
+    "portId": "PRT-CLL",
+    "name": "Callao Demo Terminal",
+    "location": {
+      "lon": -77.135,
+      "lat": -12.035
+    },
+    "berthIds": [
+      "BRH-CLL-1",
+      "BRH-CLL-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-GYE",
+    "portId": "PRT-GYE",
+    "name": "Guayaquil Demo Terminal",
+    "location": {
+      "lon": -79.905,
+      "lat": -2.215
+    },
+    "berthIds": [
+      "BRH-GYE-1",
+      "BRH-GYE-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CTG",
+    "portId": "PRT-CTG",
+    "name": "Cartagena Demo Terminal",
+    "location": {
+      "lon": -75.515,
+      "lat": 10.395
+    },
+    "berthIds": [
+      "BRH-CTG-1",
+      "BRH-CTG-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-BALB",
+    "portId": "PRT-BALB",
+    "name": "Balboa Demo Terminal",
+    "location": {
+      "lon": -79.555,
+      "lat": 8.955
+    },
+    "berthIds": [
+      "BRH-BALB-1",
+      "BRH-BALB-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CRB",
+    "portId": "PRT-CRB",
+    "name": "Cristobal Demo Terminal",
+    "location": {
+      "lon": -79.895,
+      "lat": 9.355
+    },
+    "berthIds": [
+      "BRH-CRB-1",
+      "BRH-CRB-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-KIN",
+    "portId": "PRT-KIN",
+    "name": "Kingston Demo Terminal",
+    "location": {
+      "lon": -76.775,
+      "lat": 17.975
+    },
+    "berthIds": [
+      "BRH-KIN-1",
+      "BRH-KIN-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-VER",
+    "portId": "PRT-VER",
+    "name": "Veracruz Demo Terminal",
+    "location": {
+      "lon": -96.125,
+      "lat": 19.195
+    },
+    "berthIds": [
+      "BRH-VER-1",
+      "BRH-VER-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-MAN",
+    "portId": "PRT-MAN",
+    "name": "Manzanillo Mexico Demo Terminal",
+    "location": {
+      "lon": -104.305,
+      "lat": 19.065
+    },
+    "berthIds": [
+      "BRH-MAN-1",
+      "BRH-MAN-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ENS",
+    "portId": "PRT-ENS",
+    "name": "Ensenada Demo Terminal",
+    "location": {
+      "lon": -116.605,
+      "lat": 31.865
+    },
+    "berthIds": [
+      "BRH-ENS-1",
+      "BRH-ENS-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LZC",
+    "portId": "PRT-LZC",
+    "name": "Lazaro Cardenas Demo Terminal",
+    "location": {
+      "lon": -102.165,
+      "lat": 17.965
+    },
+    "berthIds": [
+      "BRH-LZC-1",
+      "BRH-LZC-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-COL",
+    "portId": "PRT-COL",
+    "name": "Colon Demo Terminal",
+    "location": {
+      "lon": -79.885,
+      "lat": 9.365
+    },
+    "berthIds": [
+      "BRH-COL-1",
+      "BRH-COL-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TNG",
+    "portId": "PRT-TNG",
+    "name": "Tangier Med Demo Terminal",
+    "location": {
+      "lon": -5.485,
+      "lat": 35.885
+    },
+    "berthIds": [
+      "BRH-TNG-1",
+      "BRH-TNG-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-CAS",
+    "portId": "PRT-CAS",
+    "name": "Casablanca Demo Terminal",
+    "location": {
+      "lon": -7.595,
+      "lat": 33.615
+    },
+    "berthIds": [
+      "BRH-CAS-1",
+      "BRH-CAS-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-ABJ",
+    "portId": "PRT-ABJ",
+    "name": "Abidjan Demo Terminal",
+    "location": {
+      "lon": -3.995,
+      "lat": 5.315
+    },
+    "berthIds": [
+      "BRH-ABJ-1",
+      "BRH-ABJ-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-TEM",
+    "portId": "PRT-TEM",
+    "name": "Tema Demo Terminal",
+    "location": {
+      "lon": 0.025,
+      "lat": 5.635
+    },
+    "berthIds": [
+      "BRH-TEM-1",
+      "BRH-TEM-2"
+    ],
+    "sourceType": "synthetic-layout"
+  },
+  {
+    "terminalId": "TRM-LAD",
+    "portId": "PRT-LAD",
+    "name": "Luanda Demo Terminal",
+    "location": {
+      "lon": 13.245,
+      "lat": -8.815
+    },
+    "berthIds": [
+      "BRH-LAD-1",
+      "BRH-LAD-2"
+    ],
+    "sourceType": "synthetic-layout"
+  }
+]

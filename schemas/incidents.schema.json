@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/incidents.schema.json",
+  "title": "PORTOS synthetic incidents collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "acknowledgedAtUtc": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "Z$"
+      },
+      "actionIds": {
+        "type": "array"
+      },
+      "category": {
+        "type": "string"
+      },
+      "detectedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "entityRefs": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "kind"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "evidenceIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "incidentId": {
+        "type": "string"
+      },
+      "openedAtUtc": {
+        "type": "string",
+        "pattern": "Z$"
+      },
+      "ownerUserId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "portId": {
+        "type": "string"
+      },
+      "resolvedAtUtc": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "Z$"
+      },
+      "scenarioId": {
+        "type": "string"
+      },
+      "severity": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "title": {
+        "type": "string"
+      },
+      "vesselId": {
+        "type": "string"
+      },
+      "voyageId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "acknowledgedAtUtc",
+      "actionIds",
+      "category",
+      "detectedAtUtc",
+      "entityRefs",
+      "evidenceIds",
+      "incidentId",
+      "openedAtUtc",
+      "ownerUserId",
+      "portId",
+      "resolvedAtUtc",
+      "scenarioId",
+      "severity",
+      "sourceType",
+      "status",
+      "title",
+      "vesselId",
+      "voyageId"
+    ],
+    "additionalProperties": false
+  }
+}

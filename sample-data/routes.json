@@ -1,0 +1,1103 @@
+[
+  {
+    "routeId": "RTE-SIN-RTM",
+    "originPortId": "PRT-SIN",
+    "destinationPortId": "PRT-RTM",
+    "corridorId": "asia–europe-via-suez",
+    "corridorName": "Asia–Europe via Suez",
+    "waypoints": [
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      },
+      {
+        "lon": 103.45,
+        "lat": 1.12
+      },
+      {
+        "lon": 102.2,
+        "lat": 1.95
+      },
+      {
+        "lon": 101.0,
+        "lat": 2.75
+      },
+      {
+        "lon": 99.6,
+        "lat": 3.9
+      },
+      {
+        "lon": 97.8,
+        "lat": 5.6
+      },
+      {
+        "lon": 94.5,
+        "lat": 6.3
+      },
+      {
+        "lon": 88.0,
+        "lat": 6.0
+      },
+      {
+        "lon": 81.0,
+        "lat": 5.4
+      },
+      {
+        "lon": 76.0,
+        "lat": 8.6
+      },
+      {
+        "lon": 67.0,
+        "lat": 12.0
+      },
+      {
+        "lon": 58.0,
+        "lat": 13.0
+      },
+      {
+        "lon": 51.0,
+        "lat": 12.6
+      },
+      {
+        "lon": 45.5,
+        "lat": 12.3
+      },
+      {
+        "lon": 43.4,
+        "lat": 12.6
+      },
+      {
+        "lon": 41.5,
+        "lat": 14.6
+      },
+      {
+        "lon": 39.6,
+        "lat": 18.5
+      },
+      {
+        "lon": 37.5,
+        "lat": 22.5
+      },
+      {
+        "lon": 35.2,
+        "lat": 26.2
+      },
+      {
+        "lon": 33.8,
+        "lat": 27.7
+      },
+      {
+        "lon": 32.6,
+        "lat": 29.7
+      },
+      {
+        "lon": 32.35,
+        "lat": 30.6
+      },
+      {
+        "lon": 32.3,
+        "lat": 31.4
+      },
+      {
+        "lon": 28.0,
+        "lat": 33.9
+      },
+      {
+        "lon": 21.0,
+        "lat": 35.2
+      },
+      {
+        "lon": 12.0,
+        "lat": 37.0
+      },
+      {
+        "lon": 3.0,
+        "lat": 37.6
+      },
+      {
+        "lon": -2.0,
+        "lat": 36.4
+      },
+      {
+        "lon": -5.5,
+        "lat": 35.95
+      },
+      {
+        "lon": -10.0,
+        "lat": 37.0
+      },
+      {
+        "lon": -10.0,
+        "lat": 40.0
+      },
+      {
+        "lon": -9.6,
+        "lat": 43.6
+      },
+      {
+        "lon": -5.4,
+        "lat": 48.6
+      },
+      {
+        "lon": -2.0,
+        "lat": 49.9
+      },
+      {
+        "lon": 1.6,
+        "lat": 51.0
+      },
+      {
+        "lon": 3.3,
+        "lat": 51.8
+      },
+      {
+        "lon": 4.05,
+        "lat": 51.98
+      },
+      {
+        "lon": 4.48,
+        "lat": 51.92
+      }
+    ],
+    "distanceNmEstimate": 8407.0,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-SIN-RTM-CAPE",
+    "originPortId": "PRT-SIN",
+    "destinationPortId": "PRT-RTM",
+    "corridorId": "asia–europe-via-cape-of-good-hope",
+    "corridorName": "Asia–Europe via Cape of Good Hope (scenario)",
+    "waypoints": [
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      },
+      {
+        "lon": 103.45,
+        "lat": 1.12
+      },
+      {
+        "lon": 102.2,
+        "lat": 1.95
+      },
+      {
+        "lon": 101.0,
+        "lat": 2.75
+      },
+      {
+        "lon": 99.6,
+        "lat": 3.9
+      },
+      {
+        "lon": 97.8,
+        "lat": 5.6
+      },
+      {
+        "lon": 95.0,
+        "lat": 5.4
+      },
+      {
+        "lon": 93.0,
+        "lat": 1.0
+      },
+      {
+        "lon": 88.0,
+        "lat": -8.0
+      },
+      {
+        "lon": 78.0,
+        "lat": -14.0
+      },
+      {
+        "lon": 60.0,
+        "lat": -22.0
+      },
+      {
+        "lon": 45.0,
+        "lat": -30.0
+      },
+      {
+        "lon": 33.5,
+        "lat": -31.0
+      },
+      {
+        "lon": 25.0,
+        "lat": -35.2
+      },
+      {
+        "lon": 19.0,
+        "lat": -35.6
+      },
+      {
+        "lon": 15.0,
+        "lat": -33.0
+      },
+      {
+        "lon": 10.0,
+        "lat": -25.0
+      },
+      {
+        "lon": 2.0,
+        "lat": -8.0
+      },
+      {
+        "lon": -12.0,
+        "lat": 4.0
+      },
+      {
+        "lon": -19.5,
+        "lat": 12.0
+      },
+      {
+        "lon": -20.0,
+        "lat": 25.0
+      },
+      {
+        "lon": -15.0,
+        "lat": 36.0
+      },
+      {
+        "lon": -11.0,
+        "lat": 44.0
+      },
+      {
+        "lon": -5.4,
+        "lat": 48.6
+      },
+      {
+        "lon": -2.0,
+        "lat": 49.9
+      },
+      {
+        "lon": 1.6,
+        "lat": 51.0
+      },
+      {
+        "lon": 3.3,
+        "lat": 51.8
+      },
+      {
+        "lon": 4.05,
+        "lat": 51.98
+      },
+      {
+        "lon": 4.48,
+        "lat": 51.92
+      }
+    ],
+    "distanceNmEstimate": 12162.6,
+    "isScenarioAlternative": true,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-SHA-SIN",
+    "originPortId": "PRT-SHA",
+    "destinationPortId": "PRT-SIN",
+    "corridorId": "east-asia–singapore",
+    "corridorName": "East Asia–Singapore",
+    "waypoints": [
+      {
+        "lon": 121.49,
+        "lat": 31.23
+      },
+      {
+        "lon": 122.4,
+        "lat": 30.6
+      },
+      {
+        "lon": 122.0,
+        "lat": 28.0
+      },
+      {
+        "lon": 119.8,
+        "lat": 24.4
+      },
+      {
+        "lon": 117.5,
+        "lat": 21.5
+      },
+      {
+        "lon": 113.5,
+        "lat": 15.0
+      },
+      {
+        "lon": 109.5,
+        "lat": 8.0
+      },
+      {
+        "lon": 105.5,
+        "lat": 3.0
+      },
+      {
+        "lon": 104.4,
+        "lat": 1.33
+      },
+      {
+        "lon": 104.0,
+        "lat": 1.24
+      },
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      }
+    ],
+    "distanceNmEstimate": 2152.1,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-SIN-JEA",
+    "originPortId": "PRT-SIN",
+    "destinationPortId": "PRT-JEA",
+    "corridorId": "singapore–gulf",
+    "corridorName": "Singapore–Gulf",
+    "waypoints": [
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      },
+      {
+        "lon": 103.45,
+        "lat": 1.12
+      },
+      {
+        "lon": 102.2,
+        "lat": 1.95
+      },
+      {
+        "lon": 101.0,
+        "lat": 2.75
+      },
+      {
+        "lon": 99.6,
+        "lat": 3.9
+      },
+      {
+        "lon": 97.8,
+        "lat": 5.6
+      },
+      {
+        "lon": 94.5,
+        "lat": 6.3
+      },
+      {
+        "lon": 88.0,
+        "lat": 6.0
+      },
+      {
+        "lon": 81.0,
+        "lat": 5.4
+      },
+      {
+        "lon": 75.0,
+        "lat": 9.0
+      },
+      {
+        "lon": 66.0,
+        "lat": 16.0
+      },
+      {
+        "lon": 60.6,
+        "lat": 22.7
+      },
+      {
+        "lon": 58.2,
+        "lat": 24.6
+      },
+      {
+        "lon": 56.7,
+        "lat": 26.4
+      },
+      {
+        "lon": 55.6,
+        "lat": 25.9
+      },
+      {
+        "lon": 55.07,
+        "lat": 24.99
+      }
+    ],
+    "distanceNmEstimate": 3502.7,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-SIN-CPT",
+    "originPortId": "PRT-SIN",
+    "destinationPortId": "PRT-CPT",
+    "corridorId": "singapore–cape",
+    "corridorName": "Singapore–Cape",
+    "waypoints": [
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      },
+      {
+        "lon": 103.45,
+        "lat": 1.12
+      },
+      {
+        "lon": 102.2,
+        "lat": 1.95
+      },
+      {
+        "lon": 101.0,
+        "lat": 2.75
+      },
+      {
+        "lon": 99.6,
+        "lat": 3.9
+      },
+      {
+        "lon": 97.8,
+        "lat": 5.6
+      },
+      {
+        "lon": 95.0,
+        "lat": 5.4
+      },
+      {
+        "lon": 93.0,
+        "lat": 1.0
+      },
+      {
+        "lon": 88.0,
+        "lat": -8.0
+      },
+      {
+        "lon": 78.0,
+        "lat": -14.0
+      },
+      {
+        "lon": 60.0,
+        "lat": -22.0
+      },
+      {
+        "lon": 45.0,
+        "lat": -30.0
+      },
+      {
+        "lon": 33.5,
+        "lat": -31.0
+      },
+      {
+        "lon": 25.0,
+        "lat": -35.2
+      },
+      {
+        "lon": 19.0,
+        "lat": -35.6
+      },
+      {
+        "lon": 18.2,
+        "lat": -34.2
+      },
+      {
+        "lon": 18.44,
+        "lat": -33.92
+      }
+    ],
+    "distanceNmEstimate": 5799.1,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-LAX-SHA",
+    "originPortId": "PRT-LAX",
+    "destinationPortId": "PRT-SHA",
+    "corridorId": "trans-pacific",
+    "corridorName": "Trans-Pacific",
+    "waypoints": [
+      {
+        "lon": -118.27,
+        "lat": 33.73
+      },
+      {
+        "lon": -119.5,
+        "lat": 33.3
+      },
+      {
+        "lon": -130.0,
+        "lat": 33.0
+      },
+      {
+        "lon": -150.0,
+        "lat": 35.0
+      },
+      {
+        "lon": -170.0,
+        "lat": 38.0
+      },
+      {
+        "lon": 173.0,
+        "lat": 39.0
+      },
+      {
+        "lon": 160.0,
+        "lat": 37.0
+      },
+      {
+        "lon": 145.0,
+        "lat": 34.0
+      },
+      {
+        "lon": 136.0,
+        "lat": 32.5
+      },
+      {
+        "lon": 130.5,
+        "lat": 30.5
+      },
+      {
+        "lon": 125.0,
+        "lat": 30.8
+      },
+      {
+        "lon": 122.4,
+        "lat": 30.8
+      },
+      {
+        "lon": 121.49,
+        "lat": 31.23
+      }
+    ],
+    "distanceNmEstimate": 5994.6,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-RTM-NYC",
+    "originPortId": "PRT-RTM",
+    "destinationPortId": "PRT-NYC",
+    "corridorId": "north-atlantic",
+    "corridorName": "North Atlantic",
+    "waypoints": [
+      {
+        "lon": 4.48,
+        "lat": 51.92
+      },
+      {
+        "lon": 4.05,
+        "lat": 51.98
+      },
+      {
+        "lon": 3.3,
+        "lat": 51.8
+      },
+      {
+        "lon": 1.6,
+        "lat": 51.0
+      },
+      {
+        "lon": -2.0,
+        "lat": 49.9
+      },
+      {
+        "lon": -6.0,
+        "lat": 49.3
+      },
+      {
+        "lon": -25.0,
+        "lat": 47.5
+      },
+      {
+        "lon": -45.0,
+        "lat": 43.5
+      },
+      {
+        "lon": -62.0,
+        "lat": 41.0
+      },
+      {
+        "lon": -72.5,
+        "lat": 40.2
+      },
+      {
+        "lon": -74.05,
+        "lat": 40.67
+      }
+    ],
+    "distanceNmEstimate": 3399.6,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-HAM-SIN",
+    "originPortId": "PRT-HAM",
+    "destinationPortId": "PRT-SIN",
+    "corridorId": "europe–asia-via-suez",
+    "corridorName": "Europe–Asia via Suez",
+    "waypoints": [
+      {
+        "lon": 9.96,
+        "lat": 53.54
+      },
+      {
+        "lon": 8.6,
+        "lat": 53.95
+      },
+      {
+        "lon": 7.0,
+        "lat": 54.0
+      },
+      {
+        "lon": 4.0,
+        "lat": 52.6
+      },
+      {
+        "lon": 1.6,
+        "lat": 51.0
+      },
+      {
+        "lon": -2.0,
+        "lat": 49.9
+      },
+      {
+        "lon": -5.4,
+        "lat": 48.6
+      },
+      {
+        "lon": -9.6,
+        "lat": 43.6
+      },
+      {
+        "lon": -10.0,
+        "lat": 37.0
+      },
+      {
+        "lon": -5.5,
+        "lat": 35.95
+      },
+      {
+        "lon": -2.0,
+        "lat": 36.4
+      },
+      {
+        "lon": 3.0,
+        "lat": 37.6
+      },
+      {
+        "lon": 12.0,
+        "lat": 37.0
+      },
+      {
+        "lon": 21.0,
+        "lat": 35.2
+      },
+      {
+        "lon": 28.0,
+        "lat": 33.9
+      },
+      {
+        "lon": 32.3,
+        "lat": 31.4
+      },
+      {
+        "lon": 32.35,
+        "lat": 30.6
+      },
+      {
+        "lon": 32.6,
+        "lat": 29.7
+      },
+      {
+        "lon": 33.8,
+        "lat": 27.7
+      },
+      {
+        "lon": 35.2,
+        "lat": 26.2
+      },
+      {
+        "lon": 37.5,
+        "lat": 22.5
+      },
+      {
+        "lon": 39.6,
+        "lat": 18.5
+      },
+      {
+        "lon": 41.5,
+        "lat": 14.6
+      },
+      {
+        "lon": 43.4,
+        "lat": 12.6
+      },
+      {
+        "lon": 45.5,
+        "lat": 12.3
+      },
+      {
+        "lon": 51.0,
+        "lat": 12.6
+      },
+      {
+        "lon": 58.0,
+        "lat": 13.0
+      },
+      {
+        "lon": 67.0,
+        "lat": 12.0
+      },
+      {
+        "lon": 76.0,
+        "lat": 8.6
+      },
+      {
+        "lon": 81.0,
+        "lat": 5.4
+      },
+      {
+        "lon": 88.0,
+        "lat": 6.0
+      },
+      {
+        "lon": 94.5,
+        "lat": 6.3
+      },
+      {
+        "lon": 97.8,
+        "lat": 5.6
+      },
+      {
+        "lon": 99.6,
+        "lat": 3.9
+      },
+      {
+        "lon": 101.0,
+        "lat": 2.75
+      },
+      {
+        "lon": 102.2,
+        "lat": 1.95
+      },
+      {
+        "lon": 103.45,
+        "lat": 1.12
+      },
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      }
+    ],
+    "distanceNmEstimate": 8659.2,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-MUM-SIN",
+    "originPortId": "PRT-MUM",
+    "destinationPortId": "PRT-SIN",
+    "corridorId": "india–southeast-asia",
+    "corridorName": "India–Southeast Asia",
+    "waypoints": [
+      {
+        "lon": 72.85,
+        "lat": 18.94
+      },
+      {
+        "lon": 72.2,
+        "lat": 17.5
+      },
+      {
+        "lon": 73.5,
+        "lat": 13.0
+      },
+      {
+        "lon": 75.5,
+        "lat": 8.5
+      },
+      {
+        "lon": 78.5,
+        "lat": 6.2
+      },
+      {
+        "lon": 81.0,
+        "lat": 5.4
+      },
+      {
+        "lon": 88.0,
+        "lat": 6.0
+      },
+      {
+        "lon": 94.5,
+        "lat": 6.3
+      },
+      {
+        "lon": 97.8,
+        "lat": 5.6
+      },
+      {
+        "lon": 99.6,
+        "lat": 3.9
+      },
+      {
+        "lon": 101.0,
+        "lat": 2.75
+      },
+      {
+        "lon": 102.2,
+        "lat": 1.95
+      },
+      {
+        "lon": 103.45,
+        "lat": 1.12
+      },
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      }
+    ],
+    "distanceNmEstimate": 2519.9,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-BUS-LAX",
+    "originPortId": "PRT-BUS",
+    "destinationPortId": "PRT-LAX",
+    "corridorId": "korea–us-west-coast",
+    "corridorName": "Korea–US West Coast",
+    "waypoints": [
+      {
+        "lon": 129.04,
+        "lat": 35.1
+      },
+      {
+        "lon": 129.4,
+        "lat": 34.6
+      },
+      {
+        "lon": 131.0,
+        "lat": 33.3
+      },
+      {
+        "lon": 133.5,
+        "lat": 32.4
+      },
+      {
+        "lon": 136.0,
+        "lat": 33.0
+      },
+      {
+        "lon": 140.5,
+        "lat": 34.5
+      },
+      {
+        "lon": 150.0,
+        "lat": 38.5
+      },
+      {
+        "lon": 168.0,
+        "lat": 41.0
+      },
+      {
+        "lon": -175.0,
+        "lat": 42.0
+      },
+      {
+        "lon": -150.0,
+        "lat": 41.0
+      },
+      {
+        "lon": -130.0,
+        "lat": 36.0
+      },
+      {
+        "lon": -119.5,
+        "lat": 33.3
+      },
+      {
+        "lon": -118.27,
+        "lat": 33.73
+      }
+    ],
+    "distanceNmEstimate": 5498.0,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-MEL-SIN",
+    "originPortId": "PRT-MEL",
+    "destinationPortId": "PRT-SIN",
+    "corridorId": "australia–singapore",
+    "corridorName": "Australia–Singapore",
+    "waypoints": [
+      {
+        "lon": 144.92,
+        "lat": -37.84
+      },
+      {
+        "lon": 144.7,
+        "lat": -38.3
+      },
+      {
+        "lon": 143.0,
+        "lat": -39.4
+      },
+      {
+        "lon": 136.0,
+        "lat": -36.6
+      },
+      {
+        "lon": 125.0,
+        "lat": -35.2
+      },
+      {
+        "lon": 115.0,
+        "lat": -35.4
+      },
+      {
+        "lon": 113.5,
+        "lat": -30.0
+      },
+      {
+        "lon": 112.5,
+        "lat": -22.0
+      },
+      {
+        "lon": 110.0,
+        "lat": -12.0
+      },
+      {
+        "lon": 105.9,
+        "lat": -6.8
+      },
+      {
+        "lon": 106.0,
+        "lat": -5.0
+      },
+      {
+        "lon": 105.8,
+        "lat": -3.0
+      },
+      {
+        "lon": 106.6,
+        "lat": -1.5
+      },
+      {
+        "lon": 105.0,
+        "lat": 0.5
+      },
+      {
+        "lon": 104.4,
+        "lat": 1.2
+      },
+      {
+        "lon": 104.0,
+        "lat": 1.24
+      },
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      }
+    ],
+    "distanceNmEstimate": 3938.9,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-SIN-MNL",
+    "originPortId": "PRT-SIN",
+    "destinationPortId": "PRT-MNL",
+    "corridorId": "singapore–philippines",
+    "corridorName": "Singapore–Philippines",
+    "waypoints": [
+      {
+        "lon": 103.83,
+        "lat": 1.27
+      },
+      {
+        "lon": 104.0,
+        "lat": 1.24
+      },
+      {
+        "lon": 104.4,
+        "lat": 1.33
+      },
+      {
+        "lon": 106.5,
+        "lat": 3.2
+      },
+      {
+        "lon": 110.0,
+        "lat": 6.0
+      },
+      {
+        "lon": 114.5,
+        "lat": 8.6
+      },
+      {
+        "lon": 118.6,
+        "lat": 11.4
+      },
+      {
+        "lon": 119.8,
+        "lat": 13.6
+      },
+      {
+        "lon": 120.55,
+        "lat": 14.35
+      },
+      {
+        "lon": 120.96,
+        "lat": 14.59
+      }
+    ],
+    "distanceNmEstimate": 1317.7,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  },
+  {
+    "routeId": "RTE-ALG-VLC",
+    "originPortId": "PRT-ALG",
+    "destinationPortId": "PRT-VLC",
+    "corridorId": "western-mediterranean",
+    "corridorName": "Western Mediterranean",
+    "waypoints": [
+      {
+        "lon": -5.45,
+        "lat": 36.13
+      },
+      {
+        "lon": -5.2,
+        "lat": 36.05
+      },
+      {
+        "lon": -3.0,
+        "lat": 36.4
+      },
+      {
+        "lon": -0.5,
+        "lat": 37.5
+      },
+      {
+        "lon": 0.4,
+        "lat": 38.8
+      },
+      {
+        "lon": -0.32,
+        "lat": 39.44
+      }
+    ],
+    "distanceNmEstimate": 398.5,
+    "isScenarioAlternative": false,
+    "provenance": "synthetic",
+    "sourceType": "conceptual-synthetic-not-for-navigation"
+  }
+]

@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/regions.schema.json",
+  "title": "PORTOS synthetic regions collection",
+  "description": "Synthetic scenario fixtures. Not live AIS or navigational data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "bounds": {
+        "type": "object",
+        "properties": {
+          "east": {
+            "type": "integer"
+          },
+          "north": {
+            "type": "integer"
+          },
+          "south": {
+            "type": "integer"
+          },
+          "west": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "east",
+          "north",
+          "south",
+          "west"
+        ],
+        "additionalProperties": false
+      },
+      "center": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "integer"
+          },
+          "lon": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "lat",
+          "lon"
+        ],
+        "additionalProperties": false
+      },
+      "kind": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "regionId": {
+        "type": "string"
+      },
+      "sourceType": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "bounds",
+      "center",
+      "kind",
+      "name",
+      "regionId",
+      "sourceType"
+    ],
+    "additionalProperties": false
+  }
+}
