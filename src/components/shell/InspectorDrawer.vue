@@ -80,7 +80,7 @@ onMounted(() => heading.value?.focus({ preventScroll: true }));
   position: absolute;
   top: var(--map-control-gap);
   right: var(--map-control-gap);
-  bottom: var(--map-control-gap);
+  bottom: var(--drawer-bottom, var(--map-control-gap));
   width: var(--inspector-w);
   display: flex;
   flex-direction: column;

@@ -177,5 +177,38 @@ with stated limits. Proposing records a decision and a follow-up task; only a ma
 never changes the route, ETA or any external system. While comparing, the map also draws the candidate corridor in
 the dashed "proposed" style. Drafts are prepared locally and have no Send action.
 
+## D-020 One event fold is the source of recorded history
+`foldEvents(base, events, t)` (`src/engines/fold.ts`) is a pure reducer over fixture events sorted by
+(occurredAt, eventId). Incident visibility, status and owner, port wait estimates, anchorage membership, berth
+occupancy, berth windows, warnings, latest position reports and ETA revisions all come from it, and
+`getSnapshotAt` folds once per instant. The fixture's "investigating"-type statuses have no event of their own, so
+they apply at the recorded ACTION_ASSIGNED event (one minute after acknowledgement); the acknowledging user owns
+the case from acknowledgement. A unit test checks the fold against the incident record timestamps at every event
+boundary (±1 ms), so the two descriptions cannot drift apart. Local decisions stay a separate overlay (D-016).
+
+## D-021 Replay speeds, scrubbing and URL time
+Speeds are 1×, 10× and 60× (simulated seconds per wall second); the 12 h window takes 12 min at 60×. Playback is
+time-based, not frame-based (frame delta capped at 1 s, hidden tabs pause), so slow frames never slow the
+simulation. Scrubbing commits at most once per animation frame and pauses playback; the clock rounds to whole
+seconds. Arrow keys step one minute, Shift+Arrow jumps to the previous/next event marker in context, Page keys and
+Home/End use the native slider steps. While paused the URL carries `t=` (debounced 300 ms) and drops it at Now;
+links with `t` outside the window snap to the nearest edge with a notice. Opening a review dialog (reset, response
+comparison) pauses playback.
+
+## D-022 Replay rail content
+Markers follow context: a selection shows its own events plus linked records (vessel ↔ voyages ↔ cases, case →
+port); port scope shows that port's events; with nothing selected the rail shows case openings and storm warnings.
+A 30-minute density histogram of all events sits behind the markers. Clicking a marker seeks to it and, with
+nothing selected, opens the linked entity. "Compared with Now" uses the same snapshot function for both columns
+(position state and age, ETA shift and confidence, exposure, each case's status or "Not yet detected", the port
+wait and anchorage); with no context it compares the global KPIs. Before a vessel's first report it reads
+"Not yet tracked · first report HH:MM UTC". UTC is always shown; the port's local time is added when a port is in
+context, with the date only when the local date differs.
+
+## D-023 Historical notes are the only write allowed in replay
+"Add note" records a `history.note` audit event at the user's current time that references the historical instant
+and the selection. It needs the add-notes permission, changes no case state and cannot be undone; every other
+command stays blocked in replay (D-017).
+
 ## D-007 Port 2D basemap
 Superseded by D-011 (OpenFreeMap, decided at Phase 4).

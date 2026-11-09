@@ -2,6 +2,7 @@ import { watch } from 'vue';
 import { useRoute, useRouter, type LocationQueryRaw, type RouteLocationNormalizedLoaded } from 'vue-router';
 import { decodeLayers } from '@/core/layers';
 import { formatUtc } from '@/core/format';
+import { parseUtc } from '@/core/time';
 import { defaultViewMode, supportsViewMode, type ViewMode } from '@/core/scope';
 import type { EntityRef } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
@@ -45,6 +46,8 @@ export function useRouteSync() {
     const k = r.query.kpi;
     view.kpiDrill = typeof k === 'string' && (KPI_KEYS as string[]).includes(k) ? (k as KpiKey) : null;
     view.comparing = r.name === 'compare';
+    if (view.comparing) clock.pause();
+    if (r.name === 'replay') view.replayOpen = true;
   }
 
   function applyRoute(r: RouteLocationNormalizedLoaded) {
@@ -53,7 +56,11 @@ export function useRouteSync() {
 
     const t = r.query.t;
     if (typeof t === 'string') {
+      const requested = parseUtc(t);
       if (!clock.seek(t)) notices.push(`Ignored invalid time "${t}" in link; showing ${formatUtc(clock.timeMs)}.`, 'warning');
+      else if (requested !== null && Math.abs(requested - clock.timeMs) >= 1000) {
+        notices.push(`${formatUtc(requested)} is outside the replay window; showing ${formatUtc(clock.timeMs)} instead.`, 'warning', { timeoutMs: 8000 });
+      }
     } else if (first) clock.reset();
     first = false;
 
@@ -124,7 +131,28 @@ export function useRouteSync() {
     () => apply(route),
     { immediate: true },
   );
+
+  /** Clock → URL: a paused replay time is written to `?t=` (replace, no history entry) so reload and share keep it. */
+  let urlTimer: ReturnType<typeof setTimeout> | undefined;
+  watch(
+    () => [clock.timeMs, clock.playing] as const,
+    ([, playing]) => {
+      clearTimeout(urlTimer);
+      if (playing || catalog.status !== 'ready') return;
+      urlTimer = setTimeout(() => {
+        const want = clock.mode === 'replay' ? clock.iso : undefined;
+        const cur = route.query.t;
+        if ((typeof cur === 'string' ? cur : undefined) === want) return;
+        const query = { ...route.query };
+        if (want) query.t = want;
+        else delete query.t;
+        router.replace({ name: route.name ?? undefined, params: route.params, query });
+      }, URL_TIME_DEBOUNCE_MS);
+    },
+  );
 }
+
+const URL_TIME_DEBOUNCE_MS = 300;
 
 /** Navigation helpers that keep replay time and scope context in the URL. */
 export function useNavigation() {
@@ -164,6 +192,23 @@ export function useNavigation() {
     closeSelection() {
       view.clearSelection();
       return router.push(routeForScope(view.scope, { ...timeQuery(), ...modeQuery(), ...kpiQuery() }));
+    },
+    /** Opens the replay rail; with a voyage, also moves to its shareable `/replay/:voyageId` link. */
+    openReplay(voyageId?: string) {
+      view.replayOpen = true;
+      if (!voyageId) return;
+      const cur = router.currentRoute.value;
+      return router.push({ name: 'replay', params: { voyageId }, query: { ...cur.query } });
+    },
+    /** Hides the rail and returns to Now (simulated), keeping the selection. */
+    closeReplay() {
+      view.replayOpen = false;
+      clock.reset();
+      const cur = router.currentRoute.value;
+      const query = { ...cur.query };
+      delete query.t;
+      if (cur.name === 'replay') return router.replace({ name: 'voyage', params: cur.params, query });
+      return router.replace({ name: cur.name ?? undefined, params: cur.params, query });
     },
     setViewMode(mode: ViewMode) {
       if (!supportsViewMode(view.scope, mode) || mode === view.viewMode) return;

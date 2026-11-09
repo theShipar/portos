@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { formatUtc } from '@/core/format';
+import { parseUtc } from '@/core/time';
 import { buildIncidentModel } from '@/selectors/incident';
 import { useNavigation } from '@/router/useRouteSync';
 import { useCatalogStore } from '@/stores/catalog';
@@ -44,6 +45,13 @@ const FRESHNESS_STYLE = {
   stale: { tone: 'critical', label: 'Stale', icon: 'alert' },
   unknown: { tone: 'unknown', label: 'Age unknown', icon: 'question' },
 } as const;
+
+function replayFromDetection() {
+  const opened = parseUtc(model.value?.incident.openedAtUtc ?? null);
+  nav.openReplay();
+  clock.pause();
+  if (opened !== null) clock.seekMs(opened);
+}
 
 async function copyHandoff() {
   const c = catalog.catalog;
@@ -118,6 +126,7 @@ async function copyHandoff() {
         <button type="button" class="btn btn--sm" @click="nav.openEntity({ kind: 'vessel', id: model.incident.vesselId })">Open vessel</button>
         <button type="button" class="btn btn--sm" @click="nav.openEntity({ kind: 'voyage', id: model.incident.voyageId })">Voyage {{ model.incident.voyageId }}</button>
         <button type="button" class="btn btn--sm" data-testid="copy-handoff" @click="copyHandoff">Copy handoff summary</button>
+        <button type="button" class="btn btn--sm" data-testid="replay-from-detection" @click="replayFromDetection">Replay from detection</button>
       </div>
     </section>
 

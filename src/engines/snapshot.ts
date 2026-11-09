@@ -1,7 +1,7 @@
-import { parseUtc } from '@/core/time';
 import type { Incident, IncidentStatus, TimelineEvent, Voyage, WeatherHazard } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import { computeEta, type EtaResult } from './eta';
+import { emptyFold, foldEvents, incidentFromFold, type FoldState } from './fold';
 import { computeExposure, type ExposureEstimate, type RateAssumption } from './exposure';
 import { computeRouteHazards, hazardPhase, type HazardPhase, type RouteRiskResult } from './weatherRisk';
 import { getVesselAtTime, type VesselAtTime } from './tracks';
@@ -42,6 +42,8 @@ export interface Snapshot {
   risks: Map<string, RouteRiskResult>;
   weatherFeedLoaded: boolean;
   portWait: Map<string, { hours: number; asOfUtc: string }>;
+  /** Recorded history folded to `timeMs` (fixture events only). */
+  fold: FoldState;
 }
 
 export function rateAssumption(vo: Voyage, override: UserRateOverride | undefined): RateAssumption {
@@ -50,18 +52,10 @@ export function rateAssumption(vo: Voyage, override: UserRateOverride | undefine
     : { kind: 'fixture', usdPerDay: vo.dailyDelayCostUsd };
 }
 
-/** Fixture lifecycle of an incident at time t (folded from its timestamps/events). */
-export function incidentStatusAt(i: Incident, t: number): { visible: boolean; status: IncidentStatus; ownerUserId: string | null } {
-  const opened = parseUtc(i.openedAtUtc) ?? 0;
-  const ack = parseUtc(i.acknowledgedAtUtc);
-  const res = parseUtc(i.resolvedAtUtc);
-  if (t < opened) return { visible: false, status: 'open', ownerUserId: null };
-  if (res !== null && t >= res) return { visible: true, status: 'resolved', ownerUserId: i.ownerUserId };
-  if (ack !== null && t >= ack) {
-    const progressed = ['investigating', 'mitigation_planned', 'monitoring'].includes(i.status) && t >= ack + 60_000;
-    return { visible: true, status: progressed ? i.status : 'acknowledged', ownerUserId: i.ownerUserId };
-  }
-  return { visible: true, status: 'open', ownerUserId: null };
+/** Fixture lifecycle of one incident at time t, folded from its own events. */
+export function incidentStatusAt(c: Catalog, i: Incident, t: number): { visible: boolean; status: IncidentStatus; ownerUserId: string | null } {
+  const fold = foldEvents(emptyFold(), c.eventsByEntity.get(`incident:${i.incidentId}`) ?? [], t, () => i);
+  return incidentFromFold(fold, i, t);
 }
 
 export function voyageEvents(c: Catalog, voyageId: string): TimelineEvent[] {
@@ -93,9 +87,10 @@ export function getSnapshotAt(c: Catalog, t: number, overlay?: WorkflowOverlay):
   }
 
   const live = t >= c.anchorMs;
+  const fold = foldEvents(emptyFold(), c.events, t, (id) => c.byId.incident.get(id));
   const incidents = new Map<string, IncidentState>();
   for (const i of c.incidents) {
-    const base = incidentStatusAt(i, t);
+    const base = incidentFromFold(fold, i, t);
     const o = live ? overlay?.incidents?.[i.incidentId] : undefined;
     incidents.set(i.incidentId, {
       incidentId: i.incidentId,
@@ -125,11 +120,7 @@ export function getSnapshotAt(c: Catalog, t: number, overlay?: WorkflowOverlay):
   }
 
   const portWait = new Map<string, { hours: number; asOfUtc: string }>();
-  for (const e of c.events) {
-    if (e.type !== 'PORT_WAIT_UPDATED') continue;
-    if ((c.eventMs.get(e.eventId) ?? Infinity) > t) break;
-    portWait.set(e.payload.portId as string, { hours: e.payload.waitingEstimateHours as number, asOfUtc: e.occurredAtUtc });
-  }
+  for (const [portId, w] of fold.portWait) portWait.set(portId, { hours: w.hours, asOfUtc: w.asOfUtc });
 
-  return { timeMs: t, isHistorical: !live, vessels, etas, exposures, incidents, hazards, risks, weatherFeedLoaded: c.weatherHazards.length > 0, portWait };
+  return { timeMs: t, isHistorical: !live, vessels, etas, exposures, incidents, hazards, risks, weatherFeedLoaded: c.weatherHazards.length > 0, portWait, fold };
 }

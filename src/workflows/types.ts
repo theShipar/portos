@@ -108,6 +108,7 @@ export type AuditActionType =
   | 'incident.assign'
   | 'incident.note'
   | 'incident.undo'
+  | 'history.note'
   | 'task.create'
   | 'task.status'
   | 'draft.create'

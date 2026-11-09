@@ -37,6 +37,8 @@ export const useViewStore = defineStore('view', () => {
   const kpiDrill = ref<KpiKey | null>(null);
   /** True on `/compare/:voyageId`; the map then also draws candidate corridors. */
   const comparing = ref(false);
+  /** Replay rail visible (also shown whenever the clock is in replay). */
+  const replayOpen = ref(false);
   /** Element that opened the inspector, so closing it can return focus. */
   let returnFocusEl: HTMLElement | null = null;
 
@@ -83,6 +85,7 @@ export const useViewStore = defineStore('view', () => {
     selection.value = null;
     viewMode.value = '3d';
     kpiDrill.value = null;
+    replayOpen.value = false;
   }
 
   function isSelected(kind: EntityKind, id: string) {
@@ -105,6 +108,7 @@ export const useViewStore = defineStore('view', () => {
     incidentQueueOpen,
     kpiDrill,
     comparing,
+    replayOpen,
     select,
     clearSelection,
     setHover,

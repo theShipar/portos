@@ -137,6 +137,8 @@ export function buildVesselInspector(c: Catalog, snap: Snapshot, vesselId: strin
   if (!v) return null;
   const pos = snap.vessels.get(vesselId);
   const state: TrackState = pos?.state ?? 'unavailable';
+  const firstSample = c.tracks.get(vesselId)?.[0]?.t ?? null;
+  const notYetTracked = state === 'unavailable' && firstSample !== null && snap.timeMs < firstSample;
   const voyage = v.currentVoyageId ? c.byId.voyage.get(v.currentVoyageId) ?? null : null;
   const impact = voyage ? selectVoyageImpact(snap, voyage.voyageId) : null;
   const eta = impact?.eta ?? null;
@@ -164,7 +166,7 @@ export function buildVesselInspector(c: Catalog, snap: Snapshot, vesselId: strin
     fleet: v.fleet,
     navStyle: statusStyle('nav', pos?.navStatus ?? 'unknown'),
     positionState: state,
-    positionLabel: POSITION_LABEL[state],
+    positionLabel: notYetTracked ? `Not yet tracked · first report ${formatUtc(firstSample, { date: false })}` : POSITION_LABEL[state],
     positionStale: state === 'stale' || state === 'unavailable',
     identity: [
       { label: 'IMO (demo)', value: v.imoDemo, mono: true, hint: 'Synthetic identifier, not a registered IMO number' },

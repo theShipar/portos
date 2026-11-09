@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useNavigation, useRouteSync } from '@/router/useRouteSync';
 import { useAssumptionStore } from '@/stores/assumptions';
 import { useCatalogStore } from '@/stores/catalog';
@@ -17,6 +17,7 @@ import IncidentQueue from '@/features/workflow/IncidentQueue.vue';
 import ScopeBreadcrumb from '@/components/shell/ScopeBreadcrumb.vue';
 import EntityInspector from '@/features/inspectors/EntityInspector.vue';
 import MapWorkspace from '@/map/MapWorkspace.vue';
+import ReplayRail from '@/features/replay/ReplayRail.vue';
 
 const catalog = useCatalogStore();
 const clock = useClockStore();
@@ -28,6 +29,7 @@ const workflow = useWorkflowStore();
 const nav = useNavigation();
 const header = ref<InstanceType<typeof AppHeader> | null>(null);
 const crumbs = ref<InstanceType<typeof ScopeBreadcrumb> | null>(null);
+const railOpen = computed(() => catalog.status === 'ready' && (view.replayOpen || clock.mode === 'replay'));
 
 useRouteSync();
 
@@ -65,7 +67,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
   <div class="shell">
     <a class="skip-link" href="#global-search">Skip to search</a>
     <AppHeader ref="header" />
-    <main class="workspace" aria-label="Operations map workspace">
+    <main class="workspace" :class="{ 'workspace--rail': railOpen }" aria-label="Operations map workspace">
       <MapWorkspace v-if="catalog.status === 'ready'" />
       <div v-if="catalog.status === 'ready'" class="overlay overlay--tl">
         <ScopeBreadcrumb ref="crumbs" />
@@ -75,6 +77,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
         <IncidentQueue v-else />
       </div>
       <EntityInspector v-if="catalog.status === 'ready'" />
+      <ReplayRail v-if="railOpen" />
       <div v-if="catalog.status === 'loading' || catalog.status === 'idle'" class="state" role="status">
         <div class="state__spinner" aria-hidden="true" />
         <span>Loading simulated dataset…</span>
@@ -100,9 +103,15 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
   height: 100%;
 }
 .workspace {
+  --rail-h: 148px;
+  --rail-lift: 0px;
   position: relative;
   overflow: hidden;
   background: var(--color-map-ocean);
+}
+.workspace--rail {
+  --rail-lift: calc(var(--rail-h) + 8px);
+  --drawer-bottom: calc(var(--rail-h) + 44px);
 }
 .overlay {
   position: absolute;
@@ -111,7 +120,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
 .overlay--tl {
   top: var(--map-control-gap);
   left: var(--map-control-gap);
-  bottom: 40px;
+  bottom: calc(40px + var(--rail-lift));
   display: grid;
   grid-template-rows: auto auto minmax(0, auto);
   align-content: start;

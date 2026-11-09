@@ -10,6 +10,7 @@ export const AUDIT_ACTION_LABEL: Record<AuditActionType, string> = {
   'incident.assign': 'Assignment',
   'incident.note': 'Note',
   'incident.undo': 'Undo',
+  'history.note': 'Historical note',
   'task.create': 'Task created',
   'task.status': 'Task updated',
   'draft.create': 'Draft prepared',

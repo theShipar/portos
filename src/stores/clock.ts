@@ -3,12 +3,13 @@ import { computed, ref } from 'vue';
 import { parseUtc, toIsoUtc } from '@/core/time';
 
 export type ClockMode = 'now' | 'replay';
-export const REPLAY_SPEEDS = [1, 10, 60, 600] as const;
+export const REPLAY_SPEEDS = [1, 10, 60] as const;
 export type ReplaySpeed = (typeof REPLAY_SPEEDS)[number];
 
 /** Reactive commits are throttled; render loops read `frameTimeMs()` for per-frame motion. */
 const COMMIT_INTERVAL_MS = 100;
-const MAX_FRAME_DELTA_MS = 250;
+/** Large enough that throttled frame rates still play at wall-clock pace; hidden tabs pause instead. */
+const MAX_FRAME_DELTA_MS = 1000;
 
 const DEFAULT_ANCHOR = Date.parse('2026-11-09T12:00:00Z');
 

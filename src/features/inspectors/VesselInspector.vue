@@ -108,7 +108,10 @@ function openPort(portId: string) {
             <li v-for="a in model.eta.assumptions" :key="a">{{ a }}</li>
           </ul>
         </div>
-        <button type="button" class="btn btn--sm" @click="nav.openEntity({ kind: 'voyage', id: model.voyage.voyageId })">Open voyage {{ model.voyage.voyageId }}</button>
+        <div class="links">
+          <button type="button" class="btn btn--sm" @click="nav.openEntity({ kind: 'voyage', id: model.voyage.voyageId })">Open voyage {{ model.voyage.voyageId }}</button>
+          <button type="button" class="btn btn--sm" data-testid="open-replay" @click="nav.openReplay(model.voyage.voyageId)">Replay voyage</button>
+        </div>
       </template>
       <div v-else class="empty">No assigned voyage for this vessel in the simulated dataset.</div>
     </section>
@@ -149,6 +152,11 @@ function openPort(portId: string) {
 </template>
 
 <style scoped>
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 .sub {
   font-size: var(--text-12);
   color: var(--color-ink-secondary);

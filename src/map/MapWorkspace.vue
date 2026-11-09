@@ -130,7 +130,7 @@ defineExpose({ earth, earthView, map2d });
 .map-tools {
   position: absolute;
   right: var(--map-control-gap);
-  bottom: 40px;
+  bottom: calc(40px + var(--rail-lift, 0px));
   z-index: 20;
   display: grid;
   justify-items: end;

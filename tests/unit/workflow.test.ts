@@ -28,7 +28,7 @@ function ctx(userId: string, cat: Catalog = c, simNowMs = NOW): WorkflowContext 
     wallNowIso: '2026-11-09T20:00:00Z',
     baseIncident: (id) => {
       const inc = cat.byId.incident.get(id);
-      return inc ? incidentStatusAt(inc, cat.anchorMs) : null;
+      return inc ? incidentStatusAt(cat, inc, cat.anchorMs) : null;
     },
     incidentRefs: (id) => [{ kind: 'incident', id }, ...(cat.byId.incident.get(id)?.entityRefs ?? [])],
     needsVerification: (id) => {

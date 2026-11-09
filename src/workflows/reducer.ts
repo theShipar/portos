@@ -34,6 +34,8 @@ export type WorkflowCommand =
   | { type: 'incident.assign'; incidentId: string; assigneeUserId: string | null; dueAtUtc?: string | null; note?: string }
   | { type: 'incident.note'; incidentId: string; text: string }
   | { type: 'incident.undo'; incidentId: string; auditId: string }
+  /** Note about a historical instant; the only command accepted during replay. Changes no case state. */
+  | { type: 'history.note'; text: string; entityRefs: EntityRef[] }
   | {
       type: 'task.create';
       task: {
@@ -194,6 +196,20 @@ export function reduceWorkflow(s: WorkflowState, cmd: WorkflowCommand, ctx: Work
       const noteId = nextId('LOC-NOTE');
       const next: IncidentLocal = { ...cur, notes: [...cur.notes, { noteId, authorUserId: actor.userId, simulatedAtUtc: ctx.simNowIso, text }] };
       return commit(withIncident(cmd.incidentId, next), { actionType: 'incident.note', entityRefs: ctx.incidentRefs(cmd.incidentId), summary: `Note on ${cmd.incidentId}`, notes: text }, 'Note saved locally.');
+    }
+
+    case 'history.note': {
+      const perm = permissionCheck(actor, PERMISSION.note, 'add notes');
+      if (!perm.ok) return fail(perm.reason);
+      const text = cmd.text.trim();
+      if (!text) return fail('Write a note before saving.');
+      if (text.length > MAX_NOTE_LENGTH) return fail(`Keep the note under ${MAX_NOTE_LENGTH} characters.`);
+      const about = cmd.entityRefs.map((r) => r.id).join(', ');
+      return commit(
+        {},
+        { actionType: 'history.note', entityRefs: cmd.entityRefs, summary: `Note on history at ${ctx.simNowIso.slice(11, 16)} UTC${about ? ` · ${about}` : ''}`, notes: text },
+        'Note saved locally. It references the historical time; no case was changed.',
+      );
     }
 
     case 'incident.undo': {

@@ -44,7 +44,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
       wallNowIso: toIsoUtc(Date.now()),
       baseIncident: (id) => {
         const inc = c.byId.incident.get(id);
-        return inc ? incidentStatusAt(inc, c.anchorMs) : null;
+        return inc ? incidentStatusAt(c, inc, c.anchorMs) : null;
       },
       incidentRefs: (id) => {
         const inc = c.byId.incident.get(id);
@@ -59,7 +59,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
   }
 
   function dispatch(cmd: WorkflowCommand, opts: { quiet?: boolean } = {}): WorkflowResult {
-    if (blockReason.value) return { ok: false, error: blockReason.value };
+    if (blockReason.value && cmd.type !== 'history.note') return { ok: false, error: blockReason.value };
     const ctx = context();
     if (!ctx) return { ok: false, error: 'The simulated dataset is not loaded yet.' };
     const r = reduceWorkflow(state.value, cmd, ctx);

@@ -61,6 +61,9 @@ watch(
         <p class="shelf__kicker">Berth queue</p>
         <h2 class="shelf__title">{{ vm.port.name }}</h2>
       </div>
+      <button v-if="view.queueShelfOpen" type="button" class="btn btn--sm shelf__replay" data-testid="open-replay" @click="nav.openReplay()">
+        <Icon name="clock" :size="14" /> Replay
+      </button>
       <button
         type="button"
         class="shelf__toggle"
@@ -175,6 +178,9 @@ watch(
   margin: 0;
   font-size: var(--text-14);
   line-height: 20px;
+}
+.shelf__replay {
+  margin-left: auto;
 }
 .shelf__toggle {
   display: grid;

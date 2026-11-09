@@ -27,6 +27,14 @@ export const useSnapshotStore = defineStore('snapshot', () => {
     return markRaw(getSnapshotAt(c, clock.timeMs, overlay.value));
   });
 
+  /** Snapshot at Now (simulated), for "compared with now" while replaying. Independent of the clock. */
+  const nowSnapshot = computed<Snapshot | null>(() => {
+    const c = catalog.catalog;
+    if (!c) return null;
+    if (clock.mode === 'now' && snapshot.value) return snapshot.value;
+    return markRaw(getSnapshotAt(c, c.anchorMs, overlay.value));
+  });
+
   const globalKpis = computed(() => (catalog.catalog && snapshot.value ? selectKpis(catalog.catalog, snapshot.value) : []));
 
   /** KPIs for the visible cohort: the region at region/port scope, the whole simulated fleet at Earth. */
@@ -61,5 +69,5 @@ export const useSnapshotStore = defineStore('snapshot', () => {
     return markRaw(markers.value.filter((m) => ids.has(m.vesselId) || m.vesselId === keep));
   });
 
-  return { snapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView };
+  return { snapshot, nowSnapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView };
 });

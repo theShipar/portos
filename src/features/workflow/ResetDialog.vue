@@ -51,6 +51,7 @@ const losesAudit = computed(() => level.value !== 'view' && wf.state.audit.lengt
 
 function show() {
   level.value = 'view';
+  clock.pause();
   dialog.value?.showModal();
   nextTick(() => dialog.value?.querySelector<HTMLInputElement>('input[type="radio"]:checked')?.focus());
 }

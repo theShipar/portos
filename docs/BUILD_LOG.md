@@ -323,3 +323,55 @@ blockers. Status values: implemented / tested / blocked.
   - Screenshots: `docs/screenshots/phase6-queue.png`, `phase6-incident-summary.png`, `phase6-incident-actions.png`,
     `phase6-vessel-audit.png`, `phase6-comparison.png`, `phase6-activity-audit.png`, `phase6-reset-dialog.png`.
 - **Blockers:** none.
+
+## Phase 7 — Deterministic replay (event fold, snapshots, timeline rail, staleness)
+
+- **Decisions:** one event fold as the source of recorded history (D-020); 1×/10×/60× time-based playback,
+  coalesced scrubbing, URL time sync and snap-with-notice (D-021); context markers, density bins and "Compared with
+  Now" (D-022); historical notes as the only replay write (D-023).
+- **Implemented:**
+  - `src/engines/fold.ts`: `foldEvents`, `emptyFold`, `incidentFromFold`. `getSnapshotAt` folds once per instant
+    and exposes `fold`; `incidentStatusAt(c, incident, t)` folds that incident's events.
+  - `src/selectors/replay.ts`: event categories and labels, `railMarkers` (context-aware), `densityBins`,
+    `stepMarker`, `currentMarker`, `compareWithNow`.
+  - `src/features/replay/ReplayRail.vue`: play/pause, speed 1×/10×/60×, previous/next event, slider (one-minute
+    steps, Shift+Arrow event jumps, `aria-valuetext`), coloured markers over a density histogram, hour ticks,
+    "Historical"/"Now (simulated)" mode, UTC plus port-local time, last event in force, "Compared with Now" table,
+    "Add note" form, Return to Now, close. Mounted at the bottom of the workspace; the inspector, left stack and map
+    tools lift above it through CSS variables.
+  - Entry points: Replay voyage (voyage inspector, vessel Voyage tab), Replay from detection (incident), Replay
+    (port queue shelf); `/replay/:voyageId` opens the rail.
+  - Clock: speeds `[1, 10, 60]`, frame delta cap 1 s. Route sync: `t` written while paused (300 ms debounce),
+    removed at Now, out-of-window notice. Reset dialog and comparison route pause playback.
+  - Workflow: `history.note` command and audit label "Historical note"; allowed in replay, all other writes blocked.
+  - Vessel inspector: "Not yet tracked · first report HH:MM UTC" before the first sample.
+- **Tested:**
+  - `npm run typecheck` → exit 0.
+  - `npx vitest run` → exit 0, 161 tests (`tests/unit/replay.test.ts` 22: fold equals the incident record rule at
+    every event boundary ±1 ms and the previous port-wait scan; fold purity and order independence; same-timestamp
+    order; identical snapshot fingerprints (position, ETA, exposure, incidents, hazards, risks, port wait, anchorage,
+    berths) on repeat and after scrubbing away and back; VYG-0001 +8 h at 08:59 and +18 h at 09:00; INC-0001 hidden
+    at 10:58 and open at 10:59; Singapore wait 14 h → 26 h at 11:22; no resolved case before detection; "Not yet
+    tracked"; marker determinism, stepping and density totals; compare rows; history notes allowed and
+    case-neutral, rejected empty or for viewers; out-of-range seek clamps; Europe/Amsterdam DST fall-back
+    (00:30Z and 01:30Z both 02:30 local, UTC distinct) and the Singapore day boundary).
+  - `getSnapshotAt` cost: 7.1–7.4 ms per call over 60 scrub positions (Node, full fixture set).
+  - `npm run build` → exit 0.
+- **Browser evidence (dev server, 1440×900):**
+  - `/replay/VYG-0001` opens the rail with 9 context markers. Clicking the INC-0001 marker → 10:59 UTC,
+    `?t=2026-11-09T10:59:00Z`; compare: position interpolated (4 min), ETA +18.0 h, $24,000, INC-0001 Open,
+    INC-0050 "Not yet detected" (Open at Now), wait at Singapore 14 h vs 26 h, at anchorage yes (acceptance: vessel
+    position, ETA and port conditions consistent).
+  - Six scrub moves (02:00–11:30) then back to the marker → identical values; at 07:00 ETA +8.0 h, $10,667, cases not
+    yet detected, no Singapore wait update yet. Shift+→ → 11:22 "Singapore wait estimate 14 → 26 h".
+  - Reload with `?t=` keeps 10:59 and "Replay · paused" in the header. `?t=2026-11-08T05:00:00Z` → 00:00 UTC with
+    "2026-11-08 05:00 UTC is outside the replay window; showing 2026-11-09 00:00 UTC instead." and the URL rewritten.
+  - 60× playback advances ~3 min in ~4 s even in the automation view (which throttles animation frames to 1/s); the
+    URL updates once paused. Add note → "Note saved locally. It references the historical time; no case was
+    changed." Return to Now drops `t` and keeps the rail open in Now mode. Opening Reset pauses playback.
+  - VSL-0003 at 00:10 → "Not yet tracked · first report 00:25 UTC"; compare "Not yet tracked" vs "Stale (35 min)".
+  - Singapore port at 11:08 → 73 port markers, local 19:08 (Asia/Singapore), wait 14 h vs 26 h, open cases here
+    22 vs 24. INC-0001 at 10:59 → Open, unassigned, banner "Replay shows the recorded case history…".
+  - Screenshots: `docs/screenshots/phase7-replay-rail.png`, `phase7-compare-now.png`, `phase7-inc0001-marker.png`.
+- **Blockers:** none.
+
