@@ -11,6 +11,7 @@ const ICON = { info: 'info', success: 'check', warning: 'alert', critical: 'octa
     <div v-for="n in notices.items" :key="n.id" class="notice panel" :class="`notice--${n.tone}`">
       <Icon :name="ICON[n.tone]" />
       <span class="notice__text">{{ n.text }}</span>
+      <button v-if="n.action" type="button" class="btn btn--sm" data-testid="notice-action" @click="notices.runAction(n)">{{ n.action.label }}</button>
       <button type="button" class="icon-btn notice__close" aria-label="Dismiss notice" @click="notices.dismiss(n.id)"><Icon name="close" :size="14" /></button>
     </div>
   </div>

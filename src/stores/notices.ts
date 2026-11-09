@@ -1,5 +1,10 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { markRaw, ref } from 'vue';
+
+export interface NoticeAction {
+  label: string;
+  run: () => void;
+}
 
 export interface Notice {
   id: number;
@@ -7,6 +12,7 @@ export interface Notice {
   text: string;
   /** Persistent notices stay until dismissed. */
   persistent?: boolean;
+  action?: NoticeAction;
 }
 
 let seq = 0;
@@ -14,10 +20,10 @@ let seq = 0;
 export const useNoticeStore = defineStore('notices', () => {
   const items = ref<Notice[]>([]);
 
-  function push(text: string, tone: Notice['tone'] = 'info', opts: { persistent?: boolean; timeoutMs?: number } = {}) {
-    const n: Notice = { id: ++seq, tone, text, persistent: opts.persistent };
+  function push(text: string, tone: Notice['tone'] = 'info', opts: { persistent?: boolean; timeoutMs?: number; action?: NoticeAction } = {}) {
+    const n: Notice = { id: ++seq, tone, text, persistent: opts.persistent, action: opts.action ? markRaw(opts.action) : undefined };
     items.value = [...items.value.filter((i) => i.text !== text), n].slice(-4);
-    if (!opts.persistent) setTimeout(() => dismiss(n.id), opts.timeoutMs ?? 5000);
+    if (!opts.persistent) setTimeout(() => dismiss(n.id), opts.timeoutMs ?? (opts.action ? 8000 : 5000));
     return n.id;
   }
 
@@ -25,5 +31,10 @@ export const useNoticeStore = defineStore('notices', () => {
     items.value = items.value.filter((i) => i.id !== id);
   }
 
-  return { items, push, dismiss };
+  function runAction(n: Notice) {
+    dismiss(n.id);
+    n.action?.run();
+  }
+
+  return { items, push, dismiss, runAction };
 });

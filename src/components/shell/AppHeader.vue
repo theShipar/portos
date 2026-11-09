@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useNavigation } from '@/router/useRouteSync';
+import { useCatalogStore } from '@/stores/catalog';
+import ActivityHub from '@/features/workflow/ActivityHub.vue';
+import ResetDialog from '@/features/workflow/ResetDialog.vue';
 import SearchCombobox from './SearchCombobox.vue';
 import SimulationStamp from './SimulationStamp.vue';
 import UserMenu from './UserMenu.vue';
 
 const nav = useNavigation();
+const catalog = useCatalogStore();
 const search = ref<InstanceType<typeof SearchCombobox> | null>(null);
 
 defineExpose({ focusSearch: () => search.value?.focus() });
@@ -27,6 +31,9 @@ defineExpose({ focusSearch: () => search.value?.focus() });
     </div>
     <div class="header__right">
       <SimulationStamp />
+      <span class="divider" aria-hidden="true" />
+      <ActivityHub v-if="catalog.status === 'ready'" />
+      <ResetDialog v-if="catalog.status === 'ready'" />
       <span class="divider" aria-hidden="true" />
       <UserMenu />
     </div>

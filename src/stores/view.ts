@@ -10,6 +10,7 @@ export type { Scope } from '@/core/scope';
 export { scopeKey } from '@/core/scope';
 
 export type InspectorTab = 'overview' | 'voyage' | 'events' | 'documents';
+export type IncidentTab = 'summary' | 'evidence' | 'timeline' | 'actions';
 export type { ViewMode } from '@/core/scope';
 
 const isLayerState = (v: unknown): v is Record<LayerId, boolean> => isRecord(v) && LAYERS.every((l) => typeof v[l.id] === 'boolean');
@@ -27,11 +28,15 @@ export const useViewStore = defineStore('view', () => {
   const selection = ref<EntityRef | null>(null);
   const hover = ref<EntityRef | null>(null);
   const inspectorTab = ref<InspectorTab>('overview');
+  const incidentTab = ref<IncidentTab>('summary');
   const inspectorExpanded = ref(false);
   const viewMode = ref<ViewMode>('3d');
   const queueShelfOpen = ref(true);
+  const incidentQueueOpen = ref(true);
   /** KPI whose members filter the map; mirrored from the `kpi` URL query. */
   const kpiDrill = ref<KpiKey | null>(null);
+  /** True on `/compare/:voyageId`; the map then also draws candidate corridors. */
+  const comparing = ref(false);
   /** Element that opened the inspector, so closing it can return focus. */
   let returnFocusEl: HTMLElement | null = null;
 
@@ -44,6 +49,7 @@ export const useViewStore = defineStore('view', () => {
     if (ref && !sameRef(ref, selection.value)) {
       returnFocusEl = typeof document !== 'undefined' ? (document.activeElement as HTMLElement | null) : null;
       inspectorTab.value = opts.tab ?? 'overview';
+      incidentTab.value = 'summary';
     } else if (opts.tab) inspectorTab.value = opts.tab;
     selection.value = ref;
   }
@@ -91,11 +97,14 @@ export const useViewStore = defineStore('view', () => {
     selection,
     hover,
     inspectorTab,
+    incidentTab,
     inspectorExpanded,
     inspectorOpen,
     viewMode,
     queueShelfOpen,
+    incidentQueueOpen,
     kpiDrill,
+    comparing,
     select,
     clearSelection,
     setHover,

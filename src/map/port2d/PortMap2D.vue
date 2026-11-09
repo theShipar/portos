@@ -56,7 +56,7 @@ const markers = computed(() => snapStore.mapMarkers);
 const markerById = computed(() => new Map(markers.value.map((m) => [m.vesselId, m])));
 const routeLines = computed(() => (c.value ? markRaw(buildRouteLines(c.value)) : []));
 const hazards = computed(() => (c.value && snapStore.snapshot ? markRaw(buildHazards(c.value, snapStore.snapshot)) : []));
-const focus = computed(() => (c.value && snapStore.snapshot ? markRaw(focusForSelection(c.value, snapStore.snapshot, view.selection)) : null));
+const focus = computed(() => (c.value && snapStore.snapshot ? markRaw(focusForSelection(c.value, snapStore.snapshot, view.selection, { comparing: view.comparing })) : null));
 const selectedVesselId = computed(() => focus.value?.vesselIds[0] ?? null);
 const selectedRow = computed(() => vm.value?.queue.find((q) => q.vesselId === selectedVesselId.value) ?? null);
 const highlightBerthId = computed(() => {

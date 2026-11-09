@@ -30,5 +30,9 @@ export const useSessionStore = defineStore('session', () => {
     prefs.value.userId = userId;
   }
 
-  return { prefs, user, reducedMotion, can, switchUser };
+  function resetPreferences() {
+    prefs.value = { ...DEFAULT_PREFS };
+  }
+
+  return { prefs, user, reducedMotion, can, switchUser, resetPreferences };
 });

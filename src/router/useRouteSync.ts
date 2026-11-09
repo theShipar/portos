@@ -44,6 +44,7 @@ export function useRouteSync() {
     view.viewMode = requested && supportsViewMode(view.scope, requested) ? requested : defaultViewMode(view.scope);
     const k = r.query.kpi;
     view.kpiDrill = typeof k === 'string' && (KPI_KEYS as string[]).includes(k) ? (k as KpiKey) : null;
+    view.comparing = r.name === 'compare';
   }
 
   function applyRoute(r: RouteLocationNormalizedLoaded) {

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { computed, markRaw, shallowRef } from 'vue';
+import { computed, markRaw } from 'vue';
 import { selectKpis, type Kpi } from '@/engines/kpis';
 import { getSnapshotAt, type Snapshot, type WorkflowOverlay } from '@/engines/snapshot';
 import { buildVesselMarkers, type VesselMarker } from '@/selectors/mapLayers';
@@ -9,6 +9,7 @@ import { useAssumptionStore } from './assumptions';
 import { useCatalogStore } from './catalog';
 import { useClockStore } from './clock';
 import { useViewStore } from './view';
+import { useWorkflowStore } from './workflow';
 
 /** Derived read models at the committed clock time; the only place UI gets temporal values from. */
 export const useSnapshotStore = defineStore('snapshot', () => {
@@ -16,9 +17,9 @@ export const useSnapshotStore = defineStore('snapshot', () => {
   const clock = useClockStore();
   const view = useViewStore();
   const assumptions = useAssumptionStore();
-  const workflow = shallowRef<Pick<WorkflowOverlay, 'incidents'> | undefined>(undefined);
+  const workflow = useWorkflowStore();
 
-  const overlay = computed<WorkflowOverlay>(() => ({ incidents: workflow.value?.incidents, dailyRates: assumptions.dailyRates }));
+  const overlay = computed<WorkflowOverlay>(() => ({ incidents: workflow.overlay, dailyRates: assumptions.dailyRates }));
 
   const snapshot = computed<Snapshot | null>(() => {
     const c = catalog.catalog;
@@ -60,9 +61,5 @@ export const useSnapshotStore = defineStore('snapshot', () => {
     return markRaw(markers.value.filter((m) => ids.has(m.vesselId) || m.vesselId === keep));
   });
 
-  function setWorkflowOverlay(o: Pick<WorkflowOverlay, 'incidents'> | undefined) {
-    workflow.value = o;
-  }
-
-  return { snapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView, setWorkflowOverlay };
+  return { snapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView };
 });

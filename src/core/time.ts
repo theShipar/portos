@@ -18,3 +18,16 @@ export const DAY = 86_400_000;
 export function minutesBetween(fromMs: number, toMs: number): number {
   return (toMs - fromMs) / MINUTE;
 }
+
+/** `<input type="datetime-local">` value for a UTC instant (the field is labelled UTC). */
+export function toUtcInputValue(ms: number): string {
+  return toIsoUtc(ms).slice(0, 16);
+}
+
+/** Reads a `datetime-local` value as UTC; empty → null, malformed → undefined. */
+export function fromUtcInputValue(value: string): IsoUtc | null | undefined {
+  if (!value) return null;
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return undefined;
+  const ms = Date.parse(`${value}:00Z`);
+  return Number.isFinite(ms) ? toIsoUtc(ms) : undefined;
+}

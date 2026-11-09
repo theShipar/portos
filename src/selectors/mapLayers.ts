@@ -2,6 +2,7 @@ import { densifyPath, inverseSpherical, sphericalPosition } from '@/core/geo';
 import type { Bounds, EntityRef, GeoPoint, NavStatus, WeatherHazard } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import { cohortSets, LATE_THRESHOLD_MINUTES, voyagesAtRisk } from '@/engines/kpis';
+import { alternativeRoutes } from '@/engines/scenario';
 import type { Snapshot } from '@/engines/snapshot';
 import type { TrackState } from '@/engines/tracks';
 import type { HazardPhase } from '@/engines/weatherRisk';
@@ -197,13 +198,15 @@ export function polygonCentroid(poly: GeoPoint[]): GeoPoint {
 }
 
 /** What the map should emphasise for the current selection (route highlight, endpoints, hazard). */
-export function focusForSelection(c: Catalog, snap: Snapshot, sel: EntityRef | null): MapFocus {
+export function focusForSelection(c: Catalog, snap: Snapshot, sel: EntityRef | null, opts: { comparing?: boolean } = {}): MapFocus {
   if (!sel) return EMPTY_FOCUS;
   const forVoyage = (voyageId: string | null, vesselId: string): MapFocus => {
     const vo = voyageId ? c.byId.voyage.get(voyageId) : undefined;
+    const route = vo ? c.byId.route.get(vo.routeId) : undefined;
+    const candidates = opts.comparing && route ? alternativeRoutes(c, route).map((r) => r.routeId) : [];
     return {
       vesselIds: [vesselId],
-      routeIds: vo ? [vo.routeId] : [],
+      routeIds: vo ? [vo.routeId, ...candidates] : [],
       hazardIds: [],
       portIds: vo ? [vo.originPortId, vo.destinationPortId] : [],
       voyageId: vo?.voyageId ?? null,

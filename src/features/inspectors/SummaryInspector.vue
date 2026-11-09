@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { formatNm, formatUtc, sentenceCase } from '@/core/format';
 import type { EntityRef } from '@/core/types';
 import { makeProvenance } from '@/engines/provenance';
@@ -20,6 +21,8 @@ const catalog = useCatalogStore();
 const snap = useSnapshotStore();
 const view = useViewStore();
 const nav = useNavigation();
+const router = useRouter();
+const route = useRoute();
 
 interface Summary {
   kindLabel: string;
@@ -27,10 +30,10 @@ interface Summary {
   subtitle: string;
   chips: StatusStyle[];
   impact?: VoyageImpact;
-  impactTitle?: string;
   fields: InspectorField[];
   links: { label: string; ref: EntityRef }[];
   note?: string;
+  compareVoyageId?: string;
 }
 
 const model = computed<Summary | null>(() => {
@@ -56,31 +59,7 @@ const model = computed<Summary | null>(() => {
         { label: 'Route', value: c.byId.route.get(vo.routeId)?.corridorName ?? vo.routeId },
       ],
       links: [{ label: 'Open vessel', ref: { kind: 'vessel', id: vo.vesselId } }, ...(c.incidentsByVoyage.get(id) ?? []).filter((i) => s.incidents.get(i.incidentId)?.visible).map((i) => ({ label: `Incident ${i.incidentId}`, ref: { kind: 'incident' as const, id: i.incidentId } }))],
-    };
-  }
-  if (kind === 'incident') {
-    const inc = c.byId.incident.get(id);
-    const st = s.incidents.get(id);
-    if (!inc || !st) return null;
-    return {
-      kindLabel: 'Incident',
-      title: inc.title,
-      subtitle: `${inc.incidentId} · ${c.byId.vessel.get(inc.vesselId)?.name ?? inc.vesselId}`,
-      chips: [statusStyle('severity', inc.severity), statusStyle('incident', st.status)],
-      impact: selectVoyageImpact(s, inc.voyageId),
-      impactTitle: `Voyage ${inc.voyageId} impact`,
-      fields: [
-        { label: 'Category', value: sentenceCase(inc.category) },
-        { label: 'Opened', value: formatUtc(inc.openedAtUtc), mono: true },
-        { label: 'Owner', value: st.ownerUserId ? (c.byId.user.get(st.ownerUserId)?.displayName ?? st.ownerUserId) : 'Unassigned' },
-        { label: 'Port', value: portName(inc.portId) },
-        { label: 'Evidence items', value: String(inc.evidenceIds.length), mono: true },
-      ],
-      links: [
-        { label: 'Open vessel', ref: { kind: 'vessel', id: inc.vesselId } },
-        { label: `Voyage ${inc.voyageId}`, ref: { kind: 'voyage', id: inc.voyageId } },
-      ],
-      note: st.visible ? undefined : 'This incident had not been opened yet at the selected replay time.',
+      compareVoyageId: vo.voyageId,
     };
   }
   if (kind === 'route') {
@@ -165,12 +144,12 @@ const model = computed<Summary | null>(() => {
     <div class="stack">
       <p v-if="model.note" class="note">{{ model.note }}</p>
       <div v-if="model.impact">
-        <h3 v-if="model.impactTitle" class="section-title">{{ model.impactTitle }}</h3>
         <VoyageImpactCard :impact="model.impact" />
       </div>
       <FieldList :fields="model.fields" />
       <div v-if="model.links.length" class="links">
         <button v-for="l in model.links" :key="l.label" type="button" class="btn btn--sm" @click="nav.openEntity(l.ref)">{{ l.label }}</button>
+        <button v-if="model.compareVoyageId" type="button" class="btn btn--sm" data-testid="open-comparison" @click="router.push({ name: 'compare', params: { voyageId: model.compareVoyageId }, query: route.query })">Compare responses</button>
       </div>
     </div>
   </InspectorDrawer>
@@ -197,12 +176,6 @@ const model = computed<Summary | null>(() => {
   background: var(--color-info-subtle);
   color: var(--color-info);
   font-size: var(--text-12);
-}
-.section-title {
-  font-size: var(--text-14);
-  line-height: 20px;
-  font-weight: 600;
-  margin-bottom: 4px;
 }
 .links {
   display: flex;

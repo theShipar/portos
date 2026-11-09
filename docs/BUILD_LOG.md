@@ -264,3 +264,62 @@ blockers. Status values: implemented / tested / blocked.
     - Reset removed the focused button → focus moves to Edit rate.
 - **Deferred:** alert deduplication window moves to Phase 6 with the incident workflow.
 - **Blockers:** none.
+
+## Phase 6 — Incident workflow, tasks, drafts, audit, persistence, resets
+
+- **Decisions:** reducer-based local workflow with append-only audit (D-016), writes only at Now (D-017),
+  explainable priority and 6 h forecast dedupe (D-018), honest comparison and no-send drafts (D-019).
+- **Implemented:**
+  - `src/workflows/`: `types.ts` (versioned `WorkflowState`), `incidentMachine.ts` (lifecycle open → acknowledged →
+    investigating → mitigation planned → monitoring → resolved, step-backs, resolve/reopen rules, role guards with
+    "`<Role>` role cannot …" reasons, assignee and due checks), `reducer.ts` (transition, assign, note, undo, task
+    create/status with duplicate guard, draft create/ready/discard, scenario propose/accept; local IDs
+    `LOC-AUD-0001`…), `validate.ts` (shape + duplicate-ID check), `handoff.ts` (audit per entity incl. vessel →
+    voyages → incidents, handoff summary, audit export with the prototype caveat, prefilled draft templates).
+  - Engines: `priority.ts` (score + rationale, needs-verification, deduped case queue), `scenario.ts` (option
+    comparison, input limits, JSON export).
+  - Stores: `workflow.ts` (load/validate/persist, `saved` flag, replay block, outstanding tasks, dispatch with
+    success notice + Undo action, cross-tab notice); snapshot reads the workflow overlay; notices gained actions;
+    session `resetPreferences`; view `incidentTab`, `incidentQueueOpen`, `comparing` (set from the route).
+  - Screens: `IncidentInspector` (Summary with effect/cause callout, impact card, priority rationale, related
+    alerts, facts, Copy handoff; Evidence with freshness and provenance; Timeline with UTC/local toggle; Actions),
+    `IncidentActions` (stepper, transitions with reasons, resolve/reopen forms, assign with UTC due + escalation note,
+    notes, tasks, drafts, Open comparison), `TaskPanel`, `DraftPanel` (Draft prepared locally, Mark ready, Copy, no
+    Send), `ComparisonPanel` (editable inputs, three options, propose/accept, export), `IncidentQueue` (top 5 per
+    scope, search, expandable "why ranked here", Show on map via the unresolved-incidents KPI drill),
+    `ActivityHub` (header button with outstanding-task badge and "Not saved"; Tasks Mine/All + region, Drafts, Audit
+    with actor/action/entity filters and Export audit JSON), `ResetDialog` (native modal dialog, three levels, exact
+    clear list with counts, export-first link, focus return). Vessel Events tab shows local decisions and voyage
+    tasks. The map draws the scenario corridor dashed while `/compare/:voyageId` is open.
+- **Tested:**
+  - `npm run typecheck` → exit 0.
+  - `npx vitest run` → exit 0, 139 tests (`tests/unit/workflow.test.ts` 36: legal transitions, role guards, resolve
+    and reopen rules, assign/due validation, undo limits, task duplicate guard, draft recipients, scenario
+    propose/accept permissions, overlay at/after the anchor only, priority order and rationale, dedupe, comparison
+    numbers and limits, audit for vessel, handoff text, draft "+18.0 h"/"Not sent", persistence validation, queue
+    rows per region/search/owner, audit filters, hub task filter).
+  - `npm run build` → exit 0.
+- **Browser evidence (dev server, 1440×900, clean storage):**
+  - Earth queue: 47 unresolved cases, top 5 by score; INC-0038 "Score 92 · Critical severity +45, $38,500 exposure
+    +29, Open 8.1 h +8, Not yet acknowledged +10".
+  - INC-0001 as Taylor Cruz (dispatcher): Resolve disabled with "Dispatcher role cannot resolve cases…";
+    Acknowledge → Start investigating → assign Jordan Lee due 2026-11-09 18:00 UTC → note. Header chips
+    "Investigating · Jordan Lee · Local decision"; four audit events stored.
+  - Reload keeps status, owner and note. Vessel VSL-0001 → Events → "Local decisions" lists the same four events
+    (acceptance: an INC-0001 action is visible in incident and vessel audit views).
+  - Task LOC-TSK-0006 for Jordan Lee (activity badge 1); port-agent draft contains "+18.0 h" and "not sent"; the
+    editor offers only Save draft / Cancel and no Send exists anywhere.
+  - Mitigation planned → notice Undo → back to Investigating, `incident.undo` appended.
+  - Sam Ellis (viewer): every action disabled, each with its reason.
+  - Comparison: baseline +18.0 h $24,000, agent confirmation +18.0 h $24,000, Cape corridor +11.9 d $381,733;
+    dispatcher proposes, Accept disabled for dispatcher, Avery Morgan (manager) accepts; follow-up task created.
+    Earth view shows planned (solid) and candidate Cape (dashed) corridors.
+  - Activity → Audit: 10 events; entity VSL-0001 → 8, + "Plan accepted" → 0; Esc closes the hub only and returns
+    focus to its button.
+  - Reset decisions: dialog lists "1 local case change, 2 tasks, 1 communication draft, 1 route proposal, 10 audit
+    events, 0 edited daily delay rates" with Export audit JSON first; after confirm storage is empty, view kept, KPIs
+    back to 330 / 118 / 85 / $737.7K, focus on Reset. Replay `?t=11:30` → INC-0001 Open, actions blocked with the
+    Now message. Reset full demo → `/operations`, Now, Taylor Cruz.
+  - Screenshots: `docs/screenshots/phase6-queue.png`, `phase6-incident-summary.png`, `phase6-incident-actions.png`,
+    `phase6-vessel-audit.png`, `phase6-comparison.png`, `phase6-activity-audit.png`, `phase6-reset-dialog.png`.
+- **Blockers:** none.

@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { auditRows } from '@/selectors/activity';
 import { buildVesselInspector } from '@/selectors/vessel';
 import { useNavigation } from '@/router/useRouteSync';
 import { useCatalogStore } from '@/stores/catalog';
+import { useClockStore } from '@/stores/clock';
 import { useSnapshotStore } from '@/stores/snapshot';
 import { useViewStore, type InspectorTab } from '@/stores/view';
+import { useWorkflowStore } from '@/stores/workflow';
+import { auditFor } from '@/workflows/handoff';
+import TaskPanel from '@/features/workflow/TaskPanel.vue';
 import InspectorDrawer from '@/components/shell/InspectorDrawer.vue';
 import FieldList from '@/components/ui/FieldList.vue';
 import Icon from '@/components/ui/Icon.vue';
@@ -16,6 +21,8 @@ const props = defineProps<{ vesselId: string }>();
 const catalog = useCatalogStore();
 const snap = useSnapshotStore();
 const view = useViewStore();
+const clock = useClockStore();
+const wf = useWorkflowStore();
 const nav = useNavigation();
 
 const model = computed(() => (catalog.catalog && snap.snapshot ? buildVesselInspector(catalog.catalog, snap.snapshot, props.vesselId) : null));
@@ -25,6 +32,7 @@ const tabs: { id: InspectorTab; label: string }[] = [
   { id: 'events', label: 'Events' },
   { id: 'documents', label: 'Documents' },
 ];
+const localAudit = computed(() => (catalog.catalog ? auditRows(catalog.catalog, auditFor(catalog.catalog, wf.state, { kind: 'vessel', id: props.vesselId })) : []));
 const voyage = computed(() => (model.value?.voyage ? catalog.catalog?.byId.voyage.get(model.value.voyage.voyageId) ?? null : null));
 
 function openPort(portId: string) {
@@ -105,7 +113,24 @@ function openPort(portId: string) {
       <div v-else class="empty">No assigned voyage for this vessel in the simulated dataset.</div>
     </section>
 
-    <section v-else-if="view.inspectorTab === 'events'">
+    <section v-else-if="view.inspectorTab === 'events'" class="stack">
+      <div data-testid="vessel-local-audit">
+        <h3 class="section-title">Local decisions <span class="section-note">demo, this browser only</span></h3>
+        <p v-if="clock.mode === 'replay'" class="empty">Local decisions are recorded at Now (simulated) and are hidden while replaying history.</p>
+        <ol v-else-if="localAudit.length" class="events">
+          <li v-for="a in localAudit" :key="a.auditId">
+            <span class="events__time mono">{{ a.simText }}</span>
+            <span class="events__label">{{ a.summary }}</span>
+            <span class="events__meta mono">{{ a.actorText }} · {{ a.refsText }}</span>
+          </li>
+        </ol>
+        <p v-else class="empty">No local decisions on this vessel, its voyages or its cases yet.</p>
+      </div>
+      <div v-if="model.voyage">
+        <h3 class="section-title">Voyage tasks <span class="section-note">{{ model.voyage.voyageId }}</span></h3>
+        <TaskPanel :voyage-id="model.voyage.voyageId" :allow-create="false" />
+      </div>
+      <h3 class="section-title">Simulated events</h3>
       <ol v-if="model.events.length" class="events">
         <li v-for="e in model.events" :key="e.eventId">
           <span class="events__time mono">{{ e.timeUtc }}</span>

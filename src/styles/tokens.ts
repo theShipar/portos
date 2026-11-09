@@ -21,7 +21,7 @@ export interface StatusStyle {
   tone: StatusTone;
   label: string;
   /** Glyph name from components/ui/Icon.vue. */
-  icon: 'check' | 'alert' | 'octagon' | 'question' | 'info' | 'dot' | 'anchor' | 'clock' | 'ship';
+  icon: 'check' | 'alert' | 'octagon' | 'question' | 'info' | 'dot' | 'anchor' | 'clock' | 'ship' | 'user';
 }
 
 export const toneColor: Record<StatusTone, string> = {

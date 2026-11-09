@@ -7,11 +7,13 @@ import { useClockStore } from '@/stores/clock';
 import { useNoticeStore } from '@/stores/notices';
 import { useSnapshotStore } from '@/stores/snapshot';
 import { useViewStore } from '@/stores/view';
+import { useWorkflowStore } from '@/stores/workflow';
 import AppHeader from '@/components/shell/AppHeader.vue';
 import KpiRow from '@/components/shell/KpiRow.vue';
 import NoticeStack from '@/components/shell/NoticeStack.vue';
 import PortKpiRow from '@/components/shell/PortKpiRow.vue';
 import PortQueueShelf from '@/features/port/PortQueueShelf.vue';
+import IncidentQueue from '@/features/workflow/IncidentQueue.vue';
 import ScopeBreadcrumb from '@/components/shell/ScopeBreadcrumb.vue';
 import EntityInspector from '@/features/inspectors/EntityInspector.vue';
 import MapWorkspace from '@/map/MapWorkspace.vue';
@@ -22,6 +24,7 @@ const view = useViewStore();
 const snap = useSnapshotStore();
 const notices = useNoticeStore();
 const assumptions = useAssumptionStore();
+const workflow = useWorkflowStore();
 const nav = useNavigation();
 const header = ref<InstanceType<typeof AppHeader> | null>(null);
 const crumbs = ref<InstanceType<typeof ScopeBreadcrumb> | null>(null);
@@ -38,6 +41,7 @@ watch(
 
 if (view.storageWarning) notices.push(view.storageWarning, 'warning');
 if (assumptions.storageWarning) notices.push(assumptions.storageWarning, 'warning');
+if (workflow.storageWarning) notices.push(workflow.storageWarning, 'warning');
 
 const isTyping = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName));
 
@@ -68,6 +72,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
         <PortKpiRow v-if="snap.portView" :vm="snap.portView" />
         <KpiRow v-else :kpis="snap.kpis" />
         <PortQueueShelf v-if="snap.portView" />
+        <IncidentQueue v-else />
       </div>
       <EntityInspector v-if="catalog.status === 'ready'" />
       <div v-if="catalog.status === 'loading' || catalog.status === 'idle'" class="state" role="status">

@@ -141,5 +141,41 @@ map markers to the members plus the selection, and survives reload. Opening enti
 regions keep the drill; entering a port drops it (port KPIs have no members); the drill chip's Clear removes it. Count tiles show their denominator so vessel and voyage counts are not compared
 by mistake.
 
+## D-016 Local workflow is a reducer over fixtures, never a fixture edit
+Incident lifecycle changes, owners, due times, notes, tasks, drafts and route proposals live in one versioned
+`WorkflowState` (`portos:workflow:v1`), changed only through `reduceWorkflow(state, command, context)`. The reducer
+checks role permissions and transition rules, returns a new state plus one append-only audit event, and never touches
+fixture data. The snapshot applies the incident part as an overlay. Consequences:
+- Every action has an audit event (actor, role, wall-clock click time, simulation time, entity refs incl. vessel,
+  voyage and port, previous/next state, notes, `source: local-demo`), so a vessel's Events tab and the activity hub
+  read the same trail as the incident timeline.
+- Undo is a new `incident.undo` event that restores the previous status/owner, allowed only for the latest
+  state-changing event on that case; resolve cannot be undone (reopen instead, with a reason).
+- Unreadable or duplicate-ID saved state is discarded with a notice; blocked storage keeps working in memory with a
+  "Not saved" indicator.
+- Three resets with a dialog that lists exactly what is cleared: view (scope, selection, layers, KPI filter, time),
+  decisions (workflow + rate overrides, with "Export audit JSON first"), full demo (both + identity/preferences).
+
+## D-017 Decisions are taken at Now (simulated)
+Writes are blocked while replaying: "Decisions are recorded at Now (simulated). Return to now to act." The overlay
+applies only at times ≥ the anchor, and local audit rows are hidden in replay, so history stays exactly what the
+fixtures say and replay stays deterministic.
+
+## D-018 Explainable priority and alert dedupe
+Queue order is a points sum, and every term is shown: severity (critical 45 / high 30 / medium 15), exposure
+(linear to 30 points at $40,000), age (1 point per hour, max 15), status (open +10, acknowledged +5), low or unknown
+confidence −5. The label is "priority score", not "dispatch order". Forecast alerts (schedule variance, port delay,
+port congestion) on the same voyage and category within a 6 h bucket collapse into one case; other alerts on the
+same voyage stay separate but cross-linked, and exposure is counted once per voyage. The queue shows the top five
+for the current Earth/region scope, with search and "Show all".
+
+## D-019 Comparison is a what-if, honestly labelled
+Options are computed from the same ETA and exposure engines as the inspector: maintain plan (baseline), port-agent
+confirmation (same delay, confidence one level up), and the scenario corridor when the dataset has one for the same
+origin/destination (extra distance at the assumed speed, low confidence, manager approval). Inputs are validated
+with stated limits. Proposing records a decision and a follow-up task; only a manager can accept, and acceptance
+never changes the route, ETA or any external system. While comparing, the map also draws the candidate corridor in
+the dashed "proposed" style. Drafts are prepared locally and have no Send action.
+
 ## D-007 Port 2D basemap
 Superseded by D-011 (OpenFreeMap, decided at Phase 4).

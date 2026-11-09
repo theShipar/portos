@@ -37,16 +37,24 @@ export function loadStored<T>(key: StorageKey, validate: (v: unknown) => v is T,
   return { value: fallback, corrupted: true };
 }
 
-export function saveStored(key: StorageKey, value: unknown): void {
+/** Returns false when storage is unavailable or full; the caller keeps the state in memory. */
+export function saveStored(key: StorageKey, value: unknown): boolean {
+  const s = storage();
+  if (!s) return false;
   try {
-    storage()?.setItem(key, JSON.stringify(value));
+    s.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
-    /* quota or privacy mode: state stays in memory */
+    return false;
   }
 }
 
 export function clearStored(key: StorageKey): void {
-  storage()?.removeItem(key);
+  try {
+    storage()?.removeItem(key);
+  } catch {
+    /* storage blocked */
+  }
 }
 
 export const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);

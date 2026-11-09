@@ -70,7 +70,7 @@ const ports = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(bu
 const routeLines = computed(() => (catalog.catalog ? markRaw(buildRouteLines(catalog.catalog)) : []));
 const hazards = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildHazards(catalog.catalog, snapStore.snapshot)) : []));
 const hazardKey = computed(() => hazards.value.map((h) => `${h.hazardId}:${h.phase}`).join('|'));
-const focus = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(focusForSelection(catalog.catalog, snapStore.snapshot, view.selection)) : null));
+const focus = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(focusForSelection(catalog.catalog, snapStore.snapshot, view.selection, { comparing: view.comparing })) : null));
 
 /** Layer switches filtered to what the current scope offers (spec 05/02). */
 const effectiveLayers = computed<OverlayLayers>(() => {
