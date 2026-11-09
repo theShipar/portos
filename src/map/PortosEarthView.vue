@@ -454,12 +454,46 @@ async function init() {
     }),
     sc.onFrame(onFrame),
   ];
-  sc.setRightInset(view.inspectorOpen ? inspectorInset() : 0);
+  sc.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0);
   if (props.active) sc.start();
-  if (import.meta.env.DEV) (window as unknown as { __portos?: unknown }).__portos = { scene: sc, overlay: ov };
+  if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') exposeTestAdapter(sc, ov);
   state.value = 'ready';
   emit('ready', sc);
   await applyScope(view.scope, { initial: true });
+}
+
+/** Test-only scene adapter (dev and `--mode e2e` builds): page coordinates for map targets and renderer figures. */
+function exposeTestAdapter(sc: EarthScene, ov: MaritimeOverlay) {
+  const pointOf = (lat: number, lon: number) => {
+    const p = sc.project(lat, lon);
+    const r = host.value?.getBoundingClientRect();
+    return r ? { x: r.left + p.x, y: r.top + p.y, visible: p.visible } : null;
+  };
+  (window as unknown as { __portos?: unknown }).__portos = {
+    scene: sc,
+    overlay: ov,
+    state: () => state.value,
+    stats: () => sc.stats(),
+    flying: () => sc.flying,
+    reducedMotion: () => sc.motionReduced,
+    pointOf,
+    vesselPoint: (id: string) => {
+      const m = markers.value.find((v) => v.vesselId === id);
+      return m ? pointOf(m.point.lat, m.point.lon) : null;
+    },
+    vesselsNear: (x: number, y: number, radius: number) =>
+      markers.value
+        .filter((m) => {
+          const p = pointOf(m.point.lat, m.point.lon);
+          return !!p?.visible && Math.hypot(p.x - x, p.y - y) <= radius;
+        })
+        .map((m) => m.vesselId),
+    portPoint: (id: string) => {
+      const m = ports.value.find((p) => p.portId === id);
+      return m ? pointOf(m.point.lat, m.point.lon) : null;
+    },
+    loseContext: () => sc.renderer.getContext().getExtension('WEBGL_lose_context')?.loseContext(),
+  };
 }
 
 function inspectorInset() {
@@ -481,9 +515,9 @@ watch(
   () => applyScope(view.scope),
 );
 watch(
-  () => view.inspectorOpen,
-  (open) => {
-    scene.value?.setRightInset(open ? inspectorInset() : 0);
+  () => [view.inspectorOpen, view.sheetLayout] as const,
+  ([open, sheet]) => {
+    scene.value?.setRightInset(open && !sheet ? inspectorInset() : 0);
     scene.value?.setIdleRotation(view.scope.level === 'earth' && !open);
   },
 );

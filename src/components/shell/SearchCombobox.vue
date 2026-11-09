@@ -265,7 +265,7 @@ input:focus {
   color: var(--color-ink-secondary);
 }
 .search__option.is-active .search__opt-icon {
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
 }
 .search__opt-title {
   font-weight: 500;

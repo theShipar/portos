@@ -300,7 +300,7 @@ function toggle(id: string) {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
   font: inherit;
   font-size: var(--text-12);
   cursor: pointer;

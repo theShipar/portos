@@ -43,7 +43,7 @@ defineExpose({ focusSearch: () => search.value?.focus() });
 <style scoped>
 .header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 480px) minmax(0, 1fr);
+  grid-template-columns: auto minmax(160px, 1fr) auto;
   align-items: center;
   gap: var(--space-4);
   height: var(--shell-header-h);
@@ -90,6 +90,38 @@ defineExpose({ focusSearch: () => search.value?.focus() });
 }
 @media (max-width: 1360px) {
   .brand__tag {
+    display: none;
+  }
+}
+@media (max-width: 1200px) {
+  .header {
+    gap: var(--space-3);
+    padding: 0 var(--space-4);
+  }
+  .header__right {
+    gap: var(--space-2);
+  }
+  .header :deep(.compact-label) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+@media (max-width: 900px) {
+  .brand__name,
+  .divider {
+    display: none;
+  }
+  .header :deep(.user__label) {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .header :deep(.stamp__text),
+  .header :deep(.search__kbd) {
     display: none;
   }
 }

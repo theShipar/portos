@@ -93,6 +93,22 @@ onMounted(() => heading.value?.focus({ preventScroll: true }));
 .drawer--expanded {
   width: var(--inspector-w-expanded);
 }
+@media (max-width: 1024px) {
+  .drawer,
+  .drawer--expanded {
+    top: auto;
+    left: var(--map-control-gap);
+    width: auto;
+    height: var(--sheet-h, 46%);
+    animation-name: sheet-in;
+  }
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
 @keyframes drawer-in {
   from {
     opacity: 0;

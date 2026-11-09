@@ -25,7 +25,7 @@ const basemap = basemapConfig();
 const SHELF_W = 340;
 const show2d = computed(() => view.viewMode === '2d' && view.scope.level !== 'earth');
 const insetLeft = computed(() => (view.scope.level === 'port' ? (view.queueShelfOpen ? SHELF_W + 16 : 0) : 0));
-const insetRight = computed(() => (view.inspectorOpen ? 408 + 24 : 0));
+const insetRight = computed(() => (view.inspectorOpen && !view.sheetLayout ? 408 + 24 : 0));
 const initialView = ref<MapView2D | null>(null);
 /** Ports already framed once in 2D; the first visit fits the port layout instead of copying the globe zoom. */
 const framedPorts = new Set<string>();
@@ -178,8 +178,34 @@ defineExpose({ earth, earthView, map2d });
 .workspace-map--inspector .map-tools,
 .workspace-map--inspector .attribution {
   right: calc(var(--inspector-w) + var(--map-control-gap) * 2);
+  /* Leaves room for the marker legend on the left. */
+  max-width: max(240px, calc(100% - var(--inspector-w) - 480px));
+  text-align: right;
 }
 .attribution :deep(a) {
   color: inherit;
+}
+@media (max-width: 1280px) {
+  .attribution {
+    max-width: 380px;
+    text-align: right;
+  }
+}
+@media (max-width: 1024px) {
+  .workspace-map--inspector .map-tools,
+  .workspace-map--inspector .attribution {
+    right: var(--map-control-gap);
+  }
+  .workspace-map--inspector .map-tools {
+    top: var(--map-control-gap);
+    bottom: auto;
+  }
+  .workspace-map--inspector .attribution {
+    bottom: min(var(--sheet-top), calc(100% - 48px));
+    max-width: 380px;
+  }
+  .workspace-map--inspector .map-legend {
+    display: none;
+  }
 }
 </style>

@@ -375,3 +375,57 @@ blockers. Status values: implemented / tested / blocked.
   - Screenshots: `docs/screenshots/phase7-replay-rail.png`, `phase7-compare-now.png`, `phase7-inc0001-marker.png`.
 - **Blockers:** none.
 
+## Phase 8 — QA: E2E matrix, visual baselines, accessibility, resilience, performance, release docs
+
+- **Decisions:** responsive layout (D-024); test adapter in dev/e2e builds only (D-025); AA text roles derived from
+  the kit palette (D-026); MapLibre GL JS 6 (D-027); weather hazards as an optional dataset (D-028).
+- **Implemented:**
+  - E2E (`tests/e2e/`, Playwright Chromium, SwiftShader WebGL, against `vite build --mode e2e`):
+    - `journey.spec.ts` (9): Earth first paint (canvas + `renderer.info`), Earth → Southeast Asia → Singapore →
+      queue vessel with browser Back to Earth, a real click on a 3D vessel marker at adapter coordinates, INC-0001
+      evidence and the three-option comparison, acknowledge/investigate/assign surviving reload with the audit
+      entry, replay stepping to the INC-0001 marker (10:59, +18.0 h, $24,000) and Return to Now, deep link
+      reproduced in a second tab, `/` search focus, full demo reset.
+    - `resilience.spec.ts` (15): no WebGL, WebGL context loss with recovery and kept selection, basemap tile failure,
+      missing weather dataset, corrupted storage; reduced motion, accessible names and visible focus, keyboard walk
+      without traps; incident/voyage/vessel exposure consistency, queue count equals its list, same `t` → identical
+      inspector; 1024 bottom sheet, < 768 list mode, 200 % zoom, 1280 region journey.
+    - `visual.spec.ts` (16): eight views at 1440 × 900 and 1920 × 1080 → `tests/visual/NN-name-{desktop,1920}.png`,
+      compared at 1 % pixel tolerance; checklist in `docs/VISUAL_QA.md`.
+    - `perf.spec.ts`: opt-in probe (`PERF=1`, `PERF_ANGLE`, `PERF_ROUND_TRIPS`) writing `docs/perf/*.json`;
+      report in `docs/PERF_REPORT.md`.
+    - `helpers.ts`: clean-start storage once per tab, globe/flight waits.
+  - Test adapter (`PortosEarthView.vue`): `state`, `stats`, `flying`, `reducedMotion`, `pointOf`, `vesselPoint`,
+    `vesselsNear`, `portPoint`, `loseContext`; `EarthScene` gained `flying`/`motionReduced` getters.
+  - Responsive: `view.sheetLayout` (`matchMedia ≤ 1024px`) drives camera insets; bottom-sheet inspector, compact
+    header labels (`.compact-label`), stacked replay rail ≤ 1100 px, smaller sheet with the rail open, map tools
+    top-right in sheet layout, attribution wraps beside the inspector, narrow list mode hides map labels too.
+  - Contrast: text-role tokens in `tokens.css`, text colours in 15 component/style files switched to them, primary/count fills on
+    `--color-accent-fill`; `tests/unit/contrast.test.ts`.
+  - Resilience: optional `weatherHazards` in `loader.ts`/`buildCatalog` (`missingDatasets`) with a persistent notice;
+    `tests/unit/resilience.test.ts`.
+  - Dependencies: `maplibre-gl` 5.24 → 6.17 with an ES-module worker (`?worker&url`, `setWorkerUrl`,
+    `worker.format: 'es'`).
+  - Docs: `README.md` (root; prototype vs production), `docs/KNOWN_LIMITATIONS.md`, `docs/VISUAL_QA.md`,
+    `docs/PERF_REPORT.md`.
+- **Tested:**
+  - `python3 scripts/validate_data.py` → exit 0 ("Scenario: MV Pacific Horizon +18h, USD 24,000 … verified").
+  - `npm ci` → exit 0. `npm audit --omit=dev` → 0 vulnerabilities (after D-027); dev-only advisories remain
+    (vitest/tinypool, @vue/test-utils), listed in KNOWN_LIMITATIONS.
+  - `npm run typecheck` → exit 0. `npm run build` → exit 0.
+  - `npx vitest run` → exit 0, 183 tests in 11 files (new: contrast 18, resilience 4).
+  - `npx playwright test` → exit 0, 43 passed, 1 skipped (perf probe). Visual baselines re-run in compare mode at 1 %
+    tolerance: 16/16 stable.
+  - Performance (`PERF=1 PERF_ANGLE=metal`, Apple M4 Pro): flight and orbit 59.9 fps p50 / 59.5 p5, first
+    interactive 0.6–2.0 s, Earth → region 1.24 s, 34–40 draw calls, heap 17.2 → 24.2 MB after the first round trip
+    and 25.2 MB after 60 switches, GPU geometries flat at 47. SwiftShader: 7.5 fps p50, first interactive 3.8 s.
+- **Fixed during QA:**
+  - Tablet replay: the sheet pushed map tools under the header; now 30 % sheet with the rail open and tools top-right.
+  - 2D attribution overlapped the legend with the inspector open at 1440 px (caught in baseline 06).
+  - Narrow list mode showed globe labels and cluster badges over the list (inline `visibility` won); now hidden.
+  - MapLibre 6 "Worker failed to load" in the built app (caught by the tile-failure E2E).
+- **Browser evidence:** `docs/screenshots/phase8-1280-port.png`, `phase8-tablet-1024-sheet.png`,
+  `phase8-tablet-768-sheet.png`, `phase8-narrow-list.png`, `phase8-webgl-unavailable.png`, `phase8-context-lost.png`,
+  `phase8-tiles-unavailable.png`; baselines in `tests/visual/`.
+- **Blockers:** none. Playwright must run outside the editor sandbox (browser launch is blocked inside it).
+

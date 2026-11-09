@@ -1,0 +1,58 @@
+import { expect, type Page } from '@playwright/test';
+
+export interface PortosAdapter {
+  state(): string;
+  stats(): { calls: number; triangles: number; geometries: number; textures: number };
+  flying(): boolean;
+  reducedMotion(): boolean;
+  pointOf(lat: number, lon: number): { x: number; y: number; visible: boolean } | null;
+  vesselPoint(id: string): { x: number; y: number; visible: boolean } | null;
+  vesselsNear(x: number, y: number, radius: number): string[];
+  portPoint(id: string): { x: number; y: number; visible: boolean } | null;
+  loseContext(): void;
+}
+
+declare global {
+  interface Window {
+    __portos?: PortosAdapter;
+    __portos2d?: unknown;
+  }
+}
+
+/** First load in a tab starts from the clean demo state; reloads keep whatever the test saved. */
+export async function cleanStart(page: Page) {
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem('__portos_e2e')) return;
+    sessionStorage.setItem('__portos_e2e', '1');
+    localStorage.removeItem('portos:workflow:v1');
+    localStorage.removeItem('portos:assumptions:v1');
+    localStorage.setItem('portos:preferences:v1', JSON.stringify({ userId: 'USR-005', reducedMotion: null }));
+  });
+}
+
+export async function open(page: Page, path: string) {
+  await cleanStart(page);
+  await page.goto(path);
+}
+
+export async function globeReady(page: Page) {
+  await page.waitForFunction(() => window.__portos?.state() === 'ready', null, { timeout: 30_000 });
+}
+
+export async function flightDone(page: Page) {
+  await page.waitForFunction(() => window.__portos && !window.__portos.flying(), null, { timeout: 15_000 });
+}
+
+export function inspector(page: Page) {
+  return page.getByTestId('inspector');
+}
+
+export async function search(page: Page, query: string) {
+  const box = page.getByRole('combobox', { name: /Search vessels/ });
+  await box.fill(query);
+  await box.press('Enter');
+}
+
+export async function expectHeading(page: Page, text: string | RegExp) {
+  await expect(inspector(page).getByRole('heading', { level: 2 })).toHaveText(text);
+}

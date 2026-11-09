@@ -78,19 +78,19 @@ defineProps<{ impact: VoyageImpact }>();
 }
 .impact__value--muted {
   font-size: var(--text-16);
-  color: var(--color-unknown);
+  color: var(--color-unknown-ink);
 }
 .tone-critical {
   color: var(--color-critical);
 }
 .tone-warning {
-  color: var(--color-warning);
+  color: var(--color-warning-ink);
 }
 .tone-healthy {
   color: var(--color-healthy);
 }
 .tone-unknown {
-  color: var(--color-unknown);
+  color: var(--color-unknown-ink);
 }
 .impact__grid {
   display: grid;

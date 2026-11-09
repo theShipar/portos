@@ -115,11 +115,11 @@ defineExpose({ close, label: props.label });
 }
 .prov-btn:hover,
 .prov-btn--open {
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
   background: var(--color-accent-subtle);
 }
 .prov-btn--scenario {
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
   border-color: var(--color-accent);
 }
 .prov-pop {

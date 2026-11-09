@@ -14,6 +14,9 @@ export default defineConfig({
   server: {
     fs: { allow: ['.'] },
   },
+  worker: {
+    format: 'es',
+  },
   build: {
     chunkSizeWarningLimit: 1600,
     rollupOptions: {

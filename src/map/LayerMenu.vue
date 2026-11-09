@@ -136,7 +136,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
   position: relative;
 }
 .map-tool--on {
-  color: var(--color-accent) !important;
+  color: var(--color-accent-ink) !important;
   border-color: var(--color-accent) !important;
 }
 .layer-panel {

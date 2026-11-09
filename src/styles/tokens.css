@@ -18,8 +18,15 @@
 
   --color-ink: #111827;
   --color-ink-secondary: #52606d;
-  --color-ink-muted: #77838e;
+  --color-ink-muted-token: #77838e;
   --color-ink-on-dark: #f7fafc;
+
+  /* Text roles: tokens.json hues darkened until text passes WCAG AA (4.5:1) on panel, app and subtle fills. */
+  --color-ink-muted: #646f78;
+  --color-accent-ink: #b94c12;
+  --color-accent-fill: var(--color-accent-hover);
+  --color-warning-ink: #a45a14;
+  --color-unknown-ink: #616c7a;
 
   --color-healthy: #18784e;
   --color-healthy-subtle: #e7f3ed;

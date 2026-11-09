@@ -219,7 +219,7 @@ watch(
 .fchip[aria-pressed='true'] {
   border-color: var(--color-accent);
   background: var(--color-accent-subtle);
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
 }
 .fchip .num {
   margin-left: 2px;
@@ -305,7 +305,7 @@ watch(
   white-space: nowrap;
 }
 .qrow__sub--warn {
-  color: var(--color-unknown);
+  color: var(--color-unknown-ink);
 }
 .shelf__empty {
   padding: 8px;
@@ -347,7 +347,7 @@ watch(
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
   font: inherit;
   text-align: left;
   cursor: pointer;

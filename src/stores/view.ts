@@ -39,6 +39,10 @@ export const useViewStore = defineStore('view', () => {
   const comparing = ref(false);
   /** Replay rail visible (also shown whenever the clock is in replay). */
   const replayOpen = ref(false);
+  /** Below the tablet breakpoint the inspector is a bottom sheet (matches the CSS media query). */
+  const sheetQuery = typeof matchMedia !== 'undefined' ? matchMedia('(max-width: 1024px)') : null;
+  const sheetLayout = ref(sheetQuery?.matches ?? false);
+  sheetQuery?.addEventListener('change', (e) => (sheetLayout.value = e.matches));
   /** Element that opened the inspector, so closing it can return focus. */
   let returnFocusEl: HTMLElement | null = null;
 
@@ -103,6 +107,7 @@ export const useViewStore = defineStore('view', () => {
     incidentTab,
     inspectorExpanded,
     inspectorOpen,
+    sheetLayout,
     viewMode,
     queueShelfOpen,
     incidentQueueOpen,

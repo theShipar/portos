@@ -210,5 +210,40 @@ context, with the date only when the local date differs.
 and the selection. It needs the add-notes permission, changes no case state and cannot be undone; every other
 command stays blocked in replay (D-017).
 
+## D-024 Responsive layout
+Desktop (> 1024 px) keeps the right inspector and insets the map camera by its width. At ≤ 1024 px the inspector
+becomes a bottom sheet (46 % of the workspace, 30 % while the replay rail is open), the camera inset drops to zero,
+map tools move to the top-right and the legend hides. The header compacts to icons with visually hidden labels at
+≤ 1200 px and drops the brand name at ≤ 900 px. The replay rail stacks its "Compared with Now" panel below the
+track at ≤ 1100 px. Below 768 px the map is hidden (kept mounted, `visibility: hidden` on the map and every label)
+and a note explains that cases, search and the inspector still work; the left stack becomes a full-width list.
+
+## D-025 Test adapter in dev and e2e builds only
+`window.__portos` (scene state, `renderer.info` stats, flight state, reduced-motion flag, page coordinates for
+vessels and ports, vessels near a point, forced context loss) and `window.__portos2d` (the MapLibre map) exist only
+when `import.meta.env.DEV` or `MODE === 'e2e'`. Playwright builds with `vite build --mode e2e`; the production build
+does not expose them. E2E clicks real map hit targets at adapter-provided coordinates rather than calling handlers.
+
+## D-026 AA text roles derived from the kit palette
+Several kit hues fail WCAG AA as small text (`ink.muted` 3.9:1 on white, accent 3.3:1, warning 3.8:1 on its
+chip fill, unknown 4.2:1). `tokens.json` stays byte-identical to the kit and drives fills, markers and the map;
+`tokens.css` adds text roles darkened along the same hue until they reach ≥ 4.5:1 on panel, app and subtle fills:
+`--color-ink-muted` #646F78 (raw value kept as `--color-ink-muted-token`), `--color-accent-ink` #B94C12,
+`--color-warning-ink` #A45A14, `--color-unknown-ink` #616C7A. Filled primary controls use the kit's
+`accent-hover` #C65117 (4.6:1 with white) and darken to `accent-ink` on hover. `tests/unit/contrast.test.ts`
+enforces the pairs and fails if any source uses a raw accent/warning/unknown hue as a text colour.
+
+## D-027 MapLibre GL JS 6
+5.24 carried a critical advisory (GHSA-jrc7-96c5-q579, `DOM.sanitize()` bypass). PORTOS does not use popups or
+`setHTML`, but the release ships with 6.17 (`npm audit --omit=dev`: 0). Version 6 loads its worker as a separate
+ES module, so `PortMap2D` imports `maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url` and calls `setWorkerUrl`;
+Vite builds workers as ES modules (`worker.format: 'es'`).
+
+## D-028 Weather hazards are an optional dataset
+If `weatherHazards.json` fails to load, the catalog loads without it (`missingDatasets`), event references to
+hazards are not treated as dangling, `weatherFeedLoaded` is false, route risk reads "Route risk unknown" with a
+provenance warning ("unknown, not clear"), and a persistent notice explains it. ETA and exposure are unaffected.
+Every other dataset remains required: a missing vessel or incident file is a load error, not a partial view.
+
 ## D-007 Port 2D basemap
 Superseded by D-011 (OpenFreeMap, decided at Phase 4).

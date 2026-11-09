@@ -52,7 +52,7 @@ const ICON = { info: 'info', success: 'check', warning: 'alert', critical: 'octa
   color: var(--color-healthy);
 }
 .notice--warning svg:first-child {
-  color: var(--color-warning);
+  color: var(--color-warning-ink);
 }
 .notice--critical svg:first-child {
   color: var(--color-critical);

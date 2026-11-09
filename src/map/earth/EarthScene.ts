@@ -608,6 +608,14 @@ export class EarthScene {
     }
   };
 
+  get flying() {
+    return this.flight.active;
+  }
+
+  get motionReduced() {
+    return this.reducedMotion;
+  }
+
   /** Draw-call and memory figures for the performance report. */
   stats() {
     const info = this.renderer.info;

@@ -100,7 +100,7 @@ const items = computed<Item[]>(() => {
   color: var(--color-ink-muted);
 }
 .tone-warning {
-  color: var(--color-warning);
+  color: var(--color-warning-ink);
 }
 .tone-critical {
   color: var(--color-critical);
@@ -109,6 +109,6 @@ const items = computed<Item[]>(() => {
   color: var(--color-info);
 }
 .tone-unknown {
-  color: var(--color-unknown);
+  color: var(--color-unknown-ink);
 }
 </style>

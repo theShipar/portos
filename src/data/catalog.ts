@@ -76,6 +76,8 @@ export interface Catalog {
   berthsByPort: Map<string, Berth[]>;
   voyageByVessel: Map<string, Voyage>;
   eventMs: Map<string, number>;
+  /** Optional datasets that failed to load; the app runs without them and says so. */
+  missingDatasets: string[];
 }
 
 export class CatalogValidationError extends Error {
@@ -104,7 +106,7 @@ function push<K, V>(m: Map<K, V[]>, k: K, v: V) {
 export const entityKey = (ref: EntityRef) => `${ref.kind}:${ref.id}`;
 
 /** Build a validated, indexed, immutable catalog. Throws CatalogValidationError when references do not resolve. */
-export function buildCatalog(raw: RawDataset): Catalog {
+export function buildCatalog(raw: RawDataset, missingDatasets: string[] = []): Catalog {
   const issues: string[] = [];
   const byId = {
     region: index(raw.regions, 'regionId', 'regions', issues),
@@ -160,7 +162,12 @@ export function buildCatalog(raw: RawDataset): Catalog {
     for (const e of i.evidenceIds) need(byId.evidence, e, `incident ${i.incidentId}`);
   }
   for (const w of raw.weatherHazards) for (const v of w.affectedVoyageIds) need(byId.voyage, v, `weather ${w.hazardId}`);
-  for (const ev of raw.events) for (const r of ev.entityRefs) need(refMap[r.kind] ?? new Map(), r.id, `event ${ev.eventId}`);
+  const weatherMissing = missingDatasets.includes('weatherHazards');
+  for (const ev of raw.events)
+    for (const r of ev.entityRefs) {
+      if (r.kind === 'weather' && weatherMissing) continue;
+      need(refMap[r.kind] ?? new Map(), r.id, `event ${ev.eventId}`);
+    }
 
   const tracks = new Map<string, TrackPoint[]>();
   for (const p of raw.positions) {
@@ -242,6 +249,7 @@ export function buildCatalog(raw: RawDataset): Catalog {
     berthsByPort,
     voyageByVessel,
     eventMs,
+    missingDatasets: [...missingDatasets],
   }) as Catalog;
 }
 

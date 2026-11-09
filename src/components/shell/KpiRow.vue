@@ -244,7 +244,7 @@ function toggleDrill(k: Kpi) {
   height: 28px;
   padding: 0 4px 0 10px;
   border-radius: var(--radius-chip);
-  background: var(--color-accent);
+  background: var(--color-accent-fill);
   color: #fff;
   font-size: var(--text-12);
   font-weight: 500;

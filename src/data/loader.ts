@@ -15,15 +15,24 @@ async function fetchJson<T>(name: string, signal?: AbortSignal): Promise<T> {
   return (await res.json()) as T;
 }
 
+/** Datasets the app can run without: a missing weather feed makes route risk "unknown", never "clear". */
+const OPTIONAL_DATASETS: ReadonlySet<string> = new Set(['weatherHazards']);
+
 /** Load every fixture, validate references and return the immutable catalog. */
 export async function loadCatalog(signal?: AbortSignal): Promise<Catalog> {
+  const missing: string[] = [];
+  const optional = (k: string) => (e: unknown) => {
+    if (!OPTIONAL_DATASETS.has(k) || signal?.aborted) throw e;
+    missing.push(k);
+    return [];
+  };
   const [manifest, ...rows] = await Promise.all([
     fetchJson<RawDataset['manifest']>('manifest', signal),
-    ...DATASET_KEYS.map((k) => fetchJson<unknown[]>(k, signal)),
+    ...DATASET_KEYS.map((k) => fetchJson<unknown[]>(k, signal).catch(optional(k))),
   ]);
   const raw = { manifest } as RawDataset;
   DATASET_KEYS.forEach((k, i) => {
     (raw as unknown as Record<string, unknown>)[k] = rows[i];
   });
-  return buildCatalog(raw);
+  return buildCatalog(raw, missing);
 }

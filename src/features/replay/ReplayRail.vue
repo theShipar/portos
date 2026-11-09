@@ -293,7 +293,7 @@ function saveNote() {
 }
 .seg__btn[aria-pressed='true'] {
   background: var(--color-accent-subtle);
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
   font-weight: 600;
 }
 .rail__time {
@@ -538,6 +538,25 @@ function saveNote() {
 .rail__side textarea {
   min-height: 44px;
   resize: none;
+}
+@media (max-width: 1100px) {
+  .rail {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
+    row-gap: 6px;
+  }
+  .rail__bar {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .rail__side {
+    grid-column: 1;
+    grid-row: 3;
+    width: auto;
+    padding: 6px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--color-border);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .track__fill {

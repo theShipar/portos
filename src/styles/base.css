@@ -41,6 +41,10 @@ button:disabled {
   outline: none;
   box-shadow: var(--focus-ring);
 }
+/* Programmatic focus targets (headings, panels) are not controls; a ring there reads as a selectable element. */
+:is(h1, h2, h3, section)[tabindex='-1']:focus-visible {
+  box-shadow: none;
+}
 
 h1,
 h2,
@@ -105,14 +109,14 @@ p {
 }
 
 .btn--primary {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--color-accent-fill);
+  border-color: var(--color-accent-fill);
   color: #fff;
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: var(--color-accent-hover);
-  border-color: var(--color-accent-hover);
+  background: var(--color-accent-ink);
+  border-color: var(--color-accent-ink);
 }
 
 .btn--ghost {

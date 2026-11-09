@@ -67,7 +67,7 @@ function set(m: ViewMode) {
 }
 .vms__btn[aria-pressed='true'] {
   background: var(--color-accent-subtle);
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
 }
 .vms__btn:disabled {
   color: var(--color-ink-muted);

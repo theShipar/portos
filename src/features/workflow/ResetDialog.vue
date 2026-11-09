@@ -89,7 +89,7 @@ function confirm() {
 <template>
   <button ref="trigger" type="button" class="btn btn--sm btn--ghost" data-testid="reset-open" @click="show">
     <Icon name="reset" :size="14" />
-    Reset
+    <span class="compact-label">Reset</span>
   </button>
   <dialog ref="dialog" class="dlg" :aria-labelledby="ids.title" :aria-describedby="ids.desc" data-testid="reset-dialog" @close="onClose" @keydown.esc.stop>
     <form method="dialog" class="dlg__body" @submit.prevent="confirm">
@@ -203,7 +203,7 @@ function confirm() {
 .dlg__warn {
   margin: 0;
   font-size: var(--text-12);
-  color: var(--color-warning);
+  color: var(--color-warning-ink);
 }
 .dlg__actions {
   display: flex;
@@ -223,7 +223,7 @@ function confirm() {
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
   font: inherit;
   text-decoration: underline;
   cursor: pointer;

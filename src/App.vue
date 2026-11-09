@@ -37,6 +37,8 @@ watch(
   () => catalog.catalog,
   (c) => {
     if (c) clock.configure({ anchorMs: c.anchorMs, startMs: c.replayStartMs, dataVersion: c.manifest.version });
+    if (c?.missingDatasets.includes('weatherHazards'))
+      notices.push('Weather hazard data could not be loaded. Route risk reads "unknown" (not clear) until it is available; reload to retry.', 'warning', { persistent: true });
   },
   { immediate: true },
 );
@@ -67,7 +69,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
   <div class="shell">
     <a class="skip-link" href="#global-search">Skip to search</a>
     <AppHeader ref="header" />
-    <main class="workspace" :class="{ 'workspace--rail': railOpen }" aria-label="Operations map workspace">
+    <main class="workspace" :class="{ 'workspace--rail': railOpen, 'workspace--inspector': view.inspectorOpen }" aria-label="Operations map workspace">
+      <p class="narrow-note" role="note">The map needs a window at least 768 px wide. Cases, search and the inspector still work here.</p>
       <MapWorkspace v-if="catalog.status === 'ready'" />
       <div v-if="catalog.status === 'ready'" class="overlay overlay--tl">
         <ScopeBreadcrumb ref="crumbs" />
@@ -105,6 +108,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
 .workspace {
   --rail-h: 148px;
   --rail-lift: 0px;
+  --drawer-bottom: var(--map-control-gap);
+  --sheet-h: 46%;
+  --sheet-top: calc(var(--drawer-bottom) + var(--sheet-h) + 8px);
   position: relative;
   overflow: hidden;
   background: var(--color-map-ocean);
@@ -130,6 +136,59 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
 }
 .overlay--tl > :deep(*) {
   pointer-events: auto;
+}
+.narrow-note {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .workspace {
+    --rail-h: 290px;
+  }
+}
+@media (max-width: 1024px) {
+  .workspace--rail {
+    --sheet-h: 30%;
+  }
+  .workspace--inspector .overlay--tl {
+    bottom: var(--sheet-top);
+  }
+}
+@media (max-width: 767px) {
+  .workspace {
+    --sheet-h: 62%;
+    background: var(--color-app);
+  }
+  .workspace :deep(.workspace-map) {
+    visibility: hidden;
+  }
+  /* Map labels set inline visibility every frame. */
+  .workspace :deep(.workspace-map *) {
+    visibility: hidden !important;
+  }
+  .narrow-note {
+    display: block;
+    position: absolute;
+    top: var(--map-control-gap);
+    left: var(--map-control-gap);
+    right: var(--map-control-gap);
+    z-index: 21;
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-panel);
+    background: var(--color-info-subtle);
+    color: var(--color-ink);
+    font-size: var(--text-12);
+  }
+  .overlay--tl {
+    top: 64px;
+    right: var(--map-control-gap);
+    justify-items: stretch;
+  }
+  .overlay--tl > :deep(*) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
 }
 .state {
   position: absolute;

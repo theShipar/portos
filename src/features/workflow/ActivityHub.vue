@@ -107,7 +107,7 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
       @click="toggle"
     >
       <Icon name="check" :size="16" />
-      <span>Activity</span>
+      <span class="compact-label">Activity</span>
       <span v-if="outstanding" class="hub__badge num" data-testid="activity-count" :aria-label="`${outstanding} outstanding tasks`">{{ outstanding }}</span>
       <span v-if="!wf.saved" class="hub__unsaved" data-testid="not-saved">Not saved</span>
     </button>
@@ -240,7 +240,7 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
   height: 18px;
   padding: 0 5px;
   border-radius: var(--radius-pill);
-  background: var(--color-accent);
+  background: var(--color-accent-fill);
   color: #fff;
   font-size: var(--text-11);
   line-height: 18px;
@@ -250,7 +250,7 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
   padding: 0 6px;
   border-radius: var(--radius-chip);
   background: var(--color-warning-subtle);
-  color: var(--color-warning);
+  color: var(--color-warning-ink);
   font-size: var(--text-11);
   line-height: 18px;
 }
@@ -343,7 +343,7 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
 .fchip[aria-pressed='true'] {
   border-color: var(--color-accent);
   background: var(--color-accent-subtle);
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
 }
 .control--sm {
   height: 28px;
@@ -401,7 +401,7 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
   font: inherit;
   font-size: var(--text-12);
   cursor: pointer;

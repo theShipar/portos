@@ -524,7 +524,9 @@ async function init() {
   if (!host.value) return;
   let ml: typeof import('maplibre-gl');
   try {
-    ml = await import('maplibre-gl');
+    const [lib, worker] = await Promise.all([import('maplibre-gl'), import('maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url')]);
+    ml = lib;
+    ml.setWorkerUrl(worker.default);
   } catch (e) {
     state.value = 'error';
     errorText.value = `The 2D map library could not be loaded (${e instanceof Error ? e.message : String(e)}).`;
@@ -594,7 +596,7 @@ async function init() {
     });
     emit('ready');
   });
-  if (import.meta.env.DEV) (window as unknown as { __portos2d?: unknown }).__portos2d = m;
+  if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') (window as unknown as { __portos2d?: unknown }).__portos2d = m;
 }
 
 watch([markers, pinned, layersOn], syncVessels);
@@ -639,7 +641,7 @@ onBeforeUnmount(() => {
   cancelAnimationFrame(moveRaf);
   map.value?.remove();
   map.value = null;
-  if (import.meta.env.DEV) delete (window as unknown as { __portos2d?: unknown }).__portos2d;
+  if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') delete (window as unknown as { __portos2d?: unknown }).__portos2d;
 });
 
 const cardBerth = computed(() => (card.value?.kind === 'berth' ? (vm.value?.berths.find((b) => b.berthId === card.value!.id) ?? null) : null));
@@ -1028,7 +1030,7 @@ defineExpose({ getView, resetView, map });
 }
 .m2d-card__note {
   margin: 0;
-  color: var(--color-unknown);
+  color: var(--color-unknown-ink);
 }
 .m2d-card__foot {
   margin: 0;
@@ -1039,7 +1041,7 @@ defineExpose({ getView, resetView, map });
   padding: 0;
   border: 0;
   background: none;
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
   font: inherit;
   text-align: left;
   cursor: pointer;

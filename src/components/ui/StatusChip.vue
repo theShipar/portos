@@ -36,7 +36,7 @@ withDefaults(defineProps<{ status: StatusStyle; label?: string; dense?: boolean 
 }
 .chip--warning {
   background: var(--color-warning-subtle);
-  color: var(--color-warning);
+  color: var(--color-warning-ink);
 }
 .chip--critical {
   background: var(--color-critical-subtle);
@@ -48,11 +48,11 @@ withDefaults(defineProps<{ status: StatusStyle; label?: string; dense?: boolean 
 }
 .chip--unknown {
   background: var(--color-unknown-subtle);
-  color: var(--color-unknown);
+  color: var(--color-unknown-ink);
 }
 .chip--selected {
   background: var(--color-accent-subtle);
-  color: var(--color-accent-hover);
+  color: var(--color-accent-ink);
 }
 .chip--neutral {
   background: var(--color-panel-secondary);

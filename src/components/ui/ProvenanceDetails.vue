@@ -99,7 +99,7 @@ const ageText = computed(() => {
   padding: 6px 8px 6px 22px;
   border-radius: var(--radius-chip);
   background: var(--color-warning-subtle);
-  color: var(--color-warning);
+  color: var(--color-warning-ink);
 }
 .prov__h {
   margin: 0 0 2px;
