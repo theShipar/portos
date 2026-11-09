@@ -15,6 +15,11 @@ PORTOS reuses techniques, not the one-to-one template (decision D-001). Code der
 | Province/city/district drilldown | Earth → maritime region → port (2D) → vessel | Spec 03/03 |
 | South China Sea inset | Not rendered | Not applicable to a global maritime scope |
 | `check_three_map_project.py --strict` | Expected to report missing one-to-one effects | Intentional; reported in BUILD_LOG rather than "fixed" |
+| Globe rotates under a fixed camera | Globe fixed; camera orbits the centre (`OrbitControls` target = origin), pose = `{lat, lon, distance}` | Scope stack can save/restore one serialisable pose; picking, labels and overlays share world coordinates |
+| Bloom / `EffectComposer`, ACES tone mapping | `NoToneMapping`, sRGB output, shaders end in `colorspace_fragment`; no post-processing | Token colours must render as specified (contrast), and one render pass keeps the 60 fps budget with 500 vessels |
+| Country names as join keys | `ISO3166-1-Alpha-3` with an explicit fallback table (Natural Earth ships `-99` for France, Norway, Kosovo…) | Region membership must use stable IDs (FRA/NOR are in `REG-NEU`/`REG-MED`) |
+| Fixed per-region camera distances | `regionPreset` fits region bounds to the live aspect, clamped to 0.75–1.35× of `regions.json` `cameraPreset.distance` (Earth radius 100 → 2) | Inspector, viewport and aspect changes keep the region framed without drifting far from the authored framing |
+| Separate scene per drill level | One `EarthScene` for Earth/region/port-on-globe; flights cancel and restart from the actual camera pose | No WebGL context churn; rapid clicks never leave a half-finished transition |
 
 Kept from the skill: `world.earth-render.json` render cache for the globe (raw `world.json` not in the first-paint
 bundle), Earth day/normal/specular/lights textures, batched `THREE.LineSegments` outlines, single active render loop

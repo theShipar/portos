@@ -9,8 +9,9 @@ import { useViewStore } from '@/stores/view';
 import AppHeader from '@/components/shell/AppHeader.vue';
 import KpiRow from '@/components/shell/KpiRow.vue';
 import NoticeStack from '@/components/shell/NoticeStack.vue';
+import ScopeBreadcrumb from '@/components/shell/ScopeBreadcrumb.vue';
 import EntityInspector from '@/features/inspectors/EntityInspector.vue';
-import TempCanvasMap from '@/map/TempCanvasMap.vue';
+import MapWorkspace from '@/map/MapWorkspace.vue';
 
 const catalog = useCatalogStore();
 const clock = useClockStore();
@@ -19,6 +20,7 @@ const snap = useSnapshotStore();
 const notices = useNoticeStore();
 const nav = useNavigation();
 const header = ref<InstanceType<typeof AppHeader> | null>(null);
+const crumbs = ref<InstanceType<typeof ScopeBreadcrumb> | null>(null);
 
 useRouteSync();
 
@@ -40,6 +42,9 @@ function onKey(e: KeyboardEvent) {
     header.value?.focusSearch();
   } else if (e.key === 'Escape' && !isTyping(e.target) && view.selection) {
     nav.closeSelection();
+  } else if (e.key === 'Backspace' && !isTyping(e.target) && !e.metaKey && !e.ctrlKey) {
+    e.preventDefault();
+    crumbs.value?.up();
   }
 }
 
@@ -52,8 +57,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
     <a class="skip-link" href="#global-search">Skip to search</a>
     <AppHeader ref="header" />
     <main class="workspace" aria-label="Operations map workspace">
-      <TempCanvasMap v-if="catalog.status === 'ready'" />
+      <MapWorkspace v-if="catalog.status === 'ready'" />
       <div v-if="catalog.status === 'ready'" class="overlay overlay--tl">
+        <ScopeBreadcrumb ref="crumbs" />
         <KpiRow :kpis="snap.globalKpis" />
       </div>
       <EntityInspector v-if="catalog.status === 'ready'" />
@@ -93,6 +99,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
 .overlay--tl {
   top: var(--map-control-gap);
   left: var(--map-control-gap);
+  display: grid;
+  justify-items: start;
+  gap: 8px;
 }
 .state {
   position: absolute;

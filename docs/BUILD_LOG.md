@@ -48,3 +48,36 @@ blockers. Status values: implemented / tested / blocked.
   - Fixed during verification: header right side wrapped the Simulated stamp onto three lines at 1440px.
 - **Not yet run:** Playwright `tests/e2e/gate.spec.ts` (browser binaries installed in Phase 8).
 - **Blockers:** none.
+
+## Phase 2 — Earth view and regional scope
+
+- **Implemented:**
+  - `src/map/theme.ts` (map colour roles from tokens, quality tiers), `src/map/earth/worldGeo.ts` (render-cache loader,
+    ISO3 fallback, point-in-polygon), `src/map/earth/shaders.ts` (GPL-derived earth/atmosphere shaders, region mask
+    + hover mask), `src/map/earth/camera.ts` (pose math, bounds fit, great-circle flights, cancellable controller),
+    `src/map/earth/EarthScene.ts` (renderer, dirty-flag loop, idle rotation, picking, projection, region highlight,
+    context-loss handling, `overlay` group for Phase 3), `src/map/regions.ts` (region registry).
+  - `src/map/PortosEarthView.vue`: region labels as focusable buttons, hover tooltip + highlight, click → scope route,
+    `GeoScopeStack` pose restore, inspector inset via `setViewOffset`, reduced-motion = instant cuts, WebGL-unavailable
+    and load-error states with retry. `MapWorkspace.vue` hosts it with reset-camera control and attribution.
+  - Removed `TempCanvasMap.vue`.
+- **Tested:**
+  - `npx vitest run` → exit 0, 42 tests (+12: scope stack restore/sideways/jump, bounds fit monotonic, region preset
+    clamp for all 8 regions, antimeridian interpolation, flight cancellation, ISO3 fallback, country/region picking).
+  - `npm run typecheck` → exit 0. `npm run build` → exit 0 (three chunk 473 kB / 119 kB gzip).
+  - `check_three_map_project.py --strict .` → reports missing China template files (`EarthView.vue`,
+    `ChinaMap.vue`, `china.json`…), extrusion/chase-light/fly-line/handoff effects and the South China Sea inset.
+    Expected per TECHNICAL_DEVIATIONS (D-001); not "fixed".
+- **Browser evidence (dev server, 1440×900):**
+  - Earth: globe, outlines, atmosphere, eight region labels culled by hemisphere, KPI row, breadcrumb "Earth".
+  - Click "Southeast Asia" label → `/region/REG-SEA`, camera flight, region countries highlighted, breadcrumb
+    "Earth › Southeast Asia". Backspace → `/operations`, Earth pose restored exactly.
+  - `/region/REG-OCE` deep link frames Australia/NZ across the antimeridian.
+  - Eight rapid `router.push` scope changes 180 ms apart (including an invalid port) → final scope correct, zero
+    console errors / unhandled rejections; invalid port shows notice.
+  - `/port/PRT-SIN` breadcrumb "Earth › Southeast Asia › Singapore"; on-globe port altitude raised 0.32 → 0.7 after
+    texture blur at close range (2D port view replaces this in Phase 4).
+  - Screenshots: `docs/screenshots/phase2-earth.png`, `docs/screenshots/phase2-region-sea.png`.
+  - Fixed during verification: limb haze washed out land/ocean contrast (fresnel and lighting retuned, atmosphere
+    intensities lowered).
+- **Blockers:** none.

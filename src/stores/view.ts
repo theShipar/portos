@@ -1,19 +1,17 @@
 import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { DEFAULT_LAYERS, LAYERS, type LayerId, type ScopeLevel } from '@/core/layers';
+import { scopeKey, type Scope } from '@/core/scope';
 import type { EntityKind, EntityRef } from '@/core/types';
 import { isRecord, loadStored, saveStored, STORAGE_KEYS } from './persist';
 
-export type Scope = { level: 'earth' } | { level: 'region'; regionId: string } | { level: 'port'; regionId: string; portId: string };
+export type { Scope } from '@/core/scope';
+export { scopeKey } from '@/core/scope';
 
 export type InspectorTab = 'overview' | 'voyage' | 'events' | 'documents';
 export type ViewMode = '3d' | '2d';
 
 const isLayerState = (v: unknown): v is Record<LayerId, boolean> => isRecord(v) && LAYERS.every((l) => typeof v[l.id] === 'boolean');
-
-export function scopeKey(s: Scope): string {
-  return s.level === 'earth' ? 'earth' : s.level === 'region' ? `region:${s.regionId}` : `port:${s.portId}`;
-}
 
 export function sameRef(a: EntityRef | null, b: EntityRef | null) {
   return !!a && !!b && a.kind === b.kind && a.id === b.id;
@@ -54,7 +52,7 @@ export const useViewStore = defineStore('view', () => {
   }
 
   function setHover(ref: EntityRef | null) {
-    if (!sameRef(ref, hover.value)) hover.value = ref;
+    if (!sameRef(ref, hover.value) && (ref || hover.value)) hover.value = ref;
   }
 
   function setScope(s: Scope) {
