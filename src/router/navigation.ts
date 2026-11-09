@@ -39,6 +39,10 @@ export function routeForEntity(ref: EntityRef, scope: Scope, query: LocationQuer
       return { name: 'voyage', params: { voyageId: ref.id }, query: q };
     case 'incident':
       return { name: 'incident', params: { incidentId: ref.id }, query: q };
+    case 'route':
+      return { name: 'route', params: { routeId: ref.id }, query: q };
+    case 'weather':
+      return { name: 'weather', params: { hazardId: ref.id }, query: q };
     case 'port':
       return { name: 'port', params: { portId: ref.id }, query };
     case 'region':

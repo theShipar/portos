@@ -30,6 +30,8 @@ export const earthFragmentShader = /* glsl */ `
   uniform sampler2D uNightMap;
   uniform sampler2D uRegionMask;
   uniform sampler2D uHoverMask;
+  uniform sampler2D uOverlayMap;
+  uniform float uOverlayStrength;
   uniform vec3 uLightDirection;
   uniform vec3 uOcean;
   uniform vec3 uOceanMid;
@@ -91,6 +93,9 @@ export const earthFragmentShader = /* glsl */ `
     color = mix(color, uRegionFill * (0.7 + wrappedLight * 0.45), regionMask * landMask * uRegionStrength * 0.7);
     color *= 1.0 - (1.0 - regionMask) * landMask * uRegionStrength * 0.28;
     color += uRegionHover * hoverMask * landMask * uHoverStrength * 0.16;
+
+    vec4 overlay = texture2D(uOverlayMap, vUv);
+    color = mix(color, overlay.rgb, overlay.a * uOverlayStrength);
 
     float grid = max(gridLine(vUv.x, 24.0), gridLine(vUv.y, 12.0));
     color += uGrid * grid * 0.045 * (0.4 + oceanMask * 0.6);

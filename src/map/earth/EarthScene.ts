@@ -64,11 +64,11 @@ function drawCountries(canvas: HTMLCanvasElement, countries: Country[], blurPx: 
   ctx.clearRect(0, 0, w, h);
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, w, h);
-  ctx.filter = blurPx ? `blur(${blurPx}px)` : 'none';
   ctx.fillStyle = '#fff';
+  // One path and one fill: a canvas blur filter is applied per fill call, so filling per polygon costs ~200 ms.
+  ctx.beginPath();
   for (const c of countries) {
     for (const poly of c.polygons) {
-      ctx.beginPath();
       for (const ring of poly) {
         ring.forEach(([lon, lat], i) => {
           const x = ((lon + 180) / 360) * w;
@@ -78,9 +78,10 @@ function drawCountries(canvas: HTMLCanvasElement, countries: Country[], blurPx: 
         });
         ctx.closePath();
       }
-      ctx.fill('evenodd');
     }
   }
+  ctx.filter = blurPx ? `blur(${blurPx}px)` : 'none';
+  ctx.fill('evenodd');
   ctx.restore();
 }
 
@@ -139,13 +140,16 @@ export class EarthScene {
     cameraSettled: new Set(),
     contextLost: new Set(),
   };
-  private readonly frameHooks = new Set<(nowMs: number) => void>();
+  /** Called every animation frame before rendering; `dirty` is true when this frame will be drawn. */
+  private readonly frameHooks = new Set<(nowMs: number, dirty: boolean) => void>();
   private earthMaterial: THREE.ShaderMaterial | null = null;
   private atmosphereMaterials: THREE.ShaderMaterial[] = [];
   private regionMask = maskCanvas(2048, 1024);
   private hoverMask = maskCanvas(1024, 512);
   private regionMaskTex = new THREE.CanvasTexture(this.regionMask);
   private hoverMaskTex = new THREE.CanvasTexture(this.hoverMask);
+  private overlayTex: THREE.CanvasTexture | null = null;
+  private readonly blankOverlay = new THREE.DataTexture(new Uint8Array(4), 1, 1);
   private regionOutline: THREE.LineSegments | null = null;
   private world: WorldGeo | null = null;
   private resizeObserver: ResizeObserver;
@@ -227,7 +231,7 @@ export class EarthScene {
     for (const fn of this.listeners[event] as Set<(...a: Parameters<EarthSceneEvents[K]>) => void>) fn(...args);
   }
 
-  onFrame(fn: (nowMs: number) => void): () => void {
+  onFrame(fn: (nowMs: number, dirty: boolean) => void): () => void {
     this.frameHooks.add(fn);
     return () => this.frameHooks.delete(fn);
   }
@@ -267,6 +271,8 @@ export class EarthScene {
         uNightMap: { value: lights },
         uRegionMask: { value: this.regionMaskTex },
         uHoverMask: { value: this.hoverMaskTex },
+        uOverlayMap: { value: this.overlayTex ?? this.blankOverlay },
+        uOverlayStrength: { value: this.overlayTex ? 1 : 0 },
         uLightDirection: { value: new THREE.Vector3(-0.5, 0.6, 0.6).normalize() },
         uOcean: { value: T.ocean },
         uOceanMid: { value: T.oceanMid },
@@ -349,7 +355,7 @@ export class EarthScene {
       this.raf = requestAnimationFrame(loop);
       this.controls.autoRotate = this.idleRotationAllowed && !this.reducedMotion && !this.flight.active && now - this.lastInteraction > 20000;
       if (this.controls.update()) this.dirty = true;
-      for (const fn of this.frameHooks) fn(now);
+      for (const fn of this.frameHooks) fn(now, this.dirty);
       if (!this.dirty) return;
       this.dirty = false;
       this.updateLight();
@@ -413,6 +419,36 @@ export class EarthScene {
     return { fov: this.camera.fov, aspect: (this.width - this.viewOffsetPx) / this.height };
   }
 
+  /** Orbit distance limits of the current scope. */
+  get distanceLimits() {
+    return { min: this.controls.minDistance, max: this.controls.maxDistance };
+  }
+
+  get viewport() {
+    return { width: this.width, height: this.height };
+  }
+
+  /** World units per CSS pixel at view depth 1 (multiply by depth for a point's pixel scale). */
+  get pxToWorld() {
+    return (2 * Math.tan((this.camera.fov * Math.PI) / 360)) / this.height;
+  }
+
+  /** Equirectangular RGBA canvas (lon −180…180 → x, lat 90…−90 → y) blended over the globe surface. */
+  setOverlayCanvas(canvas: HTMLCanvasElement | null) {
+    if (canvas && (!this.overlayTex || this.overlayTex.image !== canvas)) {
+      this.overlayTex?.dispose();
+      this.overlayTex = new THREE.CanvasTexture(canvas);
+      this.overlayTex.colorSpace = THREE.SRGBColorSpace;
+      this.overlayTex.anisotropy = Math.min(this.renderer.capabilities.getMaxAnisotropy(), 8);
+    }
+    if (this.overlayTex) this.overlayTex.needsUpdate = true;
+    if (this.earthMaterial) {
+      this.earthMaterial.uniforms.uOverlayMap.value = canvas && this.overlayTex ? this.overlayTex : this.blankOverlay;
+      this.earthMaterial.uniforms.uOverlayStrength.value = canvas ? 1 : 0;
+    }
+    this.invalidate();
+  }
+
   setReducedMotion(v: boolean) {
     this.reducedMotion = v;
   }
@@ -441,6 +477,19 @@ export class EarthScene {
 
   flyToPose(pose: CameraPose, limits: { min: number; max: number }): Promise<boolean> {
     return this.flyTo({ id: 'restore', scope: 'earth', center: { lat: pose.lat, lon: pose.lon }, distance: pose.distance, minDistance: limits.min, maxDistance: limits.max });
+  }
+
+  /** True when the point is on the near hemisphere and inside the central part of the free map area. */
+  isComfortablyInView(lat: number, lon: number, margin = 0.12): boolean {
+    const s = this.project(lat, lon);
+    const w = this.width - this.viewOffsetPx;
+    return s.visible && s.x > w * margin && s.x < w * (1 - margin) && s.y > this.height * margin && s.y < this.height * (1 - margin);
+  }
+
+  /** Recentre on a point at the current distance (optionally capped) without changing scope limits. */
+  focusPoint(lat: number, lon: number, opts: { maxDistance?: number } = {}): Promise<boolean> {
+    const distance = Math.min(this.camera.position.length(), opts.maxDistance ?? Infinity);
+    return this.flyTo({ id: 'focus', scope: 'earth', center: { lat, lon }, distance, minDistance: this.controls.minDistance, maxDistance: this.controls.maxDistance });
   }
 
   cancelFlight() {
@@ -584,6 +633,8 @@ export class EarthScene {
     });
     this.regionMaskTex.dispose();
     this.hoverMaskTex.dispose();
+    this.overlayTex?.dispose();
+    this.blankOverlay.dispose();
     for (const s of Object.values(this.listeners)) s.clear();
     this.frameHooks.clear();
     this.renderer.dispose();

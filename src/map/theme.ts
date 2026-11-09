@@ -31,6 +31,37 @@ export const portosMapTheme = {
   inkOnDark: new Color(tokens.ink.onDark),
 } as const;
 
+const lift = (hex: string, amount: number) => new Color(hex).lerp(new Color('#ffffff'), amount);
+
+/**
+ * Marker colours on the dark ocean. Status hues come from tokens.json, lifted toward white so they reach ≥3:1 against
+ * #061A28 (DECISIONS D-009). Shape cues (incident ring, stale dimming, cluster badge) back up every colour.
+ */
+export const markerColors = {
+  incident: lift(tokens.status.critical, 0.34),
+  atRisk: lift(tokens.status.warning, 0.22),
+  delayed: lift(tokens.status.warning, 0.55),
+  onPlan: new Color('#d3dde3'),
+  ambient: new Color('#7d93a1'),
+  stale: lift(tokens.status.unknown, 0.1),
+  selected: new Color(tokens.status.selected),
+  route: new Color(mapColors.routeBase),
+  routeFocus: new Color(mapColors.routeSelected),
+  track: new Color('#c9d6df'),
+  portHealthy: lift(tokens.status.healthy, 0.3),
+  portWarning: lift(tokens.status.warning, 0.3),
+  portCritical: lift(tokens.status.critical, 0.34),
+  portUnknown: lift(tokens.status.unknown, 0.25),
+  hazardModerate: lift(tokens.status.warning, 0.45),
+  hazardHigh: lift(tokens.status.warning, 0.2),
+  hazardSevere: lift(tokens.status.critical, 0.3),
+  density: new Color('#7fb2c9'),
+} as const;
+
+export function cssHex(c: Color): string {
+  return `#${c.getHexString()}`;
+}
+
 export type QualityTier = 'high' | 'standard' | 'low';
 
 export interface QualitySettings {

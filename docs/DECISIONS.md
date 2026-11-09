@@ -68,6 +68,27 @@ therefore fixed at the anchor, and motion is shown only in replay (`00:00–12:0
 commits reactive time at most every 100 ms; render loops read `frameTimeMs()` per frame. Local workflow decisions
 apply only at "Now"; replay shows fixture history.
 
+## D-009 Map marker colours lifted from status tokens
+Token status colours (`critical #B42318`, `warning #B96516`, `unknown #687482`) are designed for white panels; at
+marker size on the `#061A28` ocean they fall below 3:1. Map glyphs therefore use the same hues mixed toward white
+(`src/map/theme.ts` `markerColors`: incident = critical +34 %, at risk = warning +22 %, late forecast = warning +55 %,
+stale = unknown +10 %). Managed on-plan vessels are a light neutral `#D3DDE3`; non-managed traffic is a dim `#7D93A1`
+so it never reads as managed. Panels, chips and the stack picker keep the unmodified token colours. Status is never
+colour-only: incident vessels carry a dashed ring, late forecast uses a dashed cluster border, and every tooltip and
+list row names the state.
+
+## D-010 Dense-spot handling: paint-order hit test, stacks with a picker
+At region scope the Singapore anchorage puts ~50 vessels within 2 px of each other, so "nearest centre wins" picked
+an effectively random hull. Two rules (spec 05/01 interaction priority, spec 10/03 "cluster before visual
+overcrowding and expose item list"):
+- Hit testing walks markers in paint order and returns the topmost glyph whose core is under the pointer (selected >
+  hovered > incident > at risk > late > managed > other), falling back to nearest-within-radius. The tooltip states
+  how many other vessels share the spot.
+- Earth scope keeps grid clusters (6°/3° bands) whose click zooms to bounds. Region and port scopes collapse only
+  genuine pile-ups: a power-of-two geographic cell sized to half a marker's ground length (hysteresis 0.4–1.15×), at
+  least 6 vessels, pinned vessels (selection, open incidents) never absorbed. Clicking a stack opens a picker (worst
+  state first, 8 rows, "Zoom to area"), because vessels moored metres apart cannot be separated by zooming.
+
 ## D-007 Port 2D basemap
 Deferred to Phase 4 (see BUILD_LOG). MapLibre style URL is configurable; without tiles the port view shows an honest
 "basemap unavailable" state and still renders fixture geometry on a plain background.

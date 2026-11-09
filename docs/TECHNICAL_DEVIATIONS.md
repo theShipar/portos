@@ -19,6 +19,8 @@ PORTOS reuses techniques, not the one-to-one template (decision D-001). Code der
 | Bloom / `EffectComposer`, ACES tone mapping | `NoToneMapping`, sRGB output, shaders end in `colorspace_fragment`; no post-processing | Token colours must render as specified (contrast), and one render pass keeps the 60 fps budget with 500 vessels |
 | Country names as join keys | `ISO3166-1-Alpha-3` with an explicit fallback table (Natural Earth ships `-99` for France, Norway, Kosovo…) | Region membership must use stable IDs (FRA/NOR are in `REG-NEU`/`REG-MED`) |
 | Fixed per-region camera distances | `regionPreset` fits region bounds to the live aspect, clamped to 0.75–1.35× of `regions.json` `cameraPreset.distance` (Earth radius 100 → 2) | Inspector, viewport and aspect changes keep the region framed without drifting far from the authored framing |
+| Fly lines / chase-light paths for routes | `Line2` fat lines (pixel widths) on densified short-arc corridors; selected corridor `#FF905B` 3 px, others 1.25 px at 48 % | Spec 04/03: routes are evidence, not decoration; no animated flow |
+| Scatter points for entities | Instanced, screen-sized vessel glyphs (LOD0 chevron → LOD1 class silhouette → LOD2 procedural hull) with back-hemisphere culling in the vertex shader; ports as instanced diamonds | 500 vessels in ≤ 8 vessel draw calls (one per visible class + two ring meshes); heading and class readable at every zoom |
 | Separate scene per drill level | One `EarthScene` for Earth/region/port-on-globe; flights cancel and restart from the actual camera pose | No WebGL context churn; rapid clicks never leave a half-finished transition |
 
 Kept from the skill: `world.earth-render.json` render cache for the globe (raw `world.json` not in the first-paint

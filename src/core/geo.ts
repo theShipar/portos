@@ -64,7 +64,7 @@ export function interpolateGeodesicShortArc(a: GeoPoint, b: GeoPoint, t: number)
   return { lat: Math.atan2(z, Math.sqrt(x * x + y * y)) / DEG, lon: normalizeLon(Math.atan2(y, x) / DEG) };
 }
 
-/** Densify a waypoint path with short-arc steps no longer than `maxStepNm`. */
+/** Densify a waypoint path with short-arc steps no longer than `maxStepNm`; original waypoints are kept exactly. */
 export function densifyPath(points: GeoPoint[], maxStepNm = 60): GeoPoint[] {
   if (points.length < 2) return points.slice();
   const out: GeoPoint[] = [points[0]];
@@ -72,7 +72,8 @@ export function densifyPath(points: GeoPoint[], maxStepNm = 60): GeoPoint[] {
     const a = points[i - 1];
     const b = points[i];
     const steps = Math.max(1, Math.ceil(haversineDistanceNm(a, b) / maxStepNm));
-    for (let s = 1; s <= steps; s++) out.push(interpolateGeodesicShortArc(a, b, s / steps));
+    for (let s = 1; s < steps; s++) out.push(interpolateGeodesicShortArc(a, b, s / steps));
+    out.push(b);
   }
   return out;
 }

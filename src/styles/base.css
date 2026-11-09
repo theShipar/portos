@@ -144,6 +144,23 @@ p {
   color: var(--color-ink);
 }
 
+.map-tool {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  background: var(--color-panel);
+  color: var(--color-ink-secondary);
+  box-shadow: var(--shadow-panel);
+}
+
+.map-tool:hover {
+  color: var(--color-ink);
+  background: var(--color-panel-secondary);
+}
+
 .panel {
   background: var(--color-panel);
   border: 1px solid var(--color-border);

@@ -93,9 +93,41 @@ const model = computed<Summary | null>(() => {
         { label: 'To', value: portName(r.destinationPortId) },
         { label: 'Distance (est.)', value: formatNm(r.distanceNmEstimate), mono: true },
         { label: 'Waypoints', value: String(r.waypoints.length), mono: true },
+        { label: 'Voyages on corridor', value: String(c.voyages.filter((v) => v.routeId === r.routeId).length), mono: true },
       ],
-      links: [],
+      links: c.weatherHazards
+        .filter((h) => h.affectedRouteIds.includes(r.routeId) && s.hazards.get(h.hazardId) === 'active')
+        .map((h) => ({ label: `Active hazard ${h.hazardId}`, ref: { kind: 'weather' as const, id: h.hazardId } })),
       note: 'Synthetic corridor for demonstration. Not a navigational route or passage plan.',
+    };
+  }
+  if (kind === 'weather') {
+    const h = c.byId.weather.get(id);
+    if (!h) return null;
+    const phase = s.hazards.get(id) ?? 'not-issued';
+    const phaseLabel = { 'not-issued': 'Not yet issued', upcoming: 'Upcoming', active: 'Active', expired: 'Expired' }[phase];
+    return {
+      kindLabel: 'Weather hazard',
+      title: `${sentenceCase(h.type)} · ${sentenceCase(h.severity)}`,
+      subtitle: `${h.hazardId} · Scenario model`,
+      chips: [{ tone: phase === 'active' ? (h.severity === 'severe' ? 'critical' : 'warning') : 'unknown', label: phaseLabel, icon: phase === 'active' ? 'alert' : 'clock' }, statusStyle('confidence', h.confidence)],
+      fields: [
+        { label: 'Issued', value: formatUtc(h.issuedAtUtc), mono: true },
+        { label: 'Valid from', value: formatUtc(h.validFromUtc), mono: true },
+        { label: 'Valid to', value: formatUtc(h.validToUtc), mono: true },
+        { label: 'Affected voyages', value: String(h.affectedVoyageIds.length), mono: true },
+        { label: 'Affected corridors', value: h.affectedRouteIds.map((rid) => c.byId.route.get(rid)?.corridorName ?? rid).join(', ') || 'None listed' },
+      ],
+      links: [
+        ...h.affectedRouteIds.map((rid) => ({ label: `Corridor ${rid}`, ref: { kind: 'route' as const, id: rid } })),
+        ...h.affectedVoyageIds.slice(0, 6).map((vid) => ({ label: `Voyage ${vid}`, ref: { kind: 'voyage' as const, id: vid } })),
+      ],
+      note:
+        phase === 'expired'
+          ? 'This forecast had expired at the selected time and is not drawn as current.'
+          : phase === 'active'
+            ? 'Synthetic scenario forecast. Not for navigation or weather routing decisions.'
+            : 'This forecast is not valid yet at the selected time; it is outlined, not filled, on the map.',
     };
   }
   return null;

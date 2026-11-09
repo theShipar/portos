@@ -91,6 +91,16 @@ export function useRouteSync() {
         if (!inc) return invalid(`Incident ${id} is not in the simulated dataset.`, ctx ?? view.scope);
         return sel({ kind: 'incident', id }, scopeForPort(c, inc.portId));
       }
+      case 'route': {
+        const id = param(r, 'routeId');
+        if (!c.byId.route.has(id)) return invalid(`Corridor ${id} is not in the simulated dataset.`, ctx ?? view.scope);
+        return sel({ kind: 'route', id }, { level: 'earth' });
+      }
+      case 'weather': {
+        const id = param(r, 'hazardId');
+        if (!c.byId.weather.has(id)) return invalid(`Weather hazard ${id} is not in the simulated dataset.`, ctx ?? view.scope);
+        return sel({ kind: 'weather', id }, { level: 'earth' });
+      }
       default:
         if (r.name === 'not-found') invalid(`No page at ${r.fullPath}. Showing the global view.`, { level: 'earth' });
     }
