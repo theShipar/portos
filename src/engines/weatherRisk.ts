@@ -1,6 +1,7 @@
 import { pathAt, pointInPolygon, projectOntoPath } from '@/core/geo';
-import { parseUtc } from '@/core/time';
+import { parseUtc, toIsoUtc } from '@/core/time';
 import type { Confidence, Route, Vessel, Voyage, WeatherHazard } from '@/core/types';
+import { makeProvenance, type Provenance } from './provenance';
 import type { VesselAtTime } from './tracks';
 
 export type HazardPhase = 'not-issued' | 'upcoming' | 'active' | 'expired';
@@ -50,10 +51,13 @@ export interface RouteSegmentExposure {
   score: number;
 }
 
+export const RISK_FORMULA = 'score = 100 × severity × (0.35 + 0.25·overlap + 0.2·lead + 0.2·duration) × class × confidence; voyage score = max over intersecting hazards';
+
 export interface RouteRiskResult {
   voyageId: string;
   score: number;
-  band: RiskBand;
+  /** `unknown` only when no weather feed is loaded; absence of intersections is `low`, never "clear". */
+  band: RiskBand | 'unknown';
   affectedSegments: RouteSegmentExposure[];
   hazardIds: string[];
   nearbyHazardIds: string[];
@@ -61,6 +65,7 @@ export interface RouteRiskResult {
   confidence: Confidence;
   rationale: string[];
   limitations: string[];
+  provenance: Provenance;
 }
 
 export interface VoyageKinematics {
@@ -161,22 +166,46 @@ export function computeRouteHazards(
     rationale.push(`Forecast ${h.type.replace(/_/g, ' ')} over route segment (${h.hazardId}) from ${leadHours.toFixed(1)} h ahead.`);
   }
   const score = segments.reduce((m, s) => Math.max(m, s.score), 0);
-  if (!segments.length && nearby.length) rationale.push(`Hazard on corridor (${nearby.join(', ')}) but expected traversal is outside its validity window.`);
-  const confidences = hazards.filter((h) => segments.some((s) => s.hazardId === h.hazardId)).map((h) => h.confidence);
+  const noFeed = hazards.length === 0;
+  if (noFeed) rationale.push('No weather feed loaded; route risk is unknown.');
+  else if (!segments.length && nearby.length) rationale.push(`Hazard on corridor (${nearby.join(', ')}) but expected traversal is outside its validity window.`);
+  else if (!segments.length) rationale.push('No issued hazard forecast intersects the expected traversal.');
+  const considered = hazards.filter((h) => segments.some((s) => s.hazardId === h.hazardId) || nearby.includes(h.hazardId));
+  const confidences = considered.filter((h) => segments.some((s) => s.hazardId === h.hazardId)).map((h) => h.confidence);
+  const confidence: Confidence = confidences.includes('low') ? 'low' : confidences.length ? 'medium' : 'unknown';
+  const limitations = [
+    ...kin.assumptions,
+    'Hazard polygons are coarse synthetic forecasts; intersection is approximate (30 min steps).',
+    'Not a weather-routing recommendation or statement of navigational safety.',
+  ];
+  const latestIssue = considered.map((h) => parseUtc(h.issuedAtUtc)).filter((x): x is number => x !== null).sort((a, b) => b - a)[0] ?? null;
+  const top = [...segments].sort((a, b) => b.score - a.score)[0];
   return {
     voyageId: voyage.voyageId,
     score,
-    band: bandFor(score),
+    band: noFeed ? 'unknown' : bandFor(score),
     affectedSegments: segments,
     hazardIds: segments.map((s) => s.hazardId),
     nearbyHazardIds: nearby,
-    validAtUtc: new Date(t).toISOString().replace(/\.\d{3}Z$/, 'Z'),
-    confidence: confidences.includes('low') ? 'low' : confidences.length ? 'medium' : 'unknown',
+    validAtUtc: toIsoUtc(t),
+    confidence,
     rationale,
-    limitations: [
-      ...kin.assumptions,
-      'Hazard polygons are coarse synthetic forecasts; intersection is approximate (30 min steps).',
-      'Not a weather-routing recommendation or statement of navigational safety.',
-    ],
+    limitations,
+    provenance: makeProvenance({
+      sourceClass: 'derived-model',
+      evidence: noFeed ? 'unknown' : 'estimated',
+      method: 'Expected traversal (dead-reckoned along the corridor) intersected with time-valid hazard polygons',
+      feed: 'weather',
+      asOf: latestIssue ?? t,
+      nowMs: t,
+      confidence,
+      formula: top ? `${RISK_FORMULA} → ${top.hazardId}: ${top.factors.map((f) => `${f.key} ${f.value.toFixed(2)}`).join(', ')} = ${top.score}` : RISK_FORMULA,
+      sources: [
+        { kind: 'record', id: route.routeId, label: `Corridor ${route.corridorName} · routes.json` },
+        ...(snap?.sourceTimeMs != null && voyage.departedAtUtc ? [{ kind: 'record' as const, id: vessel.vesselId, label: `Position sample (${snap.state}) · positions.json`, atUtc: toIsoUtc(snap.sourceTimeMs) }] : []),
+        ...considered.map((h) => ({ kind: 'record' as const, id: h.hazardId, label: `${h.severity} ${h.type.replace(/_/g, ' ')} forecast${segments.some((s) => s.hazardId === h.hazardId) ? ' · intersects' : ' · outside traversal window'}`, atUtc: h.issuedAtUtc })),
+      ],
+      assumptions: limitations,
+    }),
   };
 }

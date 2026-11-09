@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { InspectorField } from '@/selectors/vessel';
+import ProvenanceButton from './ProvenanceButton.vue';
 
 defineProps<{ fields: InspectorField[] }>();
 </script>
@@ -9,7 +10,10 @@ defineProps<{ fields: InspectorField[] }>();
     <template v-for="f in fields" :key="f.label">
       <dt>{{ f.label }}</dt>
       <dd>
-        <span :class="{ mono: f.mono }">{{ f.value }}</span>
+        <span class="fields__value">
+          <span :class="{ mono: f.mono }">{{ f.value }}</span>
+          <ProvenanceButton v-if="f.provenance" :provenance="f.provenance" :label="f.label" />
+        </span>
         <span v-if="f.hint" class="fields__hint">{{ f.hint }}</span>
       </dd>
     </template>
@@ -36,6 +40,12 @@ dd {
   margin: 0;
   color: var(--color-ink);
   display: grid;
+}
+.fields__value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
 }
 .fields__hint {
   font-size: var(--text-11);

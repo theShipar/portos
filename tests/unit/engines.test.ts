@@ -71,14 +71,17 @@ describe('ETA and exposure — Singapore scenario', () => {
   });
 
   it('computes $24,000 from 18 h at $32,000/day', () => {
-    const ex = computeExposure({ voyageId: 'VYG-0001', incrementalHours: 18, dailyDelayCostUsd: 32000, asOfUtc: null, confidence: 'medium' });
+    const ex = computeExposure({ voyageId: 'VYG-0001', incrementalHours: 18, rate: { kind: 'fixture', usdPerDay: 32000 }, asOfUtc: null, confidence: 'medium', nowMs: NOW });
     expect(ex.estimatedUsd).toBe(24000);
     expect(ex.formulaText).toBe('18 h ÷ 24 × $32,000/day = $24,000');
   });
 
   it('never creates negative exposure for early arrivals and reports missing inputs', () => {
-    expect(computeExposure({ voyageId: 'X', incrementalHours: -3, dailyDelayCostUsd: 10000, asOfUtc: null, confidence: 'high' }).estimatedUsd).toBe(0);
-    expect(computeExposure({ voyageId: 'X', incrementalHours: 5, dailyDelayCostUsd: null, asOfUtc: null, confidence: 'high' }).estimatedUsd).toBeNull();
+    expect(computeExposure({ voyageId: 'X', incrementalHours: -3, rate: { kind: 'fixture', usdPerDay: 10000 }, asOfUtc: null, confidence: 'high', nowMs: NOW }).estimatedUsd).toBe(0);
+    const missing = computeExposure({ voyageId: 'X', incrementalHours: 5, rate: { kind: 'fixture', usdPerDay: null }, asOfUtc: null, confidence: 'high', nowMs: NOW });
+    expect(missing.estimatedUsd).toBeNull();
+    expect(missing.formulaText).toBe('Financial exposure unavailable');
+    expect(missing.provenance.evidence).toBe('unknown');
   });
 
   it('handles month boundaries in UTC', () => {

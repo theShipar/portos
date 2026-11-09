@@ -258,6 +258,8 @@ export interface HazardShape {
 /** Active hazards are filled; upcoming ones are outlined only; expired or not-yet-issued are not drawn. */
 export function buildHazards(c: Catalog, snap: Snapshot): HazardShape[] {
   const out: HazardShape[] = [];
+  const crossing = new Map<string, number>();
+  for (const r of snap.risks.values()) for (const id of r.hazardIds) crossing.set(id, (crossing.get(id) ?? 0) + 1);
   for (const h of c.weatherHazards) {
     const phase = snap.hazards.get(h.hazardId) ?? 'not-issued';
     if (phase !== 'active' && phase !== 'upcoming') continue;
@@ -270,7 +272,7 @@ export function buildHazards(c: Catalog, snap: Snapshot): HazardShape[] {
       outline: densifyPath([...h.polygon, h.polygon[0]], 40),
       validFromUtc: h.validFromUtc,
       validToUtc: h.validToUtc,
-      affectedVoyageCount: h.affectedVoyageIds.length,
+      affectedVoyageCount: crossing.get(h.hazardId) ?? 0,
       confidence: h.confidence,
     });
   }

@@ -1,9 +1,9 @@
 import { parseUtc } from '@/core/time';
-import type { Incident, IncidentStatus, TimelineEvent } from '@/core/types';
+import type { Incident, IncidentStatus, TimelineEvent, Voyage, WeatherHazard } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import { computeEta, type EtaResult } from './eta';
-import { computeExposure, type ExposureEstimate } from './exposure';
-import { hazardPhase, type HazardPhase } from './weatherRisk';
+import { computeExposure, type ExposureEstimate, type RateAssumption } from './exposure';
+import { computeRouteHazards, hazardPhase, type HazardPhase, type RouteRiskResult } from './weatherRisk';
 import { getVesselAtTime, type VesselAtTime } from './tracks';
 
 export interface IncidentState {
@@ -15,9 +15,19 @@ export interface IncidentState {
   locallyModified: boolean;
 }
 
-/** Local workflow overlay; only applied at or after the fixture anchor ("Now"), never to history. */
+export interface UserRateOverride {
+  usdPerDay: number;
+  setByUserId: string;
+  setAtUtc: string;
+}
+
+/**
+ * Local overlay. Incident decisions apply only at or after the fixture anchor ("Now"), never to history.
+ * Daily-rate overrides are what-if assumptions and apply at every time, labelled as user scenario.
+ */
 export interface WorkflowOverlay {
-  incidents: Record<string, { status: IncidentStatus; ownerUserId: string | null }>;
+  incidents?: Record<string, { status: IncidentStatus; ownerUserId: string | null }>;
+  dailyRates?: Record<string, UserRateOverride>;
 }
 
 export interface Snapshot {
@@ -28,7 +38,16 @@ export interface Snapshot {
   exposures: Map<string, ExposureEstimate>;
   incidents: Map<string, IncidentState>;
   hazards: Map<string, HazardPhase>;
+  /** Route risk for voyages whose corridor has an issued, unexpired hazard; absent ⇒ no hazard on the corridor. */
+  risks: Map<string, RouteRiskResult>;
+  weatherFeedLoaded: boolean;
   portWait: Map<string, { hours: number; asOfUtc: string }>;
+}
+
+export function rateAssumption(vo: Voyage, override: UserRateOverride | undefined): RateAssumption {
+  return override
+    ? { kind: 'user', usdPerDay: override.usdPerDay, fixtureUsdPerDay: vo.dailyDelayCostUsd, setByUserId: override.setByUserId, setAtUtc: override.setAtUtc }
+    : { kind: 'fixture', usdPerDay: vo.dailyDelayCostUsd };
 }
 
 /** Fixture lifecycle of an incident at time t (folded from its timestamps/events). */
@@ -64,9 +83,11 @@ export function getSnapshotAt(c: Catalog, t: number, overlay?: WorkflowOverlay):
       computeExposure({
         voyageId: vo.voyageId,
         incrementalHours: eta.etaShiftMinutes === null ? null : eta.etaShiftMinutes / 60,
-        dailyDelayCostUsd: vo.dailyDelayCostUsd,
+        rate: rateAssumption(vo, overlay?.dailyRates?.[vo.voyageId]),
         asOfUtc: eta.asOfUtc,
         confidence: eta.confidence,
+        nowMs: t,
+        etaSources: eta.provenance.sources.filter((s) => s.kind === 'event'),
       }),
     );
   }
@@ -75,7 +96,7 @@ export function getSnapshotAt(c: Catalog, t: number, overlay?: WorkflowOverlay):
   const incidents = new Map<string, IncidentState>();
   for (const i of c.incidents) {
     const base = incidentStatusAt(i, t);
-    const o = live ? overlay?.incidents[i.incidentId] : undefined;
+    const o = live ? overlay?.incidents?.[i.incidentId] : undefined;
     incidents.set(i.incidentId, {
       incidentId: i.incidentId,
       visible: base.visible,
@@ -88,6 +109,21 @@ export function getSnapshotAt(c: Catalog, t: number, overlay?: WorkflowOverlay):
   const hazards = new Map<string, HazardPhase>();
   for (const h of c.weatherHazards) hazards.set(h.hazardId, hazardPhase(h, t));
 
+  const hazardsByRoute = new Map<string, WeatherHazard[]>();
+  for (const h of c.weatherHazards) {
+    const phase = hazards.get(h.hazardId);
+    if (phase !== 'active' && phase !== 'upcoming') continue;
+    for (const r of h.affectedRouteIds) hazardsByRoute.set(r, [...(hazardsByRoute.get(r) ?? []), h]);
+  }
+  const risks = new Map<string, RouteRiskResult>();
+  for (const vo of c.voyages) {
+    const hz = hazardsByRoute.get(vo.routeId);
+    const route = c.byId.route.get(vo.routeId);
+    const vessel = c.byId.vessel.get(vo.vesselId);
+    if (!hz || !route || !vessel) continue;
+    risks.set(vo.voyageId, computeRouteHazards(vo, route, vessel, vessels.get(vo.vesselId) ?? null, hz, t));
+  }
+
   const portWait = new Map<string, { hours: number; asOfUtc: string }>();
   for (const e of c.events) {
     if (e.type !== 'PORT_WAIT_UPDATED') continue;
@@ -95,5 +131,5 @@ export function getSnapshotAt(c: Catalog, t: number, overlay?: WorkflowOverlay):
     portWait.set(e.payload.portId as string, { hours: e.payload.waitingEstimateHours as number, asOfUtc: e.occurredAtUtc });
   }
 
-  return { timeMs: t, isHistorical: !live, vessels, etas, exposures, incidents, hazards, portWait };
+  return { timeMs: t, isHistorical: !live, vessels, etas, exposures, incidents, hazards, risks, weatherFeedLoaded: c.weatherHazards.length > 0, portWait };
 }

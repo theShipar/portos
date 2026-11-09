@@ -3,6 +3,7 @@ export const STORAGE_KEYS = {
   workflow: 'portos:workflow:v1',
   view: 'portos:view:v1',
   layers: 'portos:layers:v1',
+  assumptions: 'portos:assumptions:v1',
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

@@ -65,7 +65,7 @@ let scoping = false;
 let pendingPortId: string | null = null;
 let unsubs: (() => void)[] = [];
 
-const markers = computed(() => snapStore.markers);
+const markers = computed(() => snapStore.mapMarkers);
 const ports = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildPortMarkers(catalog.catalog, snapStore.snapshot)) : []));
 const routeLines = computed(() => (catalog.catalog ? markRaw(buildRouteLines(catalog.catalog)) : []));
 const hazards = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildHazards(catalog.catalog, snapStore.snapshot)) : []));

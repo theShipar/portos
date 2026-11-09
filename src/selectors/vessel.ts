@@ -1,17 +1,20 @@
-import { formatCoord, formatDuration, formatKn, formatNm, formatTimestampFreshness, formatUsd, formatUtc } from '@/core/format';
+import { formatCoord, formatKn, formatNm, formatTimestampFreshness, formatUtc } from '@/core/format';
 import type { GeoPoint, IncidentStatus, Severity, TimelineEvent } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import type { EtaResult } from '@/engines/eta';
 import type { ExposureEstimate } from '@/engines/exposure';
 import type { Snapshot } from '@/engines/snapshot';
 import type { TrackState } from '@/engines/tracks';
+import { makeProvenance, type Provenance } from '@/engines/provenance';
 import { statusStyle, type StatusStyle } from '@/styles/tokens';
+import { selectVoyageImpact, type VoyageImpact } from './impact';
 
 export interface InspectorField {
   label: string;
   value: string;
   mono?: boolean;
   hint?: string;
+  provenance?: Provenance;
 }
 
 export interface LinkedIncident {
@@ -51,6 +54,7 @@ export interface VesselInspectorModel {
     stage: string;
     fields: InspectorField[];
   };
+  impact: VoyageImpact | null;
   eta: EtaResult | null;
   etaShiftText: string;
   etaShiftTone: 'critical' | 'warning' | 'healthy' | 'unknown';
@@ -75,6 +79,14 @@ const POSITION_LABEL: Record<TrackState, string> = {
   'last-known': 'Last known',
   stale: 'Last reported (stale)',
   unavailable: 'No position at this time',
+};
+
+const POSITION_METHOD: Record<TrackState, string> = {
+  exact: 'Reported sample at the simulation time',
+  interpolated: 'Interpolated between the two bracketing samples',
+  'last-known': 'Most recent sample before the simulation time',
+  stale: 'Most recent sample, older than the 30 min freshness limit',
+  unavailable: 'No sample at or before the simulation time',
 };
 
 export function describeEvent(e: TimelineEvent, c: Catalog): string {
@@ -126,8 +138,9 @@ export function buildVesselInspector(c: Catalog, snap: Snapshot, vesselId: strin
   const pos = snap.vessels.get(vesselId);
   const state: TrackState = pos?.state ?? 'unavailable';
   const voyage = v.currentVoyageId ? c.byId.voyage.get(v.currentVoyageId) ?? null : null;
-  const eta = voyage ? snap.etas.get(voyage.voyageId) ?? null : null;
-  const exposure = voyage ? snap.exposures.get(voyage.voyageId) ?? null : null;
+  const impact = voyage ? selectVoyageImpact(snap, voyage.voyageId) : null;
+  const eta = impact?.eta ?? null;
+  const exposure = impact?.exposure ?? null;
   const portName = (id: string) => c.byId.port.get(id)?.name ?? id;
 
   const incidents: LinkedIncident[] = (voyage ? c.incidentsByVoyage.get(voyage.voyageId) ?? [] : c.incidentsByVessel.get(vesselId) ?? [])
@@ -143,9 +156,6 @@ export function buildVesselInspector(c: Catalog, snap: Snapshot, vesselId: strin
     }));
   const sevRank: Record<Severity, number> = { critical: 3, high: 2, medium: 1 };
   const active = incidents.filter((i) => i.status !== 'resolved').sort((a, b) => sevRank[b.severity] - sevRank[a.severity] || a.incidentId.localeCompare(b.incidentId));
-
-  const shift = eta?.etaShiftMinutes ?? null;
-  const tone = shift === null ? 'unknown' : shift > 12 * 60 ? 'critical' : shift > 60 ? 'warning' : 'healthy';
 
   return {
     vesselId,
@@ -165,7 +175,22 @@ export function buildVesselInspector(c: Catalog, snap: Snapshot, vesselId: strin
     ],
     point: pos?.point ?? null,
     position: [
-      { label: 'Position', value: pos?.point ? formatCoord(pos.point) : '—', mono: true },
+      {
+        label: 'Position',
+        value: pos?.point ? formatCoord(pos.point) : '—',
+        mono: true,
+        provenance: makeProvenance({
+          sourceClass: 'simulated-fixture',
+          evidence: state === 'interpolated' ? 'estimated' : state === 'unavailable' ? 'unknown' : 'observed',
+          method: POSITION_METHOD[state],
+          feed: 'position',
+          asOf: pos?.sourceTimeMs ?? null,
+          nowMs: snap.timeMs,
+          confidence: state === 'exact' ? 'high' : state === 'interpolated' ? 'medium' : state === 'unavailable' ? 'unknown' : 'low',
+          sources: pos?.sourceTimeMs ? [{ kind: 'record', id: vesselId, label: 'Synthetic AIS-style sample · positions.json', atUtc: formatUtc(pos.sourceTimeMs) }] : [],
+          assumptions: ['Positions are never extrapolated past the last sample.'],
+        }),
+      },
       { label: 'Speed', value: formatKn(pos?.sogKn), mono: true },
       { label: 'Course', value: pos?.cogDeg === null || pos?.cogDeg === undefined ? '—' : `${Math.round(pos.cogDeg)}°`, mono: true },
       { label: 'Last report', value: pos?.sourceTimeMs ? formatUtc(pos.sourceTimeMs) : '—', mono: true, hint: formatTimestampFreshness(pos?.sourceTimeMs ?? null, snap.timeMs) },
@@ -186,11 +211,12 @@ export function buildVesselInspector(c: Catalog, snap: Snapshot, vesselId: strin
           ],
         }
       : null,
+    impact,
     eta,
-    etaShiftText: formatDuration(shift, { signed: true }),
-    etaShiftTone: tone,
+    etaShiftText: impact?.shiftText ?? '—',
+    etaShiftTone: impact?.shiftTone ?? 'unknown',
     exposure,
-    exposureText: exposure?.estimatedUsd === null || exposure?.estimatedUsd === undefined ? '—' : formatUsd(exposure.estimatedUsd),
+    exposureText: impact?.exposureText ?? '—',
     incidents,
     activeIncident: active[0] ?? null,
     events: eventsFor(c, [`vessel:${vesselId}`, ...(voyage ? [`voyage:${voyage.voyageId}`] : [])], snap.timeMs),

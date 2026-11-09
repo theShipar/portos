@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { formatUtc } from '@/core/format';
 import { buildVesselInspector } from '@/selectors/vessel';
 import { useNavigation } from '@/router/useRouteSync';
 import { useCatalogStore } from '@/stores/catalog';
 import { useSnapshotStore } from '@/stores/snapshot';
 import { useViewStore, type InspectorTab } from '@/stores/view';
-import { statusStyle } from '@/styles/tokens';
 import InspectorDrawer from '@/components/shell/InspectorDrawer.vue';
 import FieldList from '@/components/ui/FieldList.vue';
 import Icon from '@/components/ui/Icon.vue';
 import StatusChip from '@/components/ui/StatusChip.vue';
+import VoyageImpactCard from './VoyageImpactCard.vue';
 
 const props = defineProps<{ vesselId: string }>();
 
@@ -69,31 +68,7 @@ function openPort(portId: string) {
     </template>
 
     <section v-if="view.inspectorTab === 'overview'" class="stack">
-      <div v-if="model.eta" class="eta" data-testid="eta-block">
-        <div class="eta__row">
-          <div>
-            <div class="micro-label">Forecast ETA shift</div>
-            <div class="eta__value num" :class="`tone-${model.etaShiftTone}`" data-testid="eta-shift">{{ model.etaShiftText }}</div>
-          </div>
-          <div class="eta__exposure">
-            <div class="micro-label">Est. delay exposure</div>
-            <div class="eta__value num" data-testid="exposure-value">{{ model.exposureText }}</div>
-          </div>
-        </div>
-        <div class="eta__grid">
-          <span>Planned ETA</span><span class="mono">{{ formatUtc(model.eta.plannedArrivalUtc) }}</span>
-          <span>Forecast ETA</span><span class="mono">{{ formatUtc(model.eta.estimatedArrivalUtc) }}</span>
-        </div>
-        <div v-if="model.eta.drivers.length" class="eta__driver">
-          <Icon name="info" :size="14" />
-          <span>Driver: <strong>{{ model.eta.drivers[0].label }}</strong> · {{ model.eta.drivers[0].eventId }} at {{ formatUtc(model.eta.drivers[0].atUtc, { date: false }) }}</span>
-        </div>
-        <div v-if="model.exposure" class="eta__formula mono">{{ model.exposure.formulaText }}</div>
-        <div class="eta__meta">
-          <StatusChip :status="statusStyle('confidence', model.eta.confidence)" dense />
-          <span>As of {{ formatUtc(model.eta.asOfUtc) }} · simulated estimate, not an invoice or demurrage claim</span>
-        </div>
-      </div>
+      <VoyageImpactCard v-if="model.impact" :impact="model.impact" />
       <div v-else class="empty">No assigned voyage. Identity and tracking remain available below.</div>
 
       <div>
@@ -179,77 +154,6 @@ function openPort(portId: string) {
 .stack {
   display: grid;
   gap: var(--space-5);
-}
-.eta {
-  display: grid;
-  gap: 10px;
-  padding: 14px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-panel);
-  background: var(--color-panel-secondary);
-}
-.eta__row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-.eta__value {
-  font-size: var(--text-24);
-  line-height: 30px;
-  font-weight: 600;
-}
-.tone-critical {
-  color: var(--color-critical);
-}
-.tone-warning {
-  color: var(--color-warning);
-}
-.tone-healthy {
-  color: var(--color-healthy);
-}
-.tone-unknown {
-  color: var(--color-unknown);
-}
-.eta__grid {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 2px 12px;
-  font-size: var(--text-12);
-  color: var(--color-ink-secondary);
-}
-.eta__grid .mono {
-  color: var(--color-ink);
-}
-.eta__driver {
-  display: flex;
-  gap: 6px;
-  align-items: flex-start;
-  font-size: var(--text-12);
-  line-height: 18px;
-  color: var(--color-ink-secondary);
-}
-.eta__driver strong {
-  color: var(--color-ink);
-  font-weight: 600;
-}
-.eta__driver svg {
-  margin-top: 2px;
-  flex: none;
-}
-.eta__formula {
-  font-size: var(--text-12);
-  padding: 6px 8px;
-  border-radius: var(--radius-chip);
-  background: var(--color-panel);
-  border: 1px solid var(--color-border);
-}
-.eta__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 8px;
-  font-size: var(--text-11);
-  color: var(--color-ink-muted);
 }
 .section-title {
   font-size: var(--text-14);

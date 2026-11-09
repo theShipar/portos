@@ -52,7 +52,7 @@ const labelEls = new Map<string, HTMLElement>();
 
 const c = computed(() => catalog.catalog);
 const vm = computed(() => snapStore.portView);
-const markers = computed(() => snapStore.markers);
+const markers = computed(() => snapStore.mapMarkers);
 const markerById = computed(() => new Map(markers.value.map((m) => [m.vesselId, m])));
 const routeLines = computed(() => (c.value ? markRaw(buildRouteLines(c.value)) : []));
 const hazards = computed(() => (c.value && snapStore.snapshot ? markRaw(buildHazards(c.value, snapStore.snapshot)) : []));

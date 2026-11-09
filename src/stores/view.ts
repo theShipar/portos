@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { DEFAULT_LAYERS, LAYERS, type LayerId, type ScopeLevel } from '@/core/layers';
 import { scopeKey, type Scope, type ViewMode } from '@/core/scope';
 import type { EntityKind, EntityRef } from '@/core/types';
+import type { KpiKey } from '@/engines/kpis';
 import { isRecord, loadStored, saveStored, STORAGE_KEYS } from './persist';
 
 export type { Scope } from '@/core/scope';
@@ -29,6 +30,8 @@ export const useViewStore = defineStore('view', () => {
   const inspectorExpanded = ref(false);
   const viewMode = ref<ViewMode>('3d');
   const queueShelfOpen = ref(true);
+  /** KPI whose members filter the map; mirrored from the `kpi` URL query. */
+  const kpiDrill = ref<KpiKey | null>(null);
   /** Element that opened the inspector, so closing it can return focus. */
   let returnFocusEl: HTMLElement | null = null;
 
@@ -73,6 +76,7 @@ export const useViewStore = defineStore('view', () => {
     scope.value = { level: 'earth' };
     selection.value = null;
     viewMode.value = '3d';
+    kpiDrill.value = null;
   }
 
   function isSelected(kind: EntityKind, id: string) {
@@ -91,6 +95,7 @@ export const useViewStore = defineStore('view', () => {
     inspectorOpen,
     viewMode,
     queueShelfOpen,
+    kpiDrill,
     select,
     clearSelection,
     setHover,

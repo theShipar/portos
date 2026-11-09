@@ -114,5 +114,32 @@ scope navigation that does not clear the inspector. `openScope` now keeps the op
 `in=` (`/vessel/VSL-0001?in=region:REG-SEA`, explicit `in=earth` at Earth). Clicking the current scope's breadcrumb,
 Esc, or the back button closes the selection; the PORTOS brand link goes home with nothing selected.
 
+## D-013 Provenance on every metric; user-scenario rates apply in replay
+Every computed value carries a `Provenance` record: source class (simulated fixture, derived model, user scenario),
+evidence kind (observed, estimated, scenario, unknown), as-of time and age, freshness band per feed, confidence,
+method, formula with the actual numbers, sources (events, records, engines, assumptions), assumptions and warnings.
+The UI shows it through one popover component, so a reader can always answer "where does this number come from?".
+- A daily-rate override is a user scenario, not data: it is stored per voyage in `portos:assumptions:v1` with who
+  set it and when (simulation time), labelled "User scenario" wherever the exposure appears, and flips the
+  provenance to user-scenario / scenario evidence. Entering the fixture value removes the override.
+- Overrides apply at every simulation time, including replay, because they describe the user's assumption rather
+  than an event in the timeline. Replay of fixture events stays deterministic for a given override set.
+- Editing requires `action.scenario.propose`; the Viewer role sees the value and the reason it cannot edit.
+
+## D-014 At risk is computed from geometry × time
+The fixture's `affectedVoyageIds` on hazards is a bootstrap list, not evidence. A voyage is "at risk" when it has an
+unresolved incident or when `computeRouteHazards` finds its expected traversal intersecting an issued hazard while
+the hazard is valid. The KPI, the hazard overlay count and the weather inspector share that computation. Without a
+weather feed the band is `unknown`, never `low`. A hazard near a corridor that the voyage does not cross is shown as
+"Hazard on corridor · not crossed" and is not counted.
+
+## D-015 KPI cohort follows scope; drill-down lives in the URL
+KPIs are computed for the current scope: the whole simulated fleet at Earth, the region (vessels positioned inside,
+plus voyages starting or ending there) at region scope. Port scope keeps its own port KPIs. Each KPI lists its
+members worst first; "Show only these on map" writes `?kpi=<key>` with `router.replace` (no history entry), filters
+map markers to the members plus the selection, and survives reload. Opening entities and moving between Earth and
+regions keep the drill; entering a port drops it (port KPIs have no members); the drill chip's Clear removes it. Count tiles show their denominator so vessel and voyage counts are not compared
+by mistake.
+
 ## D-007 Port 2D basemap
 Superseded by D-011 (OpenFreeMap, decided at Phase 4).

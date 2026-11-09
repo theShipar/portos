@@ -1,9 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, markRaw, shallowRef } from 'vue';
-import { selectKpis } from '@/engines/kpis';
+import { selectKpis, type Kpi } from '@/engines/kpis';
 import { getSnapshotAt, type Snapshot, type WorkflowOverlay } from '@/engines/snapshot';
 import { buildVesselMarkers, type VesselMarker } from '@/selectors/mapLayers';
+import { drillVesselIds } from '@/selectors/kpiDrill';
 import { buildPortViewModel, type PortViewModel } from '@/selectors/port';
+import { useAssumptionStore } from './assumptions';
 import { useCatalogStore } from './catalog';
 import { useClockStore } from './clock';
 import { useViewStore } from './view';
@@ -13,7 +15,10 @@ export const useSnapshotStore = defineStore('snapshot', () => {
   const catalog = useCatalogStore();
   const clock = useClockStore();
   const view = useViewStore();
-  const overlay = shallowRef<WorkflowOverlay | undefined>(undefined);
+  const assumptions = useAssumptionStore();
+  const workflow = shallowRef<Pick<WorkflowOverlay, 'incidents'> | undefined>(undefined);
+
+  const overlay = computed<WorkflowOverlay>(() => ({ incidents: workflow.value?.incidents, dailyRates: assumptions.dailyRates }));
 
   const snapshot = computed<Snapshot | null>(() => {
     const c = catalog.catalog;
@@ -22,6 +27,14 @@ export const useSnapshotStore = defineStore('snapshot', () => {
   });
 
   const globalKpis = computed(() => (catalog.catalog && snapshot.value ? selectKpis(catalog.catalog, snapshot.value) : []));
+
+  /** KPIs for the visible cohort: the region at region/port scope, the whole simulated fleet at Earth. */
+  const kpis = computed<Kpi[]>(() => {
+    const c = catalog.catalog;
+    if (!c || !snapshot.value) return [];
+    const s = view.scope;
+    return s.level === 'earth' ? globalKpis.value : selectKpis(c, snapshot.value, { regionId: s.regionId });
+  });
 
   /** Map markers shared by the 3D globe, the 2D port map and the port view model. */
   const markers = computed<VesselMarker[]>(() => (catalog.catalog && snapshot.value ? markRaw(buildVesselMarkers(catalog.catalog, snapshot.value)) : []));
@@ -34,9 +47,22 @@ export const useSnapshotStore = defineStore('snapshot', () => {
     return vm ? markRaw(vm) : null;
   });
 
-  function setOverlay(o: WorkflowOverlay | undefined) {
-    overlay.value = o;
+  const activeDrill = computed<Kpi | null>(() => (view.kpiDrill && view.scope.level !== 'port' ? kpis.value.find((k) => k.key === view.kpiDrill) ?? null : null));
+
+  /** Markers drawn on the map: all, or only the members of the active KPI drill (plus the selection). */
+  const mapMarkers = computed<VesselMarker[]>(() => {
+    const c = catalog.catalog;
+    const drill = activeDrill.value;
+    if (!c || !drill) return markers.value;
+    const ids = drillVesselIds(c, drill);
+    const sel = view.selection;
+    const keep = sel?.kind === 'vessel' ? sel.id : null;
+    return markRaw(markers.value.filter((m) => ids.has(m.vesselId) || m.vesselId === keep));
+  });
+
+  function setWorkflowOverlay(o: Pick<WorkflowOverlay, 'incidents'> | undefined) {
+    workflow.value = o;
   }
 
-  return { snapshot, globalKpis, markers, portView, setOverlay };
+  return { snapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView, setWorkflowOverlay };
 });

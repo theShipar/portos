@@ -1,6 +1,7 @@
-import { parseUtc } from '@/core/time';
+import { parseUtc, toIsoUtc } from '@/core/time';
 import type { Berth, Confidence, PortCall, TimelineEvent } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
+import { makeProvenance, type Provenance } from './provenance';
 import { getVesselAtTime } from './tracks';
 
 export interface QueueEntry {
@@ -54,6 +55,7 @@ export interface PortCongestionResult {
   qualityWarnings: string[];
   queue: QueueEntry[];
   berths: BerthState[];
+  provenance: Provenance;
 }
 
 function percentile(sorted: number[], p: number): number {
@@ -167,7 +169,27 @@ export function computePortCongestion(c: Catalog, portId: string, t: number): Po
   const confidence: Confidence = !present.length ? 'unknown' : coverage !== null && coverage < 0.5 ? 'low' : present.length < formula.length ? 'low' : 'medium';
   const level = score === null ? 'unknown' : score >= 70 && confidence !== 'low' ? 'critical' : score >= 40 ? 'elevated' : 'normal';
 
+  const latestBerthUpdate = berths.map((b) => parseUtc(b.lastUpdatedUtc)).filter((x): x is number => x !== null && x <= t).sort((a, b) => b - a)[0] ?? null;
+  const provenance = makeProvenance({
+    sourceClass: 'derived-model',
+    evidence: score === null ? 'unknown' : 'estimated',
+    method: 'Weighted score of median known wait, arrival pressure and berth utilisation; missing inputs renormalised, never zero',
+    feed: 'berth',
+    asOf: latestBerthUpdate ?? t,
+    nowMs: t,
+    confidence,
+    formula: `score = 100 × Σ(weight × input) ÷ Σ(weights present) · ${formula.map((f) => `${f.key} ${f.weight}`).join(', ')}`,
+    sources: [
+      { kind: 'record', id: `portCalls:${portId}`, label: `${calls.length} port calls · portCalls.json` },
+      { kind: 'record', id: `berths:${portId}`, label: `${berths.length} berths · berths.json`, atUtc: latestBerthUpdate === null ? null : toIsoUtc(latestBerthUpdate) },
+      ...(waitEvt ? [{ kind: 'event' as const, id: waitEvt.eventId, label: `PORT_WAIT_UPDATED · ${forecastWait} h`, atUtc: waitEvt.occurredAtUtc }] : []),
+    ],
+    assumptions: ['Anchored vessels are not assumed to hold a commercial berth slot.', 'Unknown berth status is not counted as free.'],
+    warnings: qualityWarnings,
+  });
+
   return {
+    provenance,
     portId,
     asOfMs: t,
     atAnchorCount: queue.filter((q) => q.atAnchor).length,

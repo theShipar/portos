@@ -5,6 +5,7 @@ import { formatUtc } from '@/core/format';
 import { defaultViewMode, supportsViewMode, type ViewMode } from '@/core/scope';
 import type { EntityRef } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
+import { KPI_KEYS, type KpiKey } from '@/engines/kpis';
 import { useCatalogStore } from '@/stores/catalog';
 import { useClockStore } from '@/stores/clock';
 import { useNoticeStore } from '@/stores/notices';
@@ -41,6 +42,8 @@ export function useRouteSync() {
     const q = r.query.view;
     const requested = q === '2d' || q === '3d' ? q : null;
     view.viewMode = requested && supportsViewMode(view.scope, requested) ? requested : defaultViewMode(view.scope);
+    const k = r.query.kpi;
+    view.kpiDrill = typeof k === 'string' && (KPI_KEYS as string[]).includes(k) ? (k as KpiKey) : null;
   }
 
   function applyRoute(r: RouteLocationNormalizedLoaded) {
@@ -134,14 +137,23 @@ export function useNavigation() {
     const q = viewModeQuery(view.scope, view.viewMode);
     return q ? { view: q } : {};
   };
+  const kpiQuery = (): LocationQueryRaw => (view.kpiDrill ? { kpi: view.kpiDrill } : {});
 
   return {
     openEntity(ref: EntityRef) {
-      return router.push(routeForEntity(ref, view.scope, { ...timeQuery(), ...modeQuery() }));
+      return router.push(routeForEntity(ref, view.scope, { ...timeQuery(), ...modeQuery(), ...kpiQuery() }));
     },
     /** Scope changes keep the open selection (spec: selection survives Earth ↔ region ↔ port and 3D ↔ 2D). */
     openScope(scope: Scope) {
-      return router.push(routeForScopeKeepingSelection(view.selection, scope, timeQuery()));
+      return router.push(routeForScopeKeepingSelection(view.selection, scope, { ...timeQuery(), ...(scope.level === 'port' ? {} : kpiQuery()) }));
+    },
+    /** Filters the map to a KPI's members (or clears the filter); replaces history like the 3D/2D switch. */
+    setKpiDrill(key: KpiKey | null) {
+      const cur = router.currentRoute.value;
+      const query = { ...cur.query };
+      if (key) query.kpi = key;
+      else delete query.kpi;
+      return router.replace({ name: cur.name ?? undefined, params: cur.params, query });
     },
     /** Global view with nothing selected. */
     home() {
@@ -150,7 +162,7 @@ export function useNavigation() {
     },
     closeSelection() {
       view.clearSelection();
-      return router.push(routeForScope(view.scope, { ...timeQuery(), ...modeQuery() }));
+      return router.push(routeForScope(view.scope, { ...timeQuery(), ...modeQuery(), ...kpiQuery() }));
     },
     setViewMode(mode: ViewMode) {
       if (!supportsViewMode(view.scope, mode) || mode === view.viewMode) return;

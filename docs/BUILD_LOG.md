@@ -200,3 +200,67 @@ blockers. Status values: implemented / tested / blocked.
 - **Known limitations:** the 3D globe offsets only for the right inspector, not for the left queue shelf; 3D cannot
   zoom as close as 2D, so 2D → 3D at high zoom lands at the port's minimum globe distance.
 - **Blockers:** none.
+
+## Phase 5 — Intelligence engines with provenance
+
+- **Decisions:** provenance model and user-scenario rates (D-013), computed hazard exposure replaces the fixture list
+  (D-014), KPI cohort follows scope with a URL drill (D-015).
+- **Implemented:**
+  - `src/engines/provenance.ts`: source class (simulated fixture / derived model / user scenario), evidence kind
+    (observed / estimated / scenario / unknown), per-feed freshness bands (position 15/30 min, ETA and port wait
+    6/24 h, berth 2/12 h, weather 6/12 h), `makeProvenance` (as-of, age, confidence, method, formula, sources,
+    assumptions, warnings; stale inputs add a warning).
+  - Engines now return provenance: `computeEta` (formula "Forecast ETA − planned ETA = +18.0 h", sources = planned
+    record + `ETA_REVISED` events, warning when the voyage record disagrees with the applied revision),
+    `computeExposure` (rewritten around a `RateAssumption`: fixture or user scenario; "18 h ÷ 24 × $32,000/day =
+    $24,000"; missing rate → "Financial exposure unavailable", evidence unknown), `computePortCongestion` (weighted
+    formula with renormalised missing inputs, quality warnings), `computeRouteHazards` (`unknown` band when no
+    weather feed, rationale for outside-window / no-intersection).
+  - `snapshot.ts`: `risks` computed per voyage whose corridor has an active or upcoming hazard; workflow overlay
+    carries `dailyRates`, applied at every time including replay.
+  - `kpis.ts` rewritten: cohort sets (global, or region by position / origin / destination), each KPI has a
+    definition, provenance, denominator and worst-first `members`; at risk = open-incident voyages ∪ hazard-crossing
+    voyages; exposure deduplicated per voyage, null only when every member is unavailable.
+  - Shared read model `src/selectors/impact.ts` (`selectVoyageImpact`) drives the vessel inspector, voyage summary,
+    incident summary and KPI drill rows, so one number appears everywhere.
+  - UI: `ProvenanceButton` (teleported popover, Esc/outside close, focus return) + `ProvenanceDetails`; provenance
+    buttons on inspector fields, ETA shift, exposure, route risk, port KPIs (queue, median wait, new Congestion tile).
+    `VoyageImpactCard` replaces the inline ETA block. `KpiRow` rewritten: tile → detail panel (definition,
+    provenance, members), "Show only these on map" (`?kpi=` via `router.replace`, map markers filtered to members +
+    selection), "Metrics +N" flyout, drill chip with Clear; Delayed and At risk show their voyage denominators.
+  - `ExposureRateEditor` + `src/stores/assumptions.ts` (`portos:assumptions:v1`): validated daily-rate override
+    (strips `$`/commas, rejects empty, non-numeric, negative, > $5M), entering the fixture value resets, gated by
+    `action.scenario.propose` (Viewer sees a disabled button with the reason).
+  - Weather inspector: affected voyages computed from geometry × time with risk scores (fixture bootstrap list noted
+    in provenance); hazard overlay count uses the same computation.
+- **Tested:**
+  - `npm run typecheck` → exit 0.
+  - `npx vitest run` → exit 0, 103 tests (+17 in `tests/unit/intelligence.test.ts`: the $24,000 gate on engine,
+    vessel inspector, voyage and incident summaries, KPI contribution, regional KPI member and drill row; formula
+    consistency; $40,000/day override → $30,000 everywhere, labelled user scenario, KPI +$6,000; replay 08:30 →
+    $10,667 fixture / $13,333 override; missing rate → "Unavailable" and excluded from the KPI; provenance on every
+    metric, ETA traced to `ETA_REVISED`; freshness bands; at-risk union; hazard overlay count; unknown risk without a
+    feed; Pacific Horizon "Hazard on corridor · not crossed"; KPI members = values; drill vessel IDs; determinism;
+    rate validation). `tests/unit/engines.test.ts` updated to the new exposure input.
+  - `npm run build` → exit 0.
+- **Browser evidence (dev server, 1440×900):**
+  - Port Singapore: provenance on In berth queue, Median known wait, Congestion (Critical 77/100, formula + "1 berth
+    status unknown", "4 of 41 queue entries lack a waiting start"), and on VSL-0001's ETA shift, exposure, route risk
+    and position.
+  - Exposure popover: derived model · estimated · medium, "As of 09:00 UTC · 3.0 h old", `18 h ÷ 24 × $32,000/day =
+    $24,000`, sources `eta:VYG-0001`, `EVT-0004 ETA_REVISED`, VYG-0001 rate.
+  - Rate editor: "-500" → "The rate cannot be negative."; "40,000" → $30,000 in the vessel inspector, incident
+    INC-0001 ("Voyage VYG-0001 impact") and the Earth Exposure KPI ($743.7K, user-scenario chip, "Includes
+    user-scenario rates for VYG-0001."); Reset → $24,000 and focus returns to Edit rate. USR-004 (Viewer): Edit rate
+    disabled with "Viewer role can view but not change scenario assumptions."
+  - KPI drill: Exposure → "Show only these on map" → `/operations?kpi=exposureUsd`, 46 markers drawn.
+  - Weather WX-0011: "Affected voyages 10 · Computed from geometry and time", links ranked VYG-0179 (85) … VYG-0011
+    (60). Southeast Asia KPIs: Tracked 68/124 vessels, Delayed 80/134 voyages, At risk 66/134, Exposure $548.4K.
+  - Screenshots: `docs/screenshots/phase5-vessel-user-scenario.png`, `phase5-kpi-exposure-drill.png`,
+    `phase5-weather-computed-risk.png`, `phase5-port-congestion-provenance.png`.
+  - Fixed during verification:
+    - Region tiles read "Tracked 68 · Delayed 80" (vessels vs voyages) → Delayed and At risk show their voyage
+      denominators.
+    - Reset removed the focused button → focus moves to Edit rate.
+- **Deferred:** alert deduplication window moves to Phase 6 with the incident workflow.
+- **Blockers:** none.

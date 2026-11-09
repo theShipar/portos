@@ -1,5 +1,6 @@
 import { parseUtc, toIsoUtc } from '@/core/time';
 import type { Confidence, TimelineEvent, Voyage } from '@/core/types';
+import { makeProvenance, type Provenance, type SourceRef } from './provenance';
 import type { VesselAtTime } from './tracks';
 
 export type EtaStatus = 'ok' | 'missing-baseline' | 'missing-estimate';
@@ -25,6 +26,19 @@ export interface EtaResult {
   status: EtaStatus;
   drivers: EtaDriver[];
   assumptions: string[];
+  provenance: Provenance;
+}
+
+const SOURCE_METHOD: Record<EtaResult['sourceType'], string> = {
+  'scenario-event': 'Latest recorded ETA revision at or before the simulation time',
+  'pre-revision-baseline': 'Estimate in force before the next recorded ETA revision',
+  'scenario-baseline': 'Voyage record estimate (no revision recorded)',
+};
+
+function shiftFormula(planned: string | null, estimated: string | null, shiftMinutes: number | null): string | undefined {
+  if (!planned || !estimated || shiftMinutes === null) return undefined;
+  const h = shiftMinutes / 60;
+  return `Forecast ETA ${estimated} − planned ETA ${planned} = ${h >= 0 ? '+' : '−'}${Math.abs(h).toFixed(1)} h`;
 }
 
 const DRIVER_LABEL: Record<string, string> = {
@@ -97,26 +111,52 @@ export function computeEta(
     };
   });
 
+  const warnings: string[] = [];
+  const recordAsOf = parseUtc(voyage.estimatedAsOfUtc);
+  if (sourceType === 'scenario-event' && voyage.estimatedArrivalUtc && recordAsOf !== null && recordAsOf <= nowMs && voyage.estimatedArrivalUtc !== estimated) {
+    warnings.push(`Voyage record estimate ${voyage.estimatedArrivalUtc} differs; the later recorded revision takes precedence.`);
+  }
+
   const plannedMs = parseUtc(voyage.plannedArrivalUtc);
   const estMs = parseUtc(estimated);
-  if (plannedMs === null) {
-    return { voyageId: voyage.voyageId, plannedArrivalUtc: null, estimatedArrivalUtc: estimated, etaShiftMinutes: null, early: false, confidence, asOfUtc: asOf, sourceType, status: 'missing-baseline', drivers, assumptions: [...assumptions, 'Missing schedule baseline'] };
-  }
-  if (estMs === null) {
-    return { voyageId: voyage.voyageId, plannedArrivalUtc: voyage.plannedArrivalUtc, estimatedArrivalUtc: null, etaShiftMinutes: null, early: false, confidence: 'unknown', asOfUtc: asOf, sourceType, status: 'missing-estimate', drivers, assumptions };
-  }
-  const shift = Math.round((estMs - plannedMs) / 60_000);
+  const status: EtaStatus = plannedMs === null ? 'missing-baseline' : estMs === null ? 'missing-estimate' : 'ok';
+  const shift = plannedMs !== null && estMs !== null ? Math.round((estMs - plannedMs) / 60_000) : null;
+  if (status === 'missing-baseline') assumptions.push('Missing schedule baseline');
+  if (status === 'missing-estimate') confidence = 'unknown';
+  const plannedUtc = plannedMs === null ? null : toIsoUtc(plannedMs);
+  const estimatedUtc = estMs === null ? estimated : toIsoUtc(estMs);
+
+  const sources: SourceRef[] = [{ kind: 'record', id: voyage.voyageId, label: 'Planned arrival · voyages.json', atUtc: voyage.plannedArrivalUtc }];
+  for (const d of drivers) sources.push({ kind: 'event', id: d.eventId, label: `ETA_REVISED · ${d.label}`, atUtc: d.atUtc });
+  if (upcoming && sourceType === 'pre-revision-baseline') sources.push({ kind: 'event', id: upcoming.e.eventId, label: 'Next ETA_REVISED (previous estimate used)', atUtc: upcoming.e.occurredAtUtc });
+  if (sourceType === 'scenario-baseline') sources.push({ kind: 'record', id: voyage.voyageId, label: 'Estimated arrival · voyages.json', atUtc: voyage.estimatedAsOfUtc });
+
+  const provenance = makeProvenance({
+    sourceClass: 'simulated-fixture',
+    evidence: status === 'ok' ? 'estimated' : 'unknown',
+    method: SOURCE_METHOD[sourceType],
+    feed: 'eta',
+    asOf,
+    nowMs,
+    confidence,
+    formula: shiftFormula(plannedUtc, estimatedUtc, shift),
+    sources,
+    assumptions,
+    warnings,
+  });
+
   return {
     voyageId: voyage.voyageId,
-    plannedArrivalUtc: toIsoUtc(plannedMs),
-    estimatedArrivalUtc: toIsoUtc(estMs),
+    plannedArrivalUtc: plannedUtc,
+    estimatedArrivalUtc: estimatedUtc,
     etaShiftMinutes: shift,
-    early: shift < 0,
+    early: shift !== null && shift < 0,
     confidence,
     asOfUtc: asOf,
     sourceType,
-    status: 'ok',
+    status,
     drivers,
     assumptions,
+    provenance,
   };
 }

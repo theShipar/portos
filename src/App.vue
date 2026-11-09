@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useNavigation, useRouteSync } from '@/router/useRouteSync';
+import { useAssumptionStore } from '@/stores/assumptions';
 import { useCatalogStore } from '@/stores/catalog';
 import { useClockStore } from '@/stores/clock';
 import { useNoticeStore } from '@/stores/notices';
@@ -20,6 +21,7 @@ const clock = useClockStore();
 const view = useViewStore();
 const snap = useSnapshotStore();
 const notices = useNoticeStore();
+const assumptions = useAssumptionStore();
 const nav = useNavigation();
 const header = ref<InstanceType<typeof AppHeader> | null>(null);
 const crumbs = ref<InstanceType<typeof ScopeBreadcrumb> | null>(null);
@@ -35,6 +37,7 @@ watch(
 );
 
 if (view.storageWarning) notices.push(view.storageWarning, 'warning');
+if (assumptions.storageWarning) notices.push(assumptions.storageWarning, 'warning');
 
 const isTyping = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName));
 
@@ -63,7 +66,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
       <div v-if="catalog.status === 'ready'" class="overlay overlay--tl">
         <ScopeBreadcrumb ref="crumbs" />
         <PortKpiRow v-if="snap.portView" :vm="snap.portView" />
-        <KpiRow v-else :kpis="snap.globalKpis" />
+        <KpiRow v-else :kpis="snap.kpis" />
         <PortQueueShelf v-if="snap.portView" />
       </div>
       <EntityInspector v-if="catalog.status === 'ready'" />

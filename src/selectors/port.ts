@@ -3,6 +3,7 @@ import { parseUtc, toIsoUtc } from '@/core/time';
 import type { Anchorage, Bounds, GeoPoint, Port } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import { computePortCongestion, type BerthState, type PortCongestionResult } from '@/engines/congestion';
+import { makeProvenance, type Provenance } from '@/engines/provenance';
 import type { Snapshot } from '@/engines/snapshot';
 import { buildVesselMarkers, type MarkerTone, type VesselMarker } from './mapLayers';
 
@@ -100,6 +101,8 @@ export interface PortKpis {
   arrivalsNext24h: number;
   medianKnownWaitHours: number | null;
   waitSampleSize: number;
+  queueProvenance: Provenance;
+  waitProvenance: Provenance;
 }
 
 export interface PortViewModel {
@@ -255,6 +258,31 @@ export function buildPortViewModel(c: Catalog, snap: Snapshot, portId: string, m
       arrivalsNext24h: congestion.arrivalsNext24h,
       medianKnownWaitHours: congestion.medianWaitHours,
       waitSampleSize: congestion.waitSampleSize,
+      queueProvenance: makeProvenance({
+        sourceClass: 'derived-model',
+        evidence: 'estimated',
+        method: 'Port calls that have arrived and are not yet at berth, folded from port-call records and anchorage events',
+        feed: 'snapshot',
+        asOf: t,
+        nowMs: t,
+        confidence: congestion.confidence,
+        formula: `${congestion.awaitingBerthCount} in queue · ${congestion.atAnchorCount} reporting at anchor · ${congestion.arrivalsNext24h} scheduled in 24 h`,
+        sources: congestion.provenance.sources,
+        assumptions: ['At anchor is a reported navigational status, not a confirmed berth-queue slot.'],
+      }),
+      waitProvenance: makeProvenance({
+        sourceClass: 'derived-model',
+        evidence: congestion.medianWaitHours === null ? 'unknown' : 'estimated',
+        method: 'Median elapsed wait of queued calls with a recorded waiting start',
+        feed: 'snapshot',
+        asOf: t,
+        nowMs: t,
+        confidence: congestion.confidence,
+        formula: `median of ${congestion.waitSampleSize} known waits (coverage ${congestion.waitSampleSize}/${congestion.awaitingBerthCount})`,
+        sources: [{ kind: 'record', id: `portCalls:${portId}`, label: 'waitingSinceUtc · portCalls.json' }],
+        assumptions: ['Unknown waiting starts are excluded from the denominator, never counted as zero.'],
+        warnings: congestion.waitSampleSize < 5 ? ['Fewer than 5 samples; p90 withheld.'] : [],
+      }),
     },
     queue,
     anchorages: anchorages.map((a) => summariseAnchorage(a, markers, queue)),
