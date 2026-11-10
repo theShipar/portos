@@ -13,6 +13,7 @@ import specularUrl from '@/assets/textures/world/earth-specular.jpg';
 import { inverseSpherical, sphericalPosition } from '@/core/geo';
 import { portosMapTheme as T, QUALITY, type QualitySettings, type QualityTier } from '../theme';
 import { CameraTransitionController, EARTH_PRESET, EARTH_RADIUS, poseToPosition, positionToPose, type CameraPose, type CameraPreset } from './camera';
+import type { InputRouter } from '@/spatial/InputRouter';
 import { atmosphereFragmentShader, atmosphereVertexShader, earthFragmentShader, earthVertexShader } from './shaders';
 import type { Country, WorldGeo } from './worldGeo';
 
@@ -167,9 +168,15 @@ export class EarthScene {
   private readonly lightDir = new THREE.Vector3();
   private readonly tmp = new THREE.Vector3();
   private readonly limits = { min: EARTH_PRESET.minDistance, max: EARTH_PRESET.maxDistance };
+  /** Managed by the SpatialDirector: no own animation loop, pointer input arrives through an InputRouter. */
+  private readonly managed: boolean;
+  private input: InputRouter | null = null;
+  private inputUnsubs: (() => void)[] = [];
+  private activeValue = true;
 
-  constructor(host: HTMLElement, opts: { quality?: QualityTier; reducedMotion?: boolean } = {}) {
+  constructor(host: HTMLElement, opts: { quality?: QualityTier; reducedMotion?: boolean; managed?: boolean } = {}) {
     this.host = host;
+    this.managed = !!opts.managed;
     this.quality = QUALITY[opts.quality ?? 'standard'];
     this.reducedMotion = !!opts.reducedMotion;
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance', failIfMajorPerformanceCaveat: false });
@@ -211,12 +218,14 @@ export class EarthScene {
     this.globe.add(this.overlay);
 
     const el = this.renderer.domElement;
-    el.addEventListener('pointerdown', this.onPointerDown);
-    el.addEventListener('pointerup', this.onPointerUp);
-    el.addEventListener('pointermove', this.onPointerMove);
-    el.addEventListener('pointerleave', this.onPointerLeave);
+    if (!this.managed) {
+      el.addEventListener('pointerdown', this.onPointerDown);
+      el.addEventListener('pointerup', this.onPointerUp);
+      el.addEventListener('pointermove', this.onPointerMove);
+      el.addEventListener('pointerleave', this.onPointerLeave);
+      document.addEventListener('visibilitychange', this.onVisibility);
+    }
     el.addEventListener('webglcontextlost', this.onContextLost);
-    document.addEventListener('visibilitychange', this.onVisibility);
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(host);
     this.resize();
@@ -349,19 +358,66 @@ export class EarthScene {
     return group;
   }
 
+  /** One frame: controls, frame hooks, then a render when something changed. Returns true when it drew. */
+  tick(now: number): boolean {
+    if (this.disposed) return false;
+    this.controls.autoRotate = this.activeValue && this.idleRotationAllowed && !this.reducedMotion && !this.flight.active && now - this.lastInteraction > 20000;
+    if (this.controls.update()) this.dirty = true;
+    for (const fn of this.frameHooks) fn(now, this.dirty);
+    if (!this.dirty) return false;
+    this.dirty = false;
+    this.updateLight();
+    this.renderer.render(this.scene, this.camera);
+    return true;
+  }
+
   start() {
-    if (this.raf || this.disposed) return;
+    if (this.managed || this.raf || this.disposed) return;
     const loop = (now: number) => {
       this.raf = requestAnimationFrame(loop);
-      this.controls.autoRotate = this.idleRotationAllowed && !this.reducedMotion && !this.flight.active && now - this.lastInteraction > 20000;
-      if (this.controls.update()) this.dirty = true;
-      for (const fn of this.frameHooks) fn(now, this.dirty);
-      if (!this.dirty) return;
-      this.dirty = false;
-      this.updateLight();
-      this.renderer.render(this.scene, this.camera);
+      this.tick(now);
     };
     this.raf = requestAnimationFrame(loop);
+  }
+
+  /** Director-managed input: clicks and hovers arrive already filtered (5 px drag threshold, one per frame). */
+  attachInput(router: InputRouter) {
+    this.detachInput();
+    this.input = router;
+    this.inputUnsubs = [
+      router.register({ layer: 'globe', priority: 0, test: () => null }),
+      router.on('click', (_hit, e) => {
+        if (this.activeValue) this.emit('click', this.pick(e.clientX, e.clientY), e as PointerEvent);
+      }),
+      router.on('hover', (_hit, e) => {
+        if (this.activeValue && !this.disposed) this.emit('hover', this.pick(e.clientX, e.clientY), e as PointerEvent);
+      }),
+      router.on('leave', (e) => this.emit('hover', null, e as PointerEvent)),
+      router.on('dragstart', () => {
+        this.lastInteraction = performance.now();
+      }),
+    ];
+  }
+
+  private detachInput() {
+    this.inputUnsubs.forEach((u) => u());
+    this.inputUnsubs = [];
+    this.input = null;
+  }
+
+  get hasInput() {
+    return this.input !== null;
+  }
+
+  /** Inactive while another scene owns the screen: no orbit, no idle spin, no pointer events. */
+  setActive(v: boolean) {
+    this.activeValue = v;
+    this.controls.enabled = v && !this.flight.active;
+    if (v) this.invalidate();
+  }
+
+  get active() {
+    return this.activeValue;
   }
 
   stop() {
@@ -470,7 +526,7 @@ export class EarthScene {
     if (this.disposed) return false;
     this.controls.minDistance = preset.minDistance;
     this.controls.maxDistance = preset.maxDistance;
-    this.controls.enabled = true;
+    this.controls.enabled = this.activeValue;
     if (done) this.emit('cameraSettled', this.getPose());
     return done;
   }
@@ -501,7 +557,7 @@ export class EarthScene {
 
   cancelFlight() {
     this.flight.cancel();
-    this.controls.enabled = true;
+    this.controls.enabled = this.activeValue;
   }
 
   /** Highlight the land of a set of ISO-3 countries (null clears). */
@@ -625,6 +681,7 @@ export class EarthScene {
   dispose() {
     this.disposed = true;
     this.stop();
+    this.detachInput();
     this.flight.cancel();
     this.resizeObserver.disconnect();
     document.removeEventListener('visibilitychange', this.onVisibility);

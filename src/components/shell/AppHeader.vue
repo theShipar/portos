@@ -17,7 +17,7 @@ defineExpose({ focusSearch: () => search.value?.focus() });
 
 <template>
   <header class="header">
-    <a class="brand" href="/operations" aria-label="PORTOS — global operations view" @click.prevent="nav.home()">
+    <a class="brand" href="/ops/earth" aria-label="PORTOS — global operations view" @click.prevent="nav.home()">
       <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
         <rect width="26" height="26" rx="6" fill="var(--color-ink)" />
         <path d="M6 16.5h14l-1.6 3.5H7.6L6 16.5Z" fill="var(--color-accent)" />

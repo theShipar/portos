@@ -135,9 +135,9 @@ describe('view mode routing', () => {
 
   it('keeps the selection when the scope changes, with an explicit Earth scope', () => {
     const sel = { kind: 'vessel' as const, id: 'VSL-0001' };
-    expect(routeForScopeKeepingSelection(sel, SEA)).toMatchObject({ name: 'vessel', params: { vesselId: 'VSL-0001' }, query: { in: 'region:REG-SEA' } });
-    expect(routeForScopeKeepingSelection(sel, EARTH)).toMatchObject({ name: 'vessel', query: { in: 'earth' } });
-    expect(routeForScopeKeepingSelection(null, SEA)).toMatchObject({ name: 'region', params: { regionId: 'REG-SEA' } });
+    expect(routeForScopeKeepingSelection(sel, SEA)).toMatchObject({ name: 'ops-region', params: { regionId: 'REG-SEA' }, query: { vessel: 'VSL-0001' } });
+    expect(routeForScopeKeepingSelection(sel, EARTH)).toMatchObject({ name: 'ops-earth', query: { vessel: 'VSL-0001' } });
+    expect(routeForScopeKeepingSelection(null, SEA)).toEqual({ name: 'ops-region', params: { regionId: 'REG-SEA' }, query: {} });
     expect(decodeScope(c, 'earth')).toEqual({ level: 'earth' });
   });
 });

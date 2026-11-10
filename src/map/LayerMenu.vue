@@ -13,7 +13,7 @@ const open = ref(false);
 const root = ref<HTMLElement | null>(null);
 const toggleBtn = ref<HTMLButtonElement | null>(null);
 
-const SCOPE_NAME: Record<ScopeLevel, string> = { earth: 'Earth', region: 'Region', port: 'Port' };
+const SCOPE_NAME: Record<ScopeLevel, string> = { earth: 'Earth', region: 'Region', country: 'Country', city: 'City', port: 'Port' };
 
 const LEGEND: Partial<Record<LayerId, Swatch[]>> = {
   fleet: [

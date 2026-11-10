@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 import { formatNm, formatUtc, sentenceCase } from '@/core/format';
 import type { EntityRef } from '@/core/types';
 import { makeProvenance } from '@/engines/provenance';
@@ -21,8 +20,6 @@ const catalog = useCatalogStore();
 const snap = useSnapshotStore();
 const view = useViewStore();
 const nav = useNavigation();
-const router = useRouter();
-const route = useRoute();
 
 interface Summary {
   kindLabel: string;
@@ -149,7 +146,7 @@ const model = computed<Summary | null>(() => {
       <FieldList :fields="model.fields" />
       <div v-if="model.links.length" class="links">
         <button v-for="l in model.links" :key="l.label" type="button" class="btn btn--sm" @click="nav.openEntity(l.ref)">{{ l.label }}</button>
-        <button v-if="model.compareVoyageId" type="button" class="btn btn--sm" data-testid="open-comparison" @click="router.push({ name: 'compare', params: { voyageId: model.compareVoyageId }, query: route.query })">Compare responses</button>
+        <button v-if="model.compareVoyageId" type="button" class="btn btn--sm" data-testid="open-comparison" @click="nav.openCompare(model.compareVoyageId)">Compare responses</button>
         <button v-if="model.compareVoyageId" type="button" class="btn btn--sm" data-testid="open-replay" @click="nav.openReplay(model.compareVoyageId)">Replay voyage</button>
       </div>
     </div>

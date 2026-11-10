@@ -5,7 +5,8 @@ import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, ref, shallowRe
 import { boundsCenter, pointInPolygon } from '@/core/geo';
 import { formatNm, formatUtc } from '@/core/format';
 import { LAYERS, type LayerId } from '@/core/layers';
-import { GeoScopeStack, scopeKey, type Scope, type ScopeStackItem } from '@/core/scope';
+import { flags } from '@/core/flags';
+import { GeoScopeStack, scopeFocusId, scopeKey, type Scope, type ScopeStackItem } from '@/core/scope';
 import type { Bounds, Region } from '@/core/types';
 import { trackUntil } from '@/engines/tracks';
 import { useNavigation } from '@/router/useRouteSync';
@@ -27,7 +28,12 @@ import { useClockStore } from '@/stores/clock';
 import { useSessionStore } from '@/stores/session';
 import { useSnapshotStore } from '@/stores/snapshot';
 import { useViewStore } from '@/stores/view';
-import { distanceToFitBounds, EARTH_PRESET, EARTH_RADIUS, pointPreset, regionPreset, type CameraPose, type CameraPreset } from './earth/camera';
+import { InputRouter } from '@/spatial/InputRouter';
+import { OverlayProjectionAdapter } from '@/spatial/OverlayProjectionAdapter';
+import { EARTH_SCENE_KEY, EarthGlobeScene } from '@/spatial/scenes/EarthGlobeScene';
+import { SpatialDirector } from '@/spatial/SpatialDirector';
+import type { SceneTarget } from '@/spatial/types';
+import { boundsPreset, distanceToFitBounds, EARTH_PRESET, EARTH_RADIUS, pointPreset, regionPreset, type CameraPose, type CameraPreset } from './earth/camera';
 import { EarthScene, type EarthPointerHit } from './earth/EarthScene';
 import { degreesPerPx, nextClusterCell, nextStackCell, STACK_MIN_COUNT } from './earth/lod';
 import { MaritimeOverlay, type OverlayLayers } from './earth/MaritimeOverlay';
@@ -64,6 +70,11 @@ let currentScope: Scope = { level: 'earth' };
 let scoping = false;
 let pendingPortId: string | null = null;
 let unsubs: (() => void)[] = [];
+/** spatialV2: the director owns the frame loop and camera flights; the input router owns pointer events. */
+let director: SpatialDirector | null = null;
+let input: InputRouter | null = null;
+const projection = new OverlayProjectionAdapter();
+let nextGlobeFlight: (() => Promise<boolean>) | null = null;
 
 const markers = computed(() => snapStore.mapMarkers);
 const ports = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildPortMarkers(catalog.catalog, snapStore.snapshot)) : []));
@@ -113,7 +124,28 @@ function presetFor(s: Scope, sc: EarthScene): CameraPreset {
     const p = c.byId.port.get(s.portId)!;
     return pointPreset(p.portId, 'port', p.location, 0.7);
   }
+  if (s.level === 'country' || s.level === 'city') {
+    const e = catalog.registry?.get(scopeFocusId(s));
+    if (e) return boundsPreset(e.id, s.level, e.bbox, sc.viewAspect);
+  }
   return EARTH_PRESET;
+}
+
+/** Globe countries lit for a scope: the region's set, or the one country of a country/city scope. */
+function highlightFor(s: Scope): string[] | null {
+  if (s.level === 'earth') return null;
+  if (s.level === 'country' || s.level === 'city') return catalog.registry?.get(scopeFocusId(s))?.iso3.filter(Boolean) ?? null;
+  return catalog.catalog?.byId.region.get(s.regionId)?.countryIso3 ?? null;
+}
+
+/** Phase 1: every scope is a camera goal on the one globe scene; Phase 2 maps regions/countries/cities to extruded scenes. */
+function targetForScope(s: Scope): SceneTarget {
+  return { kind: 'earth', sceneKey: EARTH_SCENE_KEY, focusId: scopeFocusId(s) };
+}
+
+/** Screen position of a geographic point through the active scene (director projector, or the globe directly). */
+function geoProject(sc: EarthScene, lat: number, lon: number) {
+  return director ? projection.project(lon, lat) : sc.project(lat, lon);
 }
 
 function snapshotItem(s: Scope, sc: EarthScene): ScopeStackItem<CameraPose, Record<LayerId, boolean>> {
@@ -127,16 +159,20 @@ async function applyScope(next: Scope, opts: { initial?: boolean } = {}) {
   tooltip.value = null;
   const saved = opts.initial ? null : stack.transition(snapshotItem(currentScope, sc), next);
   currentScope = next;
-  const regionId = next.level === 'earth' ? null : next.regionId;
-  const region = regionId ? catalog.catalog.byId.region.get(regionId) : null;
-  sc.setRegionHighlight(region ? region.countryIso3 : null);
+  sc.setRegionHighlight(highlightFor(next));
   sc.setHoverHighlight(null);
   sc.setIdleRotation(next.level === 'earth' && !view.selection);
   const preset = presetFor(next, sc);
+  const fly = () =>
+    saved?.cameraPose
+      ? sc.flyToPose(saved.cameraPose, { min: preset.minDistance, max: preset.maxDistance })
+      : sc.flyTo(preset, opts.initial ? { duration: session.reducedMotion ? 0 : 1.6 } : {});
   scoping = true;
-  const done = saved?.cameraPose
-    ? await sc.flyToPose(saved.cameraPose, { min: preset.minDistance, max: preset.maxDistance })
-    : await sc.flyTo(preset, opts.initial ? { duration: session.reducedMotion ? 0 : 1.6 } : {});
+  let done: boolean;
+  if (director) {
+    nextGlobeFlight = fly;
+    done = (await director.navigate(targetForScope(next), { restoreCamera: false })) === 'done';
+  } else done = await fly();
   scoping = false;
   if (!done) return;
   if (pendingPortId && next.level === 'region') {
@@ -311,7 +347,7 @@ function onClusterClick(cl: VesselCluster) {
   }
   const sc = scene.value;
   if (!sc) return;
-  const p = sc.project(cl.center.lat, cl.center.lon);
+  const p = geoProject(sc, cl.center.lat, cl.center.lon);
   const byId = new Map(markers.value.map((m) => [m.vesselId, m]));
   const members = cl.memberIds
     .map((id) => byId.get(id))
@@ -362,7 +398,7 @@ function labelWidth(el: HTMLElement): number {
 /** Position a DOM label over a globe point; with `taken`, skip it if it would overlap an already placed label. */
 function place(el: HTMLElement | undefined, sc: EarthScene, lat: number, lon: number, show: boolean, dx = 0, taken?: Rect[]) {
   if (!el) return;
-  const p = sc.project(lat, lon);
+  const p = geoProject(sc, lat, lon);
   let visible = show && p.visible;
   if (visible && taken) {
     const w = labelWidth(el);
@@ -377,7 +413,7 @@ function place(el: HTMLElement | undefined, sc: EarthScene, lat: number, lon: nu
 /** Cluster badges always show; when one would cover a label it slides just below (or above) it instead. */
 function placeBadge(el: HTMLElement | undefined, sc: EarthScene, lat: number, lon: number, taken: Rect[]) {
   if (!el) return;
-  const p = sc.project(lat, lon);
+  const p = geoProject(sc, lat, lon);
   el.style.visibility = p.visible ? 'visible' : 'hidden';
   if (!p.visible) return;
   const w = labelWidth(el) / 2;
@@ -418,13 +454,23 @@ async function init() {
   }
   let sc: EarthScene;
   try {
-    sc = markRaw(new EarthScene(host.value, { quality: 'standard', reducedMotion: session.reducedMotion }));
+    sc = markRaw(new EarthScene(host.value, { quality: 'standard', reducedMotion: session.reducedMotion, managed: flags.spatialV2 }));
   } catch (e) {
     state.value = 'no-webgl';
     errorText.value = e instanceof Error ? e.message : String(e);
     return;
   }
   scene.value = sc;
+  if (flags.spatialV2) {
+    input = markRaw(new InputRouter(sc.renderer.domElement));
+    sc.attachInput(input);
+    const globe = new EarthGlobeScene(sc, projection, () => (nextGlobeFlight ? nextGlobeFlight() : Promise.resolve(true)));
+    director = markRaw(new SpatialDirector({ factory: () => globe }));
+    director.on('frame', (_ctx, drew) => {
+      if (drew) projection.update();
+    });
+    director.on('phase', (phase) => input?.setEnabled(phase === 'idle' || phase === 'flying' || phase === 'error'));
+  }
   try {
     const world = await loadWorld();
     await sc.load(world);
@@ -455,7 +501,7 @@ async function init() {
     sc.onFrame(onFrame),
   ];
   sc.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0);
-  if (props.active) sc.start();
+  if (props.active) startLoop();
   if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') exposeTestAdapter(sc, ov);
   state.value = 'ready';
   emit('ready', sc);
@@ -465,7 +511,7 @@ async function init() {
 /** Test-only scene adapter (dev and `--mode e2e` builds): page coordinates for map targets and renderer figures. */
 function exposeTestAdapter(sc: EarthScene, ov: MaritimeOverlay) {
   const pointOf = (lat: number, lon: number) => {
-    const p = sc.project(lat, lon);
+    const p = geoProject(sc, lat, lon);
     const r = host.value?.getBoundingClientRect();
     return r ? { x: r.left + p.x, y: r.top + p.y, visible: p.visible } : null;
   };
@@ -493,6 +539,9 @@ function exposeTestAdapter(sc: EarthScene, ov: MaritimeOverlay) {
       return m ? pointOf(m.point.lat, m.point.lon) : null;
     },
     loseContext: () => sc.renderer.getContext().getExtension('WEBGL_lose_context')?.loseContext(),
+    spatialV2: flags.spatialV2,
+    director: () => director?.state() ?? null,
+    sceneCache: () => director?.cache.stats() ?? null,
   };
 }
 
@@ -535,8 +584,8 @@ watch(
     tooltip.value = null;
     if (active) {
       sc.resize();
-      sc.start();
-    } else sc.stop();
+      startLoop();
+    } else stopLoop();
   },
 );
 watch(markers, (m) => overlay.value?.setVessels(m));
@@ -562,9 +611,35 @@ function retry() {
   init();
 }
 
+function startLoop() {
+  if (director) director.start();
+  else scene.value?.start();
+}
+
+function stopLoop() {
+  if (director) director.stop();
+  else scene.value?.stop();
+}
+
+/** Managed mode: the director (not the EarthScene) pauses rendering in hidden tabs. */
+function onVisibility() {
+  if (!director || !props.active) return;
+  if (document.hidden) director.stop();
+  else {
+    scene.value?.invalidate();
+    director.start();
+  }
+}
+
 function dispose() {
   unsubs.forEach((u) => u());
   unsubs = [];
+  director?.dispose();
+  director = null;
+  input?.dispose();
+  input = null;
+  nextGlobeFlight = null;
+  projection.setProjector(null);
   overlay.value?.dispose();
   overlay.value = null;
   scene.value?.dispose();
@@ -572,8 +647,14 @@ function dispose() {
   stack.clear();
 }
 
-onMounted(init);
-onBeforeUnmount(dispose);
+onMounted(() => {
+  document.addEventListener('visibilitychange', onVisibility);
+  init();
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('visibilitychange', onVisibility);
+  dispose();
+});
 
 defineExpose({ resetCamera, scene, overlay });
 </script>

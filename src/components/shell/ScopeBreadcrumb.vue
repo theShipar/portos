@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { parentScope, scopeKey, scopeTrail, type Scope } from '@/core/scope';
+import { parentScope, scopeFocusId, scopeKey, scopeTrail, type Scope } from '@/core/scope';
 import { useNavigation } from '@/router/useRouteSync';
 import { useCatalogStore } from '@/stores/catalog';
 import { useViewStore } from '@/stores/view';
@@ -11,10 +11,12 @@ const view = useViewStore();
 const nav = useNavigation();
 
 function scopeLabel(s: Scope): string {
-  const c = catalog.catalog;
   if (s.level === 'earth') return 'Earth';
-  if (s.level === 'region') return c?.byId.region.get(s.regionId)?.name ?? s.regionId;
-  return c?.byId.port.get(s.portId)?.name ?? s.portId;
+  const id = scopeFocusId(s);
+  const label = catalog.registry?.get(id)?.label ?? id;
+  /** City and port often share a name (Singapore › Singapore); the port crumb says what it is. */
+  if (s.level === 'port' && s.cityId && catalog.registry?.get(s.cityId)?.label === label) return `${label} port`;
+  return label;
 }
 
 const entityLabel = computed(() => {

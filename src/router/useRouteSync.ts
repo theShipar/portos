@@ -11,18 +11,39 @@ import { useCatalogStore } from '@/stores/catalog';
 import { useClockStore } from '@/stores/clock';
 import { useNoticeStore } from '@/stores/notices';
 import { useViewStore, type Scope } from '@/stores/view';
-import { decodeScope, routeForEntity, routeForScope, routeForScopeKeepingSelection, viewModeQuery } from './navigation';
+import { routeForEntity, routeForScope, routeForScopeKeepingSelection, viewModeQuery } from './navigation';
+import { isOpsRoute, opsRoute, parseOpsLocation, portScope, sceneRefForScope, scopeFromSceneRef, type OpsLocation } from './opsLocation';
 
-const param = (r: RouteLocationNormalizedLoaded, k: string) => {
-  const v = r.params[k];
-  return Array.isArray(v) ? v[0] : (v ?? '');
+const SELECTION_LABEL: Record<EntityRef['kind'], string> = {
+  vessel: 'Vessel',
+  voyage: 'Voyage',
+  incident: 'Incident',
+  route: 'Corridor',
+  weather: 'Weather hazard',
+  port: 'Port',
+  region: 'Region',
 };
 
-function scopeForPort(c: Catalog, portId: string): Scope {
-  return { level: 'port', portId, regionId: c.byId.port.get(portId)!.regionId };
+function selectionExists(c: Catalog, ref: EntityRef): boolean {
+  switch (ref.kind) {
+    case 'vessel':
+      return c.byId.vessel.has(ref.id);
+    case 'voyage':
+      return c.byId.voyage.has(ref.id);
+    case 'incident':
+      return c.byId.incident.has(ref.id);
+    case 'route':
+      return c.byId.route.has(ref.id);
+    case 'weather':
+      return c.byId.weather.has(ref.id);
+    case 'port':
+      return c.byId.port.has(ref.id);
+    case 'region':
+      return c.byId.region.has(ref.id);
+  }
 }
 
-/** Route → store sync. The URL is the source of truth for selection, scope, time and layers. */
+/** Route → store sync. The URL is the source of truth for scene, selection, time and layers. */
 export function useRouteSync() {
   const route = useRoute();
   const router = useRouter();
@@ -37,25 +58,58 @@ export function useRouteSync() {
     router.replace(routeForScope(fallback));
   }
 
-  function apply(r: RouteLocationNormalizedLoaded) {
-    if (!catalog.catalog) return;
-    applyRoute(r);
-    const q = r.query.view;
-    const requested = q === '2d' || q === '3d' ? q : null;
-    view.viewMode = requested && supportsViewMode(view.scope, requested) ? requested : defaultViewMode(view.scope);
-    const k = r.query.kpi;
-    view.kpiDrill = typeof k === 'string' && (KPI_KEYS as string[]).includes(k) ? (k as KpiKey) : null;
-    view.comparing = r.name === 'compare';
-    if (view.comparing) clock.pause();
-    if (r.name === 'replay') view.replayOpen = true;
+  /** Scene for a selection opened without one (`/ops?incident=…`): incidents open at their port, the rest stay put. */
+  function autoScope(c: Catalog, sel: EntityRef | null): Scope {
+    if (sel?.kind === 'incident') {
+      const inc = c.byId.incident.get(sel.id);
+      if (inc) return portScope(c, catalog.registry, inc.portId);
+    }
+    return view.scope;
   }
 
-  function applyRoute(r: RouteLocationNormalizedLoaded) {
+  function apply(r: RouteLocationNormalizedLoaded) {
     const c = catalog.catalog;
-    if (!c) return;
+    const reg = catalog.registry;
+    if (!c || !reg) return;
+    if (r.name === 'not-found') {
+      first = false;
+      return invalid(`No page at ${r.fullPath}. Showing the global view.`, { level: 'earth' });
+    }
+    if (!isOpsRoute(r.name)) return;
+    const loc = parseOpsLocation(r.name, r.params, r.query);
 
-    const t = r.query.t;
-    if (typeof t === 'string') {
+    applyTime(loc);
+    const layers = decodeLayers(loc.layers);
+    if (layers) view.setLayers(layers);
+
+    if (loc.selection && !selectionExists(c, loc.selection)) {
+      return invalid(`${SELECTION_LABEL[loc.selection.kind]} ${loc.selection.id} is not in the simulated dataset.`, view.scope);
+    }
+    let scope: Scope | null;
+    if (loc.scene) {
+      scope = scopeFromSceneRef(c, reg, loc.scene);
+      if (!scope) {
+        const label = loc.scene.level === 'earth' ? 'Scene' : `${loc.scene.level[0].toUpperCase()}${loc.scene.level.slice(1)} ${loc.scene.id}`;
+        return invalid(`${label} is not in the simulated dataset.`, { level: 'earth' });
+      }
+    } else {
+      scope = autoScope(c, loc.selection);
+      router.replace(opsRoute(sceneRefForScope(scope), loc.selection, r.query));
+    }
+    view.setScope(scope);
+    view.select(loc.selection);
+
+    const requested = loc.view;
+    view.viewMode = requested && supportsViewMode(scope, requested) ? requested : defaultViewMode(scope);
+    view.kpiDrill = loc.kpi && (KPI_KEYS as string[]).includes(loc.kpi) ? (loc.kpi as KpiKey) : null;
+    view.comparing = loc.panel === 'compare' && loc.selection?.kind === 'voyage';
+    if (view.comparing) clock.pause();
+    if (loc.panel === 'replay') view.replayOpen = true;
+  }
+
+  function applyTime(loc: OpsLocation) {
+    const t = loc.time;
+    if (t) {
       const requested = parseUtc(t);
       if (!clock.seek(t)) notices.push(`Ignored invalid time "${t}" in link; showing ${formatUtc(clock.timeMs)}.`, 'warning');
       else if (requested !== null && Math.abs(requested - clock.timeMs) >= 1000) {
@@ -63,67 +117,6 @@ export function useRouteSync() {
       }
     } else if (first) clock.reset();
     first = false;
-
-    const layers = decodeLayers(typeof r.query.layers === 'string' ? r.query.layers : null);
-    if (layers) view.setLayers(layers);
-
-    const ctx = decodeScope(c, r.query.in);
-    const sel = (ref: EntityRef, fallbackScope: Scope) => {
-      view.setScope(ctx ?? (view.scope.level === 'earth' ? fallbackScope : view.scope));
-      view.select(ref);
-    };
-
-    switch (r.name) {
-      case 'operations':
-        view.setScope({ level: 'earth' });
-        view.select(null);
-        return;
-      case 'region': {
-        const id = param(r, 'regionId');
-        if (!c.byId.region.has(id)) return invalid(`Region ${id} is not in the simulated dataset.`, { level: 'earth' });
-        view.setScope({ level: 'region', regionId: id });
-        view.select(null);
-        return;
-      }
-      case 'port': {
-        const id = param(r, 'portId');
-        if (!c.byId.port.has(id)) return invalid(`Port ${id} is not in the simulated dataset.`, { level: 'earth' });
-        view.setScope(scopeForPort(c, id));
-        view.select(null);
-        return;
-      }
-      case 'vessel': {
-        const id = param(r, 'vesselId');
-        if (!c.byId.vessel.has(id)) return invalid(`Vessel ${id} is not in the simulated dataset.`, ctx ?? view.scope);
-        return sel({ kind: 'vessel', id }, { level: 'earth' });
-      }
-      case 'voyage':
-      case 'compare':
-      case 'replay': {
-        const id = param(r, 'voyageId');
-        const vo = c.byId.voyage.get(id);
-        if (!vo) return invalid(`Voyage ${id} is not in the simulated dataset.`, ctx ?? view.scope);
-        return sel({ kind: 'voyage', id }, { level: 'earth' });
-      }
-      case 'incident': {
-        const id = param(r, 'incidentId');
-        const inc = c.byId.incident.get(id);
-        if (!inc) return invalid(`Incident ${id} is not in the simulated dataset.`, ctx ?? view.scope);
-        return sel({ kind: 'incident', id }, scopeForPort(c, inc.portId));
-      }
-      case 'route': {
-        const id = param(r, 'routeId');
-        if (!c.byId.route.has(id)) return invalid(`Corridor ${id} is not in the simulated dataset.`, ctx ?? view.scope);
-        return sel({ kind: 'route', id }, { level: 'earth' });
-      }
-      case 'weather': {
-        const id = param(r, 'hazardId');
-        if (!c.byId.weather.has(id)) return invalid(`Weather hazard ${id} is not in the simulated dataset.`, ctx ?? view.scope);
-        return sel({ kind: 'weather', id }, { level: 'earth' });
-      }
-      default:
-        if (r.name === 'not-found') invalid(`No page at ${r.fullPath}. Showing the global view.`, { level: 'earth' });
-    }
   }
 
   watch(
@@ -132,20 +125,20 @@ export function useRouteSync() {
     { immediate: true },
   );
 
-  /** Clock → URL: a paused replay time is written to `?t=` (replace, no history entry) so reload and share keep it. */
+  /** Clock → URL: a paused replay time is written to `?time=` (replace, no history entry) so reload and share keep it. */
   let urlTimer: ReturnType<typeof setTimeout> | undefined;
   watch(
     () => [clock.timeMs, clock.playing] as const,
     ([, playing]) => {
       clearTimeout(urlTimer);
-      if (playing || catalog.status !== 'ready') return;
+      if (playing || catalog.status !== 'ready' || !isOpsRoute(route.name)) return;
       urlTimer = setTimeout(() => {
         const want = clock.mode === 'replay' ? clock.iso : undefined;
-        const cur = route.query.t;
+        const cur = route.query.time;
         if ((typeof cur === 'string' ? cur : undefined) === want) return;
         const query = { ...route.query };
-        if (want) query.t = want;
-        else delete query.t;
+        if (want) query.time = want;
+        else delete query.time;
         router.replace({ name: route.name ?? undefined, params: route.params, query });
       }, URL_TIME_DEBOUNCE_MS);
     },
@@ -154,19 +147,25 @@ export function useRouteSync() {
 
 const URL_TIME_DEBOUNCE_MS = 300;
 
-/** Navigation helpers that keep replay time and scope context in the URL. */
+/** Navigation helpers that keep replay time and the scene in the URL. */
 export function useNavigation() {
   const router = useRouter();
   const view = useViewStore();
   const clock = useClockStore();
 
-  const timeQuery = (): LocationQueryRaw => (clock.mode === 'replay' ? { t: clock.iso } : {});
+  const timeQuery = (): LocationQueryRaw => (clock.mode === 'replay' ? { time: clock.iso } : {});
   /** Selections inside a scope keep the current 3D/2D mode; scope changes fall back to the target's default. */
   const modeQuery = (): LocationQueryRaw => {
     const q = viewModeQuery(view.scope, view.viewMode);
     return q ? { view: q } : {};
   };
   const kpiQuery = (): LocationQueryRaw => (view.kpiDrill ? { kpi: view.kpiDrill } : {});
+  const replaceQuery = (edit: (q: LocationQueryRaw) => void) => {
+    const cur = router.currentRoute.value;
+    const query: LocationQueryRaw = { ...cur.query };
+    edit(query);
+    return router.replace({ name: cur.name ?? undefined, params: cur.params, query });
+  };
 
   return {
     openEntity(ref: EntityRef) {
@@ -178,11 +177,10 @@ export function useNavigation() {
     },
     /** Filters the map to a KPI's members (or clears the filter); replaces history like the 3D/2D switch. */
     setKpiDrill(key: KpiKey | null) {
-      const cur = router.currentRoute.value;
-      const query = { ...cur.query };
-      if (key) query.kpi = key;
-      else delete query.kpi;
-      return router.replace({ name: cur.name ?? undefined, params: cur.params, query });
+      return replaceQuery((q) => {
+        if (key) q.kpi = key;
+        else delete q.kpi;
+      });
     },
     /** Global view with nothing selected. */
     home() {
@@ -193,31 +191,41 @@ export function useNavigation() {
       view.clearSelection();
       return router.push(routeForScope(view.scope, { ...timeQuery(), ...modeQuery(), ...kpiQuery() }));
     },
-    /** Opens the replay rail; with a voyage, also moves to its shareable `/replay/:voyageId` link. */
+    /** Opens the replay rail; with a voyage, also selects it and records `panel=replay` so the link is shareable. */
     openReplay(voyageId?: string) {
       view.replayOpen = true;
       if (!voyageId) return;
       const cur = router.currentRoute.value;
-      return router.push({ name: 'replay', params: { voyageId }, query: { ...cur.query } });
+      return router.push(opsRoute(sceneRefForScope(view.scope), { kind: 'voyage', id: voyageId }, { ...cur.query, panel: 'replay' }));
     },
     /** Hides the rail and returns to Now (simulated), keeping the selection. */
     closeReplay() {
       view.replayOpen = false;
       clock.reset();
+      return replaceQuery((q) => {
+        delete q.time;
+        if (q.panel === 'replay') delete q.panel;
+      });
+    },
+    /** Response comparison for a voyage (`panel=compare`); extra query such as `case` is kept. */
+    openCompare(voyageId: string, extra: LocationQueryRaw = {}) {
       const cur = router.currentRoute.value;
-      const query = { ...cur.query };
-      delete query.t;
-      if (cur.name === 'replay') return router.replace({ name: 'voyage', params: cur.params, query });
-      return router.replace({ name: cur.name ?? undefined, params: cur.params, query });
+      return router.push(opsRoute(sceneRefForScope(view.scope), { kind: 'voyage', id: voyageId }, { ...cur.query, ...extra, panel: 'compare' }));
+    },
+    closeCompare(voyageId: string) {
+      const cur = router.currentRoute.value;
+      const query: LocationQueryRaw = { ...cur.query };
+      delete query.panel;
+      delete query.case;
+      return router.push(opsRoute(sceneRefForScope(view.scope), { kind: 'voyage', id: voyageId }, query));
     },
     setViewMode(mode: ViewMode) {
       if (!supportsViewMode(view.scope, mode) || mode === view.viewMode) return;
-      const cur = router.currentRoute.value;
-      const query = { ...cur.query };
-      const q = viewModeQuery(view.scope, mode);
-      if (q) query.view = q;
-      else delete query.view;
-      return router.replace({ name: cur.name ?? undefined, params: cur.params, query });
+      return replaceQuery((q) => {
+        const v = viewModeQuery(view.scope, mode);
+        if (v) q.view = v;
+        else delete q.view;
+      });
     },
   };
 }

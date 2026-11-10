@@ -34,15 +34,15 @@ test.describe('Core Singapore journey', () => {
     const firstRow = page.getByTestId('port-queue').locator('[data-testid^="queue-row-VSL-"]').first();
     const rowId = (await firstRow.getAttribute('data-testid'))!.replace('queue-row-', '');
     await firstRow.click();
-    await expect(page).toHaveURL(new RegExp(`/vessel/${rowId}`));
+    await expect(page).toHaveURL(new RegExp(`/ops/port/PRT-SIN\\?.*vessel=${rowId}`));
     await expect(inspector(page)).toBeVisible();
 
     await page.goBack();
-    await expect(page).toHaveURL(/\/port\/PRT-SIN/);
+    await expect(page).toHaveURL(/\/ops\/port\/PRT-SIN(\?(?!.*vessel=).*)?$/);
     await page.goBack();
-    await expect(page).toHaveURL(/\/region\/REG-SEA/);
+    await expect(page).toHaveURL(/\/ops\/region\/REG-SEA/);
     await page.goBack();
-    await expect(page).toHaveURL(/\/operations/);
+    await expect(page).toHaveURL(/\/ops\/earth/);
   });
 
   test('a click on a vessel marker in the 3D scene selects the vessel under the pointer', async ({ page }) => {
@@ -63,9 +63,9 @@ test.describe('Core Singapore journey', () => {
     await page.mouse.click(pt!.x, pt!.y);
     // A stacked anchorage opens a picker; a lone marker selects directly.
     const stack = page.getByTestId('stack-menu');
-    await expect.poll(async () => /\/vessel\//.test(page.url()) || (await stack.isVisible())).toBe(true);
+    await expect.poll(async () => /[?&]vessel=/.test(page.url()) || (await stack.isVisible())).toBe(true);
     if (await stack.isVisible()) await stack.locator('[data-testid^="stack-item-"]').first().click();
-    await expect(page).toHaveURL(/\/vessel\/VSL-\d{4}/);
+    await expect(page).toHaveURL(/[?&]vessel=VSL-\d{4}/);
     const picked = page.url().match(/VSL-\d{4}/)![0];
     await expect(inspector(page)).toContainText(picked);
     expect(near).toContain(picked);
@@ -82,7 +82,8 @@ test.describe('Core Singapore journey', () => {
 
     await inspector(page).getByRole('tab', { name: 'Actions' }).click();
     await page.getByTestId('open-comparison').first().click();
-    await expect(page).toHaveURL(/\/compare\/VYG-0001/);
+    await expect(page).toHaveURL(/voyage=VYG-0001/);
+    await expect(page).toHaveURL(/panel=compare/);
     const cmp = page.getByTestId('comparison');
     await expect(cmp).toBeVisible();
     await expect(cmp.locator('[data-testid^="option-"]')).toHaveCount(3);
@@ -128,7 +129,7 @@ test.describe('Core Singapore journey', () => {
     }
     await expect(page.getByTestId('replay-current')).toContainText('INC-0001 opened');
     await expect(page.getByTestId('replay-time')).toContainText('10:59');
-    await expect(page).toHaveURL(/t=2026-11-09T10%3A59|t=2026-11-09T10:59/);
+    await expect(page).toHaveURL(/time=2026-11-09T10%3A59|time=2026-11-09T10:59/);
     const cmp = page.getByTestId('replay-compare');
     await expect(cmp).toContainText('+18.0 h');
     await expect(cmp).toContainText('$24,000');
@@ -166,7 +167,7 @@ test.describe('Core Singapore journey', () => {
     await page.getByTestId('reset-open').click();
     await page.getByTestId('reset-full').click();
     await page.getByTestId('reset-confirm').click();
-    await expect(page).toHaveURL(/\/operations/);
+    await expect(page).toHaveURL(/\/ops\/earth/);
     await page.goto('/incidents/INC-0001');
     await expect(page.getByTestId('incident-owner')).not.toContainText('Mina Rahman');
   });

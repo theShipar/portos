@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { useNavigation } from '@/router/useRouteSync';
 import { computed, nextTick, ref, useId } from 'vue';
-import { useRouter } from 'vue-router';
 import { fromUtcInputValue, HOUR, toUtcInputValue } from '@/core/time';
 import type { IncidentModel } from '@/selectors/incident';
 import { useCatalogStore } from '@/stores/catalog';
@@ -16,7 +16,7 @@ const props = defineProps<{ model: IncidentModel }>();
 const catalog = useCatalogStore();
 const clock = useClockStore();
 const wf = useWorkflowStore();
-const router = useRouter();
+const nav = useNavigation();
 const ids = { reason: useId(), evidence: useId(), ack: useId(), reopen: useId(), assignee: useId(), due: useId(), assignNote: useId(), note: useId(), block: useId() };
 
 const id = computed(() => props.model.incident.incidentId);
@@ -86,8 +86,7 @@ function submitNote() {
 }
 
 function openComparison() {
-  const cur = router.currentRoute.value;
-  router.push({ name: 'compare', params: { voyageId: props.model.incident.voyageId }, query: { ...cur.query, case: id.value } });
+  nav.openCompare(props.model.incident.voyageId, { case: id.value });
 }
 </script>
 

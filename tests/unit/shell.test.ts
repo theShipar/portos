@@ -39,8 +39,8 @@ describe('layers URL encoding', () => {
 describe('navigation helpers', () => {
   it('keeps scope context for entity routes and rejects unknown scopes', () => {
     const r = routeForEntity({ kind: 'vessel', id: 'VSL-0001' }, { level: 'port', portId: 'PRT-SIN', regionId: 'REG-SEA' }, { t: '2026-11-09T09:00:00Z' });
-    expect(r).toMatchObject({ name: 'vessel', params: { vesselId: 'VSL-0001' }, query: { in: 'port:PRT-SIN', t: '2026-11-09T09:00:00Z' } });
-    expect(decodeScope(c, 'port:PRT-SIN')).toEqual({ level: 'port', portId: 'PRT-SIN', regionId: 'REG-SEA' });
+    expect(r).toEqual({ name: 'ops-port', params: { portId: 'PRT-SIN' }, query: { vessel: 'VSL-0001', t: '2026-11-09T09:00:00Z' } });
+    expect(decodeScope(c, 'port:PRT-SIN')).toEqual({ level: 'port', portId: 'PRT-SIN', regionId: 'REG-SEA', countryId: null, cityId: null });
     expect(decodeScope(c, 'port:NOPE')).toBeNull();
     expect(decodeScope(c, 'region:REG-SEA')).toEqual({ level: 'region', regionId: 'REG-SEA' });
   });

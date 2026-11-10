@@ -7,7 +7,7 @@ test.describe('Phase gates', () => {
     const search = page.getByRole('combobox', { name: /Search vessels/ });
     await search.fill('VSL-0001');
     await search.press('Enter');
-    await expect(page).toHaveURL(/\/vessel\/VSL-0001/);
+    await expect(page).toHaveURL(/[?&]vessel=VSL-0001/);
     const inspector = page.getByTestId('inspector');
     await expect(inspector.getByRole('heading', { level: 2 })).toHaveText('MV Pacific Horizon');
     await expect(inspector.getByTestId('eta-shift')).toHaveText('+18.0 h');
@@ -16,7 +16,7 @@ test.describe('Phase gates', () => {
 
   test('invalid deep link returns to the nearest valid parent with an explanation', async ({ page }) => {
     await page.goto('/vessel/VSL-9999');
-    await expect(page).toHaveURL(/\/operations/);
+    await expect(page).toHaveURL(/\/ops\/earth/);
     await expect(page.getByRole('status').filter({ hasText: 'VSL-9999' })).toBeVisible();
   });
 

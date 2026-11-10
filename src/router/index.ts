@@ -1,10 +1,11 @@
 import { defineComponent } from 'vue';
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
+import { LEGACY_ROUTES, legacyToOps } from './legacyRedirects';
 
 /** Routes carry no views of their own: the map workspace stays mounted and reacts to the route (see routeSync). */
 const Outlet = defineComponent({ name: 'RouteOutlet', render: () => null });
 
-export type RouteLevel = 'earth' | 'region' | 'port' | 'vessel' | 'voyage' | 'incident' | 'route' | 'weather' | 'compare' | 'replay';
+export type RouteLevel = 'earth' | 'region' | 'country' | 'city' | 'port' | 'auto';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -12,18 +13,25 @@ declare module 'vue-router' {
   }
 }
 
+/**
+ * Canonical V2 routes: the path is the scene, the query is everything orthogonal to it
+ * (`vessel|voyage|incident|route|hazard`, `panel`, `time`, `speed`, `mode`, `view`, `layers`, `kpi`).
+ */
 const routes: RouteRecordRaw[] = [
-  { path: '/', redirect: { name: 'operations' } },
-  { path: '/operations', name: 'operations', component: Outlet, meta: { level: 'earth' } },
-  { path: '/region/:regionId', name: 'region', component: Outlet, meta: { level: 'region' } },
-  { path: '/port/:portId', name: 'port', component: Outlet, meta: { level: 'port' } },
-  { path: '/vessel/:vesselId', name: 'vessel', component: Outlet, meta: { level: 'vessel' } },
-  { path: '/voyage/:voyageId', name: 'voyage', component: Outlet, meta: { level: 'voyage' } },
-  { path: '/incidents/:incidentId', name: 'incident', component: Outlet, meta: { level: 'incident' } },
-  { path: '/corridors/:routeId', name: 'route', component: Outlet, meta: { level: 'route' } },
-  { path: '/weather/:hazardId', name: 'weather', component: Outlet, meta: { level: 'weather' } },
-  { path: '/compare/:voyageId', name: 'compare', component: Outlet, meta: { level: 'compare' } },
-  { path: '/replay/:voyageId', name: 'replay', component: Outlet, meta: { level: 'replay' } },
+  { path: '/', redirect: { name: 'ops-earth' } },
+  { path: '/ops', name: 'ops-auto', component: Outlet, meta: { level: 'auto' } },
+  { path: '/ops/earth', name: 'ops-earth', component: Outlet, meta: { level: 'earth' } },
+  { path: '/ops/region/:regionId', name: 'ops-region', component: Outlet, meta: { level: 'region' } },
+  { path: '/ops/country/:countryId', name: 'ops-country', component: Outlet, meta: { level: 'country' } },
+  { path: '/ops/city/:cityId', name: 'ops-city', component: Outlet, meta: { level: 'city' } },
+  { path: '/ops/port/:portId', name: 'ops-port', component: Outlet, meta: { level: 'port' } },
+  ...LEGACY_ROUTES.map(
+    (r): RouteRecordRaw => ({
+      path: r.path,
+      name: `legacy-${r.name}`,
+      redirect: (to) => legacyToOps(r.name, to.params, to.query),
+    }),
+  ),
   { path: '/:pathMatch(.*)*', name: 'not-found', component: Outlet, meta: { level: 'earth' } },
 ];
 

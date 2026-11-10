@@ -1,29 +1,62 @@
 import type { EntityRef } from './types';
 
-export type Scope = { level: 'earth' } | { level: 'region'; regionId: string } | { level: 'port'; regionId: string; portId: string };
+/**
+ * Geographic scope. Every level below Earth keeps its operational `regionId` (KPI cohort, globe highlight); country
+ * and city are optional parents of a port (Singapore drills region → city → port with no country level).
+ */
+export type Scope =
+  | { level: 'earth' }
+  | { level: 'region'; regionId: string }
+  | { level: 'country'; regionId: string; countryId: string }
+  | { level: 'city'; regionId: string; countryId: string | null; cityId: string }
+  | { level: 'port'; regionId: string; portId: string; countryId?: string | null; cityId?: string | null };
 
-export const SCOPE_RANK: Record<Scope['level'], number> = { earth: 0, region: 1, port: 2 };
+export type ScopeLevelName = Scope['level'];
+
+export const SCOPE_RANK: Record<Scope['level'], number> = { earth: 0, region: 1, country: 2, city: 3, port: 4 };
 
 export type ViewMode = '3d' | '2d';
 
-/** Port detail opens in 2D (precise positions); Earth and regions open in 3D. Earth has no 2D mode. */
+/** Port detail opens in 2D (precise positions); Earth, regions, countries and cities open in 3D. */
 export function defaultViewMode(s: Scope): ViewMode {
   return s.level === 'port' ? '2d' : '3d';
 }
 
+/** 2D exists for regions and ports (MapLibre); Earth, country and city scenes are 3D only. */
 export function supportsViewMode(s: Scope, mode: ViewMode): boolean {
-  return mode === '3d' || s.level !== 'earth';
+  return mode === '3d' || s.level === 'region' || s.level === 'port';
+}
+
+/** The registry ID the scope is centred on (`earth` for Earth). */
+export function scopeFocusId(s: Scope): string {
+  switch (s.level) {
+    case 'earth':
+      return 'earth';
+    case 'region':
+      return s.regionId;
+    case 'country':
+      return s.countryId;
+    case 'city':
+      return s.cityId;
+    case 'port':
+      return s.portId;
+  }
 }
 
 export function scopeKey(s: Scope): string {
-  return s.level === 'earth' ? 'earth' : s.level === 'region' ? `region:${s.regionId}` : `port:${s.portId}`;
+  return s.level === 'earth' ? 'earth' : `${s.level}:${scopeFocusId(s)}`;
 }
 
 /** Parent chain from Earth down to the scope itself. */
 export function scopeTrail(s: Scope): Scope[] {
   if (s.level === 'earth') return [s];
-  if (s.level === 'region') return [{ level: 'earth' }, s];
-  return [{ level: 'earth' }, { level: 'region', regionId: s.regionId }, s];
+  const out: Scope[] = [{ level: 'earth' }, { level: 'region', regionId: s.regionId }];
+  if (s.level === 'region') return out;
+  const countryId = s.level === 'country' ? s.countryId : (s.countryId ?? null);
+  if (countryId && s.level !== 'country') out.push({ level: 'country', regionId: s.regionId, countryId });
+  if (s.level === 'port' && s.cityId) out.push({ level: 'city', regionId: s.regionId, countryId, cityId: s.cityId });
+  out.push(s);
+  return out;
 }
 
 export function parentScope(s: Scope): Scope | null {

@@ -1,0 +1,1238 @@
+{
+ "source": "scripts/build_geo.py registry",
+ "countries": [
+  {
+   "countryId": "CNT-ARE",
+   "iso2": "AE",
+   "iso3": "ARE",
+   "name": "United Arab Emirates",
+   "bbox": {
+    "west": 51.579,
+    "south": 22.623,
+    "east": 56.382,
+    "north": 26.061
+   },
+   "center": {
+    "lon": 53.981,
+    "lat": 24.342
+   },
+   "portIds": [
+    "PRT-JEA"
+   ],
+   "regionIds": [
+    "REG-GULF"
+   ],
+   "primaryRegionId": "REG-GULF",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-AGO",
+   "iso2": "AO",
+   "iso3": "AGO",
+   "name": "Angola",
+   "bbox": {
+    "west": 11.772,
+    "south": -18.009,
+    "east": 24.017,
+    "north": -5.856
+   },
+   "center": {
+    "lon": 17.895,
+    "lat": -11.933
+   },
+   "portIds": [
+    "PRT-LAD"
+   ],
+   "regionIds": [
+    "REG-WAF"
+   ],
+   "primaryRegionId": "REG-WAF",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-ARG",
+   "iso2": "AR",
+   "iso3": "ARG",
+   "name": "Argentina",
+   "bbox": {
+    "west": -73.568,
+    "south": -52.379,
+    "east": -53.713,
+    "north": -22.098
+   },
+   "center": {
+    "lon": -63.641,
+    "lat": -37.239
+   },
+   "portIds": [
+    "PRT-BUE"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-AUS",
+   "iso2": "AU",
+   "iso3": "AUS",
+   "name": "Australia",
+   "bbox": {
+    "west": 113.357,
+    "south": -40.127,
+    "east": 153.549,
+    "north": -10.951
+   },
+   "center": {
+    "lon": 133.453,
+    "lat": -25.539
+   },
+   "portIds": [
+    "PRT-BNE",
+    "PRT-FRE",
+    "PRT-MEL",
+    "PRT-SYD"
+   ],
+   "regionIds": [
+    "REG-OCE"
+   ],
+   "primaryRegionId": "REG-OCE",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-BGD",
+   "iso2": "BD",
+   "iso3": "BGD",
+   "name": "Bangladesh",
+   "bbox": {
+    "west": 88.067,
+    "south": 20.749,
+    "east": 92.576,
+    "north": 26.545
+   },
+   "center": {
+    "lon": 90.322,
+    "lat": 23.647
+   },
+   "portIds": [
+    "PRT-CGP"
+   ],
+   "regionIds": [
+    "REG-IO"
+   ],
+   "primaryRegionId": "REG-IO",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-BEL",
+   "iso2": "BE",
+   "iso3": "BEL",
+   "name": "Belgium",
+   "bbox": {
+    "west": 2.522,
+    "south": 49.508,
+    "east": 6.362,
+    "north": 51.495
+   },
+   "center": {
+    "lon": 4.442,
+    "lat": 50.502
+   },
+   "portIds": [
+    "PRT-ANR"
+   ],
+   "regionIds": [
+    "REG-NEU"
+   ],
+   "primaryRegionId": "REG-NEU",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-BRA",
+   "iso2": "BR",
+   "iso3": "BRA",
+   "name": "Brazil",
+   "bbox": {
+    "west": -73.714,
+    "south": -32.288,
+    "east": -34.819,
+    "north": 5.24
+   },
+   "center": {
+    "lon": -54.266,
+    "lat": -13.524
+   },
+   "portIds": [
+    "PRT-RIO",
+    "PRT-SSZ"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-CAN",
+   "iso2": "CA",
+   "iso3": "CAN",
+   "name": "Canada",
+   "bbox": {
+    "west": -141.005,
+    "south": 43.002,
+    "east": -55.706,
+    "north": 71.826
+   },
+   "center": {
+    "lon": -98.356,
+    "lat": 57.414
+   },
+   "portIds": [
+    "PRT-HFX",
+    "PRT-PRR",
+    "PRT-YMQ",
+    "PRT-YVR"
+   ],
+   "regionIds": [
+    "REG-NAP",
+    "REG-NAA"
+   ],
+   "primaryRegionId": "REG-NAP",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-CIV",
+   "iso2": "CI",
+   "iso3": "CIV",
+   "name": "Ivory Coast",
+   "bbox": {
+    "west": -8.589,
+    "south": 4.435,
+    "east": -2.558,
+    "north": 10.668
+   },
+   "center": {
+    "lon": -5.574,
+    "lat": 7.552
+   },
+   "portIds": [
+    "PRT-ABJ"
+   ],
+   "regionIds": [
+    "REG-WAF"
+   ],
+   "primaryRegionId": "REG-WAF",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-CHL",
+   "iso2": "CL",
+   "iso3": "CHL",
+   "name": "Chile",
+   "bbox": {
+    "west": -75.566,
+    "south": -53.875,
+    "east": -67.859,
+    "north": -17.507
+   },
+   "center": {
+    "lon": -71.712,
+    "lat": -35.691
+   },
+   "portIds": [
+    "PRT-SAI",
+    "PRT-VAP"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-CHN",
+   "iso2": "CN",
+   "iso3": "CHN",
+   "name": "China",
+   "bbox": {
+    "west": 73.859,
+    "south": 20.279,
+    "east": 134.313,
+    "north": 53.489
+   },
+   "center": {
+    "lon": 104.086,
+    "lat": 36.884
+   },
+   "portIds": [
+    "PRT-DLC",
+    "PRT-NGB",
+    "PRT-SHA",
+    "PRT-SZX",
+    "PRT-TAO",
+    "PRT-TSN",
+    "PRT-XMN"
+   ],
+   "regionIds": [
+    "REG-EAS"
+   ],
+   "primaryRegionId": "REG-EAS",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-COL",
+   "iso2": "CO",
+   "iso3": "COL",
+   "name": "Colombia",
+   "bbox": {
+    "west": -78.993,
+    "south": -4.232,
+    "east": -66.934,
+    "north": 12.443
+   },
+   "center": {
+    "lon": -72.963,
+    "lat": 4.106
+   },
+   "portIds": [
+    "PRT-CTG"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-DEU",
+   "iso2": "DE",
+   "iso3": "DEU",
+   "name": "Germany",
+   "bbox": {
+    "west": 5.906,
+    "south": 47.367,
+    "east": 14.964,
+    "north": 55.065
+   },
+   "center": {
+    "lon": 10.435,
+    "lat": 51.216
+   },
+   "portIds": [
+    "PRT-HAM"
+   ],
+   "regionIds": [
+    "REG-NEU"
+   ],
+   "primaryRegionId": "REG-NEU",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-DJI",
+   "iso2": "DJ",
+   "iso3": "DJI",
+   "name": "Djibouti",
+   "bbox": {
+    "west": 41.75,
+    "south": 10.931,
+    "east": 43.419,
+    "north": 12.697
+   },
+   "center": {
+    "lon": 42.584,
+    "lat": 11.814
+   },
+   "portIds": [
+    "PRT-DJB"
+   ],
+   "regionIds": [
+    "REG-GULF"
+   ],
+   "primaryRegionId": "REG-GULF",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-ECU",
+   "iso2": "EC",
+   "iso3": "ECU",
+   "name": "Ecuador",
+   "bbox": {
+    "west": -81.009,
+    "south": -5.011,
+    "east": -75.252,
+    "north": 1.434
+   },
+   "center": {
+    "lon": -78.131,
+    "lat": -1.789
+   },
+   "portIds": [
+    "PRT-GYE"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-EGY",
+   "iso2": "EG",
+   "iso3": "EGY",
+   "name": "Egypt",
+   "bbox": {
+    "west": 24.746,
+    "south": 21.994,
+    "east": 36.898,
+    "north": 31.649
+   },
+   "center": {
+    "lon": 30.822,
+    "lat": 26.822
+   },
+   "portIds": [
+    "PRT-ALX",
+    "PRT-PSD"
+   ],
+   "regionIds": [
+    "REG-MED"
+   ],
+   "primaryRegionId": "REG-MED",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-ESP",
+   "iso2": "ES",
+   "iso3": "ESP",
+   "name": "Spain",
+   "bbox": {
+    "west": -9.292,
+    "south": 35.172,
+    "east": 4.337,
+    "north": 43.79
+   },
+   "center": {
+    "lon": -2.477,
+    "lat": 39.481
+   },
+   "portIds": [
+    "PRT-ALG",
+    "PRT-BCN",
+    "PRT-VLC"
+   ],
+   "regionIds": [
+    "REG-MED"
+   ],
+   "primaryRegionId": "REG-MED",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-FRA",
+   "iso2": "FR",
+   "iso3": "FRA",
+   "name": "France",
+   "bbox": {
+    "west": -4.706,
+    "south": 42.413,
+    "east": 8.189,
+    "north": 51.088
+   },
+   "center": {
+    "lon": 1.742,
+    "lat": 46.75
+   },
+   "portIds": [
+    "PRT-LHV",
+    "PRT-MRS"
+   ],
+   "regionIds": [
+    "REG-MED",
+    "REG-NEU"
+   ],
+   "primaryRegionId": "REG-MED",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-GBR",
+   "iso2": "GB",
+   "iso3": "GBR",
+   "name": "United Kingdom",
+   "bbox": {
+    "west": -6.215,
+    "south": 50.011,
+    "east": 1.588,
+    "north": 58.67
+   },
+   "center": {
+    "lon": -2.314,
+    "lat": 54.34
+   },
+   "portIds": [
+    "PRT-FLX",
+    "PRT-SOU"
+   ],
+   "regionIds": [
+    "REG-NEU"
+   ],
+   "primaryRegionId": "REG-NEU",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-GHA",
+   "iso2": "GH",
+   "iso3": "GHA",
+   "name": "Ghana",
+   "bbox": {
+    "west": -3.213,
+    "south": 4.737,
+    "east": 1.133,
+    "north": 11.163
+   },
+   "center": {
+    "lon": -1.04,
+    "lat": 7.95
+   },
+   "portIds": [
+    "PRT-TEM"
+   ],
+   "regionIds": [
+    "REG-WAF"
+   ],
+   "primaryRegionId": "REG-WAF",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-GRC",
+   "iso2": "GR",
+   "iso3": "GRC",
+   "name": "Greece",
+   "bbox": {
+    "west": 20.004,
+    "south": 36.137,
+    "east": 26.595,
+    "north": 41.728
+   },
+   "center": {
+    "lon": 23.3,
+    "lat": 38.932
+   },
+   "portIds": [
+    "PRT-PIR"
+   ],
+   "regionIds": [
+    "REG-MED"
+   ],
+   "primaryRegionId": "REG-MED",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-HKG",
+   "iso2": "HK",
+   "iso3": "HKG",
+   "name": "Hong Kong S.A.R.",
+   "bbox": {
+    "west": 113.837,
+    "south": 22.1,
+    "east": 114.401,
+    "north": 22.561
+   },
+   "center": {
+    "lon": 114.119,
+    "lat": 22.33
+   },
+   "portIds": [
+    "PRT-HKG"
+   ],
+   "regionIds": [
+    "REG-EAS"
+   ],
+   "primaryRegionId": "REG-EAS",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-IDN",
+   "iso2": "ID",
+   "iso3": "IDN",
+   "name": "Indonesia",
+   "bbox": {
+    "west": 95.199,
+    "south": -8.852,
+    "east": 118.957,
+    "north": 5.603
+   },
+   "center": {
+    "lon": 107.078,
+    "lat": -1.624
+   },
+   "portIds": [
+    "PRT-JKT",
+    "PRT-SBY"
+   ],
+   "regionIds": [
+    "REG-SEA"
+   ],
+   "primaryRegionId": "REG-SEA",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-IND",
+   "iso2": "IN",
+   "iso3": "IND",
+   "name": "India",
+   "bbox": {
+    "west": 68.174,
+    "south": 8.345,
+    "east": 97.078,
+    "north": 35.495
+   },
+   "center": {
+    "lon": 82.626,
+    "lat": 21.92
+   },
+   "portIds": [
+    "PRT-MAA",
+    "PRT-MUM",
+    "PRT-MUN"
+   ],
+   "regionIds": [
+    "REG-IO"
+   ],
+   "primaryRegionId": "REG-IO",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-ITA",
+   "iso2": "IT",
+   "iso3": "ITA",
+   "name": "Italy",
+   "bbox": {
+    "west": 6.637,
+    "south": 37.941,
+    "east": 18.408,
+    "north": 47.028
+   },
+   "center": {
+    "lon": 12.522,
+    "lat": 42.484
+   },
+   "portIds": [
+    "PRT-GOA"
+   ],
+   "regionIds": [
+    "REG-MED"
+   ],
+   "primaryRegionId": "REG-MED",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-JAM",
+   "iso2": "JM",
+   "iso3": "JAM",
+   "name": "Jamaica",
+   "bbox": {
+    "west": -78.375,
+    "south": 17.704,
+    "east": -76.198,
+    "north": 18.525
+   },
+   "center": {
+    "lon": -77.287,
+    "lat": 18.115
+   },
+   "portIds": [
+    "PRT-KIN"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-JPN",
+   "iso2": "JP",
+   "iso3": "JPN",
+   "name": "Japan",
+   "bbox": {
+    "west": 130.899,
+    "south": 32.712,
+    "east": 142.059,
+    "north": 41.513
+   },
+   "center": {
+    "lon": 136.479,
+    "lat": 37.112
+   },
+   "portIds": [
+    "PRT-NGO",
+    "PRT-OSA",
+    "PRT-TYO",
+    "PRT-UKB",
+    "PRT-YOK"
+   ],
+   "regionIds": [
+    "REG-EAS"
+   ],
+   "primaryRegionId": "REG-EAS",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-KEN",
+   "iso2": "KE",
+   "iso3": "KEN",
+   "name": "Kenya",
+   "bbox": {
+    "west": 33.89,
+    "south": -4.678,
+    "east": 41.801,
+    "north": 5.03
+   },
+   "center": {
+    "lon": 37.846,
+    "lat": 0.176
+   },
+   "portIds": [
+    "PRT-MBA"
+   ],
+   "regionIds": [
+    "REG-IO"
+   ],
+   "primaryRegionId": "REG-IO",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-KOR",
+   "iso2": "KR",
+   "iso3": "KOR",
+   "name": "South Korea",
+   "bbox": {
+    "west": 126.15,
+    "south": 34.006,
+    "east": 129.571,
+    "north": 38.624
+   },
+   "center": {
+    "lon": 127.861,
+    "lat": 36.315
+   },
+   "portIds": [
+    "PRT-BUS"
+   ],
+   "regionIds": [
+    "REG-EAS"
+   ],
+   "primaryRegionId": "REG-EAS",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-LKA",
+   "iso2": "LK",
+   "iso3": "LKA",
+   "name": "Sri Lanka",
+   "bbox": {
+    "west": 79.65,
+    "south": 5.927,
+    "east": 81.876,
+    "north": 9.828
+   },
+   "center": {
+    "lon": 80.763,
+    "lat": 7.877
+   },
+   "portIds": [
+    "PRT-CMB"
+   ],
+   "regionIds": [
+    "REG-IO"
+   ],
+   "primaryRegionId": "REG-IO",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-MAR",
+   "iso2": "MA",
+   "iso3": "MAR",
+   "name": "Morocco",
+   "bbox": {
+    "west": -16.97,
+    "south": 21.441,
+    "east": -1.09,
+    "north": 36.08
+   },
+   "center": {
+    "lon": -9.03,
+    "lat": 28.76
+   },
+   "portIds": [
+    "PRT-CAS",
+    "PRT-TNG"
+   ],
+   "regionIds": [
+    "REG-MED",
+    "REG-WAF"
+   ],
+   "primaryRegionId": "REG-MED",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-MMR",
+   "iso2": "MM",
+   "iso3": "MMR",
+   "name": "Myanmar",
+   "bbox": {
+    "west": 92.281,
+    "south": 10.337,
+    "east": 101.157,
+    "north": 28.482
+   },
+   "center": {
+    "lon": 96.719,
+    "lat": 19.41
+   },
+   "portIds": [
+    "PRT-RGN"
+   ],
+   "regionIds": [
+    "REG-SEA"
+   ],
+   "primaryRegionId": "REG-SEA",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-MEX",
+   "iso2": "MX",
+   "iso3": "MEX",
+   "name": "Mexico",
+   "bbox": {
+    "west": -117.254,
+    "south": 14.814,
+    "east": -86.823,
+    "north": 32.704
+   },
+   "center": {
+    "lon": -102.039,
+    "lat": 23.759
+   },
+   "portIds": [
+    "PRT-ENS",
+    "PRT-LZC",
+    "PRT-MAN",
+    "PRT-VER"
+   ],
+   "regionIds": [
+    "REG-NAP",
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-NAP",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-MYS",
+   "iso2": "MY",
+   "iso3": "MYS",
+   "name": "Malaysia",
+   "bbox": {
+    "west": 100.144,
+    "south": 1.16,
+    "east": 104.284,
+    "north": 6.7
+   },
+   "center": {
+    "lon": 102.214,
+    "lat": 3.93
+   },
+   "portIds": [
+    "PRT-PKG",
+    "PRT-TPP"
+   ],
+   "regionIds": [
+    "REG-SEA"
+   ],
+   "primaryRegionId": "REG-SEA",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-NGA",
+   "iso2": "NG",
+   "iso3": "NGA",
+   "name": "Nigeria",
+   "bbox": {
+    "west": 2.708,
+    "south": 4.278,
+    "east": 14.652,
+    "north": 13.741
+   },
+   "center": {
+    "lon": 8.68,
+    "lat": 9.01
+   },
+   "portIds": [
+    "PRT-LAG"
+   ],
+   "regionIds": [
+    "REG-WAF"
+   ],
+   "primaryRegionId": "REG-WAF",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-NLD",
+   "iso2": "NL",
+   "iso3": "NLD",
+   "name": "Netherlands",
+   "bbox": {
+    "west": 3.349,
+    "south": 50.748,
+    "east": 7.195,
+    "north": 53.558
+   },
+   "center": {
+    "lon": 5.272,
+    "lat": 52.153
+   },
+   "portIds": [
+    "PRT-RTM"
+   ],
+   "regionIds": [
+    "REG-NEU"
+   ],
+   "primaryRegionId": "REG-NEU",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-NZL",
+   "iso2": "NZ",
+   "iso3": "NZL",
+   "name": "New Zealand",
+   "bbox": {
+    "west": 166.469,
+    "south": -46.661,
+    "east": 178.566,
+    "north": -34.421
+   },
+   "center": {
+    "lon": 172.518,
+    "lat": -40.541
+   },
+   "portIds": [
+    "PRT-AKL",
+    "PRT-TRG",
+    "PRT-WLG"
+   ],
+   "regionIds": [
+    "REG-OCE"
+   ],
+   "primaryRegionId": "REG-OCE",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-PAN",
+   "iso2": "PA",
+   "iso3": "PAN",
+   "name": "Panama",
+   "bbox": {
+    "west": -83.016,
+    "south": 7.235,
+    "east": -77.26,
+    "north": 9.612
+   },
+   "center": {
+    "lon": -80.138,
+    "lat": 8.424
+   },
+   "portIds": [
+    "PRT-BALB",
+    "PRT-COL",
+    "PRT-CRB"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-PER",
+   "iso2": "PE",
+   "iso3": "PER",
+   "name": "Peru",
+   "bbox": {
+    "west": -81.317,
+    "south": -18.164,
+    "east": -68.7,
+    "north": -0.137
+   },
+   "center": {
+    "lon": -75.008,
+    "lat": -9.15
+   },
+   "portIds": [
+    "PRT-CLL"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-PHL",
+   "iso2": "PH",
+   "iso3": "PHL",
+   "name": "Philippines",
+   "bbox": {
+    "west": 117.198,
+    "south": 8.335,
+    "east": 124.146,
+    "north": 18.643
+   },
+   "center": {
+    "lon": 120.672,
+    "lat": 13.489
+   },
+   "portIds": [
+    "PRT-MNL"
+   ],
+   "regionIds": [
+    "REG-SEA"
+   ],
+   "primaryRegionId": "REG-SEA",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-PAK",
+   "iso2": "PK",
+   "iso3": "PAK",
+   "name": "Pakistan",
+   "bbox": {
+    "west": 60.947,
+    "south": 23.769,
+    "east": 76.934,
+    "north": 37.002
+   },
+   "center": {
+    "lon": 68.941,
+    "lat": 30.385
+   },
+   "portIds": [
+    "PRT-KHI"
+   ],
+   "regionIds": [
+    "REG-IO"
+   ],
+   "primaryRegionId": "REG-IO",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-SGP",
+   "iso2": "SG",
+   "iso3": "SGP",
+   "name": "Singapore",
+   "bbox": {
+    "west": 103.63,
+    "south": 1.07,
+    "east": 104.03,
+    "north": 1.47
+   },
+   "center": {
+    "lon": 103.83,
+    "lat": 1.27
+   },
+   "portIds": [
+    "PRT-SIN"
+   ],
+   "regionIds": [
+    "REG-SEA"
+   ],
+   "primaryRegionId": "REG-SEA",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-THA",
+   "iso2": "TH",
+   "iso3": "THA",
+   "name": "Thailand",
+   "bbox": {
+    "west": 97.395,
+    "south": 5.663,
+    "east": 105.566,
+    "north": 20.334
+   },
+   "center": {
+    "lon": 101.481,
+    "lat": 12.998
+   },
+   "portIds": [
+    "PRT-BKK",
+    "PRT-LCH"
+   ],
+   "regionIds": [
+    "REG-SEA"
+   ],
+   "primaryRegionId": "REG-SEA",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-TUR",
+   "iso2": "TR",
+   "iso3": "TUR",
+   "name": "Turkey",
+   "bbox": {
+    "west": 26.033,
+    "south": 35.902,
+    "east": 44.807,
+    "north": 42.096
+   },
+   "center": {
+    "lon": 35.42,
+    "lat": 38.999
+   },
+   "portIds": [
+    "PRT-IST"
+   ],
+   "regionIds": [
+    "REG-MED"
+   ],
+   "primaryRegionId": "REG-MED",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-TWN",
+   "iso2": "TW",
+   "iso3": "TWN",
+   "name": "Taiwan",
+   "bbox": {
+    "west": 118.28,
+    "south": 21.934,
+    "east": 121.968,
+    "north": 25.279
+   },
+   "center": {
+    "lon": 120.124,
+    "lat": 23.607
+   },
+   "portIds": [
+    "PRT-KHH"
+   ],
+   "regionIds": [
+    "REG-EAS"
+   ],
+   "primaryRegionId": "REG-EAS",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-USA",
+   "iso2": "US",
+   "iso3": "USA",
+   "name": "United States of America",
+   "bbox": {
+    "west": -124.483,
+    "south": 24.543,
+    "east": -67.169,
+    "north": 48.993
+   },
+   "center": {
+    "lon": -95.826,
+    "lat": 36.768
+   },
+   "portIds": [
+    "PRT-BAL",
+    "PRT-CHS",
+    "PRT-HOU",
+    "PRT-LAX",
+    "PRT-LGB",
+    "PRT-MIA",
+    "PRT-MSY",
+    "PRT-NYC",
+    "PRT-OAK",
+    "PRT-ORF",
+    "PRT-SAV",
+    "PRT-SEA",
+    "PRT-SFO",
+    "PRT-TAC"
+   ],
+   "regionIds": [
+    "REG-NAP",
+    "REG-NAA"
+   ],
+   "primaryRegionId": "REG-NAA",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-URY",
+   "iso2": "UY",
+   "iso3": "URY",
+   "name": "Uruguay",
+   "bbox": {
+    "west": -58.438,
+    "south": -35.1,
+    "east": -53.12,
+    "north": -30.102
+   },
+   "center": {
+    "lon": -55.779,
+    "lat": -32.601
+   },
+   "portIds": [
+    "PRT-MVD"
+   ],
+   "regionIds": [
+    "REG-LAT"
+   ],
+   "primaryRegionId": "REG-LAT",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-VNM",
+   "iso2": "VN",
+   "iso3": "VNM",
+   "name": "Vietnam",
+   "bbox": {
+    "west": 102.156,
+    "south": 8.66,
+    "east": 109.466,
+    "north": 23.318
+   },
+   "center": {
+    "lon": 105.811,
+    "lat": 15.989
+   },
+   "portIds": [
+    "PRT-HCM",
+    "PRT-HPH"
+   ],
+   "regionIds": [
+    "REG-SEA"
+   ],
+   "primaryRegionId": "REG-SEA",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  },
+  {
+   "countryId": "CNT-ZAF",
+   "iso2": "ZA",
+   "iso3": "ZAF",
+   "name": "South Africa",
+   "bbox": {
+    "west": 16.487,
+    "south": -34.757,
+    "east": 32.893,
+    "north": -22.146
+   },
+   "center": {
+    "lon": 24.69,
+    "lat": -28.451
+   },
+   "portIds": [
+    "PRT-CPT",
+    "PRT-DUR"
+   ],
+   "regionIds": [
+    "REG-IO",
+    "REG-WAF"
+   ],
+   "primaryRegionId": "REG-IO",
+   "provenance": "Natural Earth 110m admin-0 (public domain) via world.earth-render.json"
+  }
+ ]
+}

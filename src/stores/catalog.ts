@@ -3,6 +3,7 @@ import { markRaw, ref, shallowRef } from 'vue';
 import { CatalogValidationError, type Catalog } from '@/data/catalog';
 import { loadCatalog } from '@/data/loader';
 import { buildSearchIndex, type SearchIndex } from '@/engines/search';
+import { buildSpatialRegistry, type SpatialRegistry } from '@/spatial/registry';
 
 export type LoadStatus = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -12,6 +13,8 @@ export const useCatalogStore = defineStore('catalog', () => {
   const issues = ref<string[]>([]);
   const catalog = shallowRef<Catalog | null>(null);
   const searchIndex = shallowRef<SearchIndex | null>(null);
+  /** Geographic hierarchy (earth → region → country → city → port) for scenes, routes and breadcrumbs. */
+  const registry = shallowRef<SpatialRegistry | null>(null);
 
   async function load(): Promise<void> {
     if (status.value === 'loading' || status.value === 'ready') return;
@@ -19,6 +22,7 @@ export const useCatalogStore = defineStore('catalog', () => {
     error.value = null;
     try {
       const c = await loadCatalog();
+      registry.value = markRaw(buildSpatialRegistry(c));
       catalog.value = markRaw(c);
       searchIndex.value = markRaw(buildSearchIndex(c));
       status.value = 'ready';
@@ -40,5 +44,5 @@ export const useCatalogStore = defineStore('catalog', () => {
     return catalog.value;
   }
 
-  return { status, error, issues, catalog, searchIndex, load, retry, require };
+  return { status, error, issues, catalog, registry, searchIndex, load, retry, require };
 });

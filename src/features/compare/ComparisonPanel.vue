@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useId, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { downloadJson } from '@/core/download';
 import { formatHours, formatNm, formatUsd, formatUtc } from '@/core/format';
 import { toIsoUtc } from '@/core/time';
@@ -27,7 +27,6 @@ const wf = useWorkflowStore();
 const notices = useNoticeStore();
 const nav = useNavigation();
 const route = useRoute();
-const router = useRouter();
 const ids = { wait: useId(), rate: useId(), speed: useId(), assignee: useId(), err: useId() };
 
 const voyage = computed(() => catalog.catalog?.byId.voyage.get(props.voyageId) ?? null);
@@ -90,7 +89,7 @@ function exportJson() {
 
 function backToCase() {
   if (caseId.value) nav.openEntity({ kind: 'incident', id: caseId.value });
-  else router.push({ name: 'voyage', params: { voyageId: props.voyageId }, query: { ...route.query, case: undefined } });
+  else nav.closeCompare(props.voyageId);
 }
 </script>
 

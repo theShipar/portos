@@ -18,7 +18,7 @@ import { useViewStore } from '@/stores/view';
 import { mapColors, statusStyle } from '@/styles/tokens';
 import StatusChip from '@/components/ui/StatusChip.vue';
 import { cssHex, markerColors } from '../theme';
-import { clampZoom, ZOOM_RANGE, type MapView2D } from '../viewport';
+import { clampZoom, ZOOM_RANGE, zoomRangeFor, type MapView2D } from '../viewport';
 import { basemapConfig, BASEMAP_COLORS, portosBasemapStyle } from './basemapStyle';
 import { anchorageFeatures, berthFeatures, hazardFeatures, routeFeatures, trackFeature, vesselFeatures } from './features';
 import { buildMapIcons } from './icons';
@@ -119,7 +119,7 @@ function fitScope(animate: boolean) {
   const m = map.value;
   const b = scopeBounds();
   if (!m || !b || view.scope.level === 'earth') return;
-  const [, maxZ] = ZOOM_RANGE[view.scope.level];
+  const [, maxZ] = zoomRangeFor(view.scope);
   m.fitBounds(
     [
       [b.west, b.south],
@@ -534,7 +534,7 @@ async function init() {
   }
   const s = view.scope;
   if (s.level === 'earth') return;
-  const [minZ, maxZ] = ZOOM_RANGE[s.level];
+  const [minZ, maxZ] = zoomRangeFor(s);
   const iv = props.initialView;
   let m: MlMap;
   try {
@@ -617,7 +617,7 @@ watch(
     card.value = null;
     tooltip.value = null;
     const s = view.scope;
-    if (s.level !== 'earth') map.value?.setMaxZoom(ZOOM_RANGE[s.level][1]);
+    if (s.level !== 'earth') map.value?.setMaxZoom(zoomRangeFor(s)[1]);
     nextTick(() => fitScope(true));
   },
 );

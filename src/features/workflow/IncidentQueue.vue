@@ -20,7 +20,7 @@ const query = ref('');
 const showAll = ref(false);
 const expanded = ref<string | null>(null);
 
-const regionId = computed(() => (view.scope.level === 'region' ? view.scope.regionId : null));
+const regionId = computed(() => (view.scope.level === 'region' || view.scope.level === 'country' || view.scope.level === 'city' ? view.scope.regionId : null));
 const regionName = computed(() => (regionId.value ? (catalog.catalog?.byId.region.get(regionId.value)?.name ?? regionId.value) : 'All regions'));
 const all = computed(() => (catalog.catalog && snap.snapshot ? buildQueueRows(catalog.catalog, snap.snapshot, wf.state, regionId.value) : []));
 const matches = computed(() => filterQueueRows(all.value, query.value));

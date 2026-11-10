@@ -466,3 +466,40 @@ blockers. Status values: implemented / tested / blocked.
     southern lobe, "Berth unconfirmed"). Full re-run → exit 0, 43 passed, 6 skipped (opt-in perf/capture).
 - **Blockers:** none.
 
+
+## Phase V2-1 — SpatialDirector, SceneCache, InputRouter, overlay projection, registry, `/ops` routes
+
+- **Decisions:** D-031 (canonical `/ops/*` routes with legacy redirects, country/city scopes, spatial registry,
+  director-owned loop and input).
+- **Implemented:**
+  - `src/spatial/`: `types.ts` (scene lifecycle contract), `SceneCache.ts`, `SpatialDirector.ts`, `InputRouter.ts`,
+    `OverlayProjectionAdapter.ts`, `registry.ts`, `data/countries.json` (49 rows incl. the SGP city-state row) and
+    `scenes/EarthGlobeScene.ts` (GPL header; adapts `EarthScene` to the lifecycle).
+  - `scripts/build_geo.py registry`: country rows from the Natural Earth world file already shipped with the app
+    (ISO fallbacks for France, Norway and Taiwan; bbox = largest polygon plus polygons within 2° of a port).
+  - `EarthScene` managed mode: `tick(now)` holds the old loop body; pointer and visibility listeners are skipped and
+    input arrives through `attachInput(router)`; `setActive` gates controls.
+  - `PortosEarthView.vue` (spatialV2 on): creates the InputRouter, overlay adapter and director; scope changes call
+    `director.navigate` with the preset/stack flight as the scene focus; labels and test probes project through
+    the adapter; the director pauses in hidden tabs. Country and city scopes frame their registry bbox and light
+    their country on the globe. With spatialV2 off, the v1 loop runs unchanged.
+  - Routing: `opsLocation.ts`, `legacyRedirects.ts`, router table, `useRouteSync` (scene from path, selection
+    validation, `/ops` auto scene, `panel=compare|replay`, clock writes `time=`), `useNavigation.openCompare/
+    closeCompare`; breadcrumb shows registry labels ("Singapore port" under the Singapore city); incident queue
+    filters by region for country and city scopes.
+  - Bugs caught by the new unit tests: `SceneCache` evicted the scene it had just created when all others were
+    pinned; `SpatialDirector.stop()` called `cancelAnimationFrame` with no frame scheduled.
+- **Tested:**
+  - `npm run typecheck` → exit 0.
+  - `npx vitest run` → exit 0, 221 tests in 14 files (new `spatial.test.ts` 19 and `routing.test.ts` 13: cache
+    LRU/pinning, director phases, cancel/Back mid-preload, error keeps scene, camera memory, planner hooks, one
+    loop, bounded memory; input click/drag/long-press/hover coalescing/priority; projection margin and anchors;
+    registry counts and parent/child consistency, flagship trails, views, illustrative bounds; ops round-trip for
+    every level; all 10 legacy redirects). Updated route expectations in `shell`, `port`, `maritime` tests.
+  - `npm run build` → exit 0.
+  - `npx playwright test` → exit 0, 46 passed, 6 skipped (opt-in perf/capture). New `routes.spec.ts`: v1 links
+    redirect (`/region?t=` → `/ops/region?time=`, `/compare` → `panel=compare`, `/incidents` → port scene),
+    `/ops/country/CNT-NLD` and `/ops/city/CTY-SIN` breadcrumbs, unknown country → Earth with a notice, director
+    state idle with `activeFocusId` following Earth → REG-SEA → Back, scene cache size 1, nothing disposed.
+    Visual baselines unchanged (16/16 matched without regeneration).
+- **Blockers:** none.

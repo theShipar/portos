@@ -10,6 +10,9 @@ export interface PortosAdapter {
   vesselsNear(x: number, y: number, radius: number): string[];
   portPoint(id: string): { x: number; y: number; visible: boolean } | null;
   loseContext(): void;
+  spatialV2: boolean;
+  director(): { phase: string; activeSceneKey: string | null; activeFocusId: string | null; flights: number; cancelled: number } | null;
+  sceneCache(): { size: number; created: number; disposed: number; keys: string[] } | null;
 }
 
 declare global {

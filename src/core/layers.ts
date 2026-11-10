@@ -1,4 +1,6 @@
-export type ScopeLevel = 'earth' | 'region' | 'port';
+export type ScopeLevel = 'earth' | 'region' | 'country' | 'city' | 'port';
+
+const BELOW_EARTH: ScopeLevel[] = ['region', 'country', 'city'];
 
 export type LayerId = 'fleet' | 'ambient' | 'ports' | 'routes' | 'weather' | 'incidents' | 'traffic' | 'anchorage' | 'berths';
 
@@ -15,15 +17,15 @@ export interface LayerConfig {
 
 /** Render order follows the layer-management spec: density → weather → routes → symbols → selection → labels. */
 export const LAYERS: LayerConfig[] = [
-  { id: 'traffic', label: 'Traffic density', scopes: ['region'], visibleByDefault: false, source: 'positions.json', quality: 'Derived', renderOrder: 10, legend: 'Vessel count per cell at the simulation time' },
-  { id: 'weather', label: 'Weather', scopes: ['earth', 'region', 'port'], visibleByDefault: true, source: 'weatherHazards.json', quality: 'Simulated', renderOrder: 20, legend: 'Hazard polygons by severity and validity window' },
+  { id: 'traffic', label: 'Traffic density', scopes: BELOW_EARTH, visibleByDefault: false, source: 'positions.json', quality: 'Derived', renderOrder: 10, legend: 'Vessel count per cell at the simulation time' },
+  { id: 'weather', label: 'Weather', scopes: ['earth', ...BELOW_EARTH, 'port'], visibleByDefault: true, source: 'weatherHazards.json', quality: 'Simulated', renderOrder: 20, legend: 'Hazard polygons by severity and validity window' },
   { id: 'anchorage', label: 'Anchorage', scopes: ['port'], visibleByDefault: true, source: 'anchorages.json', quality: 'Simulated', renderOrder: 25, legend: 'Demo anchorage zone with queue count' },
-  { id: 'routes', label: 'Routes', scopes: ['earth', 'region', 'port'], visibleByDefault: true, source: 'routes.json', quality: 'Simulated', renderOrder: 30, legend: 'Synthetic voyage corridors (not navigational routes)' },
+  { id: 'routes', label: 'Routes', scopes: ['earth', ...BELOW_EARTH, 'port'], visibleByDefault: true, source: 'routes.json', quality: 'Simulated', renderOrder: 30, legend: 'Synthetic voyage corridors (not navigational routes)' },
   { id: 'berths', label: 'Berths', scopes: ['port'], visibleByDefault: true, source: 'berths.json', quality: 'Simulated', renderOrder: 35, legend: 'Berth status: occupied, scheduled, unavailable, free, unknown' },
-  { id: 'ports', label: 'Ports', scopes: ['earth', 'region', 'port'], visibleByDefault: true, source: 'ports.json', quality: 'Imported', renderOrder: 40, legend: 'Port locations; operational data is simulated' },
-  { id: 'ambient', label: 'Other vessels', scopes: ['earth', 'region', 'port'], visibleByDefault: true, source: 'positions.json', quality: 'Simulated', renderOrder: 45, legend: 'Ambient simulated traffic outside the managed fleet' },
-  { id: 'fleet', label: 'Managed fleet', scopes: ['earth', 'region', 'port'], visibleByDefault: true, source: 'positions.json', quality: 'Simulated', renderOrder: 50, legend: 'Managed fleet vessels coloured by exception state' },
-  { id: 'incidents', label: 'Incidents', scopes: ['earth', 'region', 'port'], visibleByDefault: true, source: 'incidents.json', quality: 'Simulated', renderOrder: 60, legend: 'Unresolved incidents by severity' },
+  { id: 'ports', label: 'Ports', scopes: ['earth', ...BELOW_EARTH, 'port'], visibleByDefault: true, source: 'ports.json', quality: 'Imported', renderOrder: 40, legend: 'Port locations; operational data is simulated' },
+  { id: 'ambient', label: 'Other vessels', scopes: ['earth', ...BELOW_EARTH, 'port'], visibleByDefault: true, source: 'positions.json', quality: 'Simulated', renderOrder: 45, legend: 'Ambient simulated traffic outside the managed fleet' },
+  { id: 'fleet', label: 'Managed fleet', scopes: ['earth', ...BELOW_EARTH, 'port'], visibleByDefault: true, source: 'positions.json', quality: 'Simulated', renderOrder: 50, legend: 'Managed fleet vessels coloured by exception state' },
+  { id: 'incidents', label: 'Incidents', scopes: ['earth', ...BELOW_EARTH, 'port'], visibleByDefault: true, source: 'incidents.json', quality: 'Simulated', renderOrder: 60, legend: 'Unresolved incidents by severity' },
 ];
 
 export const DEFAULT_LAYERS: Record<LayerId, boolean> = Object.fromEntries(LAYERS.map((l) => [l.id, l.visibleByDefault])) as Record<LayerId, boolean>;

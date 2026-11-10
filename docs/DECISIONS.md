@@ -284,3 +284,26 @@ after the draws, so unrelated records are byte-stable apart from derived fields.
 `src/core/flags.ts` reads `VITE_SPATIAL_V2` at build time and `?spatialV2=0|1` from the first URL (kept in
 `sessionStorage`), once at startup. Default on. With it off, all scopes render through the v1 sphere scene and
 v1 routes, so the release keeps a working fallback while V2 scenes are introduced.
+
+## D-031 Canonical `/ops/*` routes, spatial registry and SpatialDirector
+Supersedes the v1 route table (`/operations`, `/region/:id`, `/port/:id`, `/vessel/:id`, `/voyage/:id`,
+`/incidents/:id`, `/corridors/:id`, `/weather/:id`, `/compare/:id`, `/replay/:id` with `in=` and `t=`).
+- **Routes:** the scene is the path (`/ops/earth`, `/ops/region/:regionId`, `/ops/country/:countryId`,
+  `/ops/city/:cityId`, `/ops/port/:portId`); the selection, panel and time are query keys (`vessel`, `voyage`,
+  `incident`, `route`, `hazard`, `panel=compare|replay`, `time`, `speed`, `mode`, `view`, `layers`, `kpi`). Other keys
+  (e.g. `case`) pass through. `/ops` with only a selection resolves the scene (incidents open at their port) and
+  replaces itself with the canonical URL. Every v1 route is kept as a `legacy-*` redirect (`t` → `time`, `in` →
+  scene path) so old links and bookmarks keep working.
+- **Scope model:** `Scope` gains `country` and `city`; ports carry optional `countryId`/`cityId`. The breadcrumb is
+  Earth → region → country → city → port. 2D stays limited to region and port scopes.
+- **Registry:** `src/spatial/registry.ts` builds one entry per Earth, region (11), port-bearing country (48,
+  `CNT-<ISO3>`, from `scripts/build_geo.py registry` → `src/spatial/data/countries.json`), flagship city (`CTY-SIN`,
+  `CTY-RTM`, `CTY-GOA`) and port (100), with parent/child links, bbox, view list and provenance. Singapore is a
+  city-state: `REG-SEA → CTY-SIN → PRT-SIN` with no country level. REG-MED and REG-WAF are flagged
+  `illustrativeBounds`.
+- **Director:** with `spatialV2` on, `SpatialDirector` owns the single frame loop and every camera flight
+  (phases preparing → flying → handoff → settling → idle, or error which keeps the previous scene). A new
+  navigation aborts the in-flight one, which is how Back works mid-flight. `SceneCache` (LRU 3, pinned active and
+  destination) disposes evicted scenes. `InputRouter` owns pointer input (5 px drag threshold, 600 ms click limit,
+  one rAF-coalesced hover hit test, priority testers). `OverlayProjectionAdapter` is the only path from the active
+  camera to DOM labels. In Phase 1 every globe target shares the `earth` scene; Phase 2 adds extruded scenes.

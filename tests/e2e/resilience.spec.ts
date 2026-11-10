@@ -13,7 +13,7 @@ test.describe('Failure paths', () => {
     await open(page, '/operations');
     await expect(page.getByRole('alert').filter({ hasText: '3D map unavailable' })).toBeVisible();
     await search(page, 'VSL-0001');
-    await expect(page).toHaveURL(/\/vessel\/VSL-0001/);
+    await expect(page).toHaveURL(/[?&]vessel=VSL-0001/);
     await expect(page.getByTestId('exposure-value')).toHaveText('$24,000');
   });
 
@@ -27,7 +27,7 @@ test.describe('Failure paths', () => {
     await expectHeading(page, 'MV Pacific Horizon');
     await alert.getByRole('button', { name: 'Retry 3D map' }).click();
     await globeReady(page);
-    await expect(page).toHaveURL(/\/vessel\/VSL-0001/);
+    await expect(page).toHaveURL(/[?&]vessel=VSL-0001/);
     await expectHeading(page, 'MV Pacific Horizon');
   });
 

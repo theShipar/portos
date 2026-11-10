@@ -87,9 +87,9 @@ describe('selection focus', () => {
   });
 
   it('corridor and weather routes keep the scope context', () => {
-    expect(routeForEntity({ kind: 'route', id: 'RTE-SIN-RTM' }, { level: 'region', regionId: 'REG-SEA' })).toMatchObject({ name: 'route', params: { routeId: 'RTE-SIN-RTM' }, query: { in: 'region:REG-SEA' } });
+    expect(routeForEntity({ kind: 'route', id: 'RTE-SIN-RTM' }, { level: 'region', regionId: 'REG-SEA' })).toMatchObject({ name: 'ops-region', params: { regionId: 'REG-SEA' }, query: { route: 'RTE-SIN-RTM' } });
     const h = c.weatherHazards[0]!.hazardId;
-    expect(routeForEntity({ kind: 'weather', id: h }, { level: 'earth' })).toMatchObject({ name: 'weather', params: { hazardId: h } });
+    expect(routeForEntity({ kind: 'weather', id: h }, { level: 'earth' })).toMatchObject({ name: 'ops-earth', query: { hazard: h } });
   });
 });
 

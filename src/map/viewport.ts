@@ -28,8 +28,13 @@ export function distanceForDegPerPx(degPerPx: number, radius: number, pxToWorld:
   return radius + (degPerPx * DEG * radius) / pxToWorld;
 }
 
+/** 2D zoom range for any scope below Earth (country and city borrow the region range; they have no 2D mode). */
+export function zoomRangeFor(scope: Exclude<Scope, { level: 'earth' }>): [number, number] {
+  return scope.level === 'port' ? ZOOM_RANGE.port : ZOOM_RANGE.region;
+}
+
 export function clampZoom(scope: Scope, zoom: number): number {
-  if (scope.level === 'earth') return zoom;
+  if (scope.level !== 'region' && scope.level !== 'port') return zoom;
   const [lo, hi] = ZOOM_RANGE[scope.level];
   return Math.min(hi, Math.max(lo, zoom));
 }

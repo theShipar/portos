@@ -14,7 +14,7 @@ export interface CameraPose {
 
 export interface CameraPreset {
   id: string;
-  scope: 'earth' | 'region' | 'port' | 'vessel';
+  scope: 'earth' | 'region' | 'country' | 'city' | 'port' | 'vessel';
   center: GeoPoint;
   distance: number;
   minDistance: number;
@@ -63,6 +63,12 @@ export function regionPreset(id: string, bounds: Bounds, dataDistance: number, c
   const hinted = (dataDistance / 100) * EARTH_RADIUS;
   const distance = Math.min(hinted * 1.35, Math.max(hinted * 0.75, fitted));
   return { id, scope: 'region', center: boundsCenter(bounds), distance, minDistance: 2.25, maxDistance: Math.max(9, distance * 1.6) };
+}
+
+/** Country and city framing on the globe: fit the registry bounds, never closer than a city-scale altitude. */
+export function boundsPreset(id: string, scope: 'country' | 'city', bounds: Bounds, camera: Pick<PerspectiveCamera, 'fov' | 'aspect'>): CameraPreset {
+  const distance = Math.max(EARTH_RADIUS + (scope === 'city' ? 0.06 : 0.25), distanceToFitBounds(bounds, camera, 0.78));
+  return { id, scope, center: boundsCenter(bounds), distance, minDistance: 2.06, maxDistance: Math.max(6, distance * 2) };
 }
 
 export function pointPreset(id: string, scope: 'port' | 'vessel', center: GeoPoint, altitude: number): CameraPreset {
