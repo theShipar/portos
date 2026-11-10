@@ -573,6 +573,32 @@ export class Region3DScene implements SpatialScene, MapSurface {
     });
   }
 
+  /**
+   * Camera for the handoff's static frame: higher and flatter than the preset (the settle flight eases into the
+   * oblique, north-up framing), or exactly the preset for reduced motion.
+   */
+  setEntryCamera(preset: CameraPreset, exact: boolean): void {
+    if (!this.proj) return;
+    this.cancelFlight();
+    const distance = Math.min(this.span * 1.6, globeToPlanarDistance(preset.distance));
+    this.controls.minDistance = Math.min(globeToPlanarDistance(preset.minDistance), distance);
+    this.controls.maxDistance = Math.max(Math.min(this.span * 1.6, globeToPlanarDistance(preset.maxDistance)), distance * 1.4);
+    this.applyOrbit({
+      target: this.toWorld(preset.center.lat, preset.center.lon),
+      distance: exact ? distance : distance * 1.4,
+      polar: exact ? TILT[this.level] : TILT[this.level] * 0.45,
+      azimuth: exact ? 0 : -0.16,
+    });
+  }
+
+  /** Draws this scene into the shared canvas now (handoff static frame), outside the director's frame loop. */
+  drawNow(): void {
+    if (!this.doc) return;
+    this.updateClip();
+    this.renderer.render(this.scene, this.camera);
+    this.dirty = true;
+  }
+
   flyToPose(pose: CameraPose, limits: { min: number; max: number }): Promise<boolean> {
     return this.flyTo({ id: 'restore', scope: 'earth', center: { lat: pose.lat, lon: pose.lon }, distance: pose.distance, minDistance: limits.min, maxDistance: limits.max });
   }

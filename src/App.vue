@@ -43,9 +43,8 @@ watch(
   { immediate: true },
 );
 
-if (view.storageWarning) notices.push(view.storageWarning, 'warning');
-if (assumptions.storageWarning) notices.push(assumptions.storageWarning, 'warning');
-if (workflow.storageWarning) notices.push(workflow.storageWarning, 'warning');
+// Reset saved work must stay visible until dismissed; first load can outlast a timed toast.
+for (const w of [view.storageWarning, assumptions.storageWarning, workflow.storageWarning]) if (w) notices.push(w, 'warning', { persistent: true });
 
 const isTyping = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(t.tagName));
 
@@ -53,7 +52,7 @@ function onKey(e: KeyboardEvent) {
   if ((e.key === '/' && !isTyping(e.target)) || (e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey))) {
     e.preventDefault();
     header.value?.focusSearch();
-  } else if (e.key === 'Escape' && !isTyping(e.target) && view.selection) {
+  } else if (e.key === 'Escape' && !e.defaultPrevented && !isTyping(e.target) && view.selection) {
     nav.closeSelection();
   } else if (e.key === 'Backspace' && !isTyping(e.target) && !e.metaKey && !e.ctrlKey) {
     e.preventDefault();

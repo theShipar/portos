@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // 作者全平台ID：宋夏天Dazzle；公众号：送你整个夏天
 import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import { boundsCenter, pointInPolygon } from '@/core/geo';
 import { formatNm, formatUtc } from '@/core/format';
 import { LAYERS, type LayerId } from '@/core/layers';
@@ -30,6 +31,8 @@ import { useSessionStore } from '@/stores/session';
 import { useSnapshotStore } from '@/stores/snapshot';
 import { useViewStore } from '@/stores/view';
 import { scaleBar } from '@/spatial/compass';
+import { createBridgePlanner, type BridgeHost, type BridgeStep } from '@/spatial/EarthGeographyBridge';
+import { HandoffStage } from '@/spatial/HandoffStage';
 import { prefetchGeoDocs } from '@/spatial/geoData';
 import { terrainMaps } from '@/spatial/scenes/regionGeometry';
 import { InputRouter } from '@/spatial/InputRouter';
@@ -56,6 +59,7 @@ const view = useViewStore();
 const clock = useClockStore();
 const session = useSessionStore();
 const nav = useNavigation();
+const router = useRouter();
 
 const host = ref<HTMLDivElement | null>(null);
 const state = ref<'loading' | 'ready' | 'no-webgl' | 'error'>('loading');
@@ -74,6 +78,7 @@ const scaleTextEl = ref<HTMLElement | null>(null);
 const tooltip = ref<{ x: number; y: number; title: string; lines: string[] } | null>(null);
 const labelEls = new Map<string, HTMLElement>();
 const portLabelEls = new Map<string, HTMLElement>();
+const cityLabelEls = new Map<string, HTMLElement>();
 const clusterEls = new Map<string, HTMLElement>();
 const clusterCell = ref(0);
 let clusterMode: 'earth' | 'stack' = 'earth';
@@ -91,6 +96,16 @@ let director: SpatialDirector | null = null;
 let input: InputRouter | null = null;
 const projection = new OverlayProjectionAdapter();
 let nextFlight: ((surf: MapSurface) => Promise<boolean>) | null = null;
+/** Camera goal of the navigation in progress, read by the handoff bridge. */
+let pendingNav: { scope: Scope; pose: CameraPose | null } = { scope: { level: 'earth' }, pose: null };
+let bridgeTimeline: { step: BridgeStep; ms: number; plannedMs: number }[] = [];
+let stage: HandoffStage | null = null;
+const stageFrame = ref<HTMLCanvasElement | null>(null);
+const stageVeil = ref<HTMLElement | null>(null);
+const overlayHidden = new Set<MapSurface>();
+const labelsHidden = ref(false);
+const preparingLabel = ref<string | null>(null);
+let preparingTimer = 0;
 
 const markers = computed(() => snapStore.mapMarkers);
 const ports = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildPortMarkers(catalog.catalog, snapStore.snapshot)) : []));
@@ -133,6 +148,25 @@ const scopePorts = computed(() => {
     .filter((p) => p.regionId === activeRegionId.value)
     .sort((a, b) => b.openIncidents - a.openIncidents || (b.waitHours ?? -1) - (a.waitHours ?? -1) || a.name.localeCompare(b.name));
 });
+
+/** Drillable cities under the current region or country; small city-states are otherwise covered by markers. */
+const scopeCities = computed(() => {
+  const reg = catalog.registry;
+  const s = view.scope;
+  if (!reg || !flags.spatialV2 || (s.level !== 'region' && s.level !== 'country')) return [];
+  const parentId = s.level === 'region' ? activeRegionId.value : s.countryId;
+  return CITIES.map((ct) => reg.get(ct.id)).filter((e): e is NonNullable<typeof e> => !!e && e.parentId === parentId);
+});
+
+function openCity(cityId: string) {
+  const c = catalog.catalog;
+  const reg = catalog.registry;
+  if (!c || !reg || director?.busy) return;
+  const scope = scopeFromSceneRef(c, reg, { level: 'city', id: cityId });
+  if (!scope) return;
+  tooltip.value = null;
+  nav.openScope(scope);
+}
 
 function presetFor(s: Scope, surf: MapSurface): CameraPreset {
   const c = catalog.catalog!;
@@ -198,6 +232,8 @@ async function applyScope(next: Scope, opts: { initial?: boolean } = {}) {
   const saved = opts.initial ? null : stack.transition(snapshotItem(currentScope, cur), next);
   currentScope = next;
   globe.setIdleRotation(next.level === 'earth' && !view.selection);
+  pendingNav = { scope: next, pose: saved?.cameraPose ?? null };
+  bridgeTimeline = [];
   const fly = (surf: MapSurface) => {
     surf.setRegionHighlight(highlightFor(next, surf));
     surf.setHoverHighlight(null);
@@ -488,9 +524,10 @@ function labelWidth(el: HTMLElement): number {
 }
 
 /** Position a DOM label over a globe point; with `taken`, skip it if it would overlap an already placed label. */
-function place(el: HTMLElement | undefined, sc: MapSurface, lat: number, lon: number, show: boolean, dx = 0, taken?: Rect[]) {
+function place(el: HTMLElement | undefined, sc: MapSurface, lat: number, lon: number, show: boolean, dx = 0, taken?: Rect[], dy = 0) {
   if (!el) return;
-  const p = geoProject(sc, lat, lon);
+  const g = geoProject(sc, lat, lon);
+  const p = { ...g, y: g.y + dy };
   let visible = show && p.visible;
   if (visible && taken) {
     const w = labelWidth(el);
@@ -535,6 +572,7 @@ function onFrame(_now: number, dirty: boolean) {
   const atEarth = view.scope.level === 'earth';
   const taken: Rect[] = [];
   for (const r of regions.value) place(labelEls.get(r.regionId), sc, r.center.lat, r.center.lon, atEarth, 0, atEarth ? taken : undefined);
+  for (const ct of scopeCities.value) place(cityLabelEls.get(ct.id), sc, ct.center.lat, ct.center.lon, true, 0, taken, -22);
   for (const p of scopePorts.value) place(portLabelEls.get(p.portId), sc, p.point.lat, p.point.lon, true, 9, taken);
   for (const cl of clusters.value.clusters) placeBadge(clusterEls.get(cl.id), sc, cl.center.lat, cl.center.lon, taken);
 }
@@ -559,12 +597,27 @@ async function init() {
     input = markRaw(new InputRouter(sc.renderer.domElement));
     sc.attachInput(input);
     const globe = new EarthGlobeScene(sc, projection, () => (nextFlight ? nextFlight(sc) : Promise.resolve(true)));
-    director = markRaw(new SpatialDirector({ factory: (t) => (t.kind === 'earth' ? globe : createPlanarScene(t, sc)) }));
+    const surfaceOf = (s: SpatialScene): MapSurface | null => (s === globe ? sc : s instanceof Region3DScene ? s : null);
+    stage = stageFrame.value && stageVeil.value ? new HandoffStage(stageFrame.value, stageVeil.value) : null;
+    director = markRaw(
+      new SpatialDirector({
+        factory: (t) => (t.kind === 'earth' ? globe : createPlanarScene(t, sc)),
+        planner: stage ? createBridgePlanner(bridgeHost(sc, stage, surfaceOf)) : undefined,
+      }),
+    );
     director.on('frame', (_ctx, drew) => {
       if (drew) projection.update();
     });
-    director.on('phase', (phase) => input?.setEnabled(phase === 'idle' || phase === 'flying' || phase === 'error'));
-    director.on('active', (s) => setActiveSurface(s === globe ? sc : (s as Region3DScene)));
+    director.on('phase', (phase, target) => {
+      // Spec 05: no repeat selections while a flight runs; Back (history) still cancels it.
+      input?.setEnabled(phase === 'idle' || phase === 'error');
+      clearTimeout(preparingTimer);
+      if (phase === 'preparing' && target) {
+        const label = catalog.registry?.get(target.focusId)?.label ?? target.focusId;
+        preparingTimer = window.setTimeout(() => (preparingLabel.value = label), 300);
+      } else preparingLabel.value = null;
+    });
+    director.on('active', (s) => setActiveSurface(surfaceOf(s) ?? sc));
   }
   try {
     const world = await loadWorld();
@@ -593,6 +646,55 @@ async function init() {
     prefetchGeoDocs([...catalog.registry.entries.values()].filter((e) => e.type === 'region' || e.type === 'city').map((e) => e.geometryPath!));
   }
   await applyScope(view.scope, { initial: true });
+}
+
+/** What the handoff bridge needs from the view: camera goals, insets, overlay visibility, immediate draws. */
+function bridgeHost(globe: EarthScene, st: HandoffStage, surfaceOf: (s: SpatialScene) => MapSurface | null): BridgeHost {
+  return {
+    stage: st,
+    canvas: globe.renderer.domElement,
+    reducedMotion: () => session.reducedMotion,
+    surfaceOf,
+    destination: (surf) => ({ preset: presetFor(pendingNav.scope, surf), pose: pendingNav.pose }),
+    approach: (_target, g) => {
+      g.setRegionHighlight(highlightFor(pendingNav.scope, g));
+      return pendingNav.scope.level === 'earth' ? null : presetFor(pendingNav.scope, g);
+    },
+    prepare: (surf) => {
+      surf.setReducedMotion(session.reducedMotion);
+      surf.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0, { instant: true });
+      surf.setRegionHighlight(highlightFor(pendingNav.scope, surf));
+      surf.setHoverHighlight(null);
+      overlays.get(surf)?.update();
+    },
+    setOverlaysVisible,
+    drawNow: (surf) => {
+      if (surf instanceof Region3DScene) surf.drawNow();
+      else if (surf === globe) {
+        globe.invalidate();
+        globe.tick(performance.now());
+      }
+    },
+    onStep: (step, ms, plannedMs) => bridgeTimeline.push({ step, ms, plannedMs }),
+  };
+}
+
+/** 3D overlays and DOM labels stay hidden while a surface is mid-handoff; settle reveals them. */
+function setOverlaysVisible(surf: MapSurface, visible: boolean) {
+  surf.overlay.visible = visible;
+  if (visible) overlayHidden.delete(surf);
+  else overlayHidden.add(surf);
+  labelsHidden.value = !!surface.value && overlayHidden.has(surface.value);
+  surf.invalidate();
+}
+
+/** Escape during a flight goes back to where the user came from, unless a selection, menu or dialog claims it first. */
+function onKeydown(e: KeyboardEvent) {
+  if (e.key !== 'Escape' || e.defaultPrevented || view.selection || stackMenu.value) return;
+  if (!director?.busy || !(window.history.state as { back?: unknown } | null)?.back) return;
+  if ((e.target as Element | null)?.closest?.('[role="dialog"], [role="combobox"], input, textarea')) return;
+  e.preventDefault();
+  router.back();
 }
 
 /** Extruded region / country / city scene for a director target; it shares the globe's renderer and input. */
@@ -671,6 +773,7 @@ function setActiveSurface(surf: MapSurface) {
   surf.setReducedMotion(session.reducedMotion);
   surf.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0, { instant: true });
   planarInfo.value = surf instanceof Region3DScene ? { illustrative: surf.illustrativeBounds } : null;
+  labelsHidden.value = overlayHidden.has(surf);
   surf.invalidate();
 }
 
@@ -723,6 +826,7 @@ function exposeTestAdapter(sc: EarthScene) {
     },
     loseContext: () => sc.renderer.getContext().getExtension('WEBGL_lose_context')?.loseContext(),
     spatialV2: flags.spatialV2,
+    bridge: () => ({ timeline: [...bridgeTimeline], stageVisible: !!stage?.visible, labelsHidden: labelsHidden.value }),
     director: () => director?.state() ?? null,
     sceneCache: () => director?.cache.stats() ?? null,
   };
@@ -830,6 +934,12 @@ function dispose() {
   input?.dispose();
   input = null;
   nextFlight = null;
+  clearTimeout(preparingTimer);
+  preparingLabel.value = null;
+  stage?.clear();
+  stage = null;
+  overlayHidden.clear();
+  labelsHidden.value = false;
   projection.setProjector(null);
   for (const surf of [...overlays.keys()]) unbindSurface(surf);
   overlay.value = null;
@@ -842,10 +952,12 @@ function dispose() {
 
 onMounted(() => {
   document.addEventListener('visibilitychange', onVisibility);
+  window.addEventListener('keydown', onKeydown);
   init();
 });
 onBeforeUnmount(() => {
   document.removeEventListener('visibilitychange', onVisibility);
+  window.removeEventListener('keydown', onKeydown);
   dispose();
 });
 
@@ -855,7 +967,10 @@ defineExpose({ resetCamera, scene, surface, overlay });
 <template>
   <div class="earth" :inert="!active || undefined" :aria-hidden="!active || undefined">
     <div ref="host" class="earth__host" />
-    <div v-if="state === 'ready'" v-show="active" class="earth__labels">
+    <canvas ref="stageFrame" class="handoff-frame" aria-hidden="true" data-testid="handoff-frame" />
+    <div ref="stageVeil" class="handoff-veil" aria-hidden="true" />
+    <div v-if="preparingLabel" class="earth__preparing" role="status" data-testid="scene-preparing">Preparing {{ preparingLabel }}…</div>
+    <div v-if="state === 'ready'" v-show="active" class="earth__labels" :class="{ 'earth__labels--hidden': labelsHidden }">
       <button
         v-for="cl in clusters.clusters"
         :key="cl.id"
@@ -884,6 +999,18 @@ defineExpose({ resetCamera, scene, surface, overlay });
         @click="openPort(p.portId)"
       >
         {{ p.name }}
+      </button>
+      <button
+        v-for="ct in scopeCities"
+        :key="ct.id"
+        :ref="refSetter(cityLabelEls, ct.id)"
+        type="button"
+        class="city-label"
+        :aria-label="`Open city ${ct.label}`"
+        :data-testid="`city-label-${ct.id}`"
+        @click="openCity(ct.id)"
+      >
+        {{ ct.label }} <span aria-hidden="true">›</span>
       </button>
       <button
         v-for="r in regions"
@@ -968,8 +1095,43 @@ defineExpose({ resetCamera, scene, surface, overlay });
   pointer-events: none;
   overflow: hidden;
 }
+/* Labels set an inline `visibility: visible`, which would override an inherited hidden. */
+.earth__labels--hidden > * {
+  visibility: hidden !important;
+}
+.handoff-frame,
+.handoff-veil {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+.handoff-veil {
+  background: radial-gradient(ellipse at 50% 50%, rgba(196, 226, 232, 0.5) 0%, rgba(90, 173, 183, 0.42) 22%, rgba(27, 52, 66, 0.86) 56%, #071a27 82%);
+}
+.earth__preparing {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 16;
+  transform: translateX(-50%);
+  padding: 3px 10px;
+  border-radius: var(--radius-chip);
+  background: rgba(7, 26, 39, 0.82);
+  color: rgba(247, 250, 252, 0.9);
+  font-size: var(--text-11);
+  line-height: 16px;
+  pointer-events: none;
+}
 .region-label,
 .port-label,
+.city-label,
 .cluster {
   position: absolute;
   left: 0;
@@ -1000,6 +1162,21 @@ defineExpose({ resetCamera, scene, surface, overlay });
   padding: 4px 10px;
   border-color: rgba(233, 103, 34, 0.6);
   pointer-events: none;
+}
+.city-label {
+  padding: 2px 8px;
+  border: 1px solid rgba(207, 225, 234, 0.35);
+  border-radius: var(--radius-chip);
+  background: rgba(6, 26, 40, 0.8);
+  color: var(--color-ink-on-dark);
+  font-size: var(--text-11);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.city-label:hover,
+.city-label:focus-visible {
+  border-color: rgba(233, 103, 34, 0.7);
+  background: rgba(6, 26, 40, 0.95);
 }
 .port-label {
   padding: 1px 5px;

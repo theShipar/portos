@@ -11,9 +11,11 @@ export interface PortosAdapter {
   portPoint(id: string): { x: number; y: number; visible: boolean } | null;
   loseContext(): void;
   spatialV2: boolean;
-  director(): { phase: string; activeSceneKey: string | null; activeKind: string | null; activeFocusId: string | null; flights: number; cancelled: number } | null;
+  director(): { phase: string; activeSceneKey: string | null; activeKind: string | null; activeFocusId: string | null; flights: number; cancelled: number; lastOutcome: string | null } | null;
   sceneCache(): { size: number; created: number; disposed: number; keys: string[] } | null;
   surfaceKind(): 'globe' | 'planar' | null;
+  surface(): unknown;
+  bridge(): { timeline: { step: string; ms: number; plannedMs: number }[]; stageVisible: boolean; labelsHidden: boolean };
   compass(): { northDeg: number; metresPerPx: number } | null;
 }
 

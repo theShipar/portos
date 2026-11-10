@@ -337,3 +337,33 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
 - **Interaction:** click selects a country (region scenes) or switches region; double-click drills region →
   country (city-states → city), country → city, city → nearest port. A DOM north arrow and 1-2-5 scale bar show on
   planar scenes; REG-MED and REG-WAF show "Illustrative operational bounds · not a border" with a dashed frame.
+
+## D-033 Earth ↔ geography handoff on one renderer (snapshot bridge)
+
+- **Context:** spec 05 and the master plan's Phase 3 ask for the skill's `EarthChinaMap.vue` cinematic (globe
+  focus → dive → cloud reveal → settle) between the globe and every extruded scene, gated by readiness, with
+  cancel / Back / Escape and a ≤ 150 ms reduced-motion crossfade. The skill runs two live DOM stages (two renderers);
+  D-032 keeps every scene on the globe's single `WebGLRenderer`.
+- **Decision:** `src/spatial/EarthGeographyBridge.ts` (GPL-3.0-or-later, derived from `EarthChinaMap.vue`) plans each
+  director transition; `src/spatial/HandoffStage.ts` holds a snapshot canvas and an atmosphere veil above the map.
+  - *Down* (Earth → region → country → city): after preload the destination is put at its entry camera
+    (distance × 1.4, flatter tilt, small azimuth offset), drawn once, copied into the stage canvas, and the source
+    is redrawn in the same task, so no frame of the wrong scene reaches the screen. The globe flies to the region
+    (focus 650–1200 ms by angular distance and zoom), dives 620 ms under a 0.92 veil, then the stage plays the
+    skill's cloud reveal (opacity .06 → .24 → .78 → 1, scale .78 → 1, 520 ms) while the veil clears; planar sources
+    dive geographically (620 ms) into a scale-and-fade reveal. The director then swaps scenes behind the opaque
+    frame and the destination settles (440 ms) while the frame fades (160 ms).
+  - *Rise* (Back / shallower / sibling): the current frame is captured, the destination jumps to the source pose
+    and flies to its goal while the frame fades (420 ms).
+  - *Reduced motion:* exact entry camera, 120 ms fade, no camera flight.
+  - *Cancel:* new navigation, Back, or Escape (only while flying and when no selection, menu or dialog claims
+    Escape) aborts the plan; the stage clears and overlays return on the restored scene. Input is disabled while
+    the director is preparing or flying; a "Preparing …" chip appears after 300 ms of preload.
+  - The bridge records each step's planned and measured duration (`__portos.bridge().timeline`); tests assert
+    the plan against the spec budgets and treat wall-clock time only as a lower bound and a stall check.
+- **Also:** city-states and child cities get a drill chip in region / country scope (`city-label-CTY-SIN`):
+  Singapore is a few pixels wide at region scale and sits under port and vessel markers, so double-click could
+  not reach it. DOM labels hide during the handoff (inline `visibility: visible` no longer overrides the hidden
+  container). Storage-reset warnings are persistent notices.
+- **Consequences:** one WebGL context, no second renderer to warm; the reveal shows a still frame of the destination
+  rather than a live render for ≤ 520 ms, which is invisible at the destination's entry camera.
