@@ -17,6 +17,20 @@ export interface PortosAdapter {
   surface(): unknown;
   bridge(): { timeline: { step: string; ms: number; plannedMs: number }[]; stageVisible: boolean; labelsHidden: boolean };
   compass(): { northDeg: number; metresPerPx: number } | null;
+  overlayStats(): { lod: number; drawnVessels: number; wakes: number; detailVessels: string[]; modelVessels: number; px: number; shipDrawCalls: number } | null;
+  vesselPose(id: string): {
+    model: string;
+    state: 'underway' | 'anchored' | 'moored' | 'stopped';
+    headingDeg: number;
+    wake: number;
+    detail: 0 | 1 | 2;
+    lat: number;
+    lon: number;
+    navStatus: string;
+    sogKn: number | null;
+    cogDeg: number | null;
+    vesselType: string;
+  } | null;
 }
 
 declare global {

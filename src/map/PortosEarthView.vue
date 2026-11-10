@@ -629,7 +629,8 @@ async function init() {
   }
   const ov = markRaw(new MaritimeOverlay(sc, catalog.catalog?.vessels.length ?? 512));
   bindSurface(sc, ov);
-  overlay.value = ov;
+  // A deep link may already have activated an extruded scene while the world loaded.
+  if (surface.value === sc) overlay.value = ov;
   unsubs = [
     sc.on('contextLost', () => {
       state.value = 'error';
@@ -722,6 +723,7 @@ function createPlanarScene(t: SceneTarget, globe: EarthScene): SpatialScene {
 function bindSurface(surf: MapSurface, ov: MaritimeOverlay) {
   overlays.set(surf, ov);
   feedOverlay(ov);
+  ov.warmUp();
   const whenActive =
     <A extends unknown[]>(fn: (...a: A) => void) =>
     (...a: A) => {
@@ -754,7 +756,7 @@ function feedOverlay(ov: MaritimeOverlay) {
   ov.setLayers(effectiveLayers.value);
   ov.setRoutes(routeLines.value);
   ov.setPorts(ports.value);
-  ov.setVessels(markers.value);
+  ov.setVessels(markers.value, clock.timeMs);
   ov.setHazards(hazards.value);
   if (effectiveLayers.value.traffic) ov.setDensity(density.value);
   ov.setClustered(clusters.value.clusteredIds);
@@ -829,6 +831,12 @@ function exposeTestAdapter(sc: EarthScene) {
     bridge: () => ({ timeline: [...bridgeTimeline], stageVisible: !!stage?.visible, labelsHidden: labelsHidden.value }),
     director: () => director?.state() ?? null,
     sceneCache: () => director?.cache.stats() ?? null,
+    overlayStats: () => overlay.value?.stats() ?? null,
+    vesselPose: (id: string) => {
+      const m = markers.value.find((v) => v.vesselId === id);
+      const pose = overlay.value?.vesselPose(id) ?? null;
+      return m && pose ? { ...pose, lat: m.point.lat, lon: m.point.lon, navStatus: m.navStatus, sogKn: m.sogKn, cogDeg: m.cogDeg, vesselType: m.vesselType } : null;
+    },
   };
 }
 
@@ -883,7 +891,7 @@ watch(
     } else stopLoop();
   },
 );
-watch(markers, (m) => eachOverlay((ov) => ov.setVessels(m)));
+watch(markers, (m) => eachOverlay((ov) => ov.setVessels(m, clock.timeMs)));
 watch(ports, (p) => eachOverlay((ov) => ov.setPorts(p)));
 watch(hazardKey, () => eachOverlay((ov) => ov.setHazards(hazards.value)));
 watch(densityKey, () => eachOverlay((ov) => ov.setDensity(density.value)));

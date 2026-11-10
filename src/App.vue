@@ -53,6 +53,7 @@ function onKey(e: KeyboardEvent) {
     e.preventDefault();
     header.value?.focusSearch();
   } else if (e.key === 'Escape' && !e.defaultPrevented && !isTyping(e.target) && view.selection) {
+    e.preventDefault();
     nav.closeSelection();
   } else if (e.key === 'Backspace' && !isTyping(e.target) && !e.metaKey && !e.ctrlKey) {
     e.preventDefault();

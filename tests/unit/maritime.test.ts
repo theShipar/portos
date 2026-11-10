@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getSnapshotAt } from '@/engines/snapshot';
 import { degreesPerPx, LOD_THRESHOLDS, markerPxForAltitude, nextClusterCell, nextLod, nextStackCell, STACK_CELLS } from '@/map/earth/lod';
-import { buildVesselGeometry, TRIANGLE_BUDGET, triangleCount, type VesselDetail } from '@/map/earth/vesselGeometry';
 import { routeForEntity } from '@/router/navigation';
 import {
   buildHazards,
@@ -201,28 +200,5 @@ describe('LOD and cluster hysteresis', () => {
     const k = 8.7e-4;
     expect(degreesPerPx(3.95, 2, k)).toBeGreaterThan(degreesPerPx(2.7, 2, k));
     expect(degreesPerPx(2, 2, k)).toBeGreaterThan(0);
-  });
-});
-
-describe('vessel geometry', () => {
-  it('stays inside the triangle budget for every class and LOD', () => {
-    for (const cls of VESSEL_CLASSES) {
-      for (const d of [0, 1, 2] as VesselDetail[]) {
-        const g = buildVesselGeometry(cls, d);
-        const tris = triangleCount(g);
-        expect(tris).toBeGreaterThan(0);
-        expect(tris).toBeLessThanOrEqual(TRIANGLE_BUDGET[d]);
-        expect(g.getAttribute('partColor')).toBeTruthy();
-      }
-    }
-  });
-
-  it('is normalised to unit length with the bow on +Z', () => {
-    const g = buildVesselGeometry('container', 2);
-    g.computeBoundingBox();
-    const b = g.boundingBox!;
-    expect(b.max.z - b.min.z).toBeCloseTo(1, 1);
-    expect(b.max.z).toBeGreaterThan(Math.abs(b.min.z) - 0.05);
-    expect(b.min.y).toBeGreaterThanOrEqual(-0.2);
   });
 });

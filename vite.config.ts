@@ -20,6 +20,10 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1600,
     rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        ships: fileURLToPath(new URL('./qa/ships.html', import.meta.url)),
+      },
       output: {
         manualChunks: {
           three: ['three'],

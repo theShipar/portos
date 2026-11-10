@@ -1,4 +1,7 @@
-import type { VesselDetail } from './vesselGeometry';
+import type { ShipLod } from '../vessels3d/library';
+
+/** Overlay detail: 0 = instanced glyphs, 1 = per-type models, 2 = per-type models with the selected ship at LOD2. */
+export type VesselDetail = ShipLod;
 
 /** Marker length in CSS px for a camera altitude above the surface (scene units, R = 2). ≈9 px Earth, 18–20 region, 34 port. */
 export function markerPxForAltitude(altitude: number): number {

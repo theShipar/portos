@@ -367,3 +367,42 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
   container). Storage-reset warnings are persistent notices.
 - **Consequences:** one WebGL context, no second renderer to warm; the reveal shows a still frame of the destination
   rather than a live render for ≤ 520 ms, which is invisible at the destination's entry camera.
+
+## D-034 Procedural 3D ship library with LOD0–2 (no glTF assets)
+
+- **Context:** the master plan's Phase 4 asks for 3D ships by category (container, tanker / gas, bulk, RoRo,
+  tug / pilot, other) at three detail levels (LOD0 instanced, LOD1 1k–5k triangles, LOD2 10k–60k for the
+  selected ship only), a tested heading → yaw contract, wakes only when underway, sway at anchor, fixed moored
+  ships, and a silhouette / cardinal-heading test page. Spec 08 prefers licensed glTF models; none ship with the kit.
+- **Decision:** `src/map/vessels3d/` builds every model procedurally at runtime (no binary assets, no licences).
+  - *Contract* (`contract.ts`): bow −Z, up +Y, starboard +X, length 1, waterline y = 0;
+    `headingToYaw(h) = wrap(−h·π/180)` (unit-tested against `Object3D` at N / E / S / W). The marker shader places
+    vertices with the same basis on the globe and planar surfaces.
+  - *Library* (`library.ts`, `geometry.ts`): lofted superellipse hulls (bow flare, transom, boot-top) plus
+    per-type superstructure — seeded container stacks, tanker pipe rack and manifold, Moss-type LNG domes, bulk
+    hatches and four cranes, RoRo enclosed hull and stern ramp, tug wheelhouse and fender band. LOD1 is 1,066–1,998
+    triangles, LOD2 10,322–19,718; LOD0 is one 128-triangle glyph shared by every type. Geometry is merged,
+    indexed (`mergeVertices`) and cached per model × LOD.
+  - *Overlay*: LOD0 = one instanced glyph draw; LOD1 = one instanced draw per model type; LOD2 adds a separate
+    batch (capacity 4) only for pinned (selected / focused) ships, so at most 7 + 1 model draws plus one wake draw.
+    LOD switches use the existing px hysteresis (up 13 / 26, down 11 / 23); there is no material crossfade.
+    Models and wakes are only instanced for ships inside the viewport plus a 15 % margin (re-checked at 5 Hz while
+    the camera moves); glyphs stay for the whole fleet. Ship programs are compiled when an overlay is bound so the
+    first LOD switch never compiles mid-flight.
+  - *Scale:* ships keep a minimum screen size, grow to true length when that is larger (`aLength × uMetre`), and get
+    a beam boost (LOD0 1.8, LOD1 1.35, LOD2 1.0) that fades out as true scale takes over.
+  - *Motion* (`motion.ts`): state from nav status and SOG; wakes from 2 kn (0.25–1.4 ship lengths, full at 22 kn);
+    anchored ships sway ±4° about their COG with a 9-minute scenario-time period, phase hashed from the vessel ID;
+    moored ships hold the berth heading when known, otherwise a deterministic resting heading from the ID (until
+    Phase 5 gives berth poses). No pitch or roll.
+  - *QA page:* `qa/ships.html` (second Vite entry) renders every model from front, port, starboard, top and
+    three-quarter views at `?lod=0|1|2`, plus four cardinal headings with wakes against a north bar.
+- **Also:** the old per-type glyph geometry (`vesselGeometry.ts`) is removed, leaving no fallback or dev toggle;
+  `markerGeometry.ts` keeps only ring and port glyphs. Tugs exist in the library but not in the fixture fleet.
+  On deep links, `init()` no longer replaces the overlay of an extruded scene that activated while the world
+  texture loaded, and an Escape that closes the inspector is marked handled so the flight-cancel handler cannot
+  also fire `router.back()`.
+- **Consequences:** illustrative silhouettes, not authentic vessel models, labelled as the spec 08 fallback tier on
+  the QA page. Playwright runs at most 4 workers, and the wall-clock handoff gate runs as a dependent
+  `chromium-timing` project after the rest of the suite, because SwiftShader renders on the CPU and parallel
+  browsers starve its frame loop.

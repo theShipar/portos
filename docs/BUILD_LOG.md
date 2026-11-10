@@ -585,3 +585,48 @@ blockers. Status values: implemented / tested / blocked.
     memory loop (Earth → SEA → Singapore → Back → Back, ×3) shows identical geometry / texture counts on loops 2
     and 3 and the scene cache never above 3 (3 created).
 - **Blockers:** none.
+
+## Phase V2-4 — Procedural 3D ship library (LOD0–2)
+
+- **Decisions:** D-034 (procedural library, heading contract, LOD batches, viewport culling, motion rules, QA
+  page, Playwright worker cap and timing project). TECHNICAL_DEVIATIONS gains the glTF → procedural row.
+- **Implemented:**
+  - `src/map/vessels3d/`: `contract.ts` (`headingToYaw`, `yawToHeading`, `forwardForHeading`), `motion.ts`
+    (motion state, wake length, anchor sway, resting headings), `categories.ts` (six categories, seven model keys,
+    hull presets), `geometry.ts` (lofted superellipse hull and primitives), `library.ts` (builders per type,
+    `buildShipGeometry` cache, `wakeGeometry`, `libraryStats`).
+  - Triangles per model, LOD0 / LOD1 / LOD2: container 128 / 1,398 / 19,718; tanker 128 / 1,266 / 15,302; gas
+    128 / 1,998 / 19,090; bulk 128 / 1,538 / 14,138; RoRo 128 / 1,066 / 10,322; tug 128 / 1,466 / 14,194; other
+    128 / 1,146 / 12,794; wake 60. Indexing cut LOD1 vertices about 3× (container 4,194 → 1,406).
+  - `markerShader.ts`: `aLength`, `aWake`, `fade` attributes; `uMetre`, `uBeam`, `uWakeOpacity`; true-scale growth
+    and beam boost; wake material; indexed instancing. `MaritimeOverlay.ts`: glyph, per-type model, LOD2 detail and
+    wake batches; viewport culling; `warmUp()`; `vesselPose()` and new stats (`wakes`, `shipDrawCalls`,
+    `detailVessels`, `modelVessels`). `vesselGeometry.ts` → `markerGeometry.ts` (rings and ports only).
+  - `qa/ships.html` + `src/qa/shipsPage.ts` (second Vite entry): silhouette grid and cardinal headings.
+  - `PortosEarthView.vue`: scenario time fed to the overlay, test adapter `overlayStats()` / `vesselPose()`,
+    overlay warm-up on bind, deep-link overlay race fixed. `App.vue`: an inspector-closing Escape is marked handled.
+- **Tested:**
+  - `npm run typecheck` → exit 0.
+  - `npx vitest run` → exit 0, 259 tests in 18 files. New `vessels3d.test.ts` (13): cardinal yaw checked against
+    `Object3D`, heading round trip, all six categories plus fixture mapping, triangle budgets per LOD,
+    normalisation (length 0.98–1.06, bow narrower than stern, keel at the waterline), caching, tint rules, wake
+    geometry, motion rules.
+  - `npm run build` → exit 0 (`main` + `qa/ships.html` entries).
+  - `npx playwright test tests/e2e/ships.spec.ts` (Phase 4 gate) → first run: the port step failed (VSL-0001 at LOD0,
+    overlay px 8). Port scope opens in 2D, so the 3D loop was stopped; the test now opens `?view=3d`. The same probe
+    found `init()` overwriting an extruded scene's overlay on deep links (fixed). Then 5 passed: silhouette grids at
+    LOD0 / 1 / 2 inside their budgets, bow north / east / south / west by drawn centroid, the region view with
+    LOD ≥ 1, wakes only on underway ships, anchored ships present, ≤ 9 ship draw calls, and Singapore port with
+    VSL-0001 drawn by the LOD2 container model at its snapshot coordinates (screen offset < 0.5 px), the only LOD2
+    ship, ≤ 10 ship draw calls.
+  - `npx playwright test` (full) → first run 5 failed. Keyboard walk: the inspector's Escape cleared the selection,
+    then the flight-cancel handler saw no selection and called `router.back()` (fixed). Journey, routes, ships and
+    handoff timed out under 7 parallel SwiftShader workers: ships at region scale took median frame time from 19 to
+    89 ms. Fixes: viewport culling (181 of 453 drawn ships instanced as models over SEA), indexed geometry (median
+    49 ms), shader warm-up on bind, Playwright capped at 4 workers, and the wall-clock handoff gate moved to a
+    `chromium-timing` project that runs after the rest (its focus step measured 7.7–8.1 s under contention against
+    a 7.04 s stall bound, 1.5 s alone). Final run: exit 0, 57 passed, 6 skipped (opt-in perf/capture). Visual
+    baselines unchanged (within the 2 % pixel tolerance).
+  - Evidence (`PORTOS_EVIDENCE=1`): `docs/qa/v2-phase4/ships-lod0/1/2.png`, `cardinal-headings.png`,
+    `region-sea-ships.png`, `port-sin-selected-vsl-0001.png`.
+- **Blockers:** none.
