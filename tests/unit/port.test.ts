@@ -50,8 +50,9 @@ describe('port view model (Singapore at the anchor time)', () => {
   it('marks a berth confirmed only with both a berth and a berth time', () => {
     for (const q of vm.queue) expect(q.berthConfirmed).toBe(q.berthId !== null && q.estimatedBerthUtc !== null);
     const horizon = vm.queue.find((q) => q.vesselId === 'VSL-0001')!;
-    expect(horizon.berthConfirmed).toBe(true);
-    expect(horizon.berthId).toBe('BRH-SIN-W-1');
+    expect(horizon.berthConfirmed).toBe(false);
+    expect(horizon.berthId).toBeNull();
+    expect(horizon.estimatedBerthUtc).not.toBeNull();
     expect(horizon.status).toBe('at_anchor');
   });
 
@@ -65,11 +66,9 @@ describe('port view model (Singapore at the anchor time)', () => {
     expect(vm.berthFeed).toBe('available');
   });
 
-  it('links upcoming calls to their berth', () => {
-    const w1 = vm.berths.find((b) => b.berthId === 'BRH-SIN-W-1')!;
-    expect(w1.scheduledVesselId).toBe('VSL-0001');
-    expect(w1.linkedCalls.map((l) => l.vesselId)).toContain('VSL-0001');
-    expect(w1.occupantName).toBeTruthy();
+  it('never links Pacific Horizon to a berth while its slot is only an estimate', () => {
+    expect(vm.berths.some((b) => b.scheduledVesselId === 'VSL-0001')).toBe(false);
+    expect(vm.berths.some((b) => b.linkedCalls.some((l) => l.vesselId === 'VSL-0001'))).toBe(false);
   });
 
   it('summarises the demo anchorage from positions inside its polygon', () => {

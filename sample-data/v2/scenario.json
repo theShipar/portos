@@ -1,0 +1,67 @@
+{
+  "scenarioVersion": "2.0",
+  "baseFixtureVersion": "2.0.0",
+  "seed": 92026,
+  "window": {
+    "minUtc": "2026-11-05T12:00:00Z",
+    "maxUtc": "2026-11-12T12:00:00Z"
+  },
+  "anchorUtc": "2026-11-09T12:00:00Z",
+  "baseReplayRange": {
+    "startUtc": "2026-11-09T00:00:00Z",
+    "endUtc": "2026-11-09T12:00:00Z"
+  },
+  "flagshipVesselIds": [
+    "VSL-0047",
+    "VSL-0002",
+    "VSL-0003",
+    "VSL-0004",
+    "VSL-0005",
+    "VSL-0006",
+    "VSL-0007",
+    "VSL-0008",
+    "VSL-0009",
+    "VSL-0010",
+    "VSL-0011",
+    "VSL-0012",
+    "VSL-0013",
+    "VSL-0014",
+    "VSL-0015",
+    "VSL-0016",
+    "VSL-0017",
+    "VSL-0018",
+    "VSL-0019",
+    "VSL-0020",
+    "VSL-0021",
+    "VSL-0022",
+    "VSL-0023",
+    "VSL-0024",
+    "VSL-0025",
+    "VSL-0026",
+    "VSL-0027",
+    "VSL-0028",
+    "VSL-0029",
+    "VSL-0031"
+  ],
+  "followDemo": {
+    "vesselId": "VSL-0047",
+    "voyageId": "VYG-0047",
+    "routeId": "RTE-SIN-MNL"
+  },
+  "singaporeCase": {
+    "vesselId": "VSL-0001",
+    "portCallId": "PCL-0001",
+    "incidentId": "INC-0001",
+    "queueSinceUtc": "2026-11-09T04:00:00Z",
+    "anchorageEnterUtc": "2026-11-09T09:15:00Z",
+    "estimatedBerthUtc": "2026-11-10T14:00:00Z",
+    "berthAssigned": false
+  },
+  "precedence": [
+    "baseFixtureRecords",
+    "v2IllustrativeLayouts",
+    "versionedFutureMovementSamples",
+    "scenarioBranchEvents"
+  ],
+  "disclosure": "Simulated scenario extension. Keyframes, layouts and milestones are illustrative; not live AIS, port or navigation data."
+}

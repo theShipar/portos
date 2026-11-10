@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/v2/scenario.schema.json",
+  "title": "PORTOS V2 scenario scenario",
+  "description": "Versioned V2 scenario extension (simulated). Additive to the base fixture; never live data.",
+  "type": "object",
+  "properties": {
+    "anchorUtc": {
+      "type": "string",
+      "pattern": "Z$"
+    },
+    "baseFixtureVersion": {
+      "type": "string"
+    },
+    "baseReplayRange": {
+      "type": "object",
+      "properties": {
+        "endUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "startUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        }
+      },
+      "required": [
+        "endUtc",
+        "startUtc"
+      ],
+      "additionalProperties": false
+    },
+    "disclosure": {
+      "type": "string"
+    },
+    "flagshipVesselIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "followDemo": {
+      "type": "object",
+      "properties": {
+        "routeId": {
+          "type": "string"
+        },
+        "vesselId": {
+          "type": "string"
+        },
+        "voyageId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "routeId",
+        "vesselId",
+        "voyageId"
+      ],
+      "additionalProperties": false
+    },
+    "precedence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "scenarioVersion": {
+      "type": "string"
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "singaporeCase": {
+      "type": "object",
+      "properties": {
+        "anchorageEnterUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "berthAssigned": {
+          "type": "boolean"
+        },
+        "estimatedBerthUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "incidentId": {
+          "type": "string"
+        },
+        "portCallId": {
+          "type": "string"
+        },
+        "queueSinceUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "vesselId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "anchorageEnterUtc",
+        "berthAssigned",
+        "estimatedBerthUtc",
+        "incidentId",
+        "portCallId",
+        "queueSinceUtc",
+        "vesselId"
+      ],
+      "additionalProperties": false
+    },
+    "window": {
+      "type": "object",
+      "properties": {
+        "maxUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "minUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        }
+      },
+      "required": [
+        "maxUtc",
+        "minUtc"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "anchorUtc",
+    "baseFixtureVersion",
+    "baseReplayRange",
+    "disclosure",
+    "flagshipVesselIds",
+    "followDemo",
+    "precedence",
+    "scenarioVersion",
+    "seed",
+    "singaporeCase",
+    "window"
+  ],
+  "additionalProperties": false
+}

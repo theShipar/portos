@@ -2,7 +2,7 @@
   {
     "evidenceId": "EVD-0001",
     "sourceType": "synthetic-scenario",
-    "sourceId": "EVT-0004",
+    "sourceId": "EVT-0001",
     "observedAtUtc": "2026-11-09T09:00:00Z",
     "receivedAtUtc": "2026-11-09T09:03:00Z",
     "entityRef": {
@@ -41,8 +41,8 @@
     },
     "field": "lastKnownPosition",
     "value": {
-      "lon": 103.95,
-      "lat": 1.25
+      "lon": 103.91,
+      "lat": 1.18
     },
     "unit": null,
     "quality": "synthetic"
@@ -118,7 +118,7 @@
       "id": "VYG-0006"
     },
     "field": "estimatedArrivalUtc",
-    "value": "2026-11-21T01:00:00Z",
+    "value": "2026-11-19T20:00:00Z",
     "unit": null,
     "quality": "synthetic"
   },
@@ -155,15 +155,15 @@
   {
     "evidenceId": "EVD-0011",
     "sourceType": "synthetic-scenario",
-    "sourceId": "WX-0011",
-    "observedAtUtc": "2026-11-09T08:00:00Z",
-    "receivedAtUtc": "2026-11-09T08:03:00Z",
+    "sourceId": "WX-0001",
+    "observedAtUtc": "2026-11-09T06:00:00Z",
+    "receivedAtUtc": "2026-11-09T06:03:00Z",
     "entityRef": {
       "kind": "voyage",
       "id": "VYG-0023"
     },
     "field": "hazardIntersection",
-    "value": "WX-0011",
+    "value": "WX-0001",
     "unit": null,
     "quality": "synthetic"
   },
@@ -193,7 +193,7 @@
       "id": "VYG-0029"
     },
     "field": "estimatedArrivalUtc",
-    "value": "2026-11-19T20:00:00Z",
+    "value": "2026-11-22T15:00:00Z",
     "unit": null,
     "quality": "synthetic"
   },
@@ -283,7 +283,7 @@
       "id": "VYG-0047"
     },
     "field": "estimatedArrivalUtc",
-    "value": "2026-11-18T18:00:00Z",
+    "value": "2026-11-12T15:00:00Z",
     "unit": null,
     "quality": "synthetic"
   },
@@ -410,15 +410,15 @@
   {
     "evidenceId": "EVD-0028",
     "sourceType": "synthetic-scenario",
-    "sourceId": "WX-0001",
-    "observedAtUtc": "2026-11-09T06:00:00Z",
-    "receivedAtUtc": "2026-11-09T06:03:00Z",
+    "sourceId": "WX-0011",
+    "observedAtUtc": "2026-11-09T08:00:00Z",
+    "receivedAtUtc": "2026-11-09T08:03:00Z",
     "entityRef": {
       "kind": "voyage",
       "id": "VYG-0074"
     },
     "field": "hazardIntersection",
-    "value": "WX-0001",
+    "value": "WX-0011",
     "unit": null,
     "quality": "synthetic"
   },

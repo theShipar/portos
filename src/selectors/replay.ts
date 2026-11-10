@@ -20,6 +20,8 @@ export const CATEGORY: Record<EventType, EventCategory> = {
   ACTION_ASSIGNED: 'case',
   INCIDENT_RESOLVED: 'case',
   AIS_REPORT: 'position',
+  PORT_QUEUE_JOINED: 'portDelay',
+  BERTH_ESTIMATE_UPDATED: 'berth',
 };
 
 export const CATEGORY_LABEL: Record<EventCategory, string> = {
@@ -110,6 +112,10 @@ export function eventLabel(c: Catalog, e: TimelineEvent): string {
       return `${s(p.incidentId)} resolved`;
     case 'AIS_REPORT':
       return `Position report ${vessel}${n(p.sogKn) === null ? '' : ` · ${n(p.sogKn)} kn`}`;
+    case 'PORT_QUEUE_JOINED':
+      return `${vessel} joined ${port} berth queue`;
+    case 'BERTH_ESTIMATE_UPDATED':
+      return `Estimated berth ${formatUtc(s(p.estimatedBerthUtc))} for ${vessel}${p.confirmed ? '' : ' · not confirmed'}`;
   }
 }
 
@@ -206,6 +212,7 @@ export interface CompareRow {
 const POSITION_TEXT: Record<string, string> = {
   exact: 'Reported',
   interpolated: 'Interpolated',
+  modelled: 'Modelled',
   'last-known': 'Last known',
   stale: 'Stale',
   unavailable: 'Not yet tracked',

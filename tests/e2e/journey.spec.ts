@@ -46,9 +46,10 @@ test.describe('Core Singapore journey', () => {
   });
 
   test('a click on a vessel marker in the 3D scene selects the vessel under the pointer', async ({ page }) => {
-    await open(page, '/port/PRT-SIN');
+    await open(page, '/port/PRT-SIN?view=3d');
     await globeReady(page);
     await flightDone(page);
+    await expect(page.getByTestId('map-workspace')).toHaveAttribute('data-view-mode', '3d');
     await expect(page.getByTestId('port-queue')).toBeVisible();
     await page.getByTestId('queue-toggle').click();
     // Closing the shelf changes the left inset and re-frames the camera.

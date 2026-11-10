@@ -4,6 +4,10 @@
 Derived from the PORTOS Codex Master Kit generator (seed 92026). Changes are logged in docs/DECISIONS.md:
 12h replay window, water-only corridor waypoints, region registry fields, extended event vocabulary,
 coherent Singapore scenario timeline, computed weather/voyage intersections.
+
+Fixture v2.0 (D-029): the Singapore case is realigned to the original kit (VSL-0001 holds at anchor, PCL-0001 queue
+since 04:00 with no berth), VSL-0047 is restored as the kit's LNG carrier, and a separate versioned V2 scenario module
+(sample-data/v2/) adds flagship movement keyframes, port twin layouts and DCSA-style berth milestones.
 """
 import argparse, json, random, math
 from datetime import datetime, timedelta, timezone
@@ -12,6 +16,17 @@ from pathlib import Path
 UTC = timezone.utc
 ANCHOR = datetime(2026, 11, 9, 12, tzinfo=UTC)
 REPLAY_START = datetime(2026, 11, 9, 0, tzinfo=UTC)
+FIXTURE_VERSION = '2.0.0'
+SCENARIO_VERSION = '2.0'
+V2_MIN = datetime(2026, 11, 5, 12, tzinfo=UTC)
+V2_MAX = datetime(2026, 11, 12, 12, tzinfo=UTC)
+# Kit facts preserved by fixture v2.0 (PORTOS_V2 spec 21).
+VSL1_HOLD = (103.91, 1.18)
+VSL1_QUEUE_SINCE = datetime(2026, 11, 9, 4, 0, tzinfo=UTC)
+VSL47_FIX = (108.056644, 3.501864)
+VSL47_FIX_AT = datetime(2026, 11, 9, 11, 15, tzinfo=UTC)
+VSL47_SOG = 13.5
+FLAGSHIP_COUNT = 30
 iso = lambda d: d.astimezone(UTC).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
 
@@ -52,6 +67,13 @@ def path_at(waypoints, progress):
             return interpolate(waypoints[i], waypoints[i + 1], 0 if leg == 0 else min(1, target / leg))
         target -= leg
     return waypoints[-1]
+
+
+def progress_of_waypoint(waypoints, wp):
+    """Progress (0–1, distance-weighted like path_at) at which the path passes exactly through waypoint `wp`."""
+    legs = [dist_nm(a, b) for a, b in zip(waypoints, waypoints[1:])]
+    k = next(j for j, w in enumerate(waypoints) if w == wp)
+    return sum(legs[:k]) / sum(legs)
 
 
 def bearing_deg(a, b):
@@ -193,7 +215,8 @@ CORRIDORS = [
     ('RTE-MUM-SIN', 'PRT-MUM', 'PRT-SIN', 'India–Southeast Asia', [(72.85, 18.94), (72.2, 17.5), (73.5, 13.0), (75.5, 8.5), (78.5, 6.2), (81.0, 5.4), (88.0, 6.0), (94.5, 6.3), (97.8, 5.6), (99.6, 3.9), (101.0, 2.75), (102.2, 1.95), (103.45, 1.12), (103.83, 1.27)]),
     ('RTE-BUS-LAX', 'PRT-BUS', 'PRT-LAX', 'Korea–US West Coast', [(129.04, 35.10), (129.4, 34.6), (131.0, 33.3), (133.5, 32.4), (136.0, 33.0), (140.5, 34.5), (150.0, 38.5), (168.0, 41.0), (-175.0, 42.0), (-150.0, 41.0), (-130.0, 36.0), (-119.5, 33.3), (-118.27, 33.73)]),
     ('RTE-MEL-SIN', 'PRT-MEL', 'PRT-SIN', 'Australia–Singapore', [(144.92, -37.84), (144.7, -38.3), (143.0, -39.4), (136.0, -36.6), (125.0, -35.2), (115.0, -35.4), (113.5, -30.0), (112.5, -22.0), (110.0, -12.0), (105.9, -6.8), (106.0, -5.0), (105.8, -3.0), (106.6, -1.5), (105.0, 0.5), (104.4, 1.2), (104.0, 1.24), (103.83, 1.27)]),
-    ('RTE-SIN-MNL', 'PRT-SIN', 'PRT-MNL', 'Singapore–Philippines', [(103.83, 1.27), (104.0, 1.24), (104.4, 1.33), (106.5, 3.2), (110.0, 6.0), (114.5, 8.6), (118.6, 11.4), (119.8, 13.6), (120.55, 14.35), (120.96, 14.59)]),
+    # Passes through the kit's VSL-0047 fix (108.056644E 3.501864N), south of the Natuna islands.
+    ('RTE-SIN-MNL', 'PRT-SIN', 'PRT-MNL', 'Singapore–Philippines', [(103.83, 1.27), (104.0, 1.24), (104.4, 1.33), (105.6, 2.2), VSL47_FIX, (109.6, 4.3), (114.5, 8.6), (118.6, 11.4), (119.8, 13.6), (120.55, 14.35), (120.96, 14.59)]),
     ('RTE-ALG-VLC', 'PRT-ALG', 'PRT-VLC', 'Western Mediterranean', [(-5.45, 36.13), (-5.2, 36.05), (-3.0, 36.4), (-0.5, 37.5), (0.4, 38.8), (-0.32, 39.44)]),
 ]
 
@@ -231,14 +254,16 @@ PORT_REGION_OVERRIDE = {
 # Singapore showcase geometry: approximate demonstrator positions in open water of the Singapore Strait
 # (Eastern anchorage area) and terminal frontage. Not official hydrographic data.
 SIN_ANCHORAGE = [(103.875, 1.228), (104.025, 1.226), (104.03, 1.262), (103.985, 1.282), (103.9, 1.284), (103.872, 1.262)]
+# Published ANC-SIN polygon: the core above plus a southern lobe containing the kit's VSL-0001 holding position.
+# Anchorage vessels are still sampled inside the core so the seeded sequence (and every later record) is unchanged.
+SIN_ANCHORAGE_V2 = [(103.872, 1.262), (103.875, 1.228), (103.885, 1.165), (103.96, 1.163), (104.0, 1.2), (104.025, 1.226), (104.03, 1.262), (103.985, 1.282), (103.9, 1.284)]
+# Second, illustrative anchorage for the port twin (no vessels assigned in the fixture).
+SIN_WEST_ANCHORAGE = [(103.66, 1.205), (103.735, 1.2), (103.745, 1.228), (103.69, 1.236), (103.655, 1.226)]
 SIN_TERMINALS = [
     ('TRM-SIN-W', 'Singapore Demo Terminal West', (103.762, 1.272), [(103.752, 1.276), (103.758, 1.274), (103.764, 1.272), (103.770, 1.270)]),
     ('TRM-SIN-C', 'Singapore Demo Terminal Central', (103.834, 1.262), [(103.828, 1.263), (103.834, 1.261), (103.840, 1.259)]),
     ('TRM-SIN-E', 'Singapore Demo Terminal East', (103.853, 1.262), [(103.848, 1.262), (103.853, 1.261), (103.858, 1.260)]),
 ]
-# Approach for MV Pacific Horizon from the South China Sea to the anchorage (open water, illustrative).
-VSL1_APPROACH = [(105.3, 2.4), (104.7, 1.6), (104.35, 1.33), (104.1, 1.27), (103.95, 1.25)]
-
 
 def anchorage_polygon(lon, lat, rad=0.07):
     return [point(lon + rad * math.cos(math.pi * 2 * i / 10), lat + rad * 0.8 * math.sin(math.pi * 2 * i / 10)) for i in range(10)]
@@ -296,7 +321,7 @@ def gen(seed=92026):
                 terminals.append({'terminalId': tid, 'portId': 'PRT-SIN', 'name': tname, 'location': point(tlon, tlat), 'berthIds': bids, 'sourceType': 'synthetic-layout'})
                 p['terminalIds'].append(tid)
             anchorages.append({'anchorageId': 'ANC-SIN', 'portId': 'PRT-SIN', 'name': 'Singapore Eastern Demo Anchorage',
-                               'polygon': [point(a, b) for a, b in SIN_ANCHORAGE], 'capacityEstimate': 45, 'sourceType': 'synthetic-not-for-navigation'})
+                               'polygon': [point(a, b) for a, b in SIN_ANCHORAGE_V2], 'capacityEstimate': 45, 'sourceType': 'synthetic-not-for-navigation'})
             continue
         tid = 'TRM-' + p['portId'][4:]
         bids = []
@@ -339,6 +364,8 @@ def gen(seed=92026):
     for i in range(1, 501):
         vid = f'VSL-{i:04d}'
         typ = 'Container ship' if i == 1 else rng.choice(vessel_types)
+        if i == 47:
+            typ = 'LNG carrier'
         name = 'MV Pacific Horizon' if i == 1 else f'MV {prefix[(i * 7) % len(prefix)]} {suffix[(i * 11) % len(suffix)]} {i:03d}'
         lmin, lmax, bmin, bmax = class_dims[typ]
         length, beam = (229, 32) if i == 1 else (rng.randint(lmin, lmax), rng.randint(bmin, bmax))
@@ -346,23 +373,15 @@ def gen(seed=92026):
         route = voyage_routes[(i - 1) % len(voyage_routes)] if has_voyage else None
         voyage_id = f'VYG-{i:04d}' if has_voyage else None
         last_report = ANCHOR - timedelta(minutes=0 if i <= 1 else rng.choice([0, 2, 5, 8, 12, 15, 20, 25, 35, 50, 75, 95]))
+        if i == 47:
+            last_report = VSL47_FIX_AT
         cog = None
 
         if i == 1:
+            # Kit fact: MV Pacific Horizon holds at anchor for the whole window (no approach leg, no wake).
             st, sog = 'at_anchor', 0.1
-            approach = [point(a, b) for a, b in VSL1_APPROACH]
-            arrive = datetime(2026, 11, 9, 9, 15, tzinfo=UTC)
-            times = sample_times(last_report, 5)
-            samples = []
-            for ts in times:
-                if ts < arrive:
-                    prog = (ts - REPLAY_START) / (arrive - REPLAY_START)
-                    pos = path_at(approach, prog)
-                    nxt = path_at(approach, min(1, prog + 0.02))
-                    samples.append((ts, pos, 12.0, bearing_deg(pos, nxt), 'underway'))
-                else:
-                    samples.append((ts, approach[-1], 0.1, None, 'at_anchor'))
-            loc = approach[-1]
+            loc = point(*VSL1_HOLD)
+            samples = [(ts, loc, 0.1, None, 'at_anchor') for ts in sample_times(last_report, 5)]
         elif 201 <= i <= 240:
             st, sog = 'at_anchor', 0.1
             while True:
@@ -397,6 +416,9 @@ def gen(seed=92026):
             sog = round(rng.uniform(11, 19), 1)
             p_last = rng.uniform(0.07, 0.87)
             total = route['distanceNmEstimate']
+            if i == 47:
+                sog = VSL47_SOG
+                p_last = progress_of_waypoint(route['waypoints'], point(*VSL47_FIX))
             samples = []
             for ts in sample_times(last_report, 30):
                 prog = max(0.0, p_last - ((last_report - ts).total_seconds() / 3600) * sog / total)
@@ -469,13 +491,23 @@ def gen(seed=92026):
     vessel_map = {v['vesselId']: v for v in vessels}
     voyage_map = {v['voyageId']: v for v in voyages}
 
-    # Moored vessels at Singapore berths; one berth scheduled for the showcase vessel.
+    # Moored vessels at Singapore berths. The showcase vessel has no berth assignment (kit fact): only an estimate.
     for k, b in enumerate(sin_berths_moored):
         b['occupiedByVesselId'] = f'VSL-{253 + k:04d}'
-    sched = berth_map['BRH-SIN-W-1']
-    sched['scheduledVesselId'] = 'VSL-0001'
-    sched['scheduledWindowStartUtc'] = '2026-11-10T14:00:00Z'
-    sched['scheduledWindowEndUtc'] = '2026-11-11T08:00:00Z'
+
+    # Flagship vessels get dense V2 movement keyframes; their voyage ETA follows the same kinematic model so the
+    # follow demo (VSL-0047) reaches its destination when the inspector says it will.
+    flagship = flagship_vessels(voyage_kinematics)
+    for vid in flagship:
+        vo = voyage_map[f'VYG-{vid[4:]}']
+        kin = voyage_kinematics[vo['voyageId']]
+        remaining_h = (1 - kin['progressAtLastReport']) * kin['route']['distanceNmEstimate'] / kin['sogKn']
+        est = (kin['lastReport'] + timedelta(hours=remaining_h)).replace(second=0, microsecond=0)
+        est = est.replace(minute=0) + timedelta(hours=1 if est.minute >= 30 else 0)
+        planned = datetime.fromisoformat(vo['plannedArrivalUtc'].replace('Z', '+00:00'))
+        shift = datetime.fromisoformat(vo['estimatedArrivalUtc'].replace('Z', '+00:00')) - planned
+        vo['estimatedArrivalUtc'] = iso(est)
+        vo['plannedArrivalUtc'] = iso(est - shift)
 
     # ---------------- port calls ----------------
     portcalls = []
@@ -490,9 +522,8 @@ def gen(seed=92026):
         portcalls.append(rec)
         return rec
 
-    vsl1_arrival = datetime(2026, 11, 9, 9, 15, tzinfo=UTC)
-    add_call(portId='PRT-SIN', vesselId='VSL-0001', voyageId='VYG-0001', arrivalAtUtc=iso(vsl1_arrival), waitingSinceUtc=iso(vsl1_arrival),
-             estimatedBerthUtc='2026-11-10T14:00:00Z', status='awaiting_berth', terminalId='TRM-SIN-W', berthId='BRH-SIN-W-1')
+    add_call(portId='PRT-SIN', vesselId='VSL-0001', voyageId='VYG-0001', arrivalAtUtc=iso(VSL1_QUEUE_SINCE), waitingSinceUtc=iso(VSL1_QUEUE_SINCE),
+             estimatedBerthUtc='2026-11-10T14:00:00Z', status='awaiting_berth', terminalId='TRM-SIN-W', berthId=None)
     for i in range(201, 241):
         v = vessel_map[f'VSL-{i:04d}']
         arrived = ANCHOR - timedelta(hours=rng.randint(2, 44), minutes=rng.choice([0, 15, 30, 45]))
@@ -582,19 +613,22 @@ def gen(seed=92026):
 
     s_refs = [{'kind': 'vessel', 'id': 'VSL-0001'}, {'kind': 'voyage', 'id': 'VYG-0001'}, {'kind': 'port', 'id': 'PRT-SIN'}]
     planned1 = datetime(2026, 11, 28, 8, tzinfo=UTC)
+    # Stable scenario IDs (V2 spec 21): EVT-0001 is the ETA revision, EVT-0002 the anchorage entry; the berth queue
+    # (since 04:00, EVT-0004) is a separate fact from the formal anchorage assignment at 09:15.
     scenario_events = [
-        ('AIS_REPORT', datetime(2026, 11, 9, 6, 0, tzinfo=UTC), s_refs, {'vesselId': 'VSL-0001', 'location': path_at([point(a, b) for a, b in VSL1_APPROACH], 6 / 9.25), 'sogKn': 12.0}),
-        ('WEATHER_WARNING_ISSUED', datetime(2026, 11, 9, 6, 0, tzinfo=UTC), s_refs + [{'kind': 'weather', 'id': 'WX-0001'}, {'kind': 'route', 'id': 'RTE-SIN-RTM'}], {'hazardId': 'WX-0001'}),
-        ('PORT_WAIT_UPDATED', datetime(2026, 11, 9, 7, 30, tzinfo=UTC), [{'kind': 'port', 'id': 'PRT-SIN'}], {'portId': 'PRT-SIN', 'waitingEstimateHours': 14, 'previousWaitingEstimateHours': 9}),
         ('ETA_REVISED', datetime(2026, 11, 9, 9, 0, tzinfo=UTC), s_refs, {'voyageId': 'VYG-0001', 'previousEtaShiftHours': 8, 'newEtaShiftHours': 18,
                                                                          'previousEstimatedArrivalUtc': iso(planned1 + timedelta(hours=8)), 'newEstimatedArrivalUtc': iso(planned1 + timedelta(hours=18)),
                                                                          'driver': 'port_waiting_forecast'}),
-        ('ANCHORAGE_ENTER', datetime(2026, 11, 9, 9, 15, tzinfo=UTC), s_refs, {'portId': 'PRT-SIN', 'vesselId': 'VSL-0001', 'anchorageId': 'ANC-SIN'}),
+        ('ANCHORAGE_ENTER', datetime(2026, 11, 9, 9, 15, tzinfo=UTC), s_refs, {'portId': 'PRT-SIN', 'vesselId': 'VSL-0001', 'anchorageId': 'ANC-SIN',
+                                                                              'assignment': 'formal', 'note': 'Formal anchorage assignment; the vessel was already holding at this position'}),
         ('INCIDENT_OPENED', datetime(2026, 11, 9, 10, 59, tzinfo=UTC), s_refs + [{'kind': 'incident', 'id': 'INC-0001'}], {'incidentId': 'INC-0001', 'ruleKey': 'eta_shift_over_12h'}),
+        ('PORT_QUEUE_JOINED', VSL1_QUEUE_SINCE, s_refs, {'portId': 'PRT-SIN', 'vesselId': 'VSL-0001', 'portCallId': 'PCL-0001', 'terminalId': 'TRM-SIN-W'}),
+        ('WEATHER_WARNING_ISSUED', datetime(2026, 11, 9, 6, 0, tzinfo=UTC), s_refs + [{'kind': 'weather', 'id': 'WX-0001'}, {'kind': 'route', 'id': 'RTE-SIN-RTM'}], {'hazardId': 'WX-0001'}),
+        ('PORT_WAIT_UPDATED', datetime(2026, 11, 9, 7, 30, tzinfo=UTC), [{'kind': 'port', 'id': 'PRT-SIN'}], {'portId': 'PRT-SIN', 'waitingEstimateHours': 14, 'previousWaitingEstimateHours': 9}),
         ('PORT_WAIT_UPDATED', datetime(2026, 11, 9, 11, 22, tzinfo=UTC), [{'kind': 'port', 'id': 'PRT-SIN'}] + s_refs[:2], {'portId': 'PRT-SIN', 'waitingEstimateHours': 26, 'previousWaitingEstimateHours': 14}),
-        ('BERTH_SCHEDULED', datetime(2026, 11, 9, 11, 40, tzinfo=UTC), s_refs, {'portId': 'PRT-SIN', 'berthId': 'BRH-SIN-W-1', 'vesselId': 'VSL-0001',
-                                                                              'windowStartUtc': '2026-11-10T14:00:00Z', 'windowEndUtc': '2026-11-11T08:00:00Z'}),
-        ('AIS_REPORT', datetime(2026, 11, 9, 11, 55, tzinfo=UTC), s_refs, {'vesselId': 'VSL-0001', 'location': point(*VSL1_APPROACH[-1]), 'sogKn': 0.1}),
+        ('BERTH_ESTIMATE_UPDATED', datetime(2026, 11, 9, 11, 40, tzinfo=UTC), s_refs, {'portId': 'PRT-SIN', 'vesselId': 'VSL-0001', 'portCallId': 'PCL-0001', 'terminalId': 'TRM-SIN-W',
+                                                                                     'estimatedBerthUtc': '2026-11-10T14:00:00Z', 'confirmed': False}),
+        ('AIS_REPORT', datetime(2026, 11, 9, 11, 55, tzinfo=UTC), s_refs, {'vesselId': 'VSL-0001', 'location': point(*VSL1_HOLD), 'sogKn': 0.1}),
     ]
     for k, (typ, at, refs, payload) in enumerate(scenario_events, 1):
         add_event(typ, at, refs, payload)['eventId'] = f'EVT-{k:04d}'
@@ -696,7 +730,7 @@ def gen(seed=92026):
             eta_evt = next(e for e in events if e['type'] == 'ETA_REVISED' and e['payload'].get('voyageId') == 'VYG-0001')
             ev_ids.append(add_evidence('EVT-ETA-VYG-0001', datetime(2026, 11, 9, 9, 0, tzinfo=UTC), {'kind': 'voyage', 'id': 'VYG-0001'}, 'estimatedArrivalUtc', voyage['estimatedArrivalUtc']))
             ev_ids.append(add_evidence('EVT-WAIT-PRT-SIN', datetime(2026, 11, 9, 11, 22, tzinfo=UTC), {'kind': 'port', 'id': 'PRT-SIN'}, 'waitingEstimateHours', 26, 'h'))
-            ev_ids.append(add_evidence('EVT-AIS-VSL-0001', datetime(2026, 11, 9, 11, 55, tzinfo=UTC), {'kind': 'vessel', 'id': 'VSL-0001'}, 'lastKnownPosition', point(*VSL1_APPROACH[-1])))
+            ev_ids.append(add_evidence('EVT-AIS-VSL-0001', datetime(2026, 11, 9, 11, 55, tzinfo=UTC), {'kind': 'vessel', 'id': 'VSL-0001'}, 'lastKnownPosition', point(*VSL1_HOLD)))
             ev_ids.append(add_evidence('EVT-BERTH-VSL-0001', datetime(2026, 11, 9, 11, 40, tzinfo=UTC), {'kind': 'port', 'id': 'PRT-SIN'}, 'estimatedBerthUtc', '2026-11-10T14:00:00Z'))
             ev_ids.append(add_evidence('VYG-0001', datetime(2026, 11, 6, 0, 0, tzinfo=UTC), {'kind': 'voyage', 'id': 'VYG-0001'}, 'dailyDelayCostUsd', 32000, 'USD/day', 'assumption'))
         elif cat == 'weather_exposure':
@@ -742,17 +776,183 @@ def gen(seed=92026):
         if e['eventId'] is None:
             n += 1
             e['eventId'] = f'EVT-{n:04d}'
-    alias = {'EVT-ETA-VYG-0001': 'EVT-0004', 'EVT-WAIT-PRT-SIN': 'EVT-0007', 'EVT-AIS-VSL-0001': 'EVT-0009', 'EVT-BERTH-VSL-0001': 'EVT-0008'}
+    alias = {'EVT-ETA-VYG-0001': 'EVT-0001', 'EVT-WAIT-PRT-SIN': 'EVT-0007', 'EVT-AIS-VSL-0001': 'EVT-0009', 'EVT-BERTH-VSL-0001': 'EVT-0008'}
     for ev in evidence:
         ev['sourceId'] = alias.get(ev['sourceId'], ev['sourceId'])
 
     data = {'regions.json': regions, 'ports.json': ports, 'terminals.json': terminals, 'berths.json': berths, 'anchorages.json': anchorages,
             'routes.json': routes, 'vessels.json': vessels, 'voyages.json': voyages, 'positions.json': positions, 'portCalls.json': portcalls,
             'incidents.json': incidents, 'evidence.json': evidence, 'weatherHazards.json': weather, 'events.json': events, 'users.json': users}
-    return data
+    ctx = {'voyageKinematics': voyage_kinematics, 'flagship': flagship, 'portMap': port_map, 'vesselMap': vessel_map, 'voyageMap': voyage_map,
+           'berthMap': berth_map, 'positions': positions}
+    return data, ctx
 
 
-COMPACT = {'positions.json'}
+SEA_ROUTES = {'RTE-SIN-MNL', 'RTE-SHA-SIN', 'RTE-MEL-SIN', 'RTE-MUM-SIN', 'RTE-HAM-SIN', 'RTE-SIN-RTM', 'RTE-SIN-JEA', 'RTE-SIN-CPT'}
+
+
+def flagship_vessels(kinematics):
+    """VSL-0047 plus in-transit vessels: up to 20 on Southeast Asia corridors, the rest spread over other corridors."""
+    ids = sorted(int(v[4:]) for v in kinematics)
+    sea = [i for i in ids if i != 47 and kinematics[f'VYG-{i:04d}']['route']['routeId'] in SEA_ROUTES][:20]
+    other = [i for i in ids if i != 47 and i not in sea][:FLAGSHIP_COUNT - 1 - len(sea)]
+    return ['VSL-0047'] + [f'VSL-{i:04d}' for i in sorted(sea + other)]
+
+
+def model_sample(kin, t, port_map):
+    """Position on the voyage's kinematic model (same model as the base samples); clamps to the port at either end."""
+    route = kin['route']
+    prog = kin['progressAtLastReport'] + ((t - kin['lastReport']).total_seconds() / 3600) * kin['sogKn'] / route['distanceNmEstimate']
+    if prog <= 0:
+        p = port_map[route['originPortId']]['location']
+        return [p['lon'], p['lat'], 0.0, None, 'moored']
+    if prog >= 1:
+        p = port_map[route['destinationPortId']]['location']
+        return [p['lon'], p['lat'], 0.0, None, 'moored']
+    pos = path_at(route['waypoints'], prog)
+    return [pos['lon'], pos['lat'], kin['sogKn'], bearing_deg(pos, path_at(route['waypoints'], min(1, prog + 0.004))), 'underway']
+
+
+def berth_bearing(points):
+    a, b = points[0], points[-1]
+    return bearing_deg(a, b) if a != b else 90
+
+
+def gen_v2(data, ctx, seed):
+    """Versioned V2 scenario module. Never rewrites base records: it only adds keyframes, layouts and milestones."""
+    rng = random.Random(seed + 2)
+    port_map, vessel_map, berth_map = ctx['portMap'], ctx['vesselMap'], ctx['berthMap']
+    kin_by_vessel = {f'VSL-{v[4:]}': k for v, k in ctx['voyageKinematics'].items()}
+    base_times = {}
+    for p in ctx['positions']:
+        base_times.setdefault(p['vesselId'], []).append(datetime.fromisoformat(p['timestampUtc'].replace('Z', '+00:00')))
+
+    tracks = []
+    for vid in ctx['flagship']:
+        kin = kin_by_vessel[vid]
+        interval = 15 if vid == 'VSL-0047' else 30
+        step = timedelta(minutes=interval)
+        first_base = min(base_times[vid])
+        history, t = [], V2_MIN
+        while t < first_base:
+            history.append(model_sample(kin, t, port_map))
+            t += step
+        forecast, t = [], kin['lastReport'] + step
+        forecast_start = t
+        while t <= V2_MAX:
+            forecast.append(model_sample(kin, t, port_map))
+            t += step
+        tracks.append({'vesselId': vid, 'voyageId': vessel_map[vid]['currentVoyageId'], 'routeId': kin['route']['routeId'], 'intervalMinutes': interval,
+                       'history': {'startUtc': iso(V2_MIN), 'samples': [[round(s[0], 6), round(s[1], 6), s[2], s[3], s[4]] for s in history]},
+                       'forecast': {'startUtc': iso(forecast_start), 'samples': [[round(s[0], 6), round(s[1], 6), s[2], s[3], s[4]] for s in forecast]},
+                       'sourceType': 'synthetic-v2-keyframes'})
+
+    # ---------------- port twin layouts ----------------
+    def terminal_layout(t, quay_depth_m, cranes):
+        bpts = [berth_map[b]['location'] for b in t['berthIds']]
+        bearing = berth_bearing(bpts)
+        berths_out = []
+        for k, bid in enumerate(t['berthIds']):
+            b = berth_map[bid]
+            berths_out.append({'berthId': bid, 'center': b['location'], 'quayBearingDeg': bearing,
+                               'lengthMeters': 300 + 40 * ((k + len(bid)) % 3), 'depthMeters': round(quay_depth_m + 0.5 * (k % 3), 1),
+                               'craneCount': 0 if b['status'] == 'unavailable' else cranes - (k % 2), 'constraintsValidated': False})
+        return {'terminalId': t['terminalId'], 'name': t['name'], 'quayBearingDeg': bearing, 'quayLine': bpts, 'landSide': 'north' if t['portId'] == 'PRT-SIN' else 'east',
+                'yardDepthMeters': 420 if t['portId'] == 'PRT-SIN' else 260, 'berths': berths_out}
+
+    terminals = {t['terminalId']: t for t in data['terminals.json']}
+    layouts = [{
+        'portId': 'PRT-SIN', 'detail': 'flagship', 'cityId': 'CTY-SIN',
+        'bounds': {'west': 103.62, 'south': 1.12, 'east': 104.08, 'north': 1.34},
+        'terminals': [terminal_layout(terminals[tid], 16.0, 5) for tid in ('TRM-SIN-W', 'TRM-SIN-C', 'TRM-SIN-E')],
+        'anchorages': [{'anchorageId': 'ANC-SIN', 'name': 'Singapore Eastern Demo Anchorage', 'polygon': [point(a, b) for a, b in SIN_ANCHORAGE_V2], 'usage': 'waiting'},
+                       {'anchorageId': 'ANC-SIN-WEST', 'name': 'Singapore Western Demo Anchorage', 'polygon': [point(a, b) for a, b in SIN_WEST_ANCHORAGE], 'usage': 'illustrative'}],
+        'pilotBoardingPlace': point(104.08, 1.245),
+        'sourceType': 'synthetic-illustrative-layout-not-for-navigation',
+    }]
+    for pid, city in (('PRT-RTM', 'CTY-RTM'), ('PRT-GOA', 'CTY-GOA')):
+        p = port_map[pid]
+        l = p['location']
+        layouts.append({'portId': pid, 'detail': 'procedural', 'cityId': city,
+                        'bounds': {'west': l['lon'] - 0.12, 'south': l['lat'] - 0.16, 'east': l['lon'] + 0.32, 'north': l['lat'] + 0.08},
+                        'terminals': [terminal_layout(terminals[tid], 14.5, 3) for tid in p['terminalIds']],
+                        'anchorages': [{'anchorageId': a['anchorageId'], 'name': a['name'], 'polygon': a['polygon'], 'usage': 'waiting'}
+                                       for a in data['anchorages.json'] if a['portId'] == pid],
+                        'pilotBoardingPlace': point(l['lon'] + 0.2, l['lat'] - 0.14),
+                        'sourceType': 'synthetic-illustrative-layout-not-for-navigation'})
+
+    # ---------------- DCSA-style berth milestones (Singapore) ----------------
+    def ms(event, location, classifier, at, recorded):
+        return {'eventType': event, 'location': location, 'classifier': classifier, 'atUtc': iso(at), 'recordedAtUtc': iso(min(recorded, ANCHOR))}
+
+    sin_layout = {b['berthId']: b for t in layouts[0]['terminals'] for b in t['berths']}
+    calls = [c for c in data['portCalls.json'] if c['portId'] == 'PRT-SIN']
+    bookings, free_at = [], {}
+    parse = lambda v: datetime.fromisoformat(v.replace('Z', '+00:00'))
+    buffer_min = 60
+    for c in calls:
+        if c['status'] != 'at_berth':
+            continue
+        berthed = parse(c['estimatedBerthUtc'])
+        dep = berthed + timedelta(hours=rng.randint(20, 34))
+        free_at[c['berthId']] = dep
+        bookings.append({'bookingId': None, 'portCallId': c['portCallId'], 'vesselId': c['vesselId'], 'berthId': c['berthId'], 'terminalId': c['terminalId'],
+                         'status': 'at_berth', 'bufferMinutes': buffer_min,
+                         'milestones': [ms('ARRIVAL', 'BERTH', 'ACT', berthed, berthed), ms('DEPARTURE', 'BERTH', 'PLN', dep, berthed + timedelta(hours=2)),
+                                        ms('DEPARTURE', 'BERTH', 'EST', dep + timedelta(minutes=rng.choice([0, 30, 90])), ANCHOR - timedelta(minutes=rng.randint(5, 50)))]})
+    waiting = sorted((c for c in calls if c['status'] == 'awaiting_berth' and c['estimatedBerthUtc'] and c['vesselId'] != 'VSL-0001'),
+                     key=lambda c: (c['estimatedBerthUtc'], c['portCallId']))
+    conflict_made = False
+    for c in waiting:
+        eta_berth = parse(c['estimatedBerthUtc'])
+        stay = timedelta(hours=rng.randint(16, 30))
+        options = [bid for bid, b in sin_layout.items() if bid.startswith('BRH-' + c['terminalId'][4:]) and berth_map[bid]['status'] != 'unavailable']
+        bid = min(options, key=lambda b: (free_at.get(b, ANCHOR), b))
+        planned = eta_berth <= ANCHOR + timedelta(hours=30)
+        start = max(eta_berth, free_at.get(bid, ANCHOR) + timedelta(minutes=buffer_min))
+        if planned and not conflict_made and bid in free_at:
+            # One deliberate overlap with the occupant's planned departure + buffer, for the berth-conflict engine demo.
+            start = free_at[bid] - timedelta(hours=2)
+            conflict_made = True
+        miles = [ms('ARRIVAL', 'BERTH', 'REQ', eta_berth, parse(c['arrivalAtUtc']) + timedelta(hours=1)),
+                 ms('ARRIVAL', 'BERTH', 'EST', start, ANCHOR - timedelta(minutes=rng.randint(10, 90))),
+                 ms('DEPARTURE', 'BERTH', 'EST', start + stay, ANCHOR - timedelta(minutes=rng.randint(10, 90)))]
+        if planned:
+            miles += [ms('ARRIVAL', 'BERTH', 'PLN', start, ANCHOR - timedelta(hours=rng.randint(1, 4))), ms('DEPARTURE', 'BERTH', 'PLN', start + stay, ANCHOR - timedelta(hours=rng.randint(1, 4)))]
+            free_at[bid] = start + stay
+        bookings.append({'bookingId': None, 'portCallId': c['portCallId'], 'vesselId': c['vesselId'], 'berthId': bid if planned else None, 'terminalId': c['terminalId'],
+                         'status': 'awaiting_berth', 'bufferMinutes': buffer_min, 'milestones': miles})
+    one = next(c for c in calls if c['vesselId'] == 'VSL-0001')
+    voyage1 = ctx['voyageMap']['VYG-0001']
+    bookings.append({'bookingId': None, 'portCallId': one['portCallId'], 'vesselId': 'VSL-0001', 'berthId': None, 'terminalId': one['terminalId'],
+                     'status': 'awaiting_berth', 'bufferMinutes': buffer_min,
+                     'milestones': [ms('ARRIVAL', 'BERTH', 'EST', parse(one['estimatedBerthUtc']), datetime(2026, 11, 9, 11, 40, tzinfo=UTC)),
+                                    ms('DEPARTURE', 'BERTH', 'EST', parse(voyage1['estimatedDepartureUtc']), datetime(2026, 11, 9, 11, 40, tzinfo=UTC))]})
+    for c in calls:
+        if c['status'] == 'scheduled':
+            eta = parse(c['arrivalAtUtc'])
+            bookings.append({'bookingId': None, 'portCallId': c['portCallId'], 'vesselId': c['vesselId'], 'berthId': None, 'terminalId': c['terminalId'],
+                             'status': 'scheduled', 'bufferMinutes': buffer_min,
+                             'milestones': [ms('ARRIVAL', 'PBP', 'EST', eta, ANCHOR - timedelta(minutes=rng.randint(5, 60)))]})
+    for k, b in enumerate(sorted(bookings, key=lambda b: b['portCallId']), 1):
+        b['bookingId'] = f'BKG-{k:04d}'
+    bookings.sort(key=lambda b: b['bookingId'])
+
+    scenario = {
+        'scenarioVersion': SCENARIO_VERSION, 'baseFixtureVersion': FIXTURE_VERSION, 'seed': seed,
+        'window': {'minUtc': iso(V2_MIN), 'maxUtc': iso(V2_MAX)}, 'anchorUtc': iso(ANCHOR),
+        'baseReplayRange': {'startUtc': iso(REPLAY_START), 'endUtc': iso(ANCHOR)},
+        'flagshipVesselIds': ctx['flagship'],
+        'followDemo': {'vesselId': 'VSL-0047', 'voyageId': 'VYG-0047', 'routeId': 'RTE-SIN-MNL'},
+        'singaporeCase': {'vesselId': 'VSL-0001', 'portCallId': 'PCL-0001', 'incidentId': 'INC-0001', 'queueSinceUtc': iso(VSL1_QUEUE_SINCE),
+                          'anchorageEnterUtc': '2026-11-09T09:15:00Z', 'estimatedBerthUtc': '2026-11-10T14:00:00Z', 'berthAssigned': False},
+        'precedence': ['baseFixtureRecords', 'v2IllustrativeLayouts', 'versionedFutureMovementSamples', 'scenarioBranchEvents'],
+        'disclosure': 'Simulated scenario extension. Keyframes, layouts and milestones are illustrative; not live AIS, port or navigation data.',
+    }
+    return {'scenario.json': scenario, 'flagshipTracks.json': tracks, 'portLayouts.json': layouts, 'berthSchedule.json': bookings}
+
+
+COMPACT = {'positions.json', 'flagshipTracks.json'}
 
 
 def main():
@@ -762,14 +962,22 @@ def main():
     args = parser.parse_args()
     out = args.output
     out.mkdir(parents=True, exist_ok=True)
-    datasets = gen(args.seed)
-    for name, rows in datasets.items():
-        if name in COMPACT:
+    datasets, ctx = gen(args.seed)
+    v2 = gen_v2(datasets, ctx, args.seed)
+
+    def write(path, rows):
+        if path.name in COMPACT:
             text = '[\n' + ',\n'.join(json.dumps(r, ensure_ascii=False, separators=(',', ':')) for r in rows) + '\n]\n'
         else:
             text = json.dumps(rows, ensure_ascii=False, indent=2) + '\n'
-        (out / name).write_text(text, encoding='utf-8')
-    manifest = {'dataset': 'PORTOS Synthetic Maritime Operations Demo', 'version': '1.1.0', 'seed': args.seed,
+        path.write_text(text, encoding='utf-8')
+
+    for name, rows in datasets.items():
+        write(out / name, rows)
+    (out / 'v2').mkdir(exist_ok=True)
+    for name, rows in v2.items():
+        write(out / 'v2' / name, rows)
+    manifest = {'dataset': 'PORTOS Synthetic Maritime Operations Demo', 'version': FIXTURE_VERSION, 'scenarioVersion': SCENARIO_VERSION, 'seed': args.seed,
                 'fixedScenarioTimeUtc': iso(ANCHOR), 'generatedAtUtc': iso(ANCHOR),
                 'replayRange': {'startUtc': iso(REPLAY_START), 'endUtc': iso(ANCHOR)},
                 'sourceDisclosure': 'Illustrative simulation, not live AIS, port, weather or nautical navigation data',
@@ -777,9 +985,11 @@ def main():
                 'scenario': {'vesselId': 'VSL-0001', 'vesselName': 'MV Pacific Horizon', 'voyageId': 'VYG-0001', 'incidentId': 'INC-0001',
                              'portId': 'PRT-SIN', 'destinationPortId': 'PRT-RTM', 'routeId': 'RTE-SIN-RTM', 'alternativeRouteId': 'RTE-SIN-RTM-CAPE',
                              'weatherHazardId': 'WX-0001', 'etaShiftHours': 18, 'dailyDelayCostUsd': 32000, 'expectedEstimatedExposureUsd': 24000},
-                'scenarios': ['SCENARIO_SINGAPORE_CONGESTION', 'SCENARIO_INDIAN_OCEAN_WEATHER', 'SCENARIO_ROTTERDAM_BERTH', 'SCENARIO_NORTH_SEA_TRANSIT', 'SCENARIO_GENERAL_DISRUPTION']}
+                'scenarios': ['SCENARIO_SINGAPORE_CONGESTION', 'SCENARIO_INDIAN_OCEAN_WEATHER', 'SCENARIO_ROTTERDAM_BERTH', 'SCENARIO_NORTH_SEA_TRANSIT', 'SCENARIO_GENERAL_DISRUPTION'],
+                'v2Module': {'path': 'v2/', 'files': sorted(v2.keys()), 'window': v2['scenario.json']['window'], 'flagshipVessels': len(ctx['flagship'])}}
     (out / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     print('Generated', len(datasets), 'datasets:', manifest['counts'])
+    print('V2 module:', {k: len(v) if isinstance(v, list) else 'object' for k, v in v2.items()})
 
 
 if __name__ == '__main__':

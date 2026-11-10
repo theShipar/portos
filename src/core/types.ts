@@ -217,7 +217,9 @@ export type EventType =
   | 'INCIDENT_ACKNOWLEDGED'
   | 'ACTION_ASSIGNED'
   | 'INCIDENT_RESOLVED'
-  | 'PORT_WAIT_UPDATED';
+  | 'PORT_WAIT_UPDATED'
+  | 'PORT_QUEUE_JOINED'
+  | 'BERTH_ESTIMATE_UPDATED';
 
 export interface TimelineEvent {
   eventId: string;
@@ -246,6 +248,7 @@ export interface User {
 export interface Manifest {
   dataset: string;
   version: string;
+  scenarioVersion?: string;
   seed: number;
   fixedScenarioTimeUtc: IsoUtc;
   generatedAtUtc: IsoUtc;
@@ -269,8 +272,110 @@ export interface Manifest {
   scenarios: string[];
 }
 
+/* ---------------- V2 scenario module (sample-data/v2, fixture v2.0) ---------------- */
+
+/** DCSA just-in-time classifiers: estimated, requested, planned, actual. */
+export type DcsaClassifier = 'EST' | 'REQ' | 'PLN' | 'ACT';
+
+export interface BerthMilestone {
+  eventType: 'ARRIVAL' | 'DEPARTURE';
+  location: 'BERTH' | 'PBP';
+  classifier: DcsaClassifier;
+  atUtc: IsoUtc;
+  recordedAtUtc: IsoUtc;
+}
+
+export interface BerthBooking {
+  bookingId: string;
+  portCallId: string;
+  vesselId: string;
+  berthId: string | null;
+  terminalId: string | null;
+  status: PortCall['status'];
+  bufferMinutes: number;
+  milestones: BerthMilestone[];
+}
+
+export interface LayoutBerth {
+  berthId: string;
+  center: GeoPoint;
+  quayBearingDeg: number;
+  lengthMeters: number;
+  depthMeters: number;
+  craneCount: number;
+  /** Always false: draft, tide, services and policy are not modelled. */
+  constraintsValidated: false;
+}
+
+export interface LayoutTerminal {
+  terminalId: string;
+  name: string;
+  quayBearingDeg: number;
+  quayLine: GeoPoint[];
+  landSide: 'north' | 'east' | 'south' | 'west';
+  yardDepthMeters: number;
+  berths: LayoutBerth[];
+}
+
+export interface PortLayout {
+  portId: string;
+  detail: 'flagship' | 'procedural';
+  cityId: string;
+  bounds: Bounds;
+  terminals: LayoutTerminal[];
+  anchorages: { anchorageId: string; name: string; polygon: GeoPoint[]; usage: 'waiting' | 'illustrative' }[];
+  pilotBoardingPlace: GeoPoint;
+  sourceType: string;
+}
+
+/** [lon, lat, sogKn, cogDeg | null, navStatus] */
+export type KeyframeSample = [number, number, number, number | null, NavStatus];
+
+export interface FlagshipTrack {
+  vesselId: string;
+  voyageId: string;
+  routeId: string;
+  intervalMinutes: number;
+  history: { startUtc: IsoUtc; samples: KeyframeSample[] };
+  forecast: { startUtc: IsoUtc; samples: KeyframeSample[] };
+  sourceType: string;
+}
+
+export interface V2Scenario {
+  scenarioVersion: string;
+  baseFixtureVersion: string;
+  seed: number;
+  window: { minUtc: IsoUtc; maxUtc: IsoUtc };
+  anchorUtc: IsoUtc;
+  baseReplayRange: { startUtc: IsoUtc; endUtc: IsoUtc };
+  flagshipVesselIds: string[];
+  followDemo: { vesselId: string; voyageId: string; routeId: string };
+  singaporeCase: {
+    vesselId: string;
+    portCallId: string;
+    incidentId: string;
+    queueSinceUtc: IsoUtc;
+    anchorageEnterUtc: IsoUtc;
+    estimatedBerthUtc: IsoUtc;
+    berthAssigned: boolean;
+  };
+  precedence: string[];
+  disclosure: string;
+}
+
+export interface V2Module {
+  scenario: V2Scenario;
+  flagshipTracks: FlagshipTrack[];
+  portLayouts: PortLayout[];
+  berthSchedule: BerthBooking[];
+}
+
+export const V2_KEYS = ['scenario', 'flagshipTracks', 'portLayouts', 'berthSchedule'] as const;
+
 export interface RawDataset {
   manifest: Manifest;
+  /** Optional: without it the app runs on the base fixture only. */
+  v2?: V2Module | null;
   regions: Region[];
   ports: Port[];
   terminals: Terminal[];

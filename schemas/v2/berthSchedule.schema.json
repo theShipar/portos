@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://portos.example.invalid/schemas/v2/berthSchedule.schema.json",
+  "title": "PORTOS V2 scenario berthSchedule",
+  "description": "Versioned V2 scenario extension (simulated). Additive to the base fixture; never live data.",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "properties": {
+      "berthId": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "bookingId": {
+        "type": "string"
+      },
+      "bufferMinutes": {
+        "type": "integer"
+      },
+      "milestones": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "atUtc": {
+              "type": "string",
+              "pattern": "Z$"
+            },
+            "classifier": {
+              "enum": [
+                "EST",
+                "REQ",
+                "PLN",
+                "ACT"
+              ]
+            },
+            "eventType": {
+              "enum": [
+                "ARRIVAL",
+                "DEPARTURE"
+              ]
+            },
+            "location": {
+              "enum": [
+                "BERTH",
+                "PBP"
+              ]
+            },
+            "recordedAtUtc": {
+              "type": "string",
+              "pattern": "Z$"
+            }
+          },
+          "required": [
+            "atUtc",
+            "classifier",
+            "eventType",
+            "location",
+            "recordedAtUtc"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "portCallId": {
+        "type": "string"
+      },
+      "status": {
+        "type": "string"
+      },
+      "terminalId": {
+        "type": "string"
+      },
+      "vesselId": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "berthId",
+      "bookingId",
+      "bufferMinutes",
+      "milestones",
+      "portCallId",
+      "status",
+      "terminalId",
+      "vesselId"
+    ],
+    "additionalProperties": false
+  }
+}

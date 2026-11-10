@@ -177,7 +177,7 @@ describe('replay rail', () => {
     const a = railMarkers(c, { kind: 'vessel', id: 'VSL-0001' }, null, START, NOW);
     const b = railMarkers(c, { kind: 'vessel', id: 'VSL-0001' }, null, START, NOW);
     expect(a).toEqual(b);
-    expect(a.map((m) => m.eventId)).toEqual(expect.arrayContaining(['EVT-0001', 'EVT-0004', 'EVT-0005', 'EVT-0006', 'EVT-0009']));
+    expect(a.map((m) => m.eventId)).toEqual(expect.arrayContaining(['EVT-0001', 'EVT-0002', 'EVT-0003', 'EVT-0004', 'EVT-0007', 'EVT-0008', 'EVT-0009']));
     for (let i = 1; i < a.length; i++) expect(a[i].ms).toBeGreaterThanOrEqual(a[i - 1].ms);
   });
 
@@ -189,8 +189,8 @@ describe('replay rail', () => {
 
   it('steps between markers and finds the marker in force', () => {
     const m = railMarkers(c, { kind: 'incident', id: 'INC-0001' }, null, START, NOW);
-    const inc = m.find((x) => x.eventId === 'EVT-0006')!;
-    expect(currentMarker(m, at('11:00'))?.eventId).toBe('EVT-0006');
+    const inc = m.find((x) => x.eventId === 'EVT-0003')!;
+    expect(currentMarker(m, at('11:00'))?.eventId).toBe('EVT-0003');
     expect(stepMarker(m, inc.ms, 1)!.ms).toBeGreaterThan(inc.ms);
     expect(stepMarker(m, inc.ms, -1)!.ms).toBeLessThan(inc.ms);
     expect(stepMarker(m, NOW, 1)).toBeNull();

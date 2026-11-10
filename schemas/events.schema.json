@@ -47,11 +47,21 @@
           "assigneeUserId": {
             "type": "string"
           },
+          "assignment": {
+            "type": "string"
+          },
           "berthId": {
             "type": "string"
           },
+          "confirmed": {
+            "type": "boolean"
+          },
           "driver": {
             "type": "string"
+          },
+          "estimatedBerthUtc": {
+            "type": "string",
+            "pattern": "Z$"
           },
           "hazardId": {
             "type": "string"
@@ -85,6 +95,9 @@
           "note": {
             "type": "string"
           },
+          "portCallId": {
+            "type": "string"
+          },
           "portId": {
             "type": "string"
           },
@@ -107,6 +120,9 @@
           "sogKn": {
             "type": "number"
           },
+          "terminalId": {
+            "type": "string"
+          },
           "userId": {
             "type": "string"
           },
@@ -118,14 +134,6 @@
           },
           "waitingEstimateHours": {
             "type": "integer"
-          },
-          "windowEndUtc": {
-            "type": "string",
-            "pattern": "Z$"
-          },
-          "windowStartUtc": {
-            "type": "string",
-            "pattern": "Z$"
           }
         },
         "required": [],

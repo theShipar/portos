@@ -1030,12 +1030,16 @@
         "lat": 1.33
       },
       {
-        "lon": 106.5,
-        "lat": 3.2
+        "lon": 105.6,
+        "lat": 2.2
       },
       {
-        "lon": 110.0,
-        "lat": 6.0
+        "lon": 108.056644,
+        "lat": 3.501864
+      },
+      {
+        "lon": 109.6,
+        "lat": 4.3
       },
       {
         "lon": 114.5,
@@ -1058,7 +1062,7 @@
         "lat": 14.59
       }
     ],
-    "distanceNmEstimate": 1317.7,
+    "distanceNmEstimate": 1320.0,
     "isScenarioAlternative": false,
     "provenance": "synthetic",
     "sourceType": "conceptual-synthetic-not-for-navigation"

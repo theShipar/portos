@@ -76,6 +76,7 @@ const STAGE_LABEL: Record<string, string> = {
 const POSITION_LABEL: Record<TrackState, string> = {
   exact: 'Reported',
   interpolated: 'Interpolated between reports',
+  modelled: 'Modelled (scenario keyframes)',
   'last-known': 'Last known',
   stale: 'Last reported (stale)',
   unavailable: 'No position at this time',
@@ -84,6 +85,7 @@ const POSITION_LABEL: Record<TrackState, string> = {
 const POSITION_METHOD: Record<TrackState, string> = {
   exact: 'Reported sample at the simulation time',
   interpolated: 'Interpolated between the two bracketing samples',
+  modelled: 'V2 scenario keyframes along the planned route (simulated, not an observed report)',
   'last-known': 'Most recent sample before the simulation time',
   stale: 'Most recent sample, older than the 30 min freshness limit',
   unavailable: 'No sample at or before the simulation time',
@@ -115,7 +117,11 @@ export function describeEvent(e: TimelineEvent, c: Catalog): string {
     case 'INCIDENT_RESOLVED':
       return `Incident ${p.incidentId ?? ''} resolved`;
     case 'PORT_WAIT_UPDATED':
-      return `${c.byId.port.get(p.portId as string)?.name ?? 'Port'} wait estimate ${p.previousEstimateHours ?? '—'} → ${p.waitingEstimateHours} h`;
+      return `${c.byId.port.get(p.portId as string)?.name ?? 'Port'} wait estimate ${p.previousWaitingEstimateHours ?? '—'} → ${p.waitingEstimateHours} h`;
+    case 'PORT_QUEUE_JOINED':
+      return `Joined the ${c.byId.port.get(p.portId as string)?.name ?? 'port'} berth queue`;
+    case 'BERTH_ESTIMATE_UPDATED':
+      return `Estimated berth ${formatUtc(p.estimatedBerthUtc as string)}${p.confirmed ? '' : ' · estimate, not a confirmed slot'}`;
   }
 }
 

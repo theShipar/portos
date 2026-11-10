@@ -33,7 +33,23 @@ for name,idkey in ID_KEY.items():
     rows=json.loads((SAMPLE/(name+'.json')).read_text('utf-8'))
     schema={'$schema':'https://json-schema.org/draft/2020-12/schema','$id':f'https://portos.example.invalid/schemas/{name}.schema.json','title':f'PORTOS synthetic {name} collection','description':'Synthetic scenario fixtures. Not live AIS or navigational data.','type':'array','minItems':1,'items':infer(rows)}
     if name=='ports':schema['items']['properties']['countryIso2']={'type':'string','pattern':'^[A-Z]{2}$'}
+    if name=='berths':
+        bp=schema['items']['properties'];bp['scheduledVesselId']={'type':['string','null']}
+        for k in ('scheduledWindowStartUtc','scheduledWindowEndUtc'):bp[k]={'type':['string','null'],'pattern':'Z$'}
     (OUT/(name+'.schema.json')).write_text(json.dumps(schema,indent=2,ensure_ascii=False)+'\n')
 manifest={'$schema':'https://json-schema.org/draft/2020-12/schema','title':'PORTOS fixture manifest','type':'object','properties':{'dataset':{'type':'string'},'version':{'type':'string'},'seed':{'type':'integer'},'fixedScenarioTimeUtc':{'type':'string','format':'date-time'},'sourceDisclosure':{'type':'string'},'counts':{'type':'object'},'scenario':{'type':'object'}},'required':['dataset','version','seed','fixedScenarioTimeUtc','counts','scenario'],'additionalProperties':True}
 (OUT/'manifest.schema.json').write_text(json.dumps(manifest,indent=2)+'\n')
-print('Generated',len(ID_KEY)+1,'schemas')
+# V2 scenario module (sample-data/v2): keyframe samples are positional tuples [lon, lat, sogKn, cogDeg|null, navStatus].
+V2=['scenario','flagshipTracks','portLayouts','berthSchedule'];(OUT/'v2').mkdir(exist_ok=True)
+for name in V2:
+    data=json.loads((SAMPLE/'v2'/(name+'.json')).read_text('utf-8'))
+    body=infer([data]) if isinstance(data,dict) else {'type':'array','minItems':1,'items':infer(data)}
+    if name=='flagshipTracks':
+        tup={'type':'array','prefixItems':[{'type':'number','minimum':-180,'maximum':180},{'type':'number','minimum':-90,'maximum':90},{'type':'number','minimum':0},{'type':['integer','null'],'minimum':0,'maximum':359},{'enum':['underway','at_anchor','moored','not_under_command','unknown']}],'items':False,'minItems':5}
+        for part in ('history','forecast'):body['items']['properties'][part]['properties']['samples']={'type':'array','items':tup}
+    if name=='berthSchedule':
+        m=body['items']['properties']['milestones']['items']['properties']
+        m['classifier']={'enum':['EST','REQ','PLN','ACT']};m['eventType']={'enum':['ARRIVAL','DEPARTURE']};m['location']={'enum':['BERTH','PBP']}
+    schema={'$schema':'https://json-schema.org/draft/2020-12/schema','$id':f'https://portos.example.invalid/schemas/v2/{name}.schema.json','title':f'PORTOS V2 scenario {name}','description':'Versioned V2 scenario extension (simulated). Additive to the base fixture; never live data.',**body}
+    (OUT/'v2'/(name+'.schema.json')).write_text(json.dumps(schema,indent=2,ensure_ascii=False)+'\n')
+print('Generated',len(ID_KEY)+1,'schemas +',len(V2),'V2 schemas')

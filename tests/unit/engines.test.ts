@@ -46,11 +46,27 @@ describe('tracks', () => {
     expect(after.point!.lon).toBe(1);
   });
 
-  it('places Pacific Horizon underway before 09:15 and at anchor after', () => {
-    expect(getVesselAtTime(c, 'VSL-0001', parseUtc('2026-11-09T06:00:00Z')!).navStatus).toBe('underway');
+  it('holds Pacific Horizon at the kit anchor position for the whole window (fixture v2.0)', () => {
+    const early = getVesselAtTime(c, 'VSL-0001', parseUtc('2026-11-09T06:00:00Z')!);
+    expect(early.navStatus).toBe('at_anchor');
+    expect(early.point).toEqual({ lon: 103.91, lat: 1.18 });
     const now = getVesselAtTime(c, 'VSL-0001', NOW);
     expect(now.navStatus).toBe('at_anchor');
     expect(now.state).toBe('exact');
+  });
+
+  it('marks V2 keyframe positions as modelled, never as reported', () => {
+    const track = [
+      { positionId: 'a', t: 0, lon: 0, lat: 0, sogKn: 10, cogDeg: 90, navStatus: 'underway' as const, source: 'base' as const, lastObservedT: 0 },
+      { positionId: 'b', t: 15 * 60_000, lon: 1, lat: 0, sogKn: 10, cogDeg: 90, navStatus: 'underway' as const, source: 'v2' as const, lastObservedT: 0 },
+    ];
+    const mid = vesselAtTime(track, 'X', 10 * 60_000);
+    expect(mid.state).toBe('modelled');
+    expect(mid.freshnessMinutes).toBe(10);
+    const kf = vesselAtTime(track, 'X', 15 * 60_000);
+    expect(kf.state).toBe('modelled');
+    expect(kf.freshnessMinutes).toBe(15);
+    expect(vesselAtTime(track, 'X', 0).state).toBe('exact');
   });
 });
 
@@ -142,9 +158,11 @@ describe('port congestion', () => {
     expect(r.berthUtilization).not.toBeNull();
   });
 
-  it('excludes Pacific Horizon from the queue before it anchored', () => {
-    const r = computePortCongestion(c, 'PRT-SIN', parseUtc('2026-11-09T08:00:00Z')!);
-    expect(r.queue.some((q) => q.vesselId === 'VSL-0001')).toBe(false);
+  it('excludes Pacific Horizon from the queue before it joined at 04:00 UTC', () => {
+    const before = computePortCongestion(c, 'PRT-SIN', parseUtc('2026-11-09T03:00:00Z')!);
+    expect(before.queue.some((q) => q.vesselId === 'VSL-0001')).toBe(false);
+    const after = computePortCongestion(c, 'PRT-SIN', parseUtc('2026-11-09T08:00:00Z')!);
+    expect(after.queue.find((q) => q.vesselId === 'VSL-0001')?.elapsedWaitHours).toBe(4);
   });
 });
 

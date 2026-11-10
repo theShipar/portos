@@ -2,12 +2,15 @@ import { parseUtc } from '@/core/time';
 import type {
   Anchorage,
   Berth,
+  BerthBooking,
   EntityRef,
   Evidence,
+  FlagshipTrack,
   Incident,
   Manifest,
   Port,
   PortCall,
+  PortLayout,
   PositionSample,
   RawDataset,
   Region,
@@ -15,6 +18,8 @@ import type {
   Terminal,
   TimelineEvent,
   User,
+  V2Module,
+  V2Scenario,
   Vessel,
   Voyage,
   WeatherHazard,
@@ -29,6 +34,23 @@ export interface TrackPoint {
   cogDeg: number | null;
   navStatus: PositionSample['navStatus'];
   positionId: string;
+  /** `base` = AIS-style fixture sample; `v2` = V2 scenario keyframe (reconstructed history or forecast). */
+  source?: 'base' | 'v2';
+  /** Time of the latest base sample at or before this point (null for reconstructed history). */
+  lastObservedT?: number | null;
+}
+
+export interface V2Index {
+  scenario: V2Scenario;
+  windowMinMs: number;
+  windowMaxMs: number;
+  flagship: ReadonlySet<string>;
+  flagshipTracks: Map<string, FlagshipTrack>;
+  layoutByPort: Map<string, PortLayout>;
+  bookings: BerthBooking[];
+  bookingsByPort: Map<string, BerthBooking[]>;
+  bookingsByVessel: Map<string, BerthBooking[]>;
+  bookingsByBerth: Map<string, BerthBooking[]>;
 }
 
 export interface Catalog {
@@ -78,6 +100,11 @@ export interface Catalog {
   eventMs: Map<string, number>;
   /** Optional datasets that failed to load; the app runs without them and says so. */
   missingDatasets: string[];
+  /** V2 scenario module (null when it failed to load: base fixture only). */
+  v2: V2Index | null;
+  /** Scenario window the clock may move in: the V2 window, or the base replay range without V2. */
+  windowMinMs: number;
+  windowMaxMs: number;
 }
 
 export class CatalogValidationError extends Error {
@@ -184,12 +211,16 @@ export function buildCatalog(raw: RawDataset, missingDatasets: string[] = []): C
       cogDeg: p.cogDeg,
       navStatus: p.navStatus,
       positionId: p.positionId,
+      source: 'base',
+      lastObservedT: t,
     });
   }
   for (const [vid, arr] of tracks) {
     if (!byId.vessel.has(vid)) issues.push(`positions for unknown vessel ${vid}`);
     arr.sort((a, b) => a.t - b.t);
   }
+  const v2 = raw.v2 ? indexV2(raw.v2, byId.vessel, byId.berth, issues) : null;
+  if (v2) for (const ft of v2.flagshipTracks.values()) mergeKeyframes(tracks, ft);
 
   if (issues.length) throw new CatalogValidationError(issues);
 
@@ -219,11 +250,16 @@ export function buildCatalog(raw: RawDataset, missingDatasets: string[] = []): C
   const voyageByVessel = new Map(raw.voyages.map((v) => [v.vesselId, v] as const));
 
   const anchorMs = parseUtc(raw.manifest.fixedScenarioTimeUtc)!;
+  const replayStartMs = parseUtc(raw.manifest.replayRange.startUtc) ?? anchorMs - 12 * 3_600_000;
+  const replayEndMs = parseUtc(raw.manifest.replayRange.endUtc) ?? anchorMs;
   return Object.freeze({
     manifest: raw.manifest,
     anchorMs,
-    replayStartMs: parseUtc(raw.manifest.replayRange.startUtc) ?? anchorMs - 12 * 3_600_000,
-    replayEndMs: parseUtc(raw.manifest.replayRange.endUtc) ?? anchorMs,
+    replayStartMs,
+    replayEndMs,
+    v2,
+    windowMinMs: v2?.windowMinMs ?? replayStartMs,
+    windowMaxMs: v2?.windowMaxMs ?? replayEndMs,
     regions: raw.regions,
     ports: raw.ports,
     terminals: raw.terminals,
@@ -251,6 +287,62 @@ export function buildCatalog(raw: RawDataset, missingDatasets: string[] = []): C
     eventMs,
     missingDatasets: [...missingDatasets],
   }) as Catalog;
+}
+
+function indexV2(m: V2Module, vessels: Map<string, Vessel>, berths: Map<string, Berth>, issues: string[]): V2Index {
+  const windowMinMs = parseUtc(m.scenario.window.minUtc);
+  const windowMaxMs = parseUtc(m.scenario.window.maxUtc);
+  if (windowMinMs === null || windowMaxMs === null) issues.push('v2 scenario: invalid window');
+  for (const id of m.scenario.flagshipVesselIds) if (!vessels.has(id)) issues.push(`v2 flagship → missing vessel ${id}`);
+  const bookingsByPort = new Map<string, BerthBooking[]>();
+  const bookingsByVessel = new Map<string, BerthBooking[]>();
+  const bookingsByBerth = new Map<string, BerthBooking[]>();
+  for (const b of m.berthSchedule) {
+    if (!vessels.has(b.vesselId)) issues.push(`booking ${b.bookingId} → missing vessel ${b.vesselId}`);
+    if (b.berthId && !berths.has(b.berthId)) issues.push(`booking ${b.bookingId} → missing berth ${b.berthId}`);
+    const portId = b.berthId ? berths.get(b.berthId)?.portId : b.terminalId ? 'PRT-' + b.terminalId.split('-')[1] : null;
+    if (portId) push(bookingsByPort, portId, b);
+    push(bookingsByVessel, b.vesselId, b);
+    if (b.berthId) push(bookingsByBerth, b.berthId, b);
+  }
+  return {
+    scenario: m.scenario,
+    windowMinMs: windowMinMs ?? 0,
+    windowMaxMs: windowMaxMs ?? 0,
+    flagship: new Set(m.scenario.flagshipVesselIds),
+    flagshipTracks: new Map(m.flagshipTracks.map((t) => [t.vesselId, t] as const)),
+    layoutByPort: new Map(m.portLayouts.map((l) => [l.portId, l] as const)),
+    bookings: m.berthSchedule,
+    bookingsByPort,
+    bookingsByVessel,
+    bookingsByBerth,
+  };
+}
+
+/** Adds V2 keyframes around the base samples: reconstructed history before them, forecast after them. */
+function mergeKeyframes(tracks: Map<string, TrackPoint[]>, ft: FlagshipTrack) {
+  const base = tracks.get(ft.vesselId) ?? [];
+  const step = ft.intervalMinutes * 60_000;
+  const lastObserved = base.length ? base[base.length - 1].t : null;
+  const toPoints = (start: string, samples: FlagshipTrack['history']['samples'], kind: 'h' | 'f') => {
+    const t0 = parseUtc(start) ?? 0;
+    return samples.map(([lon, lat, sogKn, cogDeg, navStatus], i): TrackPoint => ({
+      t: t0 + i * step,
+      lon,
+      lat,
+      sogKn,
+      cogDeg,
+      navStatus,
+      positionId: `KF-${ft.vesselId.slice(4)}-${kind}${i}`,
+      source: 'v2',
+      lastObservedT: kind === 'h' ? null : lastObserved,
+    }));
+  };
+  const first = base[0]?.t ?? Infinity;
+  const last = lastObserved ?? -Infinity;
+  const history = toPoints(ft.history.startUtc, ft.history.samples, 'h').filter((p) => p.t < first);
+  const forecast = toPoints(ft.forecast.startUtc, ft.forecast.samples, 'f').filter((p) => p.t > last);
+  tracks.set(ft.vesselId, [...history, ...base, ...forecast]);
 }
 
 export const getVessel = (c: Catalog, id: string) => c.byId.vessel.get(id) ?? null;

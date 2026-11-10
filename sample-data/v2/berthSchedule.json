@@ -1,0 +1,3031 @@
+[
+  {
+    "bookingId": "BKG-0001",
+    "portCallId": "PCL-0001",
+    "vesselId": "VSL-0001",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T14:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:40:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:40:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0002",
+    "portCallId": "PCL-0002",
+    "vesselId": "VSL-0201",
+    "berthId": "BRH-SIN-E-3",
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T02:00:00Z",
+        "recordedAtUtc": "2026-11-08T21:30:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T02:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:41:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T20:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T02:00:00Z",
+        "recordedAtUtc": "2026-11-09T08:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T20:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0003",
+    "portCallId": "PCL-0003",
+    "vesselId": "VSL-0202",
+    "berthId": "BRH-SIN-W-1",
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-09T21:00:00Z",
+        "recordedAtUtc": "2026-11-07T18:45:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:24:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:12:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0004",
+    "portCallId": "PCL-0005",
+    "vesselId": "VSL-0204",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T07:00:00Z",
+        "recordedAtUtc": "2026-11-08T09:30:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:37:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-13T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0005",
+    "portCallId": "PCL-0006",
+    "vesselId": "VSL-0205",
+    "berthId": "BRH-SIN-E-3",
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T11:00:00Z",
+        "recordedAtUtc": "2026-11-07T23:30:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:50:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T17:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:30:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T17:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0006",
+    "portCallId": "PCL-0007",
+    "vesselId": "VSL-0206",
+    "berthId": "BRH-SIN-W-3",
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T13:00:00Z",
+        "recordedAtUtc": "2026-11-08T16:45:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:31:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:38:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0007",
+    "portCallId": "PCL-0008",
+    "vesselId": "VSL-0207",
+    "berthId": "BRH-SIN-W-3",
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-09T23:00:00Z",
+        "recordedAtUtc": "2026-11-08T10:45:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:39:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T15:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:35:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T15:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0008",
+    "portCallId": "PCL-0009",
+    "vesselId": "VSL-0208",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T14:00:00Z",
+        "recordedAtUtc": "2026-11-08T14:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T14:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:15:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:07:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0009",
+    "portCallId": "PCL-0010",
+    "vesselId": "VSL-0209",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T06:45:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:51:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:33:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0010",
+    "portCallId": "PCL-0012",
+    "vesselId": "VSL-0211",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T15:00:00Z",
+        "recordedAtUtc": "2026-11-09T08:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:46:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T17:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0011",
+    "portCallId": "PCL-0013",
+    "vesselId": "VSL-0212",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T14:00:00Z",
+        "recordedAtUtc": "2026-11-08T03:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:48:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:30:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0012",
+    "portCallId": "PCL-0014",
+    "vesselId": "VSL-0213",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T20:00:00Z",
+        "recordedAtUtc": "2026-11-08T09:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:44:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:22:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0013",
+    "portCallId": "PCL-0015",
+    "vesselId": "VSL-0214",
+    "berthId": "BRH-SIN-E-2",
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T08:00:00Z",
+        "recordedAtUtc": "2026-11-08T09:30:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:22:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:42:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T08:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0014",
+    "portCallId": "PCL-0016",
+    "vesselId": "VSL-0215",
+    "berthId": "BRH-SIN-E-1",
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T16:00:00Z",
+        "recordedAtUtc": "2026-11-08T14:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T02:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:38:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:20:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T02:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0015",
+    "portCallId": "PCL-0017",
+    "vesselId": "VSL-0216",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T06:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:14:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T15:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:24:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0016",
+    "portCallId": "PCL-0019",
+    "vesselId": "VSL-0218",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:14:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:40:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0017",
+    "portCallId": "PCL-0020",
+    "vesselId": "VSL-0219",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T23:00:00Z",
+        "recordedAtUtc": "2026-11-08T11:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:22:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:33:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0018",
+    "portCallId": "PCL-0021",
+    "vesselId": "VSL-0220",
+    "berthId": "BRH-SIN-E-1",
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T00:00:00Z",
+        "recordedAtUtc": "2026-11-08T14:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:44:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:41:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T08:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0019",
+    "portCallId": "PCL-0022",
+    "vesselId": "VSL-0221",
+    "berthId": "BRH-SIN-C-1",
+    "terminalId": "TRM-SIN-C",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T13:00:00Z",
+        "recordedAtUtc": "2026-11-08T13:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T13:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:45:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T05:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:34:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T13:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T05:00:00Z",
+        "recordedAtUtc": "2026-11-09T08:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0020",
+    "portCallId": "PCL-0023",
+    "vesselId": "VSL-0222",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T23:00:00Z",
+        "recordedAtUtc": "2026-11-08T09:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:40:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:57:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0021",
+    "portCallId": "PCL-0024",
+    "vesselId": "VSL-0223",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T03:30:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:35:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:39:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0022",
+    "portCallId": "PCL-0026",
+    "vesselId": "VSL-0225",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T09:00:00Z",
+        "recordedAtUtc": "2026-11-08T02:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:38:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T15:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:39:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0023",
+    "portCallId": "PCL-0027",
+    "vesselId": "VSL-0226",
+    "berthId": "BRH-SIN-C-2",
+    "terminalId": "TRM-SIN-C",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T18:00:00Z",
+        "recordedAtUtc": "2026-11-08T23:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:36:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:19:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T08:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0024",
+    "portCallId": "PCL-0028",
+    "vesselId": "VSL-0227",
+    "berthId": "BRH-SIN-W-3",
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-09T15:00:00Z",
+        "recordedAtUtc": "2026-11-07T19:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-08T07:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:29:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:43:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-08T07:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0025",
+    "portCallId": "PCL-0029",
+    "vesselId": "VSL-0228",
+    "berthId": "BRH-SIN-E-2",
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T16:00:00Z",
+        "recordedAtUtc": "2026-11-08T11:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T07:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:27:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:56:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T07:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-12T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0026",
+    "portCallId": "PCL-0030",
+    "vesselId": "VSL-0229",
+    "berthId": "BRH-SIN-W-2",
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T05:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:16:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:42:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T08:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0027",
+    "portCallId": "PCL-0031",
+    "vesselId": "VSL-0230",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T08:45:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:33:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T15:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:37:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0028",
+    "portCallId": "PCL-0033",
+    "vesselId": "VSL-0232",
+    "berthId": "BRH-SIN-W-4",
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T02:00:00Z",
+        "recordedAtUtc": "2026-11-07T20:45:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:17:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:41:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0029",
+    "portCallId": "PCL-0034",
+    "vesselId": "VSL-0233",
+    "berthId": "BRH-SIN-C-2",
+    "terminalId": "TRM-SIN-C",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T08:00:00Z",
+        "recordedAtUtc": "2026-11-07T20:45:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:37:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:01:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0030",
+    "portCallId": "PCL-0035",
+    "vesselId": "VSL-0234",
+    "berthId": "BRH-SIN-W-4",
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-09T16:00:00Z",
+        "recordedAtUtc": "2026-11-07T20:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:24:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:33:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0031",
+    "portCallId": "PCL-0036",
+    "vesselId": "VSL-0235",
+    "berthId": "BRH-SIN-C-1",
+    "terminalId": "TRM-SIN-C",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T18:00:00Z",
+        "recordedAtUtc": "2026-11-08T03:45:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:42:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:18:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-12T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0032",
+    "portCallId": "PCL-0037",
+    "vesselId": "VSL-0236",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T11:00:00Z",
+        "recordedAtUtc": "2026-11-08T18:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:36:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T20:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:43:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0033",
+    "portCallId": "PCL-0038",
+    "vesselId": "VSL-0237",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T03:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T03:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:25:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T02:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:37:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0034",
+    "portCallId": "PCL-0040",
+    "vesselId": "VSL-0239",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-11T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T02:15:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:28:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T03:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:36:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0035",
+    "portCallId": "PCL-0041",
+    "vesselId": "VSL-0240",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "awaiting_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T03:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:35:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T10:43:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0036",
+    "portCallId": "PCL-0042",
+    "vesselId": "VSL-0241",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T00:40:00Z",
+        "recordedAtUtc": "2026-11-09T11:11:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0037",
+    "portCallId": "PCL-0043",
+    "vesselId": "VSL-0242",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T07:40:00Z",
+        "recordedAtUtc": "2026-11-09T11:05:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0038",
+    "portCallId": "PCL-0044",
+    "vesselId": "VSL-0243",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T21:20:00Z",
+        "recordedAtUtc": "2026-11-09T11:31:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0039",
+    "portCallId": "PCL-0045",
+    "vesselId": "VSL-0244",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:04:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0040",
+    "portCallId": "PCL-0046",
+    "vesselId": "VSL-0245",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T00:20:00Z",
+        "recordedAtUtc": "2026-11-09T11:25:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0041",
+    "portCallId": "PCL-0047",
+    "vesselId": "VSL-0246",
+    "berthId": null,
+    "terminalId": "TRM-SIN-E",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T22:40:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0042",
+    "portCallId": "PCL-0048",
+    "vesselId": "VSL-0247",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:30:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0043",
+    "portCallId": "PCL-0049",
+    "vesselId": "VSL-0248",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T22:40:00Z",
+        "recordedAtUtc": "2026-11-09T11:40:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0044",
+    "portCallId": "PCL-0050",
+    "vesselId": "VSL-0249",
+    "berthId": null,
+    "terminalId": "TRM-SIN-C",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T05:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:36:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0045",
+    "portCallId": "PCL-0051",
+    "vesselId": "VSL-0250",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T09:40:00Z",
+        "recordedAtUtc": "2026-11-09T11:36:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0046",
+    "portCallId": "PCL-0052",
+    "vesselId": "VSL-0251",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T09:20:00Z",
+        "recordedAtUtc": "2026-11-09T11:33:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0047",
+    "portCallId": "PCL-0053",
+    "vesselId": "VSL-0252",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-10T04:40:00Z",
+        "recordedAtUtc": "2026-11-09T11:11:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0048",
+    "portCallId": "PCL-0054",
+    "vesselId": "VSL-0253",
+    "berthId": "BRH-SIN-W-1",
+    "terminalId": "TRM-SIN-W",
+    "status": "at_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "ACT",
+        "atUtc": "2026-11-08T03:00:00Z",
+        "recordedAtUtc": "2026-11-08T03:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T06:00:00Z",
+        "recordedAtUtc": "2026-11-08T05:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T06:30:00Z",
+        "recordedAtUtc": "2026-11-09T11:24:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0049",
+    "portCallId": "PCL-0055",
+    "vesselId": "VSL-0254",
+    "berthId": "BRH-SIN-W-2",
+    "terminalId": "TRM-SIN-W",
+    "status": "at_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "ACT",
+        "atUtc": "2026-11-08T16:00:00Z",
+        "recordedAtUtc": "2026-11-08T16:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T19:00:00Z",
+        "recordedAtUtc": "2026-11-08T18:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T19:30:00Z",
+        "recordedAtUtc": "2026-11-09T11:45:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0050",
+    "portCallId": "PCL-0056",
+    "vesselId": "VSL-0255",
+    "berthId": "BRH-SIN-W-3",
+    "terminalId": "TRM-SIN-W",
+    "status": "at_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "ACT",
+        "atUtc": "2026-11-07T13:00:00Z",
+        "recordedAtUtc": "2026-11-07T13:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-08T09:00:00Z",
+        "recordedAtUtc": "2026-11-07T15:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-08T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:48:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0051",
+    "portCallId": "PCL-0057",
+    "vesselId": "VSL-0256",
+    "berthId": "BRH-SIN-W-4",
+    "terminalId": "TRM-SIN-W",
+    "status": "at_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "ACT",
+        "atUtc": "2026-11-07T15:00:00Z",
+        "recordedAtUtc": "2026-11-07T15:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-08T20:00:00Z",
+        "recordedAtUtc": "2026-11-07T17:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-08T21:30:00Z",
+        "recordedAtUtc": "2026-11-09T11:39:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0052",
+    "portCallId": "PCL-0058",
+    "vesselId": "VSL-0257",
+    "berthId": "BRH-SIN-C-1",
+    "terminalId": "TRM-SIN-C",
+    "status": "at_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "ACT",
+        "atUtc": "2026-11-08T05:00:00Z",
+        "recordedAtUtc": "2026-11-08T05:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T14:00:00Z",
+        "recordedAtUtc": "2026-11-08T07:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T14:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:34:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0053",
+    "portCallId": "PCL-0059",
+    "vesselId": "VSL-0258",
+    "berthId": "BRH-SIN-C-2",
+    "terminalId": "TRM-SIN-C",
+    "status": "at_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "ACT",
+        "atUtc": "2026-11-08T01:00:00Z",
+        "recordedAtUtc": "2026-11-08T01:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T03:00:00Z",
+        "recordedAtUtc": "2026-11-08T03:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T04:30:00Z",
+        "recordedAtUtc": "2026-11-09T11:11:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0054",
+    "portCallId": "PCL-0060",
+    "vesselId": "VSL-0259",
+    "berthId": "BRH-SIN-E-1",
+    "terminalId": "TRM-SIN-E",
+    "status": "at_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "ACT",
+        "atUtc": "2026-11-07T13:00:00Z",
+        "recordedAtUtc": "2026-11-07T13:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-08T12:00:00Z",
+        "recordedAtUtc": "2026-11-07T15:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-08T13:30:00Z",
+        "recordedAtUtc": "2026-11-09T11:39:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0055",
+    "portCallId": "PCL-0061",
+    "vesselId": "VSL-0260",
+    "berthId": "BRH-SIN-E-2",
+    "terminalId": "TRM-SIN-E",
+    "status": "at_berth",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "ACT",
+        "atUtc": "2026-11-09T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T01:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-09T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T03:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "EST",
+        "atUtc": "2026-11-09T21:30:00Z",
+        "recordedAtUtc": "2026-11-09T11:45:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0056",
+    "portCallId": "PCL-0063",
+    "vesselId": "VSL-0002",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T10:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:47:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0057",
+    "portCallId": "PCL-0068",
+    "vesselId": "VSL-0007",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-14T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:07:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0058",
+    "portCallId": "PCL-0069",
+    "vesselId": "VSL-0008",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-17T11:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:55:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0059",
+    "portCallId": "PCL-0071",
+    "vesselId": "VSL-0010",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-17T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:48:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0060",
+    "portCallId": "PCL-0075",
+    "vesselId": "VSL-0014",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-13T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:18:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0061",
+    "portCallId": "PCL-0080",
+    "vesselId": "VSL-0019",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-30T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:24:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0062",
+    "portCallId": "PCL-0081",
+    "vesselId": "VSL-0020",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-17T14:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:20:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0063",
+    "portCallId": "PCL-0083",
+    "vesselId": "VSL-0022",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-17T13:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:16:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0064",
+    "portCallId": "PCL-0087",
+    "vesselId": "VSL-0026",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T04:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:29:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0065",
+    "portCallId": "PCL-0092",
+    "vesselId": "VSL-0031",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-24T02:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:23:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0066",
+    "portCallId": "PCL-0093",
+    "vesselId": "VSL-0032",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-23T20:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:30:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0067",
+    "portCallId": "PCL-0095",
+    "vesselId": "VSL-0034",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-20T13:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:44:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0068",
+    "portCallId": "PCL-0099",
+    "vesselId": "VSL-0038",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-22T07:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:45:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0069",
+    "portCallId": "PCL-0104",
+    "vesselId": "VSL-0043",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-29T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:48:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0070",
+    "portCallId": "PCL-0105",
+    "vesselId": "VSL-0044",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-15T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:34:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0071",
+    "portCallId": "PCL-0107",
+    "vesselId": "VSL-0046",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-22T14:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:05:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0072",
+    "portCallId": "PCL-0111",
+    "vesselId": "VSL-0050",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-26T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:09:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0073",
+    "portCallId": "PCL-0116",
+    "vesselId": "VSL-0055",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-24T11:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0074",
+    "portCallId": "PCL-0117",
+    "vesselId": "VSL-0056",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-27T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:12:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0075",
+    "portCallId": "PCL-0119",
+    "vesselId": "VSL-0058",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-18T13:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:23:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0076",
+    "portCallId": "PCL-0123",
+    "vesselId": "VSL-0062",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-26T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:13:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0077",
+    "portCallId": "PCL-0128",
+    "vesselId": "VSL-0067",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T07:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:44:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0078",
+    "portCallId": "PCL-0129",
+    "vesselId": "VSL-0068",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-28T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:45:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0079",
+    "portCallId": "PCL-0131",
+    "vesselId": "VSL-0070",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-28T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:40:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0080",
+    "portCallId": "PCL-0135",
+    "vesselId": "VSL-0074",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-19T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:24:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0081",
+    "portCallId": "PCL-0140",
+    "vesselId": "VSL-0079",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-22T18:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:54:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0082",
+    "portCallId": "PCL-0141",
+    "vesselId": "VSL-0080",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-22T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:48:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0083",
+    "portCallId": "PCL-0143",
+    "vesselId": "VSL-0082",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-18T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:00:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0084",
+    "portCallId": "PCL-0147",
+    "vesselId": "VSL-0086",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-23T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:47:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0085",
+    "portCallId": "PCL-0152",
+    "vesselId": "VSL-0091",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-20T22:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:53:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0086",
+    "portCallId": "PCL-0153",
+    "vesselId": "VSL-0092",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-11T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:46:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0087",
+    "portCallId": "PCL-0155",
+    "vesselId": "VSL-0094",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:05:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0088",
+    "portCallId": "PCL-0159",
+    "vesselId": "VSL-0098",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-25T04:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:45:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0089",
+    "portCallId": "PCL-0164",
+    "vesselId": "VSL-0103",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-13T04:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:51:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0090",
+    "portCallId": "PCL-0165",
+    "vesselId": "VSL-0104",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-18T19:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:39:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0091",
+    "portCallId": "PCL-0167",
+    "vesselId": "VSL-0106",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-19T04:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:44:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0092",
+    "portCallId": "PCL-0171",
+    "vesselId": "VSL-0110",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-22T19:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:30:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0093",
+    "portCallId": "PCL-0176",
+    "vesselId": "VSL-0115",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T23:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:39:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0094",
+    "portCallId": "PCL-0177",
+    "vesselId": "VSL-0116",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-26T17:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:17:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0095",
+    "portCallId": "PCL-0179",
+    "vesselId": "VSL-0118",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-13T17:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:45:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0096",
+    "portCallId": "PCL-0183",
+    "vesselId": "VSL-0122",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-16T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:13:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0097",
+    "portCallId": "PCL-0188",
+    "vesselId": "VSL-0127",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-23T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:48:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0098",
+    "portCallId": "PCL-0189",
+    "vesselId": "VSL-0128",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-28T02:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:14:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0099",
+    "portCallId": "PCL-0191",
+    "vesselId": "VSL-0130",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-12T17:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:05:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0100",
+    "portCallId": "PCL-0195",
+    "vesselId": "VSL-0134",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-20T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:12:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0101",
+    "portCallId": "PCL-0200",
+    "vesselId": "VSL-0139",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-13T06:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:40:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0102",
+    "portCallId": "PCL-0201",
+    "vesselId": "VSL-0140",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-20T11:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:12:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0103",
+    "portCallId": "PCL-0203",
+    "vesselId": "VSL-0142",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-22T11:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:39:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0104",
+    "portCallId": "PCL-0207",
+    "vesselId": "VSL-0146",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-15T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:32:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0105",
+    "portCallId": "PCL-0212",
+    "vesselId": "VSL-0151",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-26T07:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:24:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0106",
+    "portCallId": "PCL-0213",
+    "vesselId": "VSL-0152",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-20T14:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:08:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0107",
+    "portCallId": "PCL-0215",
+    "vesselId": "VSL-0154",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-16T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:07:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0108",
+    "portCallId": "PCL-0219",
+    "vesselId": "VSL-0158",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-18T17:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:55:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0109",
+    "portCallId": "PCL-0224",
+    "vesselId": "VSL-0163",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-15T19:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:04:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0110",
+    "portCallId": "PCL-0225",
+    "vesselId": "VSL-0164",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-20T05:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:26:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0111",
+    "portCallId": "PCL-0227",
+    "vesselId": "VSL-0166",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-18T08:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:54:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0112",
+    "portCallId": "PCL-0231",
+    "vesselId": "VSL-0170",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-17T14:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:07:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0113",
+    "portCallId": "PCL-0236",
+    "vesselId": "VSL-0175",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-22T20:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:51:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0114",
+    "portCallId": "PCL-0237",
+    "vesselId": "VSL-0176",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-28T16:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:40:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0115",
+    "portCallId": "PCL-0239",
+    "vesselId": "VSL-0178",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-19T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:29:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0116",
+    "portCallId": "PCL-0243",
+    "vesselId": "VSL-0182",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-26T13:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:26:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0117",
+    "portCallId": "PCL-0248",
+    "vesselId": "VSL-0187",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-18T02:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:38:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0118",
+    "portCallId": "PCL-0249",
+    "vesselId": "VSL-0188",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-20T11:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:35:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0119",
+    "portCallId": "PCL-0251",
+    "vesselId": "VSL-0190",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-15T21:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:15:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0120",
+    "portCallId": "PCL-0255",
+    "vesselId": "VSL-0194",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-27T01:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:25:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0121",
+    "portCallId": "PCL-0260",
+    "vesselId": "VSL-0199",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-19T09:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:26:00Z"
+      }
+    ]
+  },
+  {
+    "bookingId": "BKG-0122",
+    "portCallId": "PCL-0261",
+    "vesselId": "VSL-0200",
+    "berthId": null,
+    "terminalId": "TRM-SIN-W",
+    "status": "scheduled",
+    "bufferMinutes": 60,
+    "milestones": [
+      {
+        "eventType": "ARRIVAL",
+        "location": "PBP",
+        "classifier": "EST",
+        "atUtc": "2026-11-18T00:00:00Z",
+        "recordedAtUtc": "2026-11-09T11:46:00Z"
+      }
+    ]
+  }
+]

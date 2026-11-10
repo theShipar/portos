@@ -5,8 +5,24 @@
     "name": "Singapore Eastern Demo Anchorage",
     "polygon": [
       {
+        "lon": 103.872,
+        "lat": 1.262
+      },
+      {
         "lon": 103.875,
         "lat": 1.228
+      },
+      {
+        "lon": 103.885,
+        "lat": 1.165
+      },
+      {
+        "lon": 103.96,
+        "lat": 1.163
+      },
+      {
+        "lon": 104.0,
+        "lat": 1.2
       },
       {
         "lon": 104.025,
@@ -23,10 +39,6 @@
       {
         "lon": 103.9,
         "lat": 1.284
-      },
-      {
-        "lon": 103.872,
-        "lat": 1.262
       }
     ],
     "capacityEstimate": 45,

@@ -39,6 +39,7 @@ App lives at the workspace root. Kit `sample-data/`, `schemas/` and `scripts/` w
 root copies are edited. The kit folder is not modified.
 
 ## D-006 Fixture v1.1 (generator changes, seed 92026 retained)
+*The Singapore case narrative below is superseded by D-029 (fixture v2.0); the other items still apply.*
 - Replay window `2026-11-09T00:00Z` → `12:00Z` (`manifest.replayRange`). Samples: VSL-0001 every 5 min, Singapore
   anchorage vessels every 15 min, others every 30 min, so interpolation never spans more than 30 min. Vessels whose last
   report is older than 30 min are intentionally stale.
@@ -247,3 +248,39 @@ Every other dataset remains required: a missing vessel or incident file is a loa
 
 ## D-007 Port 2D basemap
 Superseded by D-011 (OpenFreeMap, decided at Phase 4).
+
+## D-029 Fixture v2.0 (V2 Phase 0; supersedes the Singapore narrative of D-006)
+Seed 92026 and every v1 entity ID are kept. Random draws run in the same order; kit facts are applied as overrides
+after the draws, so unrelated records are byte-stable apart from derived fields.
+- **Singapore case realigned to the kit:** MV Pacific Horizon (VSL-0001) holds at 103.91E 1.18N at anchor for the
+  whole base window (0.1 kn, 5-min samples, no wake). `PCL-0001` arrives and waits from 04:00Z with no berth: 34 h
+  total wait, 26 h remaining at Now. The published `ANC-SIN` polygon gains a southern lobe that contains the hold;
+  in-polygon sampling still uses the core polygon so the RNG sequence is unchanged. `BRH-SIN-W-1` is no longer
+  scheduled for it.
+- **Case events:** `ETA_REVISED` 09:00 (EVT-0001), `ANCHORAGE_ENTER` 09:15 as the formal anchorage assignment
+  (EVT-0002), `INCIDENT_OPENED` 10:59 (EVT-0003), new `PORT_QUEUE_JOINED` 04:00 (EVT-0004), WX-0001 warning 06:00,
+  wait 9 → 14 h at 07:30 and 14 → 26 h at 11:22, new `BERTH_ESTIMATE_UPDATED` 11:40 (berth estimated
+  2026-11-10 14:00Z, `confirmed: false`), AIS at the hold 11:55. The fold keeps `queued` and `berthEstimates`;
+  an estimate never creates a berth link.
+- **VSL-0047 restored as the follow demo:** LNG carrier on `RTE-SIN-MNL`, fix 108.056644E 3.501864N at 11:15Z,
+  13.5 kn. Flagship voyages have ETAs recomputed from kinematics (planned shifted by the same amount).
+- **V2 module `sample-data/v2/`** (schemas in `schemas/v2/`, `manifest.v2Module`, `scenarioVersion: "2.0"`):
+  `scenario.json` (7-day window 2026-11-05T12Z → 2026-11-12T12Z, precedence, disclosure), `flagshipTracks.json`
+  (30 vessels; VSL-0047 at 15 min, others at 30 min; reconstructed history before and forecast after the base
+  samples, compact tuples), `portLayouts.json` (Singapore flagship layout of 3 terminals, 10 berths and 2
+  anchorages; Rotterdam and Genoa procedural; every berth `constraintsValidated: false`), `berthSchedule.json`
+  (122 DCSA-style bookings with REQ/EST/PLN/ACT milestones and one deliberate berth conflict; VSL-0001 is
+  estimate-only with a null berth).
+- **Track merge:** the catalog keeps base samples as the observed truth and appends keyframes only outside them.
+  Positions from keyframes carry track state `modelled` (label "Modelled (scenario keyframes)"), with age measured
+  from the last observed sample, or none for reconstructed history. Non-flagship vessels stay unavailable or stale
+  outside the 12 h base window. Consequence: a flagship vessel that was stale at Now reads as modelled forecast
+  instead, which is the honest description of what the app draws.
+- **Validator:** checks the realigned case, the VSL-0047 fix, the window, flagship bounds (10–30, includes 0047,
+  excludes 0001), keyframe joins ≤ 30 min from base samples, no stationary keyframe with speed, Singapore layout
+  minimums, booking references and DCSA classifiers, and no ACT milestone after Now.
+
+## D-030 `spatialV2` feature flag
+`src/core/flags.ts` reads `VITE_SPATIAL_V2` at build time and `?spatialV2=0|1` from the first URL (kept in
+`sessionStorage`), once at startup. Default on. With it off, all scopes render through the v1 sphere scene and
+v1 routes, so the release keeps a working fallback while V2 scenes are introduced.

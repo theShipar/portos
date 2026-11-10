@@ -10,9 +10,9 @@
     },
     "status": "occupied",
     "occupiedByVesselId": "VSL-0253",
-    "scheduledVesselId": "VSL-0001",
-    "scheduledWindowStartUtc": "2026-11-10T14:00:00Z",
-    "scheduledWindowEndUtc": "2026-11-11T08:00:00Z",
+    "scheduledVesselId": null,
+    "scheduledWindowStartUtc": null,
+    "scheduledWindowEndUtc": null,
     "lastUpdatedUtc": "2026-11-09T11:33:00Z",
     "sourceType": "synthetic-layout"
   },

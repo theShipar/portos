@@ -62,6 +62,6 @@ describe('vessel inspector model', () => {
     expect(m.activeIncident).toBeNull();
     expect(m.events.every((e) => e.timeUtc <= '2026-11-09 08:00 UTC')).toBe(true);
     expect(m.etaShiftText).toBe('+8.0 h');
-    expect(m.navStyle.label).toBe('Underway');
+    expect(m.navStyle.label).toBe('At anchor');
   });
 });

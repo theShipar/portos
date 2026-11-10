@@ -429,3 +429,40 @@ blockers. Status values: implemented / tested / blocked.
   `phase8-tiles-unavailable.png`; baselines in `tests/visual/`.
 - **Blockers:** none. Playwright must run outside the editor sandbox (browser launch is blocked inside it).
 
+## Phase V2-0 — Audit, before screenshots, fixture v2.0, `spatialV2` flag
+
+- **Decisions:** fixture v2.0 (D-029, supersedes the D-006 Singapore narrative); `spatialV2` flag (D-030).
+- **Implemented:**
+  - `docs/PORTOS_V2_AUDIT.md`: subsystem audit with real paths, navigation diagram, LOD gap list, single-clock
+    migration plan, performance baseline and V2 budgets, requirement-to-phase map, superseded decisions.
+  - `tests/e2e/capture.spec.ts` (opt-in `CAPTURE=before|after`, Metal ANGLE) →
+    `docs/screenshots/v2-before-{01-earth,02-region-sea,03-singapore-port,04-vessel-vsl0001,05-incident-replay}.png`
+    captured on the v1.1 fixture before any data change.
+  - Generator: Singapore case realigned to the kit, VSL-0047 kit fix restored, `PORT_QUEUE_JOINED` and
+    `BERTH_ESTIMATE_UPDATED` events, `sample-data/v2/` module (scenario, 30 flagship tracks with 9,711 keyframes,
+    3 port layouts, 122 berth bookings) and `manifest.scenarioVersion`/`v2Module`. Validator `validate_v2()`;
+    `schemas/v2/*.schema.json`; berth schedule fields pinned as nullable in `build_schemas.py`.
+  - App: `V2Module` types, loader for `sample-data/v2/*.json` (missing module → `missingDatasets: ['v2']`, app keeps
+    v1 behaviour), catalog `V2Index` (bookings by port/vessel/berth, layouts, window) and keyframe merge outside
+    the base samples; track state `modelled`; fold `queued` and `berthEstimates`; replay/vessel labels for the new
+    events; fixed the port-wait event label (it read a non-existent `previousEstimateHours`).
+  - `src/core/flags.ts` (`spatialV2`, env + query, read once).
+  - Tests: `tests/unit/v2fixture.test.ts` (7), `modelled` track test, unit fixture loader reads `sample-data/v2`;
+    v1.1-fact tests moved to v2.0 facts (Pacific Horizon at anchor all window, queue from 04:00, berth estimate
+    unconfirmed and never linked, new marker IDs). E2E 3D click test now requests `view=3d`: port scope defaults to
+    2D and the old test clicked a MapLibre canvas at globe coordinates, passing only because a 2D marker happened
+    to sit there.
+- **Tested:**
+  - `python3 scripts/generate_demo_data.py` twice → identical SHA-1 over all `sample-data/**/*.json`
+    (`a67dc98b…`).
+  - `python3 scripts/validate_data.py` → exit 0 (500 vessels, 100 ports, 200 voyages, 12,788 positions, 261 port
+    calls, 50 incidents, 352 events; "+18h, USD 24,000 … verified"; "V2 module: VSL-0001 holds at anchor, PCL-0001
+    34 h queue / 26 h remaining, VSL-0047 follow demo keyframes — verified").
+  - `npm run typecheck` → exit 0. `npm run build` → exit 0 (`flagshipTracks` chunk 394 kB, 80.6 kB gzip).
+  - `npx vitest run` → exit 0, 191 tests in 12 files.
+  - `npx playwright test` → first run 8 failed (7 visual diffs from the moved fixture data, 1 click test as
+    above), 35 passed, 6 skipped. After the fix: `journey.spec.ts` 9/9 passed; visual baselines refreshed with
+    `--update-snapshots=all` → 16 passed; reviewed `06-investigation-desktop.png` (26 h port wait, hold in the
+    southern lobe, "Berth unconfirmed"). Full re-run → exit 0, 43 passed, 6 skipped (opt-in perf/capture).
+- **Blockers:** none.
+

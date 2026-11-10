@@ -4,7 +4,8 @@ import type { Catalog, TrackPoint } from '@/data/catalog';
 
 export const TRACK_GAP_POLICY = { maxInterpolationMinutes: 30, staleAfterMinutes: 30 } as const;
 
-export type TrackState = 'exact' | 'interpolated' | 'last-known' | 'stale' | 'unavailable';
+/** `modelled`: position comes from V2 scenario keyframes (reconstructed history or forecast), never an observed report. */
+export type TrackState = 'exact' | 'interpolated' | 'modelled' | 'last-known' | 'stale' | 'unavailable';
 
 export interface VesselAtTime {
   vesselId: string;
@@ -48,11 +49,22 @@ export function vesselAtTime(track: TrackPoint[] | undefined, vesselId: string, 
     return { vesselId, point: null, sogKn: null, cogDeg: null, navStatus: 'unknown', sourceTimeMs: null, freshnessMinutes: null, state: 'unavailable' };
   }
   const a = track[i];
-  const freshness = (t - a.t) / 60_000;
-  if (a.t === t) {
-    return { vesselId, point: { lon: a.lon, lat: a.lat }, sogKn: a.sogKn, cogDeg: a.cogDeg, navStatus: a.navStatus, sourceTimeMs: a.t, freshnessMinutes: 0, state: 'exact' };
-  }
   const b = track[i + 1];
+  const modelled = a.source === 'v2' || (b?.source === 'v2' && t > a.t);
+  /** Keyframes report age against the last observed sample; reconstructed history has none. */
+  const freshness = modelled ? (a.lastObservedT == null ? null : (t - a.lastObservedT) / 60_000) : (t - a.t) / 60_000;
+  if (a.t === t) {
+    return {
+      vesselId,
+      point: { lon: a.lon, lat: a.lat },
+      sogKn: a.sogKn,
+      cogDeg: a.cogDeg,
+      navStatus: a.navStatus,
+      sourceTimeMs: a.t,
+      freshnessMinutes: modelled ? freshness : 0,
+      state: modelled ? 'modelled' : 'exact',
+    };
+  }
   if (b && (b.t - a.t) / 60_000 <= TRACK_GAP_POLICY.maxInterpolationMinutes) {
     const f = (t - a.t) / (b.t - a.t);
     const moving = a.navStatus === 'underway' || b.navStatus === 'underway';
@@ -65,9 +77,13 @@ export function vesselAtTime(track: TrackPoint[] | undefined, vesselId: string, 
       navStatus: f < 0.5 ? a.navStatus : b.navStatus,
       sourceTimeMs: a.t,
       freshnessMinutes: freshness,
-      state: 'interpolated',
+      state: modelled ? 'modelled' : 'interpolated',
     };
   }
+  if (modelled) {
+    return { vesselId, point: { lon: a.lon, lat: a.lat }, sogKn: a.sogKn, cogDeg: a.cogDeg, navStatus: a.navStatus, sourceTimeMs: a.t, freshnessMinutes: freshness, state: 'stale' };
+  }
+  const age = freshness ?? 0;
   return {
     vesselId,
     point: { lon: a.lon, lat: a.lat },
@@ -76,7 +92,7 @@ export function vesselAtTime(track: TrackPoint[] | undefined, vesselId: string, 
     navStatus: a.navStatus,
     sourceTimeMs: a.t,
     freshnessMinutes: freshness,
-    state: freshness > TRACK_GAP_POLICY.staleAfterMinutes ? 'stale' : 'last-known',
+    state: age > TRACK_GAP_POLICY.staleAfterMinutes ? 'stale' : 'last-known',
   };
 }
 

@@ -27,6 +27,10 @@ export interface FoldState {
   berths: Map<string, { vesselId: string; sinceUtc: string }>;
   /** vesselId → latest scheduled berth window. */
   berthWindows: Map<string, { berthId: string; windowStartUtc: string | null; eventId: string }>;
+  /** vesselId → berth queue entry (port queue, distinct from anchorage entry). */
+  queued: Map<string, { portId: string; sinceUtc: string; eventId: string }>;
+  /** vesselId → latest berth-time estimate (an estimate is never a confirmed slot). */
+  berthEstimates: Map<string, { estimatedBerthUtc: string; confirmed: boolean; eventId: string }>;
   /** Weather warnings issued so far. */
   warnings: Set<string>;
   /** vesselId → latest position report event. */
@@ -44,6 +48,8 @@ export function emptyFold(): FoldState {
     anchored: new Map(),
     berths: new Map(),
     berthWindows: new Map(),
+    queued: new Map(),
+    berthEstimates: new Map(),
     warnings: new Set(),
     reports: new Map(),
     etaShift: new Map(),
@@ -59,6 +65,8 @@ function clone(s: FoldState): FoldState {
     anchored: new Map([...s.anchored].map(([k, v]) => [k, new Set(v)])),
     berths: new Map(s.berths),
     berthWindows: new Map(s.berthWindows),
+    queued: new Map(s.queued),
+    berthEstimates: new Map(s.berthEstimates),
     warnings: new Set(s.warnings),
     reports: new Map(s.reports),
     etaShift: new Map(s.etaShift),
@@ -127,6 +135,19 @@ function apply(s: FoldState, e: TimelineEvent, record: (id: string) => Incident 
       if (!vesselId || !berthId) break;
       s.berths.set(berthId, { vesselId, sinceUtc: e.occurredAtUtc });
       if (portId) s.anchored.get(portId)?.delete(vesselId);
+      s.queued.delete(vesselId);
+      break;
+    }
+    case 'PORT_QUEUE_JOINED': {
+      const vesselId = str(p.vesselId);
+      const portId = str(p.portId);
+      if (vesselId && portId) s.queued.set(vesselId, { portId, sinceUtc: e.occurredAtUtc, eventId: e.eventId });
+      break;
+    }
+    case 'BERTH_ESTIMATE_UPDATED': {
+      const vesselId = str(p.vesselId);
+      const at = str(p.estimatedBerthUtc);
+      if (vesselId && at) s.berthEstimates.set(vesselId, { estimatedBerthUtc: at, confirmed: p.confirmed === true, eventId: e.eventId });
       break;
     }
     case 'WEATHER_WARNING_ISSUED': {

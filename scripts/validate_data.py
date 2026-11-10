@@ -16,7 +16,11 @@ ID_FIELDS = {'regions': 'regionId', 'ports': 'portId', 'terminals': 'terminalId'
              'incidents': 'incidentId', 'evidence': 'evidenceId', 'weatherHazards': 'hazardId', 'events': 'eventId', 'users': 'userId'}
 REF_KIND = {'vessel': 'vessels', 'voyage': 'voyages', 'port': 'ports', 'incident': 'incidents', 'weather': 'weatherHazards', 'route': 'routes'}
 EVENT_TYPES = {'AIS_REPORT', 'ETA_REVISED', 'ANCHORAGE_ENTER', 'ANCHORAGE_EXIT', 'BERTH_SCHEDULED', 'BERTH_OCCUPIED', 'WEATHER_WARNING_ISSUED',
-               'INCIDENT_OPENED', 'INCIDENT_ACKNOWLEDGED', 'ACTION_ASSIGNED', 'INCIDENT_RESOLVED', 'PORT_WAIT_UPDATED'}
+               'INCIDENT_OPENED', 'INCIDENT_ACKNOWLEDGED', 'ACTION_ASSIGNED', 'INCIDENT_RESOLVED', 'PORT_WAIT_UPDATED',
+               'PORT_QUEUE_JOINED', 'BERTH_ESTIMATE_UPDATED'}
+NAV_STATUS = {'underway', 'at_anchor', 'moored', 'not_under_command', 'unknown'}
+DCSA_CLASSIFIERS = {'EST', 'REQ', 'PLN', 'ACT'}
+V2_FILES = ['scenario', 'flagshipTracks', 'portLayouts', 'berthSchedule']
 INCIDENT_STATUS = {'open', 'acknowledged', 'investigating', 'mitigation_planned', 'monitoring', 'resolved'}
 BERTH_STATUS = {'occupied', 'scheduled', 'unavailable', 'free', 'unknown'}
 MAX_GAP_MIN = 30
@@ -36,6 +40,120 @@ def point_in_polygon(p, poly):
             inside = not inside
         j = i
     return inside
+
+
+def validate_v2(folder: Path, by, vessel_samples, manifest):
+    """V2 scenario module (sample-data/v2): additive keyframes, layouts and milestones that never contradict base records."""
+    errors = []
+    v2 = {}
+    for name in V2_FILES:
+        try:
+            v2[name] = json.loads((folder / (name + '.json')).read_text('utf-8'))
+        except Exception as e:
+            errors.append(f'v2/{name}: {e}')
+    if errors:
+        return errors
+    sc = v2['scenario']
+    if sc.get('scenarioVersion') != manifest.get('scenarioVersion') or sc.get('baseFixtureVersion') != manifest.get('version'):
+        errors.append('v2/scenario: version does not match manifest')
+    try:
+        w_min, w_max = parse(sc['window']['minUtc']), parse(sc['window']['maxUtc'])
+        anchor = parse(sc['anchorUtc'])
+        if not (w_min < anchor < w_max):
+            errors.append('v2/scenario: anchor must lie inside the scenario window')
+    except Exception:
+        errors.append('v2/scenario: window invalid')
+        return errors
+    flagship = sc.get('flagshipVesselIds', [])
+    if not (10 <= len(flagship) <= 30) or 'VSL-0047' not in flagship:
+        errors.append('v2/scenario: 10-30 flagship vessels including VSL-0047 required')
+    if 'VSL-0001' in flagship:
+        errors.append('v2/scenario: VSL-0001 is anchored and must not receive movement keyframes')
+    if sc.get('followDemo', {}).get('vesselId') != 'VSL-0047':
+        errors.append('v2/scenario: follow demo must use VSL-0047')
+
+    tracks = {t['vesselId']: t for t in v2['flagshipTracks']}
+    if set(tracks) != set(flagship):
+        errors.append('v2/flagshipTracks: vessels do not match scenario flagship list')
+    for vid, t in tracks.items():
+        if vid not in by['vessels']:
+            errors.append(f'v2 track for unknown vessel {vid}')
+            continue
+        step = timedelta(minutes=t['intervalMinutes'])
+        if t['intervalMinutes'] > MAX_GAP_MIN:
+            errors.append(f'{vid}: keyframe interval above {MAX_GAP_MIN} min')
+        base = vessel_samples.get(vid, [])
+        if not base:
+            continue
+        first_base, last_base = parse(base[0]['timestampUtc']), parse(base[-1]['timestampUtc'])
+        hist, fc = t['history'], t['forecast']
+        h0 = parse(hist['startUtc'])
+        h_last = h0 + step * (len(hist['samples']) - 1)
+        if h0 != w_min or not hist['samples'] or h_last >= first_base or first_base - h_last > timedelta(minutes=MAX_GAP_MIN):
+            errors.append(f'{vid}: history keyframes must start at the window and join the base samples within {MAX_GAP_MIN} min')
+        f0 = parse(fc['startUtc'])
+        f_last = f0 + step * (len(fc['samples']) - 1)
+        if f0 <= last_base or f0 - last_base > timedelta(minutes=MAX_GAP_MIN) or f_last > w_max or w_max - f_last >= step:
+            errors.append(f'{vid}: forecast keyframes must follow the last base sample and run to the window end')
+        for s in hist['samples'] + fc['samples']:
+            if len(s) != 5 or not (-180 <= s[0] <= 180 and -90 <= s[1] <= 90) or s[4] not in NAV_STATUS:
+                errors.append(f'{vid}: malformed keyframe {s}')
+                break
+            if s[4] == 'underway' and not s[2]:
+                errors.append(f'{vid}: underway keyframe without speed')
+                break
+            if s[4] in ('moored', 'at_anchor') and (s[2] or 0) > 0.5:
+                errors.append(f'{vid}: stationary keyframe with speed (sailing and anchored at once)')
+                break
+    k47 = tracks.get('VSL-0047')
+    if k47 and (k47['intervalMinutes'] > 15 or k47['routeId'] != 'RTE-SIN-MNL'):
+        errors.append('VSL-0047 keyframes must be <= 15 min on RTE-SIN-MNL')
+
+    layouts = {l['portId']: l for l in v2['portLayouts']}
+    sin = layouts.get('PRT-SIN')
+    if not sin:
+        errors.append('v2/portLayouts: Singapore twin layout missing')
+    else:
+        berths = [b for t in sin['terminals'] for b in t['berths']]
+        if len(sin['terminals']) < 2 or len(berths) < 6 or len(sin['anchorages']) < 2:
+            errors.append('v2/portLayouts: Singapore needs >= 2 terminals, 6 berths, 2 anchorages')
+        sin_vessels = {c['vesselId'] for c in by['portCalls'].values() if c['portId'] == 'PRT-SIN' and c['status'] != 'scheduled'}
+        if len(sin_vessels) < 15:
+            errors.append('v2/portLayouts: Singapore twin needs >= 15 vessels in port')
+    for pid, l in layouts.items():
+        if pid not in by['ports']:
+            errors.append(f'v2/portLayouts: unknown port {pid}')
+        for t in l['terminals']:
+            if t['terminalId'] not in by['terminals']:
+                errors.append(f'v2/portLayouts: unknown terminal {t["terminalId"]}')
+            for b in t['berths']:
+                if b['berthId'] not in by['berths'] or by['berths'][b['berthId']]['terminalId'] != t['terminalId']:
+                    errors.append(f'v2/portLayouts: berth link invalid {b["berthId"]}')
+                if b.get('constraintsValidated') is not False:
+                    errors.append(f'v2/portLayouts: {b["berthId"]} must not claim validated constraints')
+
+    ids = set()
+    for bk in v2['berthSchedule']:
+        bid = bk['bookingId']
+        if bid in ids:
+            errors.append(f'v2/berthSchedule duplicate {bid}')
+        ids.add(bid)
+        call = by['portCalls'].get(bk['portCallId'])
+        if not call or call['vesselId'] != bk['vesselId']:
+            errors.append(f'{bid}: port call link invalid')
+        if bk.get('berthId') and bk['berthId'] not in by['berths']:
+            errors.append(f'{bid}: unknown berth {bk["berthId"]}')
+        for m in bk['milestones']:
+            if m['classifier'] not in DCSA_CLASSIFIERS or m['eventType'] not in ('ARRIVAL', 'DEPARTURE') or m['location'] not in ('BERTH', 'PBP'):
+                errors.append(f'{bid}: invalid milestone {m}')
+            if m['classifier'] == 'ACT' and parse(m['atUtc']) > anchor:
+                errors.append(f'{bid}: actual milestone after the scenario anchor')
+            if parse(m['recordedAtUtc']) > anchor:
+                errors.append(f'{bid}: milestone recorded after the scenario anchor')
+        if bk['vesselId'] == 'VSL-0001':
+            if bk.get('berthId') is not None or any(m['classifier'] in ('PLN', 'ACT') for m in bk['milestones']):
+                errors.append('VSL-0001 berth booking must stay estimate-only (no planned or actual berth)')
+    return errors
 
 
 def run(folder: Path):
@@ -316,16 +434,40 @@ def run(folder: Path):
         samples = vessel_samples.get('VSL-0001', [])
         if not samples or parse(samples[0]['timestampUtc']) > parse('2026-11-09T09:00:00Z'):
             errors.append('VSL-0001 track must cover the 09:00 ETA revision for replay')
-        if not any(s['navStatus'] == 'underway' for s in samples):
-            errors.append('VSL-0001 track must include the approach (underway) segment')
+        # Fixture v2.0 (D-029): the showcase vessel never moves and never shows a wake.
+        if any(s['location'] != {'lon': 103.91, 'lat': 1.18} or s['navStatus'] != 'at_anchor' or (s.get('sogKn') or 0) > 0.5 for s in samples):
+            errors.append('VSL-0001 must hold at anchor at 1.18N 103.91E for the whole window')
         scen_events = [e for e in datasets['events'] if any(r.get('id') == 'VSL-0001' for r in e.get('entityRefs', []))]
         if len(scen_events) < 6:
             errors.append('Singapore case needs >= 6 linked events')
         wx = by['weatherHazards'].get('WX-0001')
         if not wx or 'RTE-SIN-RTM' not in wx.get('affectedRouteIds', []):
             errors.append('WX-0001 must intersect RTE-SIN-RTM')
+        pcl = by['portCalls'].get('PCL-0001') or {}
+        if pcl.get('vesselId') != 'VSL-0001' or pcl.get('waitingSinceUtc') != '2026-11-09T04:00:00Z' or pcl.get('berthId') is not None:
+            errors.append('PCL-0001 must queue VSL-0001 since 04:00Z with no berth assigned')
+        elif replay_end:
+            total_h = (parse(pcl['estimatedBerthUtc']) - parse(pcl['waitingSinceUtc'])).total_seconds() / 3600
+            remaining_h = (parse(pcl['estimatedBerthUtc']) - replay_end).total_seconds() / 3600
+            if total_h != 34 or remaining_h != 26:
+                errors.append(f'PCL-0001 queue interval must be 34 h with 26 h remaining at the anchor (got {total_h}/{remaining_h})')
+        e1, e2 = by['events'].get('EVT-0001') or {}, by['events'].get('EVT-0002') or {}
+        if e1.get('type') != 'ETA_REVISED' or e1.get('occurredAtUtc') != '2026-11-09T09:00:00Z':
+            errors.append('EVT-0001 must be the 09:00 ETA revision')
+        if e2.get('type') != 'ANCHORAGE_ENTER' or e2.get('occurredAtUtc') != '2026-11-09T09:15:00Z':
+            errors.append('EVT-0002 must be the 09:15 anchorage entry')
+        if any(b.get('scheduledVesselId') == 'VSL-0001' for b in datasets['berths']):
+            errors.append('VSL-0001 must not hold a berth schedule (estimate only)')
+    s47 = by['vessels'].get('VSL-0047')
+    if not s47 or s47['vesselType'] != 'LNG carrier' or s47['lastKnownPosition'] != {'lon': 108.056644, 'lat': 3.501864} or s47['sogKn'] != 13.5 \
+            or s47['navStatus'] != 'underway' or s47['lastReportedAtUtc'] != '2026-11-09T11:15:00Z':
+        errors.append('VSL-0047 must keep the kit fix (LNG carrier, 108.056644E 3.501864N, 13.5 kn, underway at 11:15Z)')
+    elif (by['voyages'].get('VYG-0047') or {}).get('routeId') != 'RTE-SIN-MNL':
+        errors.append('VYG-0047 must follow RTE-SIN-MNL')
     if len(datasets['events']) != len(by['events']):
         errors.append('event ID uniqueness failed')
+
+    errors += validate_v2(folder / 'v2', by, vessel_samples, manifest)
 
     print('PORTOS fixture integrity:', 'PASS' if not errors else 'FAIL')
     for n, rows in datasets.items():
@@ -337,6 +479,7 @@ def run(folder: Path):
             print(f'... additional {len(errors) - 100} errors omitted', file=sys.stderr)
         return 1
     print('Scenario: MV Pacific Horizon +18h, USD 24,000 modeled delay exposure — verified')
+    print('V2 module: VSL-0001 holds at anchor, PCL-0001 34 h queue / 26 h remaining, VSL-0047 follow demo keyframes — verified')
     return 0
 
 

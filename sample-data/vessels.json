@@ -11,8 +11,8 @@
     "navStatus": "at_anchor",
     "currentVoyageId": "VYG-0001",
     "lastKnownPosition": {
-      "lon": 103.95,
-      "lat": 1.25
+      "lon": 103.91,
+      "lat": 1.18
     },
     "sogKn": 0.1,
     "cogDeg": null,
@@ -221,11 +221,11 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0011",
     "lastKnownPosition": {
-      "lon": 112.161021,
-      "lat": 7.24859
+      "lon": 112.458749,
+      "lat": 6.808698
     },
     "sogKn": 12.3,
-    "cogDeg": 60,
+    "cogDeg": 49,
     "lastReportedAtUtc": "2026-11-09T11:25:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"
@@ -473,8 +473,8 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0023",
     "lastKnownPosition": {
-      "lon": 115.075478,
-      "lat": 8.993009
+      "lon": 115.063067,
+      "lat": 8.984534
     },
     "sogKn": 18.5,
     "cogDeg": 55,
@@ -725,8 +725,8 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0035",
     "lastKnownPosition": {
-      "lon": 117.636175,
-      "lat": 10.741778
+      "lon": 117.628395,
+      "lat": 10.736465
     },
     "sogKn": 18.5,
     "cogDeg": 55,
@@ -968,21 +968,21 @@
   {
     "vesselId": "VSL-0047",
     "name": "MV Emerald Star 047",
-    "vesselType": "RoRo",
+    "vesselType": "LNG carrier",
     "imoDemo": "DEMO9101739",
     "flagCountryIso2": "GB",
-    "lengthMeters": 223,
-    "beamMeters": 34,
-    "draughtMeters": 9.9,
+    "lengthMeters": 323,
+    "beamMeters": 50,
+    "draughtMeters": 14.5,
     "navStatus": "underway",
     "currentVoyageId": "VYG-0047",
     "lastKnownPosition": {
-      "lon": 114.481082,
-      "lat": 8.58907
+      "lon": 108.056644,
+      "lat": 3.501864
     },
-    "sogKn": 17.3,
-    "cogDeg": 56,
-    "lastReportedAtUtc": "2026-11-09T11:55:00Z",
+    "sogKn": 13.5,
+    "cogDeg": 63,
+    "lastReportedAtUtc": "2026-11-09T11:15:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"
   },
@@ -1229,11 +1229,11 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0059",
     "lastKnownPosition": {
-      "lon": 110.590715,
-      "lat": 6.341302
+      "lon": 111.096492,
+      "lat": 5.613248
     },
     "sogKn": 17.5,
-    "cogDeg": 60,
+    "cogDeg": 49,
     "lastReportedAtUtc": "2026-11-09T11:45:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"
@@ -1481,8 +1481,8 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0071",
     "lastKnownPosition": {
-      "lon": 118.916213,
-      "lat": 11.979723
+      "lon": 118.913301,
+      "lat": 11.974385
     },
     "sogKn": 18.2,
     "cogDeg": 28,
@@ -1733,11 +1733,11 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0083",
     "lastKnownPosition": {
-      "lon": 109.856006,
-      "lat": 5.884805
+      "lon": 110.444954,
+      "lat": 5.04149
     },
     "sogKn": 17.3,
-    "cogDeg": 51,
+    "cogDeg": 49,
     "lastReportedAtUtc": "2026-11-09T11:52:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"
@@ -1985,8 +1985,8 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0095",
     "lastKnownPosition": {
-      "lon": 117.63832,
-      "lat": 10.743243
+      "lon": 117.630544,
+      "lat": 10.737932
     },
     "sogKn": 12.4,
     "cogDeg": 55,
@@ -2237,11 +2237,11 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0107",
     "lastKnownPosition": {
-      "lon": 105.719658,
-      "lat": 2.505124
+      "lon": 105.855385,
+      "lat": 2.335338
     },
     "sogKn": 16.7,
-    "cogDeg": 48,
+    "cogDeg": 62,
     "lastReportedAtUtc": "2026-11-09T11:52:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"
@@ -2489,8 +2489,8 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0119",
     "lastKnownPosition": {
-      "lon": 115.310113,
-      "lat": 9.153248
+      "lon": 115.298127,
+      "lat": 9.145062
     },
     "sogKn": 16.5,
     "cogDeg": 55,
@@ -2741,11 +2741,11 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0131",
     "lastKnownPosition": {
-      "lon": 106.631666,
-      "lat": 3.305333
+      "lon": 106.929897,
+      "lat": 2.90476
     },
     "sogKn": 14.4,
-    "cogDeg": 51,
+    "cogDeg": 62,
     "lastReportedAtUtc": "2026-11-09T11:10:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"
@@ -2993,11 +2993,11 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0143",
     "lastKnownPosition": {
-      "lon": 107.030118,
-      "lat": 3.624094
+      "lon": 107.38111,
+      "lat": 3.143874
     },
     "sogKn": 13.4,
-    "cogDeg": 51,
+    "cogDeg": 62,
     "lastReportedAtUtc": "2026-11-09T11:25:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"
@@ -3245,8 +3245,8 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0155",
     "lastKnownPosition": {
-      "lon": 118.700199,
-      "lat": 11.583699
+      "lon": 118.696897,
+      "lat": 11.577645
     },
     "sogKn": 19.0,
     "cogDeg": 28,
@@ -3497,8 +3497,8 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0167",
     "lastKnownPosition": {
-      "lon": 117.072172,
-      "lat": 10.356605
+      "lon": 117.063372,
+      "lat": 10.350595
     },
     "sogKn": 13.1,
     "cogDeg": 55,
@@ -3749,11 +3749,11 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0179",
     "lastKnownPosition": {
-      "lon": 111.066372,
-      "lat": 6.616126
+      "lon": 111.50913,
+      "lat": 5.975359
     },
     "sogKn": 18.2,
-    "cogDeg": 60,
+    "cogDeg": 49,
     "lastReportedAtUtc": "2026-11-09T11:52:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"
@@ -4001,11 +4001,11 @@
     "navStatus": "underway",
     "currentVoyageId": "VYG-0191",
     "lastKnownPosition": {
-      "lon": 105.114497,
-      "lat": 1.966243
+      "lon": 105.176712,
+      "lat": 1.893116
     },
     "sogKn": 11.1,
-    "cogDeg": 48,
+    "cogDeg": 54,
     "lastReportedAtUtc": "2026-11-09T11:25:00Z",
     "fleet": "own",
     "sourceType": "synthetic-track"

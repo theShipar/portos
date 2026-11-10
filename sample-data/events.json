@@ -193,8 +193,8 @@
       "voyageId": "VYG-0015",
       "previousEtaShiftHours": -2,
       "newEtaShiftHours": 2,
-      "previousEstimatedArrivalUtc": "2026-11-15T18:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-15T22:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-11T04:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-11T08:00:00Z",
       "driver": "source_correction"
     },
     "sourceType": "synthetic-event",
@@ -275,8 +275,8 @@
       "voyageId": "VYG-0026",
       "previousEtaShiftHours": -3,
       "newEtaShiftHours": 1,
-      "previousEstimatedArrivalUtc": "2026-11-15T02:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-15T06:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-12T00:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-12T04:00:00Z",
       "driver": "weather_corridor_exposure"
     },
     "sourceType": "synthetic-event",
@@ -469,8 +469,8 @@
       "voyageId": "VYG-0010",
       "previousEtaShiftHours": 10,
       "newEtaShiftHours": 12,
-      "previousEstimatedArrivalUtc": "2026-11-23T03:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-23T05:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-17T06:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-17T08:00:00Z",
       "driver": "source_correction"
     },
     "sourceType": "synthetic-event",
@@ -513,8 +513,8 @@
       "voyageId": "VYG-0014",
       "previousEtaShiftHours": -2,
       "newEtaShiftHours": 2,
-      "previousEstimatedArrivalUtc": "2026-11-24T11:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-24T15:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-13T02:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-13T06:00:00Z",
       "driver": "source_correction"
     },
     "sourceType": "synthetic-event",
@@ -539,8 +539,8 @@
       "voyageId": "VYG-0004",
       "previousEtaShiftHours": 16,
       "newEtaShiftHours": 22,
-      "previousEstimatedArrivalUtc": "2026-11-29T17:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-29T23:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-17T19:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-18T01:00:00Z",
       "driver": "scheduled_speed_change"
     },
     "sourceType": "synthetic-event",
@@ -769,8 +769,8 @@
       "voyageId": "VYG-0011",
       "previousEtaShiftHours": -3,
       "newEtaShiftHours": 1,
-      "previousEstimatedArrivalUtc": "2026-11-16T21:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-17T01:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-11T16:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-11T20:00:00Z",
       "driver": "weather_corridor_exposure"
     },
     "sourceType": "synthetic-event",
@@ -1422,8 +1422,8 @@
       "voyageId": "VYG-0018",
       "previousEtaShiftHours": 25,
       "newEtaShiftHours": 31,
-      "previousEstimatedArrivalUtc": "2026-11-27T02:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-27T08:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-11T02:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-11T08:00:00Z",
       "driver": "port_waiting_forecast"
     },
     "sourceType": "synthetic-event",
@@ -2604,6 +2604,34 @@
     "quality": "synthetic"
   },
   {
+    "eventId": "EVT-0004",
+    "type": "PORT_QUEUE_JOINED",
+    "occurredAtUtc": "2026-11-09T04:00:00Z",
+    "ingestedAtUtc": "2026-11-09T04:03:00Z",
+    "entityRefs": [
+      {
+        "kind": "vessel",
+        "id": "VSL-0001"
+      },
+      {
+        "kind": "voyage",
+        "id": "VYG-0001"
+      },
+      {
+        "kind": "port",
+        "id": "PRT-SIN"
+      }
+    ],
+    "payload": {
+      "portId": "PRT-SIN",
+      "vesselId": "VSL-0001",
+      "portCallId": "PCL-0001",
+      "terminalId": "TRM-SIN-W"
+    },
+    "sourceType": "synthetic-event",
+    "quality": "synthetic"
+  },
+  {
     "eventId": "EVT-0114",
     "type": "AIS_REPORT",
     "occurredAtUtc": "2026-11-09T04:02:00Z",
@@ -3028,8 +3056,8 @@
       "voyageId": "VYG-0008",
       "previousEtaShiftHours": 0,
       "newEtaShiftHours": -1,
-      "previousEstimatedArrivalUtc": "2026-11-13T13:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-13T12:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-17T12:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-17T11:00:00Z",
       "driver": "port_waiting_forecast"
     },
     "sourceType": "synthetic-event",
@@ -3124,8 +3152,8 @@
       "voyageId": "VYG-0022",
       "previousEtaShiftHours": 0,
       "newEtaShiftHours": -1,
-      "previousEstimatedArrivalUtc": "2026-11-22T07:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-22T06:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-17T14:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-17T13:00:00Z",
       "driver": "port_waiting_forecast"
     },
     "sourceType": "synthetic-event",
@@ -3285,8 +3313,8 @@
       "voyageId": "VYG-0009",
       "previousEtaShiftHours": 0,
       "newEtaShiftHours": -1,
-      "previousEstimatedArrivalUtc": "2026-11-26T13:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-26T12:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-18T09:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-18T08:00:00Z",
       "driver": "weather_corridor_exposure"
     },
     "sourceType": "synthetic-event",
@@ -3800,8 +3828,8 @@
       "voyageId": "VYG-0047",
       "previousEtaShiftHours": 25,
       "newEtaShiftHours": 31,
-      "previousEstimatedArrivalUtc": "2026-11-18T12:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-18T18:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-12T09:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-12T15:00:00Z",
       "driver": "port_waiting_forecast"
     },
     "sourceType": "synthetic-event",
@@ -3844,8 +3872,8 @@
       "voyageId": "VYG-0003",
       "previousEtaShiftHours": 16,
       "newEtaShiftHours": 18,
-      "previousEstimatedArrivalUtc": "2026-11-16T19:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-16T21:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-16T05:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-16T07:00:00Z",
       "driver": "scheduled_speed_change"
     },
     "sourceType": "synthetic-event",
@@ -4443,37 +4471,7 @@
     "quality": "synthetic"
   },
   {
-    "eventId": "EVT-0001",
-    "type": "AIS_REPORT",
-    "occurredAtUtc": "2026-11-09T06:00:00Z",
-    "ingestedAtUtc": "2026-11-09T06:03:00Z",
-    "entityRefs": [
-      {
-        "kind": "vessel",
-        "id": "VSL-0001"
-      },
-      {
-        "kind": "voyage",
-        "id": "VYG-0001"
-      },
-      {
-        "kind": "port",
-        "id": "PRT-SIN"
-      }
-    ],
-    "payload": {
-      "vesselId": "VSL-0001",
-      "location": {
-        "lon": 104.541406,
-        "lat": 1.477656
-      },
-      "sogKn": 12.0
-    },
-    "sourceType": "synthetic-event",
-    "quality": "synthetic"
-  },
-  {
-    "eventId": "EVT-0002",
+    "eventId": "EVT-0005",
     "type": "WEATHER_WARNING_ISSUED",
     "occurredAtUtc": "2026-11-09T06:00:00Z",
     "ingestedAtUtc": "2026-11-09T06:03:00Z",
@@ -4654,8 +4652,8 @@
       "voyageId": "VYG-0013",
       "previousEtaShiftHours": 0,
       "newEtaShiftHours": -3,
-      "previousEstimatedArrivalUtc": "2026-11-11T17:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-11T14:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-25T08:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-25T05:00:00Z",
       "driver": "weather_corridor_exposure"
     },
     "sourceType": "synthetic-event",
@@ -5036,8 +5034,8 @@
       "voyageId": "VYG-0006",
       "previousEtaShiftHours": 16,
       "newEtaShiftHours": 22,
-      "previousEstimatedArrivalUtc": "2026-11-20T19:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-21T01:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-19T14:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-19T20:00:00Z",
       "driver": "source_correction"
     },
     "sourceType": "synthetic-event",
@@ -5088,8 +5086,8 @@
       "voyageId": "VYG-0027",
       "previousEtaShiftHours": 2,
       "newEtaShiftHours": 6,
-      "previousEstimatedArrivalUtc": "2026-11-27T21:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-28T01:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-13T15:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-13T19:00:00Z",
       "driver": "scheduled_speed_change"
     },
     "sourceType": "synthetic-event",
@@ -5144,8 +5142,8 @@
       "voyageId": "VYG-0031",
       "previousEtaShiftHours": 12,
       "newEtaShiftHours": 18,
-      "previousEstimatedArrivalUtc": "2026-11-11T03:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-11T09:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-23T20:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-24T02:00:00Z",
       "driver": "scheduled_speed_change"
     },
     "sourceType": "synthetic-event",
@@ -5196,8 +5194,8 @@
       "voyageId": "VYG-0012",
       "previousEtaShiftHours": 0,
       "newEtaShiftHours": -3,
-      "previousEstimatedArrivalUtc": "2026-11-25T01:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-24T22:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-10T20:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-10T17:00:00Z",
       "driver": "port_waiting_forecast"
     },
     "sourceType": "synthetic-event",
@@ -5738,7 +5736,7 @@
     "quality": "synthetic"
   },
   {
-    "eventId": "EVT-0003",
+    "eventId": "EVT-0006",
     "type": "PORT_WAIT_UPDATED",
     "occurredAtUtc": "2026-11-09T07:30:00Z",
     "ingestedAtUtc": "2026-11-09T07:33:00Z",
@@ -6080,6 +6078,10 @@
       },
       {
         "kind": "route",
+        "id": "RTE-SHA-SIN"
+      },
+      {
+        "kind": "route",
         "id": "RTE-SIN-MNL"
       }
     ],
@@ -6268,8 +6270,8 @@
       "voyageId": "VYG-0029",
       "previousEtaShiftHours": 0,
       "newEtaShiftHours": -3,
-      "previousEstimatedArrivalUtc": "2026-11-19T23:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-19T20:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-22T18:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-22T15:00:00Z",
       "driver": "weather_corridor_exposure"
     },
     "sourceType": "synthetic-event",
@@ -6472,8 +6474,8 @@
       "voyageId": "VYG-0024",
       "previousEtaShiftHours": 2,
       "newEtaShiftHours": 6,
-      "previousEstimatedArrivalUtc": "2026-11-20T19:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-20T23:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-10T01:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-10T05:00:00Z",
       "driver": "scheduled_speed_change"
     },
     "sourceType": "synthetic-event",
@@ -6677,8 +6679,8 @@
       "voyageId": "VYG-0005",
       "previousEtaShiftHours": -2,
       "newEtaShiftHours": 4,
-      "previousEstimatedArrivalUtc": "2026-11-14T14:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-14T20:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-19T17:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-19T23:00:00Z",
       "driver": "scheduled_speed_change"
     },
     "sourceType": "synthetic-event",
@@ -6731,7 +6733,7 @@
     "quality": "synthetic"
   },
   {
-    "eventId": "EVT-0004",
+    "eventId": "EVT-0001",
     "type": "ETA_REVISED",
     "occurredAtUtc": "2026-11-09T09:00:00Z",
     "ingestedAtUtc": "2026-11-09T09:03:00Z",
@@ -7087,7 +7089,7 @@
     "quality": "synthetic"
   },
   {
-    "eventId": "EVT-0005",
+    "eventId": "EVT-0002",
     "type": "ANCHORAGE_ENTER",
     "occurredAtUtc": "2026-11-09T09:15:00Z",
     "ingestedAtUtc": "2026-11-09T09:18:00Z",
@@ -7108,7 +7110,9 @@
     "payload": {
       "portId": "PRT-SIN",
       "vesselId": "VSL-0001",
-      "anchorageId": "ANC-SIN"
+      "anchorageId": "ANC-SIN",
+      "assignment": "formal",
+      "note": "Formal anchorage assignment; the vessel was already holding at this position"
     },
     "sourceType": "synthetic-event",
     "quality": "synthetic"
@@ -7928,8 +7932,8 @@
       "voyageId": "VYG-0002",
       "previousEtaShiftHours": 0,
       "newEtaShiftHours": 6,
-      "previousEstimatedArrivalUtc": "2026-11-23T16:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-23T22:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-12T04:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-12T10:00:00Z",
       "driver": "port_waiting_forecast"
     },
     "sourceType": "synthetic-event",
@@ -8054,8 +8058,8 @@
       "voyageId": "VYG-0007",
       "previousEtaShiftHours": 8,
       "newEtaShiftHours": 12,
-      "previousEstimatedArrivalUtc": "2026-11-29T12:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-29T16:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-14T17:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-14T21:00:00Z",
       "driver": "port_waiting_forecast"
     },
     "sourceType": "synthetic-event",
@@ -8224,7 +8228,7 @@
     "quality": "synthetic"
   },
   {
-    "eventId": "EVT-0006",
+    "eventId": "EVT-0003",
     "type": "INCIDENT_OPENED",
     "occurredAtUtc": "2026-11-09T10:59:00Z",
     "ingestedAtUtc": "2026-11-09T11:02:00Z",
@@ -8518,8 +8522,8 @@
       "voyageId": "VYG-0021",
       "previousEtaShiftHours": 18,
       "newEtaShiftHours": 22,
-      "previousEstimatedArrivalUtc": "2026-11-27T21:00:00Z",
-      "newEstimatedArrivalUtc": "2026-11-28T01:00:00Z",
+      "previousEstimatedArrivalUtc": "2026-11-18T12:00:00Z",
+      "newEstimatedArrivalUtc": "2026-11-18T16:00:00Z",
       "driver": "scheduled_speed_change"
     },
     "sourceType": "synthetic-event",
@@ -8707,7 +8711,7 @@
   },
   {
     "eventId": "EVT-0008",
-    "type": "BERTH_SCHEDULED",
+    "type": "BERTH_ESTIMATE_UPDATED",
     "occurredAtUtc": "2026-11-09T11:40:00Z",
     "ingestedAtUtc": "2026-11-09T11:43:00Z",
     "entityRefs": [
@@ -8726,10 +8730,11 @@
     ],
     "payload": {
       "portId": "PRT-SIN",
-      "berthId": "BRH-SIN-W-1",
       "vesselId": "VSL-0001",
-      "windowStartUtc": "2026-11-10T14:00:00Z",
-      "windowEndUtc": "2026-11-11T08:00:00Z"
+      "portCallId": "PCL-0001",
+      "terminalId": "TRM-SIN-W",
+      "estimatedBerthUtc": "2026-11-10T14:00:00Z",
+      "confirmed": false
     },
     "sourceType": "synthetic-event",
     "quality": "synthetic"
@@ -8817,8 +8822,8 @@
     "payload": {
       "vesselId": "VSL-0001",
       "location": {
-        "lon": 103.95,
-        "lat": 1.25
+        "lon": 103.91,
+        "lat": 1.18
       },
       "sogKn": 0.1
     },
