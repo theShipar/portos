@@ -563,9 +563,10 @@ blockers. Status values: implemented / tested / blocked.
 - **Tested:**
   - `npm run typecheck` → exit 0.
   - `npx vitest run` → exit 0, 248 tests in 17 files. New `bridge.test.ts` (7, real `SpatialDirector` with fake
-    scenes and stage): down sequence and step order, focus duration within budget, rise from the current pose,
-    reduced motion ≤ 150 ms with no flights, abort clears the stage and restores overlays, prepare draws the
-    destination before the source in one task.
+    scenes and stage): focus durations inside 650–1200 ms; Earth → region static frame first, then focus, dive,
+    cloud reveal, handoff, settle; region → city geographic dive with the subtler reveal; reduced motion ≤ 150 ms
+    without camera flights; rise to Earth from the region pose; Back mid-flight clears the stage and keeps the
+    globe active; cancelling during the reveal never activates the destination.
   - `npm run build` → exit 0.
   - `npx playwright test tests/e2e/handoff.spec.ts` (Phase 3 gate) → first run 3 failed: wall-clock focus 1,421 ms
     against a 1,200 ms bound while the test took screenshots mid-flight (gsap lag smoothing stretches tweens when a
