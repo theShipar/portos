@@ -7,14 +7,21 @@ Natural Earth derived, public domain) and the port fixture. Bounding boxes cover
 plus every polygon within 2 degrees of one of its ports, so overseas islands (Alaska, Hawaii, Reunion) never stretch
 a camera preset across the antimeridian.
 
-Usage: python3 scripts/build_geo.py registry
+Step `geo` (Phase 2): clips and simplifies Natural Earth admin-0 polygons (public domain; 50m for regions and large
+countries, 10m for small countries and cities, so Singapore keeps its real coastline) into one file per registry
+entry under `public/geo/<type>/<id>.json`, plus `public/geo/index.json` and `public/geo/PROVENANCE.md`. Downloads are
+cached in `.cache/natural-earth/` (git-ignored); the SHA-256 of every source file is recorded in the provenance.
+
+Usage: python3 scripts/build_geo.py registry | geo | all
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import sys
+import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -122,13 +129,274 @@ def build_registry() -> int:
     return 0
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# Step `geo`: per-entry geometry for the extruded region / country / city scenes.
+
+NE_BASE = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson'
+NE_FILES = {'50m': 'ne_50m_admin_0_countries.geojson', '10m': 'ne_10m_admin_0_countries.geojson'}
+CACHE = ROOT / '.cache/natural-earth'
+OUT_GEO = ROOT / 'public/geo'
+# Mirror of CITIES in src/spatial/registry.ts (tests/unit/geo.test.ts checks they agree).
+CITIES = [
+    {'id': 'CTY-SIN', 'label': 'Singapore', 'iso3': 'SGP', 'bbox': (103.58, 1.1, 104.14, 1.48)},
+    {'id': 'CTY-RTM', 'label': 'Rotterdam', 'iso3': 'NLD', 'bbox': (3.95, 51.74, 4.82, 52.04)},
+    {'id': 'CTY-GOA', 'label': 'Genoa', 'iso3': 'ITA', 'bbox': (8.62, 44.22, 9.28, 44.52)},
+]
+ILLUSTRATIVE = {'REG-MED', 'REG-WAF'}
+# Frame padding (fraction of the span on each side), Douglas-Peucker divisor and coordinate decimals per level.
+LEVEL = {
+    'region': {'pad': 0.08, 'detail': 900, 'decimals': 3},
+    'country': {'pad': 0.3, 'detail': 1400, 'decimals': 4},
+    'city': {'pad': 0.35, 'detail': 2600, 'decimals': 5},
+}
+SMALL_COUNTRY_DEG = 12.0
+
+
+def ne_path(res: str) -> Path:
+    path = CACHE / NE_FILES[res]
+    if not path.exists() or path.stat().st_size == 0:
+        CACHE.mkdir(parents=True, exist_ok=True)
+        url = f'{NE_BASE}/{NE_FILES[res]}'
+        print(f'downloading {url}')
+        with urllib.request.urlopen(url, timeout=120) as r:
+            path.write_bytes(r.read())
+    return path
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def load_ne(res: str) -> list[dict]:
+    data = json.loads(ne_path(res).read_text())
+    out = []
+    for f in data['features']:
+        g = f['geometry']
+        if not g:
+            continue
+        polys = [g['coordinates']] if g['type'] == 'Polygon' else g['coordinates']
+        p = f['properties']
+        rings_bbox = [ring_bbox(poly[0]) for poly in polys]
+        out.append({'iso3': p['ADM0_A3'], 'name': p['NAME'], 'polys': polys, 'bboxes': rings_bbox})
+    return out
+
+
+def clip_ring(ring: list[list[float]], w: float, s: float, e: float, n: float) -> list[list[float]]:
+    """Sutherland-Hodgman against the frame rectangle (convex), on an open ring."""
+    pts = ring[:-1] if len(ring) > 1 and ring[0] == ring[-1] else ring[:]
+    for edge in range(4):
+        if not pts:
+            return []
+        inside = [
+            lambda p: p[0] >= w,
+            lambda p: p[0] <= e,
+            lambda p: p[1] >= s,
+            lambda p: p[1] <= n,
+        ][edge]
+
+        def cut(a, b):
+            if edge < 2:
+                x = w if edge == 0 else e
+                t = (x - a[0]) / (b[0] - a[0])
+                return [x, a[1] + t * (b[1] - a[1])]
+            y = s if edge == 2 else n
+            t = (y - a[1]) / (b[1] - a[1])
+            return [a[0] + t * (b[0] - a[0]), y]
+
+        out = []
+        for i, cur in enumerate(pts):
+            prev = pts[i - 1]
+            if inside(cur):
+                if not inside(prev):
+                    out.append(cut(prev, cur))
+                out.append(cur)
+            elif inside(prev):
+                out.append(cut(prev, cur))
+        pts = out
+    return pts
+
+
+def simplify(pts: list[list[float]], tol: float) -> list[list[float]]:
+    """Douglas-Peucker on an open ring (iterative)."""
+    if len(pts) < 5:
+        return pts
+    keep = [False] * len(pts)
+    keep[0] = keep[-1] = True
+    # Split the ring at its farthest point from the first vertex so both halves are open polylines.
+    far = max(range(len(pts)), key=lambda i: (pts[i][0] - pts[0][0]) ** 2 + (pts[i][1] - pts[0][1]) ** 2)
+    keep[far] = True
+    stack = [(0, far), (far, len(pts) - 1)]
+    while stack:
+        a, b = stack.pop()
+        ax, ay = pts[a]
+        bx, by = pts[b]
+        dx, dy = bx - ax, by - ay
+        len2 = dx * dx + dy * dy
+        best, idx = -1.0, -1
+        for i in range(a + 1, b):
+            px, py = pts[i]
+            if len2 == 0:
+                d = math.hypot(px - ax, py - ay)
+            else:
+                d = abs(dy * px - dx * py + bx * ay - by * ax) / math.sqrt(len2)
+            if d > best:
+                best, idx = d, i
+        if idx >= 0 and best > tol:
+            keep[idx] = True
+            stack.append((a, idx))
+            stack.append((idx, b))
+    return [p for p, k in zip(pts, keep) if k]
+
+
+def open_area(pts: list[list[float]]) -> float:
+    a = 0.0
+    for i in range(len(pts)):
+        x1, y1 = pts[i - 1]
+        x2, y2 = pts[i]
+        a += x1 * y2 - x2 * y1
+    return abs(a) / 2
+
+
+def shift_ring(ring: list[list[float]], shift: bool) -> list[list[float]]:
+    if not shift or max(p[0] for p in ring) >= 0:
+        return ring
+    return [[p[0] + 360, p[1]] for p in ring]
+
+
+def build_entry(entry: dict, features: list[dict]) -> dict:
+    cfg = LEVEL[entry['type']]
+    w, s, e, n = entry['bbox']
+    if e < w:
+        e += 360
+    span_x, span_y = e - w, n - s
+    pad = cfg['pad']
+    fw, fe = w - span_x * pad, e + span_x * pad
+    fs, fn = max(-85.0, s - span_y * pad), min(85.0, n + span_y * pad)
+    shift = fe > 180
+    tol = max(span_x, span_y) / cfg['detail']
+    min_area = tol * tol * 6
+    dec = cfg['decimals']
+    out_features = []
+    for f in features:
+        polys_out = []
+        for poly, bb in zip(f['polys'], f['bboxes']):
+            bw, bs, be, bn = bb
+            if shift and be < 0:
+                bw, be = bw + 360, be + 360
+            if be < fw or bw > fe or bn < fs or bs > fn:
+                continue
+            rings = []
+            for k, ring in enumerate(poly):
+                clipped = clip_ring(shift_ring(ring, shift), fw, fs, fe, fn)
+                if len(clipped) < 3:
+                    if k == 0:
+                        break
+                    continue
+                simple = simplify(clipped, tol)
+                if len(simple) < 3 or open_area(simple) < min_area:
+                    if k == 0:
+                        break
+                    continue
+                rings.append([[round(x, dec), round(y, dec)] for x, y in simple])
+            if rings:
+                polys_out.append(rings)
+        if polys_out:
+            out_features.append({'iso3': f['iso3'], 'name': f['name'], 'focus': f['iso3'] in entry['focus'], 'polygons': polys_out})
+    out_features.sort(key=lambda f: (not f['focus'], f['iso3']))
+    return {
+        'id': entry['id'],
+        'type': entry['type'],
+        'label': entry['label'],
+        'bbox': {'west': w, 'south': s, 'east': e, 'north': n},
+        'frame': {'west': round(fw, 4), 'south': round(fs, 4), 'east': round(fe, 4), 'north': round(fn, 4)},
+        'origin': {'lon': round((w + e) / 2, 5), 'lat': round((s + n) / 2, 5)},
+        'illustrativeBounds': entry['id'] in ILLUSTRATIVE,
+        'dataset': entry['dataset'],
+        'features': out_features,
+    }
+
+
+def build_geo() -> int:
+    regions = json.loads(REGIONS.read_text())
+    countries = json.loads(OUT_COUNTRIES.read_text())['countries']
+    entries = []
+    for r in regions:
+        b = r['bounds']
+        entries.append({'id': r['regionId'], 'type': 'region', 'label': r['name'], 'bbox': (b['west'], b['south'], b['east'], b['north']), 'focus': set(r['countryIso3']), 'dataset': '50m'})
+    for c in countries:
+        if c['countryId'] == 'CNT-SGP':
+            continue
+        b = c['bbox']
+        small = max(b['east'] - b['west'], b['north'] - b['south']) < SMALL_COUNTRY_DEG
+        entries.append({'id': c['countryId'], 'type': 'country', 'label': c['name'], 'bbox': (b['west'], b['south'], b['east'], b['north']), 'focus': {c['iso3']}, 'dataset': '10m' if small else '50m'})
+    for c in CITIES:
+        entries.append({'id': c['id'], 'type': 'city', 'label': c['label'], 'bbox': c['bbox'], 'focus': {c['iso3']}, 'dataset': '10m'})
+
+    sources = {res: load_ne(res) for res in ('50m', '10m')}
+    index = []
+    for entry in entries:
+        doc = build_entry(entry, sources[entry['dataset']])
+        if not any(f['focus'] for f in doc['features']) and entry['type'] != 'region':
+            print(f"{entry['id']}: focus country {sorted(entry['focus'])} has no geometry in the frame", file=sys.stderr)
+        path = OUT_GEO / entry['type'] / f"{entry['id']}.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        text = json.dumps(doc, separators=(',', ':'))
+        path.write_text(text + '\n')
+        rings = sum(len(p) for f in doc['features'] for p in f['polygons'])
+        verts = sum(len(r) for f in doc['features'] for p in f['polygons'] for r in p)
+        index.append({'id': entry['id'], 'type': entry['type'], 'path': f"/geo/{entry['type']}/{entry['id']}.json", 'dataset': f"ne_{entry['dataset']}_admin_0_countries", 'features': len(doc['features']), 'rings': rings, 'vertices': verts, 'bytes': len(text) + 1, 'sha1': hashlib.sha1(text.encode()).hexdigest()[:12]})
+    (OUT_GEO / 'index.json').write_text(json.dumps({'source': 'scripts/build_geo.py geo', 'entries': index}, indent=1) + '\n')
+    hashes = {res: sha256(ne_path(res)) for res in ('50m', '10m')}
+    total = sum(e['bytes'] for e in index)
+    lines = [
+        '# PORTOS geography provenance',
+        '',
+        'Generated by `python3 scripts/build_geo.py geo`. Do not edit by hand.',
+        '',
+        '## Sources',
+        '',
+        '| Dataset | URL | SHA-256 | Licence |',
+        '| --- | --- | --- | --- |',
+    ]
+    for res in ('50m', '10m'):
+        lines.append(f"| Natural Earth {res} admin-0 countries | {NE_BASE}/{NE_FILES[res]} | `{hashes[res]}` | Public domain (naturalearthdata.com/about/terms-of-use) |")
+    lines += [
+        '',
+        '## Processing',
+        '',
+        '- One file per registry entry: 11 operational regions (50m), port-bearing countries (10m when the bbox span is',
+        f'  under {SMALL_COUNTRY_DEG:.0f} degrees, else 50m) and the flagship cities CTY-SIN, CTY-RTM, CTY-GOA (10m).',
+        '- Frame = entry bbox padded per level (region 8 %, country 30 %, city 35 % of the span on each side); polygons',
+        '  are clipped to the frame (Sutherland-Hodgman) and simplified with Douglas-Peucker at span / 900 (region),',
+        '  span / 1400 (country) and span / 2600 (city); rings smaller than 6 tolerance squared are dropped.',
+        '- Frames crossing the antimeridian (REG-OCE) use longitudes in 0..360 for the whole file.',
+        '- Country codes are Natural Earth `ADM0_A3` (France FRA and Norway NOR, whose ISO codes are -99 there).',
+        '- REG-MED and REG-WAF are illustrative operational bounds, never borders (`illustrativeBounds: true`).',
+        '- Borders are shown as Natural Earth draws them; PORTOS takes no position on disputed boundaries.',
+        '',
+        f"## Output ({len(index)} files, {total / 1024:.0f} KiB)",
+        '',
+        '| Entry | Type | Dataset | Features | Vertices | KiB |',
+        '| --- | --- | --- | ---: | ---: | ---: |',
+    ]
+    for e in index:
+        lines.append(f"| {e['id']} | {e['type']} | {e['dataset']} | {e['features']} | {e['vertices']} | {e['bytes'] / 1024:.1f} |")
+    (OUT_GEO / 'PROVENANCE.md').write_text('\n'.join(lines) + '\n')
+    print(f'{len(index)} geometry files -> {OUT_GEO.relative_to(ROOT)} ({total / 1024:.0f} KiB)')
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('step', choices=['registry'])
+    ap.add_argument('step', choices=['registry', 'geo', 'all'])
     args = ap.parse_args()
-    if args.step == 'registry':
-        return build_registry()
-    return 1
+    if args.step in ('registry', 'all'):
+        rc = build_registry()
+        if rc:
+            return rc
+    if args.step in ('geo', 'all'):
+        return build_geo()
+    return 0
 
 
 if __name__ == '__main__':

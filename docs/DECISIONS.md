@@ -307,3 +307,33 @@ Supersedes the v1 route table (`/operations`, `/region/:id`, `/port/:id`, `/vess
   destination) disposes evicted scenes. `InputRouter` owns pointer input (5 px drag threshold, 600 ms click limit,
   one rAF-coalesced hover hit test, priority testers). `OverlayProjectionAdapter` is the only path from the active
   camera to DOM labels. In Phase 1 every globe target shares the `earth` scene; Phase 2 adds extruded scenes.
+
+## D-032 Extruded region / country / city scenes on a shared map-surface contract
+Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the globe.
+- **Geometry:** `scripts/build_geo.py geo` builds `public/geo/{region,country,city}/<id>.json` (62 files, 2.1 MiB)
+  from Natural Earth admin-0 (50m; 10m for countries narrower than 12° and for every city frame, so Singapore uses
+  the 10m coastline). Rings are clipped to the padded frame (Sutherland–Hodgman), simplified (Douglas–Peucker, per
+  level budget) and shifted across the antimeridian for REG-OCE. `public/geo/index.json` and `PROVENANCE.md` record
+  dataset, SHA-256 of each source and per-file SHA-1. Downloads are cached in `.cache/` (git-ignored).
+- **Projection:** `src/spatial/projection.ts`, world unit 1 km, +x east, +y up, −z north. Regions and countries use
+  spherical Lambert azimuthal equal-area about the frame origin; cities use WGS84 local ENU. Both are reversible
+  (round-trip < 1e-9°) and unit-tested; vessel headings add the projection's grid convergence.
+- **Scene:** `src/spatial/scenes/Region3DScene.ts` (GPL-3.0-or-later, derived from the skill's
+  `ZhejiangThreeMap.vue` / `mapTerrainMaterial.ts`) implements both `SpatialScene` and `MapSurface`. Land height =
+  1.2 % of the frame span; hover lift = 0.6 % (≤ 2 % budget, tested); the orange contour is lit only on the selected
+  feature (the scope's country in country/city scenes, a clicked country in a region). Orbit, pan (target clamped to
+  the frame) and dolly; tilt 33°/38°/45° for region/country/city, north up after every framing flight. V2 palette,
+  no neon, no chase light.
+- **Surface contract:** `src/map/surface.ts` (`MapSurface`) is implemented by `EarthScene` (`surfaceKind: 'globe'`)
+  and `Region3DScene` (`'planar'`). `MaritimeOverlay`, the marker shader (`uPlanar`), DOM labels, clustering, the
+  stack picker and camera presets talk only to this contract. Presets and poses stay in globe units (centre +
+  distance, R = 2); planar scenes convert distance to an equivalent altitude, so the scope stack, LOD thresholds
+  and the 3D ↔ 2D camera hand-off work unchanged on every surface.
+- **Scene mapping:** Earth → globe; region → `region3d:<REG>`; country → `country3d:<CNT>`; city → `city3d:<CTY>`;
+  port → its city scene, else its region scene (until the port twin in Phase 5). All scenes share the globe's one
+  `WebGLRenderer`, canvas and `InputRouter`; each gets its own `MaritimeOverlay` fed by the same selectors. The
+  director's cache keeps up to three scenes; region and city geometry is prefetched in idle time and shaders are
+  compiled with `compileAsync`.
+- **Interaction:** click selects a country (region scenes) or switches region; double-click drills region →
+  country (city-states → city), country → city, city → nearest port. A DOM north arrow and 1-2-5 scale bar show on
+  planar scenes; REG-MED and REG-WAF show "Illustrative operational bounds · not a border" with a dashed frame.

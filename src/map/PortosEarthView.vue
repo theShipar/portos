@@ -9,6 +9,7 @@ import { flags } from '@/core/flags';
 import { GeoScopeStack, scopeFocusId, scopeKey, type Scope, type ScopeStackItem } from '@/core/scope';
 import type { Bounds, Region } from '@/core/types';
 import { trackUntil } from '@/engines/tracks';
+import { portScope, scopeFromSceneRef } from '@/router/opsLocation';
 import { useNavigation } from '@/router/useRouteSync';
 import {
   buildHazards,
@@ -28,13 +29,19 @@ import { useClockStore } from '@/stores/clock';
 import { useSessionStore } from '@/stores/session';
 import { useSnapshotStore } from '@/stores/snapshot';
 import { useViewStore } from '@/stores/view';
+import { scaleBar } from '@/spatial/compass';
+import { prefetchGeoDocs } from '@/spatial/geoData';
+import { terrainMaps } from '@/spatial/scenes/regionGeometry';
 import { InputRouter } from '@/spatial/InputRouter';
 import { OverlayProjectionAdapter } from '@/spatial/OverlayProjectionAdapter';
+import { CITIES } from '@/spatial/registry';
 import { EARTH_SCENE_KEY, EarthGlobeScene } from '@/spatial/scenes/EarthGlobeScene';
+import { planarSceneKey, Region3DScene, sceneKindForLevel, type PlanarLevel } from '@/spatial/scenes/Region3DScene';
 import { SpatialDirector } from '@/spatial/SpatialDirector';
-import type { SceneTarget } from '@/spatial/types';
+import type { SceneTarget, SpatialScene } from '@/spatial/types';
 import { boundsPreset, distanceToFitBounds, EARTH_PRESET, EARTH_RADIUS, pointPreset, regionPreset, type CameraPose, type CameraPreset } from './earth/camera';
-import { EarthScene, type EarthPointerHit } from './earth/EarthScene';
+import { EarthScene } from './earth/EarthScene';
+import type { MapSurface, SurfacePointerHit } from './surface';
 import { degreesPerPx, nextClusterCell, nextStackCell, STACK_MIN_COUNT } from './earth/lod';
 import { MaritimeOverlay, type OverlayLayers } from './earth/MaritimeOverlay';
 import { loadWorld } from './earth/worldGeo';
@@ -53,8 +60,17 @@ const nav = useNavigation();
 const host = ref<HTMLDivElement | null>(null);
 const state = ref<'loading' | 'ready' | 'no-webgl' | 'error'>('loading');
 const errorText = ref('');
+/** The globe; it owns the WebGL renderer that every surface shares. */
 const scene = shallowRef<EarthScene | null>(null);
+/** The surface on screen (globe, or an extruded region / country / city scene) and its maritime overlay. */
+const surface = shallowRef<MapSurface | null>(null);
 const overlay = shallowRef<MaritimeOverlay | null>(null);
+const overlays = new Map<MapSurface, MaritimeOverlay>();
+const surfaceUnsubs = new Map<MapSurface, (() => void)[]>();
+const planarInfo = ref<{ illustrative: boolean } | null>(null);
+const compassEl = ref<HTMLElement | null>(null);
+const scaleBarEl = ref<HTMLElement | null>(null);
+const scaleTextEl = ref<HTMLElement | null>(null);
 const tooltip = ref<{ x: number; y: number; title: string; lines: string[] } | null>(null);
 const labelEls = new Map<string, HTMLElement>();
 const portLabelEls = new Map<string, HTMLElement>();
@@ -74,7 +90,7 @@ let unsubs: (() => void)[] = [];
 let director: SpatialDirector | null = null;
 let input: InputRouter | null = null;
 const projection = new OverlayProjectionAdapter();
-let nextGlobeFlight: (() => Promise<boolean>) | null = null;
+let nextFlight: ((surf: MapSurface) => Promise<boolean>) | null = null;
 
 const markers = computed(() => snapStore.mapMarkers);
 const ports = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildPortMarkers(catalog.catalog, snapStore.snapshot)) : []));
@@ -109,70 +125,93 @@ const scopePorts = computed(() => {
   const c = catalog.catalog;
   if (!c || view.scope.level === 'earth' || !effectiveLayers.value.ports) return [];
   if (view.scope.level === 'port') return ports.value.filter((p) => p.portId === (view.scope as { portId: string }).portId);
+  if (view.scope.level === 'country' || view.scope.level === 'city') {
+    const ids = new Set(catalog.registry?.get(scopeFocusId(view.scope))?.maritimePortIds ?? []);
+    return ports.value.filter((p) => ids.has(p.portId)).sort((a, b) => b.openIncidents - a.openIncidents || a.name.localeCompare(b.name));
+  }
   return ports.value
     .filter((p) => p.regionId === activeRegionId.value)
     .sort((a, b) => b.openIncidents - a.openIncidents || (b.waitHours ?? -1) - (a.waitHours ?? -1) || a.name.localeCompare(b.name));
 });
 
-function presetFor(s: Scope, sc: EarthScene): CameraPreset {
+function presetFor(s: Scope, surf: MapSurface): CameraPreset {
   const c = catalog.catalog!;
+  const planar = surf instanceof Region3DScene ? surf : null;
   if (s.level === 'region') {
     const r = c.byId.region.get(s.regionId)!;
-    return regionPreset(r.regionId, r.bounds, r.cameraPreset.distance, sc.viewAspect);
+    return planar ? planar.fitPreset(r.regionId, 'region', r.bounds) : regionPreset(r.regionId, r.bounds, r.cameraPreset.distance, surf.viewAspect);
   }
   if (s.level === 'port') {
     const p = c.byId.port.get(s.portId)!;
-    return pointPreset(p.portId, 'port', p.location, 0.7);
+    const e = catalog.registry?.get(p.portId);
+    return planar && e ? planar.fitPreset(p.portId, 'port', e.bbox, 0.7) : pointPreset(p.portId, 'port', p.location, 0.7);
   }
   if (s.level === 'country' || s.level === 'city') {
     const e = catalog.registry?.get(scopeFocusId(s));
-    if (e) return boundsPreset(e.id, s.level, e.bbox, sc.viewAspect);
+    if (e) return planar ? planar.fitPreset(e.id, s.level, e.bbox) : boundsPreset(e.id, s.level, e.bbox, surf.viewAspect);
   }
   return EARTH_PRESET;
 }
 
 /** Globe countries lit for a scope: the region's set, or the one country of a country/city scope. */
-function highlightFor(s: Scope): string[] | null {
+function highlightFor(s: Scope, surf?: MapSurface): string[] | null {
   if (s.level === 'earth') return null;
   if (s.level === 'country' || s.level === 'city') return catalog.registry?.get(scopeFocusId(s))?.iso3.filter(Boolean) ?? null;
+  if (s.level === 'port' && surf?.surfaceKind === 'planar') return catalog.registry?.get(s.portId)?.iso3.filter(Boolean) ?? null;
   return catalog.catalog?.byId.region.get(s.regionId)?.countryIso3 ?? null;
 }
 
-/** Phase 1: every scope is a camera goal on the one globe scene; Phase 2 maps regions/countries/cities to extruded scenes. */
+/**
+ * Regions, countries and cities render as extruded scenes; a port shows inside its city (or its region) until the
+ * port twin lands. Entries without built geometry fall back to the globe.
+ */
 function targetForScope(s: Scope): SceneTarget {
-  return { kind: 'earth', sceneKey: EARTH_SCENE_KEY, focusId: scopeFocusId(s) };
+  const focusId = scopeFocusId(s);
+  const reg = catalog.registry;
+  let level: PlanarLevel | null = null;
+  let id = focusId;
+  if (s.level === 'region' || s.level === 'country' || s.level === 'city') level = s.level;
+  else if (s.level === 'port') {
+    const city = reg?.cityOfPort(s.portId);
+    level = city ? 'city' : 'region';
+    id = city ? city.id : s.regionId;
+  }
+  if (level && reg?.get(id)?.geometryPath) return { kind: sceneKindForLevel(level), sceneKey: planarSceneKey(level, id), focusId };
+  return { kind: 'earth', sceneKey: EARTH_SCENE_KEY, focusId };
 }
 
 /** Screen position of a geographic point through the active scene (director projector, or the globe directly). */
-function geoProject(sc: EarthScene, lat: number, lon: number) {
-  return director ? projection.project(lon, lat) : sc.project(lat, lon);
+function geoProject(surf: MapSurface, lat: number, lon: number) {
+  return director ? projection.project(lon, lat) : surf.project(lat, lon);
 }
 
-function snapshotItem(s: Scope, sc: EarthScene): ScopeStackItem<CameraPose, Record<LayerId, boolean>> {
-  return { key: scopeKey(s), scope: s, cameraPose: sc.getPose(), layers: { ...view.layers }, clockUtc: clock.iso, selection: view.selection };
+function snapshotItem(s: Scope, surf: MapSurface): ScopeStackItem<CameraPose, Record<LayerId, boolean>> {
+  return { key: scopeKey(s), scope: s, cameraPose: surf.getPose(), layers: { ...view.layers }, clockUtc: clock.iso, selection: view.selection };
 }
 
 async function applyScope(next: Scope, opts: { initial?: boolean } = {}) {
-  const sc = scene.value;
-  if (!sc || !catalog.catalog) return;
+  const globe = scene.value;
+  const cur = surface.value;
+  if (!globe || !cur || !catalog.catalog) return;
   stackMenu.value = null;
   tooltip.value = null;
-  const saved = opts.initial ? null : stack.transition(snapshotItem(currentScope, sc), next);
+  const saved = opts.initial ? null : stack.transition(snapshotItem(currentScope, cur), next);
   currentScope = next;
-  sc.setRegionHighlight(highlightFor(next));
-  sc.setHoverHighlight(null);
-  sc.setIdleRotation(next.level === 'earth' && !view.selection);
-  const preset = presetFor(next, sc);
-  const fly = () =>
-    saved?.cameraPose
-      ? sc.flyToPose(saved.cameraPose, { min: preset.minDistance, max: preset.maxDistance })
-      : sc.flyTo(preset, opts.initial ? { duration: session.reducedMotion ? 0 : 1.6 } : {});
+  globe.setIdleRotation(next.level === 'earth' && !view.selection);
+  const fly = (surf: MapSurface) => {
+    surf.setRegionHighlight(highlightFor(next, surf));
+    surf.setHoverHighlight(null);
+    const preset = presetFor(next, surf);
+    return saved?.cameraPose
+      ? surf.flyToPose(saved.cameraPose, { min: preset.minDistance, max: preset.maxDistance })
+      : surf.flyTo(preset, opts.initial ? { duration: session.reducedMotion ? 0 : 1.6 } : {});
+  };
   scoping = true;
   let done: boolean;
   if (director) {
-    nextGlobeFlight = fly;
+    nextFlight = fly;
     done = (await director.navigate(targetForScope(next), { restoreCamera: false })) === 'done';
-  } else done = await fly();
+  } else done = await fly(globe);
   scoping = false;
   if (!done) return;
   if (pendingPortId && next.level === 'region') {
@@ -187,26 +226,26 @@ async function applyScope(next: Scope, opts: { initial?: boolean } = {}) {
 }
 
 function ensureFocusVisible() {
-  const sc = scene.value;
+  const surf = surface.value;
   const p = focus.value?.point;
-  if (!sc || !p || scoping) return;
-  if (!sc.isComfortablyInView(p.lat, p.lon)) sc.focusPoint(p.lat, p.lon, { maxDistance: view.scope.level === 'earth' ? 6.4 : undefined });
+  if (!surf || !p || scoping) return;
+  if (!surf.isComfortablyInView(p.lat, p.lon)) surf.focusPoint(p.lat, p.lon, { maxDistance: view.scope.level === 'earth' ? 6.4 : undefined });
 }
 
 function resetCamera() {
-  const sc = scene.value;
-  if (sc) sc.flyTo(presetFor(view.scope, sc));
+  const surf = surface.value;
+  if (surf) surf.flyTo(presetFor(view.scope, surf));
 }
 
-function localXY(e: PointerEvent, sc: EarthScene) {
-  const r = sc.renderer.domElement.getBoundingClientRect();
+function localXY(e: PointerEvent, surf: MapSurface) {
+  const r = surf.renderer.domElement.getBoundingClientRect();
   return { x: e.clientX - r.left, y: e.clientY - r.top };
 }
 
 function setTooltip(x: number, y: number, title: string, lines: string[]) {
-  const sc = scene.value;
-  const w = sc?.viewport.width ?? 1200;
-  const h = sc?.viewport.height ?? 800;
+  const surf = surface.value;
+  const w = surf?.viewport.width ?? 1200;
+  const h = surf?.viewport.height ?? 800;
   tooltip.value = { x: Math.min(x + 14, w - 300), y: Math.min(y + 14, h - 110), title, lines };
 }
 
@@ -215,8 +254,8 @@ function hazardAt(lon: number, lat: number) {
   return hazards.value.find((h) => h.phase === 'active' && pointInPolygon({ lon, lat }, h.polygon)) ?? null;
 }
 
-function onHover(hit: EarthPointerHit | null, e: PointerEvent) {
-  const sc = scene.value;
+function onHover(hit: SurfacePointerHit | null, e: PointerEvent) {
+  const sc = surface.value;
   const reg = registry.value;
   const ov = overlay.value;
   const c = catalog.catalog;
@@ -270,11 +309,62 @@ function onHover(hit: EarthPointerHit | null, e: PointerEvent) {
     else tooltip.value = null;
   } else {
     const inOther = region && region.regionId !== activeRegionId.value;
+    const drill = !inOther && sc.surfaceKind === 'planar' ? drillTarget(hit) : null;
     sc.setHoverHighlight(hit.country && !inOther ? [hit.country.iso3] : inOther ? region!.countryIso3 : null);
-    canvas.style.cursor = inOther ? 'pointer' : '';
-    if (hit.country || inOther) setTooltip(hit.screenX, hit.screenY, hit.country?.name ?? region!.name, [inOther ? `${region!.name} · click to switch region` : (region?.name ?? 'Outside operational regions')]);
+    canvas.style.cursor = inOther || drill ? 'pointer' : '';
+    const context = inOther ? `${region!.name} · click to switch region` : (region?.name ?? 'Outside operational regions');
+    const lines = drill ? [context, `Double-click to open ${drill.label}`] : [context];
+    if (hit.country || inOther) setTooltip(hit.screenX, hit.screenY, hit.country?.name ?? region!.name, lines);
     else tooltip.value = null;
   }
+}
+
+/** Next level down under the pointer on an extruded scene: region → country, country → city, city → nearest port. */
+function drillTarget(hit: SurfacePointerHit): { scope: Scope; label: string } | null {
+  const c = catalog.catalog;
+  const reg = catalog.registry;
+  const s = view.scope;
+  if (!c || !reg) return null;
+  const countryId = hit.country ? [...reg.countryRows.values()].find((r) => r.iso3 === hit.country!.iso3)?.countryId : undefined;
+  const city = CITIES.find((ct) => {
+    const pad = 0.25;
+    return ct.countryId === countryId && hit.lon >= ct.bbox.west - pad && hit.lon <= ct.bbox.east + pad && hit.lat >= ct.bbox.south - pad && hit.lat <= ct.bbox.north + pad;
+  });
+  const to = (level: 'country' | 'city', id: string) => {
+    const scope = scopeFromSceneRef(c, reg, { level, id });
+    return scope ? { scope, label: reg.get(id)!.label } : null;
+  };
+  if (s.level === 'region') {
+    if (countryId && reg.get(countryId)?.type === 'country') return to('country', countryId);
+    const cityState = CITIES.find((ct) => ct.countryId === countryId && !reg.get(ct.countryId));
+    return cityState ? to('city', cityState.id) : null;
+  }
+  if (s.level === 'country') {
+    if (city) return to('city', city.id);
+    return countryId && countryId !== s.countryId && reg.get(countryId)?.type === 'country' ? to('country', countryId) : null;
+  }
+  if (s.level === 'city') {
+    const portIds = reg.get(s.cityId)?.maritimePortIds ?? [];
+    const near = portIds
+      .map((id) => c.byId.port.get(id))
+      .filter((p): p is NonNullable<typeof p> => !!p)
+      .sort((a, b) => Math.hypot(a.location.lon - hit.lon, a.location.lat - hit.lat) - Math.hypot(b.location.lon - hit.lon, b.location.lat - hit.lat))[0];
+    return near ? { scope: portScope(c, reg, near.portId), label: near.name } : null;
+  }
+  return null;
+}
+
+function onDblClick(hit: SurfacePointerHit | null, e: PointerEvent) {
+  const surf = surface.value;
+  if (!(surf instanceof Region3DScene) || !hit) return;
+  const { x, y } = localXY(e, surf);
+  if (overlay.value?.hitTest(x, y)) return;
+  const region = registry.value?.regionAt(hit.lon, hit.lat, hit.country?.iso3 ?? null);
+  if (region && region.regionId !== activeRegionId.value) return;
+  const drill = drillTarget(hit);
+  if (!drill) return;
+  tooltip.value = null;
+  nav.openScope(drill.scope);
 }
 
 function openPort(portId: string) {
@@ -288,8 +378,8 @@ function openPort(portId: string) {
   } else nav.openScope({ level: 'port', regionId: p.regionId, portId });
 }
 
-function onClick(hit: EarthPointerHit | null, e: PointerEvent) {
-  const sc = scene.value;
+function onClick(hit: SurfacePointerHit | null, e: PointerEvent) {
+  const sc = surface.value;
   const reg = registry.value;
   if (!sc || !reg) return;
   stackMenu.value = null;
@@ -313,7 +403,9 @@ function onClick(hit: EarthPointerHit | null, e: PointerEvent) {
   if (region && region.regionId !== activeRegionId.value) {
     tooltip.value = null;
     nav.openScope({ level: 'region', regionId: region.regionId });
+    return;
   }
+  if (sc instanceof Region3DScene && view.scope.level === 'region') sc.selectFeature(hit.country?.iso3 ?? null);
 }
 
 function openRegion(r: Region) {
@@ -321,7 +413,7 @@ function openRegion(r: Region) {
 }
 
 function zoomToCluster(cl: VesselCluster) {
-  const sc = scene.value;
+  const sc = surface.value;
   if (!sc) return;
   stackMenu.value = null;
   if (view.scope.level === 'earth') {
@@ -345,7 +437,7 @@ function onClusterClick(cl: VesselCluster) {
     stackMenu.value = null;
     return;
   }
-  const sc = scene.value;
+  const sc = surface.value;
   if (!sc) return;
   const p = geoProject(sc, cl.center.lat, cl.center.lon);
   const byId = new Map(markers.value.map((m) => [m.vesselId, m]));
@@ -396,7 +488,7 @@ function labelWidth(el: HTMLElement): number {
 }
 
 /** Position a DOM label over a globe point; with `taken`, skip it if it would overlap an already placed label. */
-function place(el: HTMLElement | undefined, sc: EarthScene, lat: number, lon: number, show: boolean, dx = 0, taken?: Rect[]) {
+function place(el: HTMLElement | undefined, sc: MapSurface, lat: number, lon: number, show: boolean, dx = 0, taken?: Rect[]) {
   if (!el) return;
   const p = geoProject(sc, lat, lon);
   let visible = show && p.visible;
@@ -411,7 +503,7 @@ function place(el: HTMLElement | undefined, sc: EarthScene, lat: number, lon: nu
 }
 
 /** Cluster badges always show; when one would cover a label it slides just below (or above) it instead. */
-function placeBadge(el: HTMLElement | undefined, sc: EarthScene, lat: number, lon: number, taken: Rect[]) {
+function placeBadge(el: HTMLElement | undefined, sc: MapSurface, lat: number, lon: number, taken: Rect[]) {
   if (!el) return;
   const p = geoProject(sc, lat, lon);
   el.style.visibility = p.visible ? 'visible' : 'hidden';
@@ -424,11 +516,12 @@ function placeBadge(el: HTMLElement | undefined, sc: EarthScene, lat: number, lo
 }
 
 function onFrame(_now: number, dirty: boolean) {
-  const sc = scene.value;
+  const sc = surface.value;
   if (!sc || !dirty) return;
   const ov = overlay.value;
   ov?.update();
-  const distance = sc.camera.position.length();
+  if (sc instanceof Region3DScene) updateCompass(sc);
+  const distance = sc.equivalentDistance;
   const mode = view.scope.level === 'earth' ? 'earth' : 'stack';
   const held = mode === clusterMode ? clusterCell.value : 0;
   clusterMode = mode;
@@ -461,15 +554,17 @@ async function init() {
     return;
   }
   scene.value = sc;
+  surface.value = sc;
   if (flags.spatialV2) {
     input = markRaw(new InputRouter(sc.renderer.domElement));
     sc.attachInput(input);
-    const globe = new EarthGlobeScene(sc, projection, () => (nextGlobeFlight ? nextGlobeFlight() : Promise.resolve(true)));
-    director = markRaw(new SpatialDirector({ factory: () => globe }));
+    const globe = new EarthGlobeScene(sc, projection, () => (nextFlight ? nextFlight(sc) : Promise.resolve(true)));
+    director = markRaw(new SpatialDirector({ factory: (t) => (t.kind === 'earth' ? globe : createPlanarScene(t, sc)) }));
     director.on('frame', (_ctx, drew) => {
       if (drew) projection.update();
     });
     director.on('phase', (phase) => input?.setEnabled(phase === 'idle' || phase === 'flying' || phase === 'error'));
+    director.on('active', (s) => setActiveSurface(s === globe ? sc : (s as Region3DScene)));
   }
   try {
     const world = await loadWorld();
@@ -480,48 +575,136 @@ async function init() {
     return;
   }
   const ov = markRaw(new MaritimeOverlay(sc, catalog.catalog?.vessels.length ?? 512));
+  bindSurface(sc, ov);
   overlay.value = ov;
+  unsubs = [
+    sc.on('contextLost', () => {
+      state.value = 'error';
+      errorText.value = 'The WebGL context was lost (GPU reset or memory pressure).';
+    }),
+  ];
+  sc.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0);
+  if (props.active) startLoop();
+  if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') exposeTestAdapter(sc);
+  state.value = 'ready';
+  emit('ready', sc);
+  if (director && catalog.registry) {
+    terrainMaps();
+    prefetchGeoDocs([...catalog.registry.entries.values()].filter((e) => e.type === 'region' || e.type === 'city').map((e) => e.geometryPath!));
+  }
+  await applyScope(view.scope, { initial: true });
+}
+
+/** Extruded region / country / city scene for a director target; it shares the globe's renderer and input. */
+function createPlanarScene(t: SceneTarget, globe: EarthScene): SpatialScene {
+  const entryId = t.sceneKey.slice(t.sceneKey.indexOf(':') + 1);
+  const entry = catalog.registry?.get(entryId);
+  if (!entry || !host.value) throw new Error(`No geography for ${t.sceneKey}`);
+  const s = markRaw(
+    new Region3DScene({
+      entry,
+      renderer: globe.renderer,
+      host: host.value,
+      projection,
+      reducedMotion: session.reducedMotion,
+      focus: (_target, _restore, surf) => (nextFlight ? nextFlight(surf) : Promise.resolve(true)),
+      onBuilt: (surf) => bindSurface(surf, markRaw(new MaritimeOverlay(surf, catalog.catalog?.vessels.length ?? 512))),
+      onDispose: unbindSurface,
+    }),
+  );
+  if (input) s.attachInput(input);
+  return s;
+}
+
+/** Every surface gets its own overlay fed from the same selectors; only the active one reacts to input. */
+function bindSurface(surf: MapSurface, ov: MaritimeOverlay) {
+  overlays.set(surf, ov);
+  feedOverlay(ov);
+  const whenActive =
+    <A extends unknown[]>(fn: (...a: A) => void) =>
+    (...a: A) => {
+      if (surface.value === surf) fn(...a);
+    };
+  surfaceUnsubs.set(surf, [
+    surf.on('hover', whenActive(onHover)),
+    surf.on('click', whenActive(onClick)),
+    surf.on('dblclick', whenActive(onDblClick)),
+    surf.on(
+      'userInteract',
+      whenActive(() => {
+        tooltip.value = null;
+        stackMenu.value = null;
+      }),
+    ),
+    surf.onFrame(whenActive(onFrame)),
+  ]);
+}
+
+function unbindSurface(surf: MapSurface) {
+  surfaceUnsubs.get(surf)?.forEach((u) => u());
+  surfaceUnsubs.delete(surf);
+  overlays.get(surf)?.dispose();
+  overlays.delete(surf);
+  if (surface.value === surf) overlay.value = null;
+}
+
+function feedOverlay(ov: MaritimeOverlay) {
   ov.setLayers(effectiveLayers.value);
   ov.setRoutes(routeLines.value);
   ov.setPorts(ports.value);
   ov.setVessels(markers.value);
   ov.setHazards(hazards.value);
-  syncFocus();
-  unsubs = [
-    sc.on('hover', onHover),
-    sc.on('click', onClick),
-    sc.on('userInteract', () => {
-      tooltip.value = null;
-      stackMenu.value = null;
-    }),
-    sc.on('contextLost', () => {
-      state.value = 'error';
-      errorText.value = 'The WebGL context was lost (GPU reset or memory pressure).';
-    }),
-    sc.onFrame(onFrame),
-  ];
-  sc.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0);
-  if (props.active) startLoop();
-  if (import.meta.env.DEV || import.meta.env.MODE === 'e2e') exposeTestAdapter(sc, ov);
-  state.value = 'ready';
-  emit('ready', sc);
-  await applyScope(view.scope, { initial: true });
+  if (effectiveLayers.value.traffic) ov.setDensity(density.value);
+  ov.setClustered(clusters.value.clusteredIds);
+  focusOverlay(ov);
+}
+
+function eachOverlay(fn: (ov: MaritimeOverlay) => void) {
+  for (const ov of overlays.values()) fn(ov);
+}
+
+function setActiveSurface(surf: MapSurface) {
+  surface.value = surf;
+  overlay.value = overlays.get(surf) ?? null;
+  stackMenu.value = null;
+  tooltip.value = null;
+  surf.setReducedMotion(session.reducedMotion);
+  surf.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0, { instant: true });
+  planarInfo.value = surf instanceof Region3DScene ? { illustrative: surf.illustrativeBounds } : null;
+  surf.invalidate();
+}
+
+/** North arrow and scale bar for extruded scenes (DOM, written per drawn frame). */
+function updateCompass(surf: Region3DScene) {
+  const c = surf.compass();
+  if (!c) return;
+  if (compassEl.value) compassEl.value.style.transform = `rotate(${c.northDeg.toFixed(1)}deg)`;
+  const bar = scaleBar(c.metresPerPx);
+  if (bar && scaleBarEl.value && scaleTextEl.value) {
+    scaleBarEl.value.style.width = `${Math.round(bar.px)}px`;
+    scaleTextEl.value.textContent = bar.label;
+  }
 }
 
 /** Test-only scene adapter (dev and `--mode e2e` builds): page coordinates for map targets and renderer figures. */
-function exposeTestAdapter(sc: EarthScene, ov: MaritimeOverlay) {
+function exposeTestAdapter(sc: EarthScene) {
   const pointOf = (lat: number, lon: number) => {
-    const p = geoProject(sc, lat, lon);
+    const p = geoProject(surface.value ?? sc, lat, lon);
     const r = host.value?.getBoundingClientRect();
     return r ? { x: r.left + p.x, y: r.top + p.y, visible: p.visible } : null;
   };
   (window as unknown as { __portos?: unknown }).__portos = {
     scene: sc,
-    overlay: ov,
+    get overlay() {
+      return overlay.value;
+    },
+    surface: () => surface.value,
+    surfaceKind: () => surface.value?.surfaceKind ?? null,
+    compass: () => (surface.value instanceof Region3DScene ? surface.value.compass() : null),
     state: () => state.value,
-    stats: () => sc.stats(),
-    flying: () => sc.flying,
-    reducedMotion: () => sc.motionReduced,
+    stats: () => (surface.value ?? sc).stats(),
+    flying: () => !!surface.value?.flying || !!director?.busy,
+    reducedMotion: () => (surface.value ?? sc).motionReduced,
     pointOf,
     vesselPoint: (id: string) => {
       const m = markers.value.find((v) => v.vesselId === id);
@@ -549,14 +732,17 @@ function inspectorInset() {
   return 408 + 24;
 }
 
-function syncFocus() {
-  const ov = overlay.value;
+function focusOverlay(ov: MaritimeOverlay) {
   const c = catalog.catalog;
   const f = focus.value;
-  if (!ov || !c || !f) return;
+  if (!c || !f) return;
   ov.setFocus(f);
   const vesselId = f.vesselIds[0];
   ov.setTrack(vesselId ? trackUntil(c, vesselId, clock.timeMs) : null);
+}
+
+function syncFocus() {
+  eachOverlay(focusOverlay);
 }
 
 watch(
@@ -566,13 +752,17 @@ watch(
 watch(
   () => [view.inspectorOpen, view.sheetLayout] as const,
   ([open, sheet]) => {
-    scene.value?.setRightInset(open && !sheet ? inspectorInset() : 0);
+    surface.value?.setRightInset(open && !sheet ? inspectorInset() : 0);
+    if (surface.value !== scene.value) scene.value?.setRightInset(open && !sheet ? inspectorInset() : 0, { instant: true });
     scene.value?.setIdleRotation(view.scope.level === 'earth' && !open);
   },
 );
 watch(
   () => session.reducedMotion,
-  (v) => scene.value?.setReducedMotion(v),
+  (v) => {
+    scene.value?.setReducedMotion(v);
+    surface.value?.setReducedMotion(v);
+  },
 );
 /** Hidden behind the 2D map: stop rendering entirely; resume with a fresh frame. */
 watch(
@@ -584,15 +774,16 @@ watch(
     tooltip.value = null;
     if (active) {
       sc.resize();
+      if (surface.value !== sc) surface.value?.resize();
       startLoop();
     } else stopLoop();
   },
 );
-watch(markers, (m) => overlay.value?.setVessels(m));
-watch(ports, (p) => overlay.value?.setPorts(p));
-watch(hazardKey, () => overlay.value?.setHazards(hazards.value));
-watch(densityKey, () => overlay.value?.setDensity(density.value));
-watch(effectiveLayers, (l) => overlay.value?.setLayers(l));
+watch(markers, (m) => eachOverlay((ov) => ov.setVessels(m)));
+watch(ports, (p) => eachOverlay((ov) => ov.setPorts(p)));
+watch(hazardKey, () => eachOverlay((ov) => ov.setHazards(hazards.value)));
+watch(densityKey, () => eachOverlay((ov) => ov.setDensity(density.value)));
+watch(effectiveLayers, (l) => eachOverlay((ov) => ov.setLayers(l)));
 watch(focus, syncFocus);
 watch(
   () => (view.selection ? `${view.selection.kind}:${view.selection.id}` : ''),
@@ -602,7 +793,7 @@ watch(
 );
 watch(
   () => clusters.value,
-  (cl) => overlay.value?.setClustered(cl.clusteredIds),
+  (cl) => eachOverlay((ov) => ov.setClustered(cl.clusteredIds)),
 );
 
 function retry() {
@@ -626,7 +817,7 @@ function onVisibility() {
   if (!director || !props.active) return;
   if (document.hidden) director.stop();
   else {
-    scene.value?.invalidate();
+    surface.value?.invalidate();
     director.start();
   }
 }
@@ -638,10 +829,12 @@ function dispose() {
   director = null;
   input?.dispose();
   input = null;
-  nextGlobeFlight = null;
+  nextFlight = null;
   projection.setProjector(null);
-  overlay.value?.dispose();
+  for (const surf of [...overlays.keys()]) unbindSurface(surf);
   overlay.value = null;
+  surface.value = null;
+  planarInfo.value = null;
   scene.value?.dispose();
   scene.value = null;
   stack.clear();
@@ -656,7 +849,7 @@ onBeforeUnmount(() => {
   dispose();
 });
 
-defineExpose({ resetCamera, scene, overlay });
+defineExpose({ resetCamera, scene, surface, overlay });
 </script>
 
 <template>
@@ -706,6 +899,21 @@ defineExpose({ resetCamera, scene, overlay });
       >
         {{ r.name }}
       </button>
+    </div>
+    <div v-if="state === 'ready' && planarInfo" v-show="active" class="planar-hud" data-testid="planar-hud">
+      <span v-if="planarInfo.illustrative" class="planar-hud__chip" data-testid="illustrative-bounds">Illustrative operational bounds · not a border</span>
+      <div class="planar-hud__row">
+        <span class="planar-hud__north" role="img" aria-label="North arrow" data-testid="north-arrow">
+          <svg ref="compassEl" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+            <path d="M12 2 17 20 12 16 7 20Z" fill="currentColor" />
+          </svg>
+          <span class="planar-hud__n">N</span>
+        </span>
+        <span class="planar-hud__scale" data-testid="scale-bar">
+          <span ref="scaleBarEl" class="planar-hud__bar" />
+          <span ref="scaleTextEl" class="planar-hud__label mono" />
+        </span>
+      </div>
     </div>
     <div
       v-if="stackMenu"
@@ -847,6 +1055,64 @@ defineExpose({ resetCamera, scene, overlay });
   height: 22px;
   border-radius: var(--radius-input);
   border-width: 1.5px;
+}
+.planar-hud {
+  position: absolute;
+  left: var(--map-control-gap);
+  bottom: 36px;
+  z-index: 15;
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  pointer-events: none;
+}
+.planar-hud__chip {
+  padding: 2px 8px;
+  border: 1px dashed rgba(166, 169, 180, 0.7);
+  border-radius: var(--radius-chip);
+  background: rgba(7, 26, 39, 0.78);
+  color: rgba(247, 250, 252, 0.86);
+  font-size: var(--text-11);
+  line-height: 16px;
+}
+.planar-hud__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding: 4px 8px;
+  border-radius: var(--radius-chip);
+  background: rgba(7, 26, 39, 0.72);
+  color: rgba(247, 250, 252, 0.86);
+}
+.planar-hud__north {
+  display: grid;
+  justify-items: center;
+  color: #e66a2d;
+}
+.planar-hud__north svg {
+  transform-origin: 50% 50%;
+}
+.planar-hud__n {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 10px;
+  color: rgba(247, 250, 252, 0.86);
+}
+.planar-hud__scale {
+  display: grid;
+  gap: 2px;
+  padding-bottom: 2px;
+}
+.planar-hud__bar {
+  display: block;
+  height: 5px;
+  min-width: 20px;
+  border: 1.5px solid rgba(247, 250, 252, 0.86);
+  border-top: 0;
+}
+.planar-hud__label {
+  font-size: var(--text-11);
+  line-height: 14px;
 }
 .stack-menu {
   position: absolute;

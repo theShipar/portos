@@ -2,12 +2,11 @@ import * as THREE from 'three';
 import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
-import { sphericalPosition } from '@/core/geo';
 import type { GeoPoint } from '@/core/types';
 import { VESSEL_CLASSES, type DensityCell, type HazardShape, type MapFocus, type PortMarker, type RouteLine, type VesselClass, type VesselMarker } from '@/selectors/mapLayers';
 import { markerColors as MC } from '../theme';
 import { EARTH_RADIUS } from './camera';
-import type { EarthScene } from './EarthScene';
+import type { MapSurface } from '../surface';
 import { markerPxForAltitude, nextLod } from './lod';
 import { createInstanceBuffers, createMarkerMaterial, instancedFrom, type InstanceBuffers } from './markerShader';
 import { buildVesselGeometry, portGeometry, ringGeometry, type VesselDetail } from './vesselGeometry';
@@ -43,9 +42,9 @@ function toneColor(m: VesselMarker): THREE.Color {
   return MC[m.tone];
 }
 
-function linePositions(points: GeoPoint[], radius = LINE_RADIUS): number[] {
+function linePositions(surface: MapSurface, points: GeoPoint[], radius = LINE_RADIUS): number[] {
   const out: number[] = [];
-  for (const p of points) out.push(...sphericalPosition(p.lat, p.lon, radius));
+  for (const p of points) out.push(...surface.linePosition(p.lat, p.lon, radius));
   return out;
 }
 
@@ -63,16 +62,17 @@ interface ClassBatch {
 }
 
 /**
- * Maritime layers on the Earth scene: instanced vessels (LOD0 arrows / LOD1 silhouettes / LOD2 models), port glyphs,
+ * Maritime layers on a map surface (the globe or an extruded region / country / city scene): instanced vessels (LOD0 arrows / LOD1 silhouettes / LOD2 models), port glyphs,
  * selection and incident rings, corridor lines, the focused voyage track, hazard outlines, and the surface overlay
  * texture for hazard fills and traffic density. Holds no domain logic: everything arrives as view models.
  */
 export class MaritimeOverlay {
   readonly group = new THREE.Group();
-  private readonly scene: EarthScene;
-  private readonly vesselMaterial = createMarkerMaterial();
-  private readonly portMaterial = createMarkerMaterial(EARTH_RADIUS * 1.0015);
-  private readonly ringMaterial = createMarkerMaterial(EARTH_RADIUS * 1.002);
+  private readonly scene: MapSurface;
+  private readonly planar: boolean;
+  private readonly vesselMaterial: THREE.ShaderMaterial;
+  private readonly portMaterial: THREE.ShaderMaterial;
+  private readonly ringMaterial: THREE.ShaderMaterial;
   private readonly lineMaterials = new Set<LineMaterial>();
 
   private readonly arrowBuffers: InstanceBuffers;
@@ -108,8 +108,12 @@ export class MaritimeOverlay {
   private resolution = new THREE.Vector2(1, 1);
   private lodListeners = new Set<(lod: VesselDetail) => void>();
 
-  constructor(scene: EarthScene, capacity: number) {
+  constructor(scene: MapSurface, capacity: number) {
     this.scene = scene;
+    this.planar = scene.surfaceKind === 'planar';
+    this.vesselMaterial = createMarkerMaterial(undefined, this.planar);
+    this.portMaterial = createMarkerMaterial(EARTH_RADIUS * 1.0015, this.planar);
+    this.ringMaterial = createMarkerMaterial(EARTH_RADIUS * 1.002, this.planar);
     this.group.name = 'maritime-overlay';
     scene.overlay.add(this.group);
 
@@ -184,8 +188,7 @@ export class MaritimeOverlay {
 
   /** Per-frame: pixel scale, LOD with hysteresis, fat-line resolution. Cheap; no buffer writes unless LOD changes. */
   update() {
-    const altitude = this.scene.camera.position.length() - EARTH_RADIUS;
-    const px = markerPxForAltitude(altitude);
+    const px = markerPxForAltitude(this.scene.markerAltitude());
     const pxToWorld = this.scene.pxToWorld;
     this.px = px;
     for (const m of [this.vesselMaterial, this.ringMaterial]) {
@@ -273,7 +276,7 @@ export class MaritimeOverlay {
     const counts = new Map<VesselClass, number>(VESSEL_CLASSES.map((c) => [c, 0]));
     const col = new THREE.Color();
     order.forEach((m, i) => {
-      const [x, y, z] = sphericalPosition(m.point.lat, m.point.lon, 1);
+      const [x, y, z] = this.scene.markerCenter(m.point.lat, m.point.lon);
       const pinned = this.isPinned(m.vesselId);
       const hovered = m.vesselId === this.hoverId;
       const base = m.fleet === 'own' ? Math.min(1.2, Math.max(0.85, 0.85 + (m.lengthM - 180) / 500)) : 0.72;
@@ -281,7 +284,7 @@ export class MaritimeOverlay {
       col.copy(toneColor(m));
       if (m.stale) col.lerp(MC.stale, 0.6);
       if (hovered || pinned) col.lerp(new THREE.Color('#ffffff'), 0.18);
-      const heading = (m.cogDeg ?? 0) * DEG;
+      const heading = (m.cogDeg ?? 0) * DEG + (this.planar ? this.scene.headingOffset(m.point.lat, m.point.lon) : 0);
       const write = (b: InstanceBuffers, k: number) => {
         b.center.setXYZ(k, x, y, z);
         b.heading.setX(k, heading);
@@ -316,7 +319,7 @@ export class MaritimeOverlay {
   private writeRings() {
     let n = 0;
     const put = (b: InstanceBuffers, k: number, p: GeoPoint, color: THREE.Color, size: number) => {
-      const [x, y, z] = sphericalPosition(p.lat, p.lon, 1);
+      const [x, y, z] = this.scene.markerCenter(p.lat, p.lon);
       b.center.setXYZ(k, x, y, z);
       b.heading.setX(k, 0);
       b.color.setXYZ(k, color.r, color.g, color.b);
@@ -354,7 +357,7 @@ export class MaritimeOverlay {
     this.drawnPorts = list;
     const toneColors = { healthy: MC.portHealthy, warning: MC.portWarning, critical: MC.portCritical, unknown: MC.portUnknown };
     list.forEach((p, i) => {
-      const [x, y, z] = sphericalPosition(p.point.lat, p.point.lon, 1);
+      const [x, y, z] = this.scene.markerCenter(p.point.lat, p.point.lon);
       this.portBuffers.center.setXYZ(i, x, y, z);
       this.portBuffers.heading.setX(i, 0);
       const c = toneColors[p.tone];
@@ -372,9 +375,11 @@ export class MaritimeOverlay {
       transparent: true,
       opacity: opts.opacity,
       depthWrite: false,
+      // Planar scenes extrude land above the water: corridors and hazards stay readable over it.
+      depthTest: !this.planar,
       dashed: !!opts.dashed,
-      dashSize: opts.dash ?? 0.02,
-      gapSize: (opts.dash ?? 0.02) * 0.8,
+      dashSize: (opts.dash ?? 0.02) * this.scene.globeUnitScale,
+      gapSize: (opts.dash ?? 0.02) * 0.8 * this.scene.globeUnitScale,
       worldUnits: false,
     });
     m.resolution.copy(this.resolution);
@@ -395,7 +400,7 @@ export class MaritimeOverlay {
     this.routes.clear();
     for (const data of routes) {
       const g = new LineGeometry();
-      g.setPositions(linePositions(data.points));
+      g.setPositions(linePositions(this.scene, data.points));
       const material = this.lineMaterial({ color: MC.route, width: 1.25, opacity: 0.5, dashed: data.isScenarioAlternative, dash: 0.025 });
       const line = new Line2(g, material);
       line.computeLineDistances();
@@ -430,7 +435,7 @@ export class MaritimeOverlay {
     }
     if (points && points.length >= 2) {
       const g = new LineGeometry();
-      g.setPositions(linePositions(points, LINE_RADIUS * 1.0004));
+      g.setPositions(linePositions(this.scene, points, LINE_RADIUS * 1.0004));
       this.trackLine = new Line2(g, this.lineMaterial({ color: MC.track, width: 2, opacity: 0.9, dashed: true, dash: 0.006 }));
       this.trackLine.computeLineDistances();
       this.trackLine.renderOrder = RENDER_ORDER.track;
@@ -447,7 +452,7 @@ export class MaritimeOverlay {
     const focused = new Set(this.focus.hazardIds);
     for (const h of hazards) {
       const g = new LineGeometry();
-      g.setPositions(linePositions(h.outline, LINE_RADIUS * 0.9998));
+      g.setPositions(linePositions(this.scene, h.outline, LINE_RADIUS * 0.9998));
       const color = h.severity === 'severe' ? MC.hazardSevere : h.severity === 'high' ? MC.hazardHigh : MC.hazardModerate;
       const line = new Line2(g, this.lineMaterial({ color, width: focused.has(h.hazardId) ? 2.6 : 1.4, opacity: h.phase === 'active' ? 0.95 : 0.7, dashed: h.phase !== 'active', dash: 0.02 }));
       line.computeLineDistances();

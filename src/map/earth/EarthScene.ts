@@ -14,32 +14,15 @@ import { inverseSpherical, sphericalPosition } from '@/core/geo';
 import { portosMapTheme as T, QUALITY, type QualitySettings, type QualityTier } from '../theme';
 import { CameraTransitionController, EARTH_PRESET, EARTH_RADIUS, poseToPosition, positionToPose, type CameraPose, type CameraPreset } from './camera';
 import type { InputRouter } from '@/spatial/InputRouter';
+import type { MapSurface, ScreenPoint, SurfaceEvents, SurfacePointerHit } from '../surface';
 import { atmosphereFragmentShader, atmosphereVertexShader, earthFragmentShader, earthVertexShader } from './shaders';
 import type { Country, WorldGeo } from './worldGeo';
 
-export interface EarthPointerHit {
-  lat: number;
-  lon: number;
-  screenX: number;
-  screenY: number;
-  country: Country | null;
-}
-
-export interface EarthSceneEvents {
-  hover: (hit: EarthPointerHit | null, e: PointerEvent) => void;
-  click: (hit: EarthPointerHit | null, e: PointerEvent) => void;
-  userInteract: () => void;
-  cameraSettled: (pose: CameraPose) => void;
-  contextLost: () => void;
-}
+export type EarthPointerHit = SurfacePointerHit;
+export type EarthSceneEvents = SurfaceEvents;
+export type { ScreenPoint };
 
 type Listener<K extends keyof EarthSceneEvents> = EarthSceneEvents[K];
-
-export interface ScreenPoint {
-  x: number;
-  y: number;
-  visible: boolean;
-}
 
 function mulberry32(seed: number) {
   return () => {
@@ -111,7 +94,8 @@ function outlinePositions(countries: Country[], radius: number): Float32Array {
   return out.subarray(0, o);
 }
 
-export class EarthScene {
+export class EarthScene implements MapSurface {
+  readonly surfaceKind = 'globe' as const;
   static isWebGLAvailable(): boolean {
     try {
       const c = document.createElement('canvas');
@@ -137,6 +121,7 @@ export class EarthScene {
   private readonly listeners: { [K in keyof EarthSceneEvents]: Set<Listener<K>> } = {
     hover: new Set(),
     click: new Set(),
+    dblclick: new Set(),
     userInteract: new Set(),
     cameraSettled: new Set(),
     contextLost: new Set(),
@@ -389,6 +374,9 @@ export class EarthScene {
       router.on('click', (_hit, e) => {
         if (this.activeValue) this.emit('click', this.pick(e.clientX, e.clientY), e as PointerEvent);
       }),
+      router.on('dblclick', (_hit, e) => {
+        if (this.activeValue) this.emit('dblclick', this.pick(e.clientX, e.clientY), e as PointerEvent);
+      }),
       router.on('hover', (_hit, e) => {
         if (this.activeValue && !this.disposed) this.emit('hover', this.pick(e.clientX, e.clientY), e as PointerEvent);
       }),
@@ -457,11 +445,11 @@ export class EarthScene {
   }
 
   /** Shift the projection so the globe centre stays in the map area left of an open inspector. */
-  setRightInset(px: number) {
+  setRightInset(px: number, opts: { instant?: boolean } = {}) {
     const state = { v: this.viewOffsetPx };
     gsap.to(state, {
       v: px,
-      duration: this.reducedMotion ? 0 : 0.18,
+      duration: this.reducedMotion || opts.instant ? 0 : 0.18,
       ease: 'power2.out',
       onUpdate: () => {
         this.viewOffsetPx = state.v;
@@ -482,6 +470,28 @@ export class EarthScene {
 
   get viewport() {
     return { width: this.width, height: this.height };
+  }
+
+  readonly globeUnitScale = 1;
+
+  get equivalentDistance() {
+    return this.camera.position.length();
+  }
+
+  markerCenter(lat: number, lon: number): [number, number, number] {
+    return sphericalPosition(lat, lon, 1);
+  }
+
+  linePosition(lat: number, lon: number, radius: number): [number, number, number] {
+    return sphericalPosition(lat, lon, radius);
+  }
+
+  headingOffset(): number {
+    return 0;
+  }
+
+  markerAltitude(): number {
+    return this.camera.position.length() - EARTH_RADIUS;
   }
 
   /** World units per CSS pixel at view depth 1 (multiply by depth for a point's pixel scale). */

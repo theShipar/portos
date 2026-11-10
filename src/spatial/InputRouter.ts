@@ -23,6 +23,8 @@ export interface PointerLike {
 
 interface InputEvents {
   click: (hit: HitResult | null, e: PointerLike, local: { x: number; y: number }) => void;
+  /** Second click within DBLCLICK_MS and DBLCLICK_PX of the first (the first click has already been delivered). */
+  dblclick: (hit: HitResult | null, e: PointerLike, local: { x: number; y: number }) => void;
   hover: (hit: HitResult | null, e: PointerLike, local: { x: number; y: number }) => void;
   hoverchange: (hit: HitResult | null) => void;
   dragstart: (e: PointerLike) => void;
@@ -39,6 +41,8 @@ export interface InputTarget {
 
 export const DRAG_THRESHOLD_PX = 5;
 export const CLICK_MAX_MS = 600;
+export const DBLCLICK_MS = 350;
+export const DBLCLICK_PX = 8;
 
 /**
  * One pointer pipeline per canvas. A press that moves more than 5 px is a drag (camera), never a click; hover is
@@ -49,6 +53,7 @@ export class InputRouter {
   private readonly testers: HitTester[] = [];
   private readonly listeners: { [K in keyof InputEvents]: Set<InputEvents[K]> } = {
     click: new Set(),
+    dblclick: new Set(),
     hover: new Set(),
     hoverchange: new Set(),
     dragstart: new Set(),
@@ -56,6 +61,7 @@ export class InputRouter {
   };
   private down: { x: number; y: number; t: number; dragging: boolean } | null = null;
   private pendingHover: PointerLike | null = null;
+  private lastClick: { x: number; y: number; t: number } | null = null;
   private hoverKey: string | null = null;
   private enabled = true;
   private disposed = false;
@@ -171,7 +177,14 @@ export class InputRouter {
     if (!this.enabled || !d || e.button !== 0 || d.dragging) return;
     if (Math.hypot(e.clientX - d.x, e.clientY - d.y) > DRAG_THRESHOLD_PX || this.now() - d.t > CLICK_MAX_MS) return;
     const p = this.local(e);
-    this.emit('click', this.resolve(p.x, p.y), e, p);
+    const hit = this.resolve(p.x, p.y);
+    this.emit('click', hit, e, p);
+    const t = this.now();
+    const prev = this.lastClick;
+    if (prev && t - prev.t <= DBLCLICK_MS && Math.hypot(e.clientX - prev.x, e.clientY - prev.y) <= DBLCLICK_PX) {
+      this.lastClick = null;
+      this.emit('dblclick', hit, e, p);
+    } else this.lastClick = { x: e.clientX, y: e.clientY, t };
   };
 
   private readonly onLeave = (e: PointerLike) => {

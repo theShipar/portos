@@ -30,7 +30,7 @@ test.describe('Canonical /ops routes', () => {
     await expect(page.getByRole('status').filter({ hasText: 'CNT-XXX' })).toBeVisible();
   });
 
-  test('the spatial director owns the globe and settles every flight', async ({ page }) => {
+  test('the spatial director hands the globe to extruded scenes and settles every flight', async ({ page }) => {
     await open(page, '/ops/earth');
     await globeReady(page);
     await flightDone(page);
@@ -41,13 +41,49 @@ test.describe('Canonical /ops routes', () => {
     await flightDone(page);
     await expect.poll(() => page.evaluate(() => window.__portos!.director()?.phase)).toBe('idle');
     const d = await page.evaluate(() => window.__portos!.director()!);
-    expect(d).toMatchObject({ activeSceneKey: 'earth', activeFocusId: 'REG-SEA' });
+    expect(d).toMatchObject({ activeSceneKey: 'region3d:REG-SEA', activeKind: 'region3d', activeFocusId: 'REG-SEA' });
     expect(d.flights).toBeGreaterThanOrEqual(2);
+    expect(await page.evaluate(() => window.__portos!.surfaceKind())).toBe('planar');
+    await expect(page.getByTestId('north-arrow')).toBeVisible();
+    await expect(page.getByTestId('scale-bar')).toContainText(/\d+ (km|m)/);
+    const compass = (await page.evaluate(() => window.__portos!.compass()))!;
+    expect(Math.abs(compass.northDeg)).toBeLessThan(2);
+    // Southeast Asia spans thousands of km across the viewport: kilometres per pixel, not metres.
+    expect(compass.metresPerPx).toBeGreaterThan(1000);
+    await expect(page.getByTestId('illustrative-bounds')).toHaveCount(0);
     await page.goBack();
     await expect(page).toHaveURL(/\/ops\/earth/);
     await expect.poll(() => page.evaluate(() => window.__portos!.director()?.activeFocusId)).toBe('earth');
+    expect(await page.evaluate(() => window.__portos!.surfaceKind())).toBe('globe');
+    await expect(page.getByTestId('planar-hud')).toHaveCount(0);
     const cache = await page.evaluate(() => window.__portos!.sceneCache()!);
-    expect(cache.size).toBe(1);
+    expect(cache.size).toBe(2);
     expect(cache.disposed).toBe(0);
+  });
+
+  test('extruded scenes drill down by double-click and label illustrative bounds', async ({ page }) => {
+    await open(page, '/ops/region/REG-SEA');
+    await globeReady(page);
+    await flightDone(page);
+    test.skip(!(await page.evaluate(() => window.__portos!.spatialV2)), 'spatialV2 disabled');
+    await expect.poll(() => page.evaluate(() => window.__portos!.director()?.activeSceneKey)).toBe('region3d:REG-SEA');
+    // Vietnam's interior, away from vessels and labels.
+    const vn = (await page.evaluate(() => window.__portos!.pointOf(14.2, 108.2)))!;
+    await page.mouse.dblclick(vn.x, vn.y);
+    await expect(page).toHaveURL(/\/ops\/country\/CNT-VNM/);
+    await flightDone(page);
+    await expect.poll(() => page.evaluate(() => window.__portos!.director()?.activeSceneKey)).toBe('country3d:CNT-VNM');
+
+    await page.goto('/ops/city/CTY-SIN');
+    await globeReady(page);
+    await flightDone(page);
+    await expect.poll(() => page.evaluate(() => window.__portos!.director()?.activeSceneKey)).toBe('city3d:CTY-SIN');
+    const c = (await page.evaluate(() => window.__portos!.compass()))!;
+    expect(c.metresPerPx).toBeLessThan(500);
+
+    await page.goto('/ops/region/REG-MED');
+    await globeReady(page);
+    await flightDone(page);
+    await expect(page.getByTestId('illustrative-bounds')).toHaveText(/Illustrative operational bounds · not a border/);
   });
 });

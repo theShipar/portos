@@ -503,3 +503,43 @@ blockers. Status values: implemented / tested / blocked.
     state idle with `activeFocusId` following Earth → REG-SEA → Back, scene cache size 1, nothing disposed.
     Visual baselines unchanged (16/16 matched without regeneration).
 - **Blockers:** none.
+
+
+## Phase V2-2 — Natural Earth geometry, reversible projections, extruded Region3DScene
+
+- **Decisions:** D-032 (extruded region / country / city scenes, shared `MapSurface` contract, projections,
+  scene mapping and drilldown). TECHNICAL_DEVIATIONS gains rows for the extruded scene, projections and the
+  planar hazard-fill deferral.
+- **Implemented:**
+  - `scripts/build_geo.py geo|all`: Natural Earth 50m/10m admin-0 → 62 scene files (11 regions, 48 countries,
+    3 cities; 2,146 KiB, largest CNT-ITA 104 KiB; CTY-SIN from the 10m coastline), `public/geo/index.json`,
+    `public/geo/PROVENANCE.md`.
+  - `src/spatial/projection.ts` (LAEA + WGS84 ENU, reversible, grid convergence), `src/spatial/geoData.ts`
+    (validated, cached, abort-safe loader + idle prefetch), `src/spatial/compass.ts` (scale bar).
+  - `src/spatial/scenes/regionGeometry.ts` and `Region3DScene.ts` (GPL headers; terrain normal/roughness maps
+    downscaled to 512 px from the skill template into `src/assets/textures/terrain/`).
+  - `src/map/surface.ts` `MapSurface`; `EarthScene` implements it; `MaritimeOverlay` and `markerShader` accept
+    planar surfaces (world-space anchors above land tops, +Y up, grid-convergence heading, dash lengths scaled by
+    `globeUnitScale`, no depth test for lines over extruded land); `planarTheme` in `src/map/theme.ts`.
+  - `InputRouter` emits `dblclick` (350 ms, 8 px). `PortosEarthView.vue`: director factory builds planar scenes
+    sharing the globe renderer; active surface + per-surface overlays; double-click drilldown; north arrow, scale
+    bar and illustrative-bounds chip. `MapWorkspace` hands the camera to 2D from the active surface.
+- **Tested:**
+  - `npm run typecheck` → exit 0.
+  - `npx vitest run` → exit 0, 241 tests in 16 files. New `projection.test.ts` (12: round-trips, axes, distances
+    within 1 %, antimeridian, built index vs registry, city frames, illustrative flags, file budget, provenance
+    hashes) and `region3d.test.ts` (8: Singapore build with lit SGP contour, fit flight → pose, project/pick
+    round-trip lands on SGP, north-up compass, hover lift = 0.6 % and settles back, dblclick only while active,
+    dispose once, REG-MED illustrative, scale bar 1-2-5, distance conversion).
+  - `npm run build` → exit 0.
+  - `npx playwright test` → first run 5 failed: 4 visual baselines (region views now extruded — reviewed and
+    regenerated: `02-selected-cluster` and `03-region` at 1440 and 1920) and the director test (expected the globe
+    scene key). The new route test caught a scale-bar bug (screen distance measured between points at different
+    heights → "10 km" across Southeast Asia); fixed. Second run: reduced-motion scope change took 1,884 ms
+    (> 1,500 ms) on a cold region; fixed with idle prefetch of region/city geometry and terrain textures plus
+    `compileAsync` (4/4 repeats pass). Final run: exit 0, 47 passed, 6 skipped (opt-in perf/capture); new
+    route tests cover Earth → REG-SEA (`region3d:REG-SEA`, planar surface, north arrow, km scale) → Back (globe,
+    cache size 2, nothing disposed), double-click Vietnam → `country3d:CNT-VNM`, `city3d:CTY-SIN` metre-scale
+    compass, and the REG-MED illustrative chip.
+- **Blockers:** none. Known gap: in port scope the queue shelf covers the bottom-left HUD (legend, scale bar);
+  the Phase 8 layout moves both.

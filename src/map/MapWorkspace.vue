@@ -30,15 +30,20 @@ const initialView = ref<MapView2D | null>(null);
 /** Ports already framed once in 2D; the first visit fits the port layout instead of copying the globe zoom. */
 const framedPorts = new Set<string>();
 
+/** The 3D surface on screen (globe or extruded scene); both speak globe-unit poses. */
+function surface3d() {
+  return earthView.value?.surface ?? earth.value;
+}
+
 function viewFromGlobe(): MapView2D | null {
-  const sc = earth.value;
+  const sc = surface3d();
   if (!sc) return null;
   const pose = sc.getPose();
   return { center: { lat: pose.lat, lon: pose.lon }, zoom: zoomForDegPerPx(degreesPerPx(pose.distance, EARTH_RADIUS, sc.pxToWorld), pose.lat) };
 }
 
 function globeFromView(v: MapView2D) {
-  const sc = earth.value;
+  const sc = surface3d();
   if (!sc) return;
   sc.jumpToPose({ lat: v.center.lat, lon: v.center.lon, distance: distanceForDegPerPx(degPerPxForZoom(v.zoom, v.center.lat), EARTH_RADIUS, sc.pxToWorld) });
 }

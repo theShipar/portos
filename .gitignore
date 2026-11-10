@@ -6,3 +6,6 @@ playwright-report/
 *.log
 .vite/
 .devshots/
+
+# Natural Earth downloads (scripts/build_geo.py)
+.cache/

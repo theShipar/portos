@@ -31,6 +31,26 @@ export const portosMapTheme = {
   inkOnDark: new Color(tokens.ink.onDark),
 } as const;
 
+/**
+ * Extruded geography (region / country / city scenes), V2 palette: ocean #071A27, land #243A42, focus #E66A2D,
+ * observed #5AADB7. Context countries stay dark; in-scope land is one step lighter; only the selected feature gets a
+ * lit contour.
+ */
+export const planarTheme = {
+  ocean: new Color('#071A27'),
+  oceanGrid: new Color('#1B3442'),
+  land: new Color('#243A42'),
+  landScope: new Color('#2F4A54'),
+  landHover: new Color('#3A5A66'),
+  wallTop: new Color('#3A5560'),
+  wallMid: new Color('#1B3038'),
+  wallBottom: new Color('#0B1E28'),
+  border: new Color('#5AADB7'),
+  coast: new Color('#8FB7C2'),
+  contour: new Color('#E66A2D'),
+  frame: new Color('#A6A9B4'),
+} as const;
+
 const lift = (hex: string, amount: number) => new Color(hex).lerp(new Color('#ffffff'), amount);
 
 /**
