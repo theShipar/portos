@@ -1,6 +1,7 @@
 import type * as THREE from 'three';
 import type { CameraPose, CameraPreset } from './earth/camera';
 import type { Country } from './earth/worldGeo';
+import type { FollowStatus, FollowTarget } from '@/core/follow';
 
 export interface ScreenPoint {
   x: number;
@@ -70,6 +71,11 @@ export interface MapSurface {
   jumpToPose(pose: CameraPose): Promise<boolean>;
   focusPoint(lat: number, lon: number, opts?: { maxDistance?: number }): Promise<boolean>;
   cancelFlight(): void;
+  /**
+   * One follow-camera frame: eases the view onto the target (spec 09). While the user drags, only measures: a pan
+   * that leaves the target far from the view centre returns `released`. `edge`: the target is outside the scene.
+   */
+  followStep(target: FollowTarget, dtMs: number): FollowStatus;
   getPose(): CameraPose;
   isComfortablyInView(lat: number, lon: number, margin?: number): boolean;
   setRightInset(px: number, opts?: { instant?: boolean }): void;

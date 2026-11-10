@@ -9,7 +9,9 @@ import { LAYERS, type LayerId } from '@/core/layers';
 import { flags } from '@/core/flags';
 import { GeoScopeStack, scopeFocusId, scopeKey, type Scope, type ScopeStackItem } from '@/core/scope';
 import type { Bounds, Region } from '@/core/types';
-import { trackUntil } from '@/engines/tracks';
+import { getVesselAtTime, trackRunsUntil } from '@/engines/tracks';
+import { FOLLOW_FRAME_LENGTHS } from '@/core/follow';
+import FollowBar from '@/features/follow/FollowBar.vue';
 import { portScope, scopeFromSceneRef } from '@/router/opsLocation';
 import { useNavigation } from '@/router/useRouteSync';
 import {
@@ -125,6 +127,7 @@ const preparingLabel = ref<string | null>(null);
 let preparingTimer = 0;
 
 const markers = computed(() => snapStore.mapMarkers);
+const markerById = computed(() => new Map(markers.value.map((m) => [m.vesselId, m] as const)));
 const ports = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildPortMarkers(catalog.catalog, snapStore.snapshot)) : []));
 const routeLines = computed(() => (catalog.catalog ? markRaw(buildRouteLines(catalog.catalog)) : []));
 const hazards = computed(() => (catalog.catalog && snapStore.snapshot ? markRaw(buildHazards(catalog.catalog, snapStore.snapshot)) : []));
@@ -284,7 +287,7 @@ async function applyScope(next: Scope, opts: { initial?: boolean } = {}) {
 function ensureFocusVisible() {
   const surf = surface.value;
   const p = focus.value?.point;
-  if (!surf || !p || scoping) return;
+  if (!surf || !p || scoping || view.follow) return;
   if (!surf.isComfortablyInView(p.lat, p.lon)) surf.focusPoint(p.lat, p.lon, { maxDistance: view.scope.level === 'earth' ? 6.4 : undefined });
 }
 
@@ -589,9 +592,66 @@ function placeBadge(el: HTMLElement | undefined, sc: MapSurface, lat: number, lo
   el.style.transform = `translate(${Math.round(p.x)}px, ${Math.round(p.y + dy)}px) translate(-50%, -50%)`;
 }
 
+/** Follow camera state local to the view: the scene reports whether the target sits outside its bounds. */
+const followEdge = ref(false);
+let followLastNow = 0;
+let followKey = '';
+let followEngageUntil = 0;
+let liveVesselId: string | null = null;
+/** The follow step moved the camera this frame, so labels must be placed again even if the frame started clean. */
+let followMoved = false;
+
+/**
+ * Every frame: the followed vessel's pose at the frame's scenario time (same track engine as the 10 Hz snapshot,
+ * so it never disagrees with the timeline), drawn by the overlay and handed to the scene's follow step.
+ */
+function followFrame(now: number) {
+  const f = view.follow;
+  const surf = surface.value;
+  const c = catalog.catalog;
+  const dt = followLastNow ? Math.min(100, Math.max(0, now - followLastNow)) : 16;
+  followLastNow = now;
+  if (!f || !surf || !c || !props.active) {
+    if (liveVesselId) {
+      eachOverlay((ov) => ov.setLivePose(null));
+      liveVesselId = null;
+    }
+    if (followEdge.value) followEdge.value = false;
+    followKey = '';
+    return;
+  }
+  const marker = markerById.value.get(f.vesselId);
+  const s = getVesselAtTime(c, f.vesselId, clock.frameTimeMs());
+  const moving = (s.state === 'interpolated' || s.state === 'modelled') && s.navStatus === 'underway';
+  const point = marker?.berthHeadingDeg != null ? marker.point : (s.point ?? marker?.point ?? null);
+  if (!point) return;
+  if (moving && s.point) {
+    overlay.value?.setLivePose(f.vesselId, s.point, s.cogDeg);
+    liveVesselId = f.vesselId;
+  } else if (liveVesselId) {
+    eachOverlay((ov) => ov.setLivePose(null));
+    liveVesselId = null;
+  }
+  const key = `${f.vesselId}:${f.mode}:${scopeKey(view.scope)}`;
+  if (key !== followKey) {
+    followKey = key;
+    followEngageUntil = now + 1500;
+  }
+  if (view.followHold) return;
+  const lengthM = c.byId.vessel.get(f.vesselId)?.lengthMeters ?? 200;
+  const status = surf.followStep({ lat: point.lat, lon: point.lon, courseDeg: moving ? s.cogDeg : null, mode: f.mode, frameMetres: now < followEngageUntil ? lengthM * FOLLOW_FRAME_LENGTHS : null }, dt);
+  if (status === 'released') view.followHold = 'panned';
+  else if (status !== 'idle') {
+    followMoved = true;
+    const edge = status === 'edge';
+    if (edge !== followEdge.value) followEdge.value = edge;
+  }
+}
+
 function onFrame(_now: number, dirty: boolean) {
   const sc = surface.value;
-  if (!sc || !dirty) return;
+  if (!sc || !(dirty || followMoved)) return;
+  followMoved = false;
   const ov = overlay.value;
   ov?.update();
   if (sc instanceof Region3DScene) updateCompass(sc);
@@ -673,6 +733,7 @@ async function init() {
   if (surface.value === sc) overlay.value = ov;
   unsubs = [
     sc.on('contextLost', () => {
+      clock.pause();
       state.value = 'error';
       errorText.value = 'The WebGL context was lost (GPU reset or memory pressure).';
     }),
@@ -818,6 +879,7 @@ function bindSurface(surf: MapSurface, ov: MaritimeOverlay) {
         stackMenu.value = null;
       }),
     ),
+    surf.onFrame(whenActive(followFrame)),
     surf.onFrame(whenActive(onFrame)),
   ]);
 }
@@ -923,6 +985,15 @@ function exposeTestAdapter(sc: EarthScene) {
     director: () => director?.state() ?? null,
     sceneCache: () => director?.cache.stats() ?? null,
     overlayStats: () => overlay.value?.stats() ?? null,
+    clock: () => ({ timeMs: clock.timeMs, frameMs: clock.frameTimeMs(), mode: clock.mode, rate: clock.rate, phase: clock.phase, rangeStartMs: clock.rangeStartMs, rangeEndMs: clock.rangeEndMs }),
+    follow: () => {
+      const f = view.follow;
+      const ship = f ? overlay.value?.vesselScreen(f.vesselId) : null;
+      const r = host.value?.getBoundingClientRect();
+      const pose = surface.value?.getPose();
+      const aim = pose ? surface.value?.project(pose.lat, pose.lon) : null;
+      return { follow: f ? { ...f } : null, hold: view.followHold, edge: followEdge.value, centre: aim && r ? { x: r.left + aim.x, y: r.top + aim.y } : null, ship: ship && r ? { x: r.left + ship.x, y: r.top + ship.y, visible: ship.visible } : null };
+    },
     vesselPose: (id: string) => {
       const m = markers.value.find((v) => v.vesselId === id);
       const pose = overlay.value?.vesselPose(id) ?? null;
@@ -941,7 +1012,7 @@ function focusOverlay(ov: MaritimeOverlay) {
   if (!c || !f) return;
   ov.setFocus(f);
   const vesselId = f.vesselIds[0];
-  ov.setTrack(vesselId ? trackUntil(c, vesselId, clock.timeMs) : null);
+  ov.setTrack(vesselId ? trackRunsUntil(c, vesselId, clock.timeMs) : null);
 }
 
 function syncFocus() {
@@ -1166,6 +1237,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
         {{ r.name }}
       </button>
     </div>
+    <FollowBar v-if="state === 'ready'" v-show="active" :edge="followEdge" />
     <div v-if="state === 'ready' && planarInfo" v-show="active" class="planar-hud" data-testid="planar-hud">
       <span v-if="planarInfo.illustrative" class="planar-hud__chip" data-testid="illustrative-bounds">Illustrative operational bounds · not a border</span>
       <span v-if="planarInfo.twinCaption" class="planar-hud__chip" data-testid="twin-caption">{{ planarInfo.twinCaption }}</span>

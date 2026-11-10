@@ -93,7 +93,8 @@ async function copyHandoff() {
 
     <template #banner>
       <p v-if="!model.state.visible" class="banner">This incident had not been opened at {{ asOfText }}.</p>
-      <p v-else-if="clock.mode === 'replay'" class="banner">Replay shows the recorded case history. Local decisions are recorded at Now (simulated).</p>
+      <p v-else-if="clock.phase === 'history'" class="banner">Replay shows the recorded case history. Local decisions are recorded at Now (simulated).</p>
+      <p v-else-if="clock.phase === 'simulation'" class="banner">Simulated time after Now. Local decisions are recorded at Now (simulated).</p>
     </template>
 
     <section v-if="view.incidentTab === 'summary'" class="stack" data-testid="incident-summary">

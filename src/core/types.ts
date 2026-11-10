@@ -352,6 +352,8 @@ export interface V2Scenario {
   baseReplayRange: { startUtc: IsoUtc; endUtc: IsoUtc };
   flagshipVesselIds: string[];
   followDemo: { vesselId: string; voyageId: string; routeId: string };
+  /** A deliberate reporting outage: no samples strictly between the bounds, shown as an unverified path. */
+  positionGapDemo?: { vesselId: string; fromUtc: IsoUtc; toUtc: IsoUtc };
   singaporeCase: {
     vesselId: string;
     portCallId: string;

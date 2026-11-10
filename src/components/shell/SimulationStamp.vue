@@ -11,7 +11,11 @@ const catalog = useCatalogStore();
 const open = ref(false);
 
 const timeText = computed(() => formatUtc(clock.timeMs));
-const modeText = computed(() => (clock.mode === 'now' ? 'Now (simulated)' : clock.playing ? `Replay · ${clock.speed}×` : 'Replay · paused'));
+const modeText = computed(() => {
+  if (clock.playing) return `Simulation ×${clock.rate}`;
+  if (clock.phase === 'now') return 'Now (simulated)';
+  return clock.phase === 'history' ? 'Replay · paused' : 'Simulated ahead · paused';
+});
 const manifest = computed(() => catalog.catalog?.manifest ?? null);
 </script>
 
@@ -20,7 +24,7 @@ const manifest = computed(() => catalog.catalog?.manifest ?? null);
     <button
       type="button"
       class="stamp__btn"
-      :class="{ 'stamp__btn--replay': clock.mode === 'replay' }"
+      :class="{ 'stamp__btn--replay': clock.phase !== 'now' }"
       :aria-expanded="open"
       aria-controls="sim-disclosure"
       data-testid="simulated-stamp"
@@ -43,13 +47,13 @@ const manifest = computed(() => catalog.catalog?.manifest ?? null);
       <dl>
         <dt>Scenario anchor</dt>
         <dd class="mono">{{ formatUtc(clock.anchorMs) }}</dd>
-        <dt>Replay window</dt>
-        <dd class="mono">{{ formatUtc(clock.startMs, { date: false }) }} – {{ formatUtc(clock.anchorMs, { date: false }) }}</dd>
+        <dt>Scenario window</dt>
+        <dd class="mono">{{ formatUtc(clock.minMs) }} – {{ formatUtc(clock.maxMs) }}</dd>
         <dt>Showing</dt>
         <dd class="mono">{{ timeText }}</dd>
       </dl>
       <p class="stamp__note">Not for navigation, routing or safety decisions.</p>
-      <button v-if="clock.mode === 'replay'" type="button" class="btn btn--sm" @click="clock.reset()">
+      <button v-if="clock.phase !== 'now'" type="button" class="btn btn--sm" @click="clock.reset()">
         <Icon name="reset" :size="14" /> Return to Now (simulated)
       </button>
     </div>

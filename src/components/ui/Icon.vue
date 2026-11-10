@@ -32,7 +32,11 @@ export type IconName =
   | 'globe'
   | 'map'
   | 'cube'
-  | 'arrow-left';
+  | 'arrow-left'
+  | 'crosshair'
+  | 'loop'
+  | 'step-back'
+  | 'step-forward';
 
 const props = withDefaults(defineProps<{ name: IconName; size?: number; label?: string }>(), { size: 16, label: undefined });
 
@@ -68,6 +72,10 @@ const PATHS: Record<IconName, string> = {
   map: 'M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3V6Z',
   cube: 'M12 2 3 7v10l9 5 9-5V7l-9-5Zm0 10 9-5M12 12 3 7m9 5v10',
   'arrow-left': 'M19 12H5m6-6-6 6 6 6',
+  crosshair: 'M12 19a7 7 0 1 0 0-14 7 7 0 0 0 0 14Zm0-17v5m0 10v5M2 12h5m10 0h5',
+  loop: 'M17 2l3 3-3 3M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3m13-3v2a4 4 0 0 1-4 4H4',
+  'step-back': 'M6 5v14M18 5 9 12l9 7V5Z',
+  'step-forward': 'M18 5v14M6 5l9 7-9 7V5Z',
 };
 
 const d = computed(() => PATHS[props.name]);

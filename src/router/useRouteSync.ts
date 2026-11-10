@@ -113,7 +113,7 @@ export function useRouteSync() {
       const requested = parseUtc(t);
       if (!clock.seek(t)) notices.push(`Ignored invalid time "${t}" in link; showing ${formatUtc(clock.timeMs)}.`, 'warning');
       else if (requested !== null && Math.abs(requested - clock.timeMs) >= 1000) {
-        notices.push(`${formatUtc(requested)} is outside the replay window; showing ${formatUtc(clock.timeMs)} instead.`, 'warning', { timeoutMs: 8000 });
+        notices.push(`${formatUtc(requested)} is outside the scenario window; showing ${formatUtc(clock.timeMs)} instead.`, 'warning', { timeoutMs: 8000 });
       }
     } else if (first) clock.reset();
     first = false;
@@ -133,7 +133,7 @@ export function useRouteSync() {
       clearTimeout(urlTimer);
       if (playing || catalog.status !== 'ready' || !isOpsRoute(route.name)) return;
       urlTimer = setTimeout(() => {
-        const want = clock.mode === 'replay' ? clock.iso : undefined;
+        const want = clock.phase !== 'now' ? clock.iso : undefined;
         const cur = route.query.time;
         if ((typeof cur === 'string' ? cur : undefined) === want) return;
         const query = { ...route.query };
@@ -154,7 +154,7 @@ export function useNavigation() {
   const view = useViewStore();
   const clock = useClockStore();
 
-  const timeQuery = (): LocationQueryRaw => (clock.mode === 'replay' ? { time: clock.iso } : {});
+  const timeQuery = (): LocationQueryRaw => (clock.phase !== 'now' ? { time: clock.iso } : {});
   /** Selections inside a scope keep the current 3D/2D mode; scope changes fall back to the target's default. */
   const modeQuery = (): LocationQueryRaw => {
     const q = viewModeQuery(view.scope, view.viewMode, twinPredicate(catalog.catalog));

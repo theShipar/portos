@@ -106,7 +106,8 @@ function backToCase() {
     </template>
     <template #banner>
       <p class="banner">Client-side what-if on synthetic data. Choosing a plan records a proposal; it never changes the vessel route, ETA or any external system.</p>
-      <p v-if="clock.mode === 'replay'" class="banner banner--warn">Viewing history: the comparison uses the forecast known at {{ formatUtc(clock.timeMs) }}. Proposals made at Now do not apply to this time.</p>
+      <p v-if="clock.phase === 'history'" class="banner banner--warn">Viewing history: the comparison uses the forecast known at {{ formatUtc(clock.timeMs) }}. Proposals made at Now do not apply to this time.</p>
+      <p v-else-if="clock.phase === 'simulation'" class="banner banner--warn">Simulated time after Now: the baseline follows scenario forecasts at {{ formatUtc(clock.timeMs) }}. Proposals are recorded at Now.</p>
     </template>
 
     <div class="stack" data-testid="comparison">

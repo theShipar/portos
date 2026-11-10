@@ -31,7 +31,7 @@ const workflow = useWorkflowStore();
 const nav = useNavigation();
 const header = ref<InstanceType<typeof AppHeader> | null>(null);
 const crumbs = ref<InstanceType<typeof ScopeBreadcrumb> | null>(null);
-const railOpen = computed(() => catalog.status === 'ready' && (view.replayOpen || clock.mode === 'replay'));
+const railOpen = computed(() => catalog.status === 'ready' && (view.replayOpen || clock.phase !== 'now'));
 /** Port-scope panels avoid the queue shelf (left) and the inspector (right). */
 const workspaceVars = computed(() => ({
   '--shelf-w': snap.portView ? (view.queueShelfOpen ? '340px' : '220px') : '0px',
@@ -44,7 +44,7 @@ useRouteSync();
 watch(
   () => catalog.catalog,
   (c) => {
-    if (c) clock.configure({ anchorMs: c.anchorMs, startMs: c.replayStartMs, dataVersion: c.manifest.version });
+    if (c) clock.configure({ anchorMs: c.anchorMs, minMs: c.windowMinMs, maxMs: c.windowMaxMs, dataVersion: c.manifest.version });
     if (c?.missingDatasets.includes('weatherHazards'))
       notices.push('Weather hazard data could not be loaded. Route risk reads "unknown" (not clear) until it is available; reload to retry.', 'warning', { persistent: true });
   },

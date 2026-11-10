@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { formatDuration, formatLocal, formatUtc } from '@/core/format';
+import { HOUR } from '@/core/time';
+import { LOOP_RANGES, PLAYBACK_RATES, isPlaybackRate } from '@/core/scenarioClock';
 import { useNavigation } from '@/router/useRouteSync';
 import { CATEGORY_LABEL, compareWithNow, currentMarker, densityBins, railMarkers, stepMarker, type RailMarker } from '@/selectors/replay';
 import { useCatalogStore } from '@/stores/catalog';
-import { REPLAY_SPEEDS, useClockStore, type ReplaySpeed } from '@/stores/clock';
+import { useClockStore } from '@/stores/clock';
 import { useSnapshotStore } from '@/stores/snapshot';
 import { useViewStore } from '@/stores/view';
 import { useWorkflowStore } from '@/stores/workflow';
@@ -16,9 +18,7 @@ const snap = useSnapshotStore();
 const view = useViewStore();
 const wf = useWorkflowStore();
 const nav = useNavigation();
-const ids = { scrub: useId(), help: useId(), note: useId() };
-
-const TICK_HOURS = 2;
+const ids = { scrub: useId(), help: useId(), note: useId(), rate: useId() };
 
 const contextPortId = computed(() => {
   const c = catalog.catalog;
@@ -27,8 +27,9 @@ const contextPortId = computed(() => {
   return view.scope.level === 'port' ? view.scope.portId : null;
 });
 const timeZone = computed(() => (contextPortId.value ? (catalog.catalog?.byId.port.get(contextPortId.value)?.timeZone ?? null) : null));
-const markers = computed<RailMarker[]>(() => (catalog.catalog ? railMarkers(catalog.catalog, view.selection, view.scope.level === 'port' ? view.scope.portId : null, clock.startMs, clock.anchorMs) : []));
-const bins = computed(() => (catalog.catalog ? densityBins(catalog.catalog, clock.startMs, clock.anchorMs) : []));
+const span = computed(() => Math.max(1, clock.rangeEndMs - clock.rangeStartMs));
+const markers = computed<RailMarker[]>(() => (catalog.catalog ? railMarkers(catalog.catalog, view.selection, view.scope.level === 'port' ? view.scope.portId : null, clock.rangeStartMs, clock.rangeEndMs) : []));
+const bins = computed(() => (catalog.catalog ? densityBins(catalog.catalog, clock.rangeStartMs, clock.rangeEndMs, Math.max(30, Math.round(span.value / HOUR / 48) * 60)) : []));
 const current = computed(() => currentMarker(markers.value, clock.timeMs));
 const contextText = computed(() => {
   const sel = view.selection;
@@ -38,34 +39,84 @@ const contextText = computed(() => {
 });
 const markerCount = computed(() => `${markers.value.length} ${markers.value.length === 1 ? 'marker' : 'markers'}`);
 const ticks = computed(() => {
+  const hours = span.value / HOUR;
+  const every = (hours <= 6 ? 1 : hours <= 24 ? 3 : hours <= 72 ? 12 : 24) * HOUR;
   const out: { at: number; label: string }[] = [];
-  const span = Math.max(1, clock.anchorMs - clock.startMs);
-  const first = Math.ceil(clock.startMs / (TICK_HOURS * 3600_000)) * TICK_HOURS * 3600_000;
-  for (let t = first; t <= clock.anchorMs; t += TICK_HOURS * 3600_000) out.push({ at: (t - clock.startMs) / span, label: formatUtc(t, { date: false }).replace(' UTC', '') });
+  const first = Math.ceil(clock.rangeStartMs / every) * every;
+  for (let t = first; t <= clock.rangeEndMs; t += every) {
+    const full = formatUtc(t);
+    out.push({ at: (t - clock.rangeStartMs) / span.value, label: hours <= 24 ? full.slice(11, 16) : hours <= 72 ? full.slice(5, 16) : full.slice(5, 10) });
+  }
   return out;
 });
-const progressPct = computed(() => `${(clock.progress * 100).toFixed(2)}%`);
-const historical = computed(() => clock.mode === 'replay');
-const behindText = computed(() => (historical.value ? `${formatDuration(Math.round((clock.anchorMs - clock.timeMs) / 60_000))} earlier` : 'Latest simulated snapshot'));
+const pct = (ms: number) => `${(((ms - clock.rangeStartMs) / span.value) * 100).toFixed(3)}%`;
+const progressPct = computed(() => `${(Math.min(1, Math.max(0, clock.progress)) * 100).toFixed(2)}%`);
+const anchorInRange = computed(() => clock.anchorMs >= clock.rangeStartMs && clock.anchorMs <= clock.rangeEndMs);
+const simStyle = computed(() => {
+  const from = Math.max(clock.anchorMs, clock.rangeStartMs);
+  if (from >= clock.rangeEndMs) return null;
+  return { left: pct(from), right: '0' };
+});
+const historical = computed(() => clock.phase === 'history');
+const away = computed(() => clock.phase !== 'now');
+const phaseText = computed(() => (clock.phase === 'history' ? 'Historical' : clock.phase === 'simulation' ? 'Simulated ahead' : 'Now (simulated)'));
+const offsetText = computed(() => {
+  const min = Math.round(Math.abs(clock.anchorMs - clock.timeMs) / 60_000);
+  if (clock.phase === 'history') return `${formatDuration(min)} earlier than Now`;
+  if (clock.phase === 'simulation') return `${formatDuration(min)} after Now`;
+  return 'Latest simulated snapshot';
+});
 const localText = computed(() => {
   if (!timeZone.value) return null;
   const local = formatLocal(clock.timeMs, timeZone.value);
   return `${local.slice(0, 10) === clock.iso.slice(0, 10) ? local.slice(11) : local} (${timeZone.value})`;
 });
-const compare = computed(() => (catalog.catalog && snap.snapshot && snap.nowSnapshot && historical.value ? compareWithNow(catalog.catalog, snap.snapshot, snap.nowSnapshot, view.selection ?? (contextPortId.value ? { kind: 'port', id: contextPortId.value } : null)) : []));
-const valueText = computed(() => `${formatUtc(clock.timeMs)}${historical.value ? `, ${behindText.value} than Now` : ', Now (simulated)'}`);
+const compare = computed(() => (catalog.catalog && snap.snapshot && snap.nowSnapshot && away.value ? compareWithNow(catalog.catalog, snap.snapshot, snap.nowSnapshot, view.selection ?? (contextPortId.value ? { kind: 'port', id: contextPortId.value } : null)) : []));
+const valueText = computed(() => `${formatUtc(clock.timeMs)}, ${offsetText.value}`);
+
+/** Vessel the follow toggle applies to: the selected vessel, or the vessel of the selected voyage. */
+const followVesselId = computed(() => {
+  const sel = view.selection;
+  if (sel?.kind === 'vessel') return sel.id;
+  if (sel?.kind === 'voyage') return catalog.catalog?.byId.voyage.get(sel.id)?.vesselId ?? null;
+  return null;
+});
+const following = computed(() => !!view.follow && view.follow.vesselId === followVesselId.value);
+function toggleFollow() {
+  if (following.value) view.stopFollow();
+  else if (followVesselId.value) {
+    if (view.selection?.kind !== 'vessel') nav.openEntity({ kind: 'vessel', id: followVesselId.value });
+    view.startFollow(followVesselId.value);
+  }
+}
+
+/** Events crossed while playing, counted from the clock's commit spans (never skipped by the 10 Hz throttle). */
+const passed = ref(0);
+watch(
+  () => snap.crossedEvents,
+  (list) => (passed.value += list.length),
+);
 
 let raf = 0;
 let pending: number | null = null;
-function onScrub(e: Event) {
-  if (clock.playing) clock.pause();
+function onScrubInput(e: Event) {
+  if (clock.mode !== 'scrubbing') clock.beginScrub();
   pending = Number((e.target as HTMLInputElement).value);
   if (raf) return;
   raf = requestAnimationFrame(() => {
     raf = 0;
-    if (pending !== null) clock.seekMs(pending);
+    if (pending !== null) clock.scrub(pending);
     pending = null;
   });
+}
+function onScrubCommit(e: Event) {
+  cancelAnimationFrame(raf);
+  raf = 0;
+  pending = null;
+  clock.endScrub(Number((e.target as HTMLInputElement).value));
+}
+function onScrubRelease() {
+  if (clock.mode === 'scrubbing') clock.endScrub();
 }
 onMounted(() => (view.replayOpen = true));
 onBeforeUnmount(() => cancelAnimationFrame(raf));
@@ -73,10 +124,10 @@ onBeforeUnmount(() => cancelAnimationFrame(raf));
 function onScrubKey(e: KeyboardEvent) {
   if (!e.shiftKey || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return;
   e.preventDefault();
-  step(e.key === 'ArrowRight' ? 1 : -1);
+  clock.step(e.key === 'ArrowRight' ? 1 : -1, true);
 }
 
-function step(dir: 1 | -1) {
+function stepEvent(dir: 1 | -1) {
   const m = stepMarker(markers.value, clock.timeMs, dir);
   if (!m) return;
   clock.pause();
@@ -91,11 +142,15 @@ function jump(m: RailMarker) {
 
 function togglePlay() {
   if (clock.playing) clock.pause();
-  else clock.play();
+  else {
+    passed.value = 0;
+    clock.play();
+  }
 }
 
-function setSpeed(s: ReplaySpeed) {
-  clock.setSpeed(s);
+function onRate(e: Event) {
+  const r = Number((e.target as HTMLSelectElement).value);
+  if (isPlaybackRate(r)) clock.setRate(r);
 }
 
 const noting = ref(false);
@@ -120,29 +175,48 @@ function saveNote() {
 </script>
 
 <template>
-  <section class="rail" :class="{ 'rail--historical': historical }" aria-label="Replay timeline" data-testid="replay-rail">
+  <section class="rail" :class="{ 'rail--historical': away }" aria-label="Replay timeline" data-testid="replay-rail">
     <div class="rail__bar">
-      <button type="button" class="icon-btn rail__play" :aria-label="clock.playing ? 'Pause replay' : 'Play replay'" :aria-pressed="clock.playing" data-testid="replay-play" @click="togglePlay">
+      <button type="button" class="icon-btn rail__play" :aria-label="clock.playing ? 'Pause' : 'Play'" :aria-pressed="clock.playing" data-testid="replay-play" @click="togglePlay">
         <Icon :name="clock.playing ? 'pause' : 'play'" :size="16" />
       </button>
-      <div class="seg" role="group" aria-label="Replay speed">
-        <button v-for="s in REPLAY_SPEEDS" :key="s" type="button" class="seg__btn num" :aria-pressed="clock.speed === s" :data-testid="`replay-speed-${s}`" @click="setSpeed(s)">{{ s }}×</button>
-      </div>
-      <button type="button" class="icon-btn" aria-label="Previous event" :disabled="!markers.length" data-testid="replay-prev" @click="step(-1)">
+      <button type="button" class="icon-btn" aria-label="Back 5 minutes" title="Back 5 min (Shift: 1 h on the timeline)" data-testid="replay-step-back" @click="clock.step(-1)">
+        <Icon name="step-back" :size="15" />
+      </button>
+      <button type="button" class="icon-btn" aria-label="Forward 5 minutes" title="Forward 5 min (Shift: 1 h on the timeline)" data-testid="replay-step-forward" @click="clock.step(1)">
+        <Icon name="step-forward" :size="15" />
+      </button>
+      <label :for="ids.rate" class="sr-only">Playback rate</label>
+      <select :id="ids.rate" class="control rail__rate num" :value="clock.rate" data-testid="replay-rate" @change="onRate">
+        <option v-for="r in PLAYBACK_RATES" :key="r" :value="r">Simulation ×{{ r }}</option>
+      </select>
+      <button type="button" class="icon-btn" aria-label="Previous event" :disabled="!markers.length" data-testid="replay-prev" @click="stepEvent(-1)">
         <Icon name="chevron-left" :size="16" />
       </button>
-      <button type="button" class="icon-btn" aria-label="Next event" :disabled="!markers.length" data-testid="replay-next" @click="step(1)">
+      <button type="button" class="icon-btn" aria-label="Next event" :disabled="!markers.length" data-testid="replay-next" @click="stepEvent(1)">
         <Icon name="chevron-right" :size="16" />
       </button>
       <div class="rail__time" aria-live="polite">
-        <span class="rail__mode" :class="{ 'rail__mode--hist': historical }">{{ historical ? 'Historical' : 'Now (simulated)' }}</span>
+        <span class="rail__mode" :class="{ 'rail__mode--hist': historical, 'rail__mode--sim': clock.phase === 'simulation' }" data-testid="replay-phase">{{ phaseText }}</span>
         <strong class="mono" data-testid="replay-time">{{ formatUtc(clock.timeMs) }}</strong>
         <span v-if="localText" class="rail__sub mono">{{ localText }}</span>
-        <span class="rail__sub">{{ behindText }}</span>
+        <span class="rail__sub">{{ offsetText }}</span>
       </div>
       <div class="rail__actions">
+        <button
+          type="button"
+          class="btn btn--sm"
+          :class="{ 'btn--active': following }"
+          :disabled="!followVesselId"
+          :aria-pressed="following"
+          :title="followVesselId ? undefined : 'Select a vessel to follow it.'"
+          data-testid="replay-follow"
+          @click="toggleFollow"
+        >
+          <Icon name="crosshair" :size="14" /> Follow selected vessel
+        </button>
         <button type="button" class="btn btn--sm" :disabled="!historical" :title="historical ? undefined : 'Move back in time to note a historical moment.'" aria-label="Add a note about this historical moment" data-testid="replay-note" @click="startNote">Add note</button>
-        <button type="button" class="btn btn--sm btn--primary" :disabled="!historical" data-testid="replay-now" @click="clock.reset()">
+        <button type="button" class="btn btn--sm btn--primary" :disabled="!away" data-testid="replay-now" @click="clock.reset()">
           <Icon name="reset" :size="14" /> Return to Now
         </button>
         <button type="button" class="icon-btn" aria-label="Close replay and return to Now" data-testid="replay-close" @click="nav.closeReplay()">
@@ -153,6 +227,7 @@ function saveNote() {
 
     <div class="rail__body">
       <div class="track">
+        <div v-if="simStyle" class="track__sim" :style="simStyle" title="Simulated time after Now: scenario keyframes; vessels without them hold their last report" aria-hidden="true" />
         <div class="track__density" aria-hidden="true">
           <span v-for="b in bins" :key="b.startMs" class="track__bin" :style="{ left: `${b.at * 100}%`, width: `${b.width * 100}%`, height: `${4 + b.level * 22}px` }" />
         </div>
@@ -170,35 +245,50 @@ function saveNote() {
             @click="jump(m)"
           />
         </div>
+        <span v-if="anchorInRange" class="track__anchor" :style="{ left: pct(clock.anchorMs) }" aria-hidden="true"><span>Now</span></span>
         <div class="track__fill" :style="{ width: progressPct }" aria-hidden="true" />
         <label :for="ids.scrub" class="sr-only">Simulation time</label>
         <input
           :id="ids.scrub"
           class="track__input"
           type="range"
-          :min="clock.startMs"
-          :max="clock.anchorMs"
-          step="60000"
+          :min="clock.rangeStartMs"
+          :max="clock.rangeEndMs"
+          step="300000"
           :value="clock.timeMs"
           :aria-valuetext="valueText"
           :aria-describedby="ids.help"
           data-testid="replay-scrubber"
-          @input="onScrub"
+          @pointerdown="clock.beginScrub()"
+          @pointerup="onScrubRelease"
+          @pointercancel="onScrubRelease"
+          @blur="onScrubRelease"
+          @input="onScrubInput"
+          @change="onScrubCommit"
           @keydown="onScrubKey"
         />
         <div class="track__ticks" aria-hidden="true">
           <span v-for="t in ticks" :key="t.at" :style="{ left: `${t.at * 100}%` }">{{ t.label }}</span>
         </div>
       </div>
-      <p :id="ids.help" class="rail__help">
-        {{ contextText }} · {{ markerCount }}. Arrow keys step one minute; Shift+Arrow jumps between events.
-      </p>
+      <div class="rail__meta">
+        <p :id="ids.help" class="rail__help">{{ contextText }} · {{ markerCount }}. Arrow keys step 5 min; Shift+Arrow steps 1 h.</p>
+        <div class="seg seg--sm" role="group" aria-label="Playback range">
+          <button v-for="r in LOOP_RANGES" :key="r.key" type="button" class="seg__btn" :aria-pressed="clock.rangeKey === r.key" :data-testid="`replay-range-${r.key}`" @click="clock.setRange(r.key)">{{ r.label }}</button>
+        </div>
+        <button type="button" class="btn btn--sm rail__loop" :class="{ 'btn--active': clock.loop }" :aria-pressed="clock.loop" title="Off: playback pauses at the end of the range" data-testid="replay-loop" @click="clock.setLoop(!clock.loop)">
+          <Icon name="loop" :size="13" /> Loop
+        </button>
+      </div>
       <p class="rail__event" data-testid="replay-current">
-        <template v-if="current">
-          <span class="dot" :class="`dot--${current.category}`" aria-hidden="true" />
-          Last event <span class="mono">{{ current.timeText }}</span> · {{ current.label }}
-        </template>
-        <template v-else>No recorded event for this context before {{ formatUtc(clock.timeMs, { date: false }) }}.</template>
+        <span class="rail__event-text">
+          <template v-if="current">
+            <span class="dot" :class="`dot--${current.category}`" aria-hidden="true" />
+            Last event <span class="mono">{{ current.timeText }}</span> · {{ current.label }}
+          </template>
+          <template v-else>No recorded event for this context before {{ formatUtc(clock.timeMs, { date: false }) }}.</template>
+        </span>
+        <span class="rail__passed" :data-count="passed" data-testid="replay-passed">{{ passed }} {{ passed === 1 ? 'event' : 'events' }} passed this run</span>
       </p>
     </div>
 
@@ -216,7 +306,7 @@ function saveNote() {
         </div>
       </form>
     </aside>
-    <aside v-else-if="historical" class="rail__side" aria-label="Compared with Now" data-testid="replay-compare">
+    <aside v-else-if="away" class="rail__side" aria-label="Compared with Now" data-testid="replay-compare">
       <table class="cmp">
         <thead>
           <tr>
@@ -538,6 +628,79 @@ function saveNote() {
 .rail__side textarea {
   min-height: 44px;
   resize: none;
+}
+.rail__rate {
+  flex: none;
+  width: auto;
+  height: 30px;
+  padding: 0 24px 0 8px;
+  font-size: var(--text-12);
+  font-weight: 600;
+}
+.rail__mode--sim {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning-ink);
+}
+.rail__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.rail__meta .rail__help {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.seg--sm .seg__btn {
+  height: 22px;
+  min-width: 34px;
+  font-size: var(--text-11);
+}
+.rail__loop {
+  height: 22px;
+  padding: 0 8px;
+  font-size: var(--text-11);
+}
+.rail__event {
+  display: flex;
+  gap: 12px;
+}
+.rail__event-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rail__passed {
+  flex: none;
+  color: var(--color-ink-muted);
+  font-size: var(--text-11);
+  font-variant-numeric: tabular-nums;
+}
+.track__sim {
+  position: absolute;
+  top: 0;
+  bottom: 21px;
+  background: repeating-linear-gradient(135deg, transparent 0 5px, rgba(127, 139, 148, 0.12) 5px 7px);
+  border-left: 1px dashed var(--color-border);
+  pointer-events: none;
+}
+.track__anchor {
+  position: absolute;
+  top: -2px;
+  bottom: 18px;
+  width: 0;
+  border-left: 2px solid var(--color-ink);
+  pointer-events: none;
+}
+.track__anchor span {
+  position: absolute;
+  top: -1px;
+  left: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 12px;
+  color: var(--color-ink);
 }
 @media (max-width: 1100px) {
   .rail {

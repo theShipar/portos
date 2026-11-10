@@ -68,6 +68,8 @@ export const markerColors = {
   route: new Color(mapColors.routeBase),
   routeFocus: new Color(mapColors.routeSelected),
   track: new Color('#c9d6df'),
+  /** Reporting gap ("position unverified"): V2 uncertain tone. */
+  unverified: new Color('#a6a9b4'),
   portHealthy: lift(tokens.status.healthy, 0.3),
   portWarning: lift(tokens.status.warning, 0.3),
   portCritical: lift(tokens.status.critical, 0.34),

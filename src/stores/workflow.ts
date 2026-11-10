@@ -29,7 +29,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
 
   const overlay = computed(() => incidentOverlay(state.value));
   /** Decisions are taken at "Now (simulated)"; history is read-only. */
-  const blockReason = computed(() => (clock.mode === 'replay' ? 'Decisions are recorded at Now (simulated). Return to now to act.' : null));
+  const blockReason = computed(() => (clock.phase !== 'now' ? 'Decisions are recorded at Now (simulated). Return to now to act.' : null));
   const outstandingTasks = computed(() => state.value.tasks.filter((t) => t.status === 'open' || t.status === 'in_progress'));
 
   function context(): WorkflowContext | null {

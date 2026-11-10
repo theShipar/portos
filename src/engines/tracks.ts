@@ -100,6 +100,49 @@ export function getVesselAtTime(catalog: Catalog, vesselId: string, t: number): 
   return vesselAtTime(catalog.tracks.get(vesselId), vesselId, t);
 }
 
+/**
+ * `observed`: reported samples; `modelled`: V2 keyframes (reconstructed or forecast); `unverified`: a reporting gap
+ * longer than the interpolation limit, drawn as a straight dashed hint only — the vessel's path there is unknown.
+ */
+export type TrackRunKind = 'observed' | 'modelled' | 'unverified';
+
+export interface TrackRun {
+  kind: TrackRunKind;
+  points: GeoPoint[];
+  startMs: number;
+  endMs: number;
+}
+
+/** Visited path up to `t`, split into runs; the last observed or modelled run ends at the interpolated position. */
+export function trackRunsUntil(catalog: Catalog, vesselId: string, t: number): TrackRun[] {
+  const track = catalog.tracks.get(vesselId) ?? [];
+  const runs: TrackRun[] = [];
+  const maxGap = TRACK_GAP_POLICY.maxInterpolationMinutes * 60_000;
+  const kindOf = (p: TrackPoint): TrackRunKind => (p.source === 'v2' ? 'modelled' : 'observed');
+  const push = (kind: TrackRunKind, p: GeoPoint, ms: number) => {
+    const last = runs[runs.length - 1];
+    if (last && last.kind === kind) {
+      last.points.push(p);
+      last.endMs = ms;
+      return;
+    }
+    // Runs share their joining vertex so the drawn path stays continuous.
+    const join = last ? last.points[last.points.length - 1]! : null;
+    runs.push({ kind, points: join ? [join, p] : [p], startMs: join ? last!.endMs : ms, endMs: ms });
+  };
+  let prev: TrackPoint | null = null;
+  for (const p of track) {
+    if (p.t > t) break;
+    const g = { lon: p.lon, lat: p.lat };
+    if (prev && p.t - prev.t > maxGap) push('unverified', g, p.t);
+    else push(kindOf(prev && prev.source === 'v2' ? prev : p), g, p.t);
+    prev = p;
+  }
+  const now = vesselAtTime(track, vesselId, t);
+  if (prev && now.point && (now.state === 'interpolated' || now.state === 'modelled') && t > prev.t) push(kindOf(prev), now.point, t);
+  return runs.filter((r) => r.points.length >= 2);
+}
+
 /** Recorded track up to time t (for drawing the visited portion). */
 export function trackUntil(catalog: Catalog, vesselId: string, t: number): GeoPoint[] {
   const track = catalog.tracks.get(vesselId) ?? [];

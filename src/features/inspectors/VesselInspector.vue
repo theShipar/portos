@@ -32,6 +32,11 @@ const tabs: { id: InspectorTab; label: string }[] = [
   { id: 'events', label: 'Events' },
   { id: 'documents', label: 'Documents' },
 ];
+const following = computed(() => view.follow?.vesselId === props.vesselId);
+function toggleFollow() {
+  if (following.value) view.stopFollow();
+  else view.startFollow(props.vesselId);
+}
 const localAudit = computed(() => (catalog.catalog ? auditRows(catalog.catalog, auditFor(catalog.catalog, wf.state, { kind: 'vessel', id: props.vesselId })) : []));
 const voyage = computed(() => (model.value?.voyage ? catalog.catalog?.byId.voyage.get(model.value.voyage.voyageId) ?? null : null));
 
@@ -78,6 +83,20 @@ function openPort(portId: string) {
     <section v-if="view.inspectorTab === 'overview'" class="stack">
       <VoyageImpactCard v-if="model.impact" :impact="model.impact" />
       <div v-else class="empty">No assigned voyage. Identity and tracking remain available below.</div>
+      <div class="links">
+        <button
+          type="button"
+          class="btn btn--sm"
+          :class="{ 'btn--active': following }"
+          :aria-pressed="following"
+          :disabled="view.viewMode !== '3d'"
+          :title="view.viewMode !== '3d' ? 'Switch to 3D to follow the vessel.' : 'Camera follows the vessel through playback'"
+          data-testid="vessel-follow"
+          @click="toggleFollow"
+        >
+          <Icon name="crosshair" :size="14" /> {{ following ? 'Following' : 'Follow' }}
+        </button>
+      </div>
 
       <div>
         <h3 class="section-title">Position <span class="section-note">{{ model.positionLabel }}</span></h3>
@@ -119,7 +138,7 @@ function openPort(portId: string) {
     <section v-else-if="view.inspectorTab === 'events'" class="stack">
       <div data-testid="vessel-local-audit">
         <h3 class="section-title">Local decisions <span class="section-note">demo, this browser only</span></h3>
-        <p v-if="clock.mode === 'replay'" class="empty">Local decisions are recorded at Now (simulated) and are hidden while replaying history.</p>
+        <p v-if="clock.phase === 'history'" class="empty">Local decisions are recorded at Now (simulated) and are hidden while replaying history.</p>
         <ol v-else-if="localAudit.length" class="events">
           <li v-for="a in localAudit" :key="a.auditId">
             <span class="events__time mono">{{ a.simText }}</span>

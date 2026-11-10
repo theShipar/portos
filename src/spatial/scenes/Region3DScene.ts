@@ -16,6 +16,7 @@ import type { RegistryEntry } from '../registry';
 import type { InputRouter } from '../InputRouter';
 import type { OverlayProjectionAdapter } from '../OverlayProjectionAdapter';
 import { loadGeoDoc, type GeoDoc, type GeoFeatureDoc } from '../geoData';
+import { angleDelta, behindAzimuth, followAlpha, FOLLOW_RELEASE_DISTANCE, modePolar, modeSteersAzimuth, type FollowStatus, type FollowTarget } from '@/core/follow';
 import { EARTH_RADIUS_M, gridConvergence, normalizeLon, projectionForLevel, type GeoProjection } from '../projection';
 import type { CameraState, FrameContext, SceneKind, SceneTarget, SpatialScene } from '../types';
 import {
@@ -147,6 +148,9 @@ export class Region3DScene implements SpatialScene, MapSurface {
   private span = 1;
   private topY = 1;
   private frameBounds: Bounds | null = null;
+  /** Pointer or wheel interaction in progress (OrbitControls start → end). */
+  private userDragging = false;
+  private readonly dragStartTarget = new THREE.Vector3();
   private width = 1;
   private height = 1;
   private viewOffsetPx = 0;
@@ -189,6 +193,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.controls.maxPolarAngle = MAX_POLAR;
     this.controls.zoomSpeed = 0.9;
     this.controls.addEventListener('start', this.onControlsStart);
+    this.controls.addEventListener('end', this.onControlsEnd);
     this.controls.addEventListener('change', this.invalidate);
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(this.host);
@@ -274,6 +279,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.detachInput();
     this.resizeObserver.disconnect();
     this.controls.removeEventListener('start', this.onControlsStart);
+    this.controls.removeEventListener('end', this.onControlsEnd);
     this.controls.removeEventListener('change', this.invalidate);
     this.controls.dispose();
     const terrain = terrainMaps();
@@ -642,6 +648,33 @@ export class Region3DScene implements SpatialScene, MapSurface {
     return this.flyTo({ id: 'focus', scope: 'earth', center: { lat, lon }, distance, minDistance: min, maxDistance: max });
   }
 
+  followStep(t: FollowTarget, dtMs: number): FollowStatus {
+    if (!this.proj || this.flight || !this.activeValue) return 'idle';
+    const goal = this.toWorld(t.lat, t.lon);
+    const o = this.orbit();
+    if (this.userDragging) {
+      const panned = Math.hypot(o.target.x - this.dragStartTarget.x, o.target.z - this.dragStartTarget.z);
+      return panned > FOLLOW_RELEASE_DISTANCE * o.distance ? 'released' : 'following';
+    }
+    const b = this.frameBounds;
+    const edge = !!b && (goal.x < b.west || goal.x > b.east || goal.z < b.north || goal.z > b.south);
+    const a = followAlpha(dtMs);
+    const target = o.target.clone().lerp(goal, a);
+    target.y = 0;
+    let distance = o.distance;
+    if (t.frameMetres !== null) {
+      const want = Math.min(this.controls.maxDistance, Math.max(this.controls.minDistance, t.frameMetres * UNITS_PER_METRE));
+      distance = Math.exp(Math.log(distance) + (Math.log(want) - Math.log(distance)) * a);
+    }
+    const wantPolar = modePolar(t.mode);
+    const polar = wantPolar === null ? o.polar : o.polar + (Math.min(MAX_POLAR, wantPolar) - o.polar) * a * 0.6;
+    let azimuth = o.azimuth;
+    if (modeSteersAzimuth(t.mode) && t.courseDeg !== null) azimuth += angleDelta(o.azimuth, behindAzimuth(t.courseDeg, this.headingOffset(t.lat, t.lon))) * a * 0.6;
+    this.applyOrbit({ target, distance, polar, azimuth });
+    this.clampTarget();
+    return edge ? 'edge' : 'following';
+  }
+
   cancelFlight(): void {
     if (this.flight) {
       this.flight.kill();
@@ -904,7 +937,13 @@ export class Region3DScene implements SpatialScene, MapSurface {
 
   private readonly onControlsStart = () => {
     if (this.flight) this.cancelFlight();
+    this.userDragging = true;
+    this.dragStartTarget.copy(this.controls.target);
     this.emit('userInteract');
+  };
+
+  private readonly onControlsEnd = () => {
+    this.userDragging = false;
   };
 
   resize() {

@@ -671,3 +671,48 @@ blockers. Status values: implemented / tested / blocked.
     6 skipped (opt-in perf/capture).
   - Evidence: `docs/qa/v2-phase5/01-singapore-port-twin.png`, `02-berth-focus.png`, `03-rotterdam-procedural.png`.
 - **Blockers:** none.
+
+## Phase V2-6 — Canonical scenario clock, world snapshot, follow camera
+
+- **Decisions:** D-036 (clock 1–100× over the scenario window, phases, ranges and loop, step, `lastSpan` event
+  edges, pure world snapshot, follow camera rules, live pose, track runs, VSL-0059 gap fixture). D-008 marked
+  superseded. TECHNICAL_DEVIATIONS gains the globe follow-mode and 3D-only follow rows.
+- **Implemented:**
+  - `src/core/scenarioClock.ts` (pure: rates, ranges, `advance`, `rangeAround`, `stepTarget`), `src/stores/clock.ts`
+    rewritten on it (single rAF loop, 10 Hz commits, `phase`, ranges, loop, step, scrub, `lastSpan`).
+  - `src/engines/world.ts` (`deriveWorldSnapshot`, `eventsBetween`, `eventCountAt`, `berthOccupancyAt`); the
+    `snapshot` store derives from it and exposes `crossedEvents`.
+  - `src/engines/tracks.ts`: `trackRunsUntil` (observed / modelled / unverified runs). `MaritimeOverlay`: per-run
+    track lines (unverified long dash), `setLivePose` for the followed ship.
+  - `src/core/follow.ts`, `followStep` on `Region3DScene` and `EarthScene`, `view.follow` / `followHold`,
+    `src/features/follow/FollowBar.vue` (modes, stop, "Resume following", edge note), Follow buttons in the vessel
+    inspector and the replay rail.
+  - `ReplayRail.vue`: Simulation ×1–×100, step ±5 min (Shift ±1 h), range 6 h / 24 h / 72 h / 7 d, loop toggle,
+    Now marker and simulated-ahead hatch, events passed this run. Shell stamp, comparison, incident and vessel
+    panels use `phase`.
+  - Fixture: VSL-0059 reporting outage 05:15–08:15Z (`positionGapDemo`) in `generate_demo_data.py`; validator
+    check and exemption; regenerated `sample-data/` and the V2 scenario schema.
+- **Tested:**
+  - `python3 scripts/generate_demo_data.py && python3 scripts/build_schemas.py && python3 scripts/validate_data.py` →
+    exit 0 (first attempt with a 05:30–08:00 gap failed the generic gap check because it did not line up with the
+    vessel's samples; bounds moved to 05:15–08:15 and the declared gap exempted).
+  - `npx vue-tsc --noEmit` → exit 0 (first pass listed callers of the old `clock.mode` / `speed` API; all migrated).
+  - `npx vitest run` → exit 0, 292 tests in 20 files. New `clock.test.ts` (18): 100× ratio over 60 Hz frames, the
+    same ratio at 24 Hz for every rate, delta cap, pause at range end, loop wrap, ranges and steps; store with
+    stubbed rAF (100 s ± 1 s after 1 s at 100×, 5–16 distinct commits, single loop, commit spans contiguous);
+    world snapshot identical after forward and backward seeks; 10 s spans over the replay window lose no event;
+    VSL-0047 reaches the same position at 1×, 10× and 100×; VSL-0059 held during the gap with one unverified run;
+    follow easing, behind-the-ship azimuth for six courses and angle wrapping. First run 4 failed (float tolerance
+    too tight, `$subscribe` batching); tests corrected.
+  - `npm run build` → exit 0.
+  - `npx playwright test tests/e2e/follow.spec.ts --project=chromium` → 3 passed after two fixes. The first run
+    measured the ship against the raw canvas centre while the planar camera centres the free area beside the
+    inspector and rail; the adapter now reports the projected camera aim. The second run showed a 260 px pan did not
+    release follow under the old rule (ship more than 0.35 camera distances off-centre); release now measures how far
+    the view centre moved during the drag (8 % of the distance), so rotating does not release and a fast ship does
+    not either. The spec covers follow at ×1 / ×10 / ×100 with the in-page ratio within ±15 %, all four modes, pan →
+    "Resume following" → resume, stop, ranges, pause at the end, loop wrap, and the unverified run for VSL-0059.
+  - `npx playwright test` (full) → exit 0, 65 passed, 6 skipped (opt-in perf/capture), 3.5 min. Visual baselines
+    unchanged within tolerance.
+  - Evidence: `docs/qa/v2-phase6/follow-vsl0047-x100.png`, `gap-vsl0059-unverified.png`.
+- **Blockers:** none.

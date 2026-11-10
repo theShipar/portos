@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { computed, markRaw } from 'vue';
 import { selectKpis, type Kpi } from '@/engines/kpis';
 import { getSnapshotAt, type Snapshot, type WorkflowOverlay } from '@/engines/snapshot';
+import { deriveWorldSnapshot, eventsBetween, type WorldSnapshot } from '@/engines/world';
+import type { TimelineEvent } from '@/core/types';
 import { buildVesselMarkers, type VesselMarker } from '@/selectors/mapLayers';
 import { drillVesselIds } from '@/selectors/kpiDrill';
 import { buildPortViewModel, type PortViewModel } from '@/selectors/port';
@@ -22,21 +24,31 @@ export const useSnapshotStore = defineStore('snapshot', () => {
 
   const overlay = computed<WorkflowOverlay>(() => ({ incidents: workflow.overlay, dailyRates: assumptions.dailyRates }));
 
-  const snapshot = computed<Snapshot | null>(() => {
+  /** The world at the committed clock time; every temporal read model below derives from it. */
+  const world = computed<WorldSnapshot | null>(() => {
     const c = catalog.catalog;
     if (!c) return null;
-    return markRaw(getSnapshotAt(c, clock.timeMs, overlay.value));
+    return markRaw(deriveWorldSnapshot(c, clock.timeMs, overlay.value));
+  });
+
+  const snapshot = computed<Snapshot | null>(() => world.value?.snapshot ?? null);
+
+  /** Events passed by the latest playback commit (empty after a jump): flashed on the timeline, never skipped. */
+  const crossedEvents = computed<TimelineEvent[]>(() => {
+    const c = catalog.catalog;
+    const span = clock.lastSpan;
+    return c && span ? eventsBetween(c, span.fromMs, span.toMs) : [];
   });
 
   /** Snapshot at Now (simulated), for "compared with now" while replaying. Independent of the clock. */
   const nowSnapshot = computed<Snapshot | null>(() => {
     const c = catalog.catalog;
     if (!c) return null;
-    if (clock.mode === 'now' && snapshot.value) return snapshot.value;
+    if (clock.phase === 'now' && snapshot.value) return snapshot.value;
     return markRaw(getSnapshotAt(c, c.anchorMs, overlay.value));
   });
 
-  const globalKpis = computed(() => (catalog.catalog && snapshot.value ? selectKpis(catalog.catalog, snapshot.value) : []));
+  const globalKpis = computed(() => world.value?.kpis ?? []);
 
   /** KPIs for the visible cohort: the region at region/port scope, the whole simulated fleet at Earth. */
   const kpis = computed<Kpi[]>(() => {
@@ -79,5 +91,5 @@ export const useSnapshotStore = defineStore('snapshot', () => {
     return twin ? markRaw(twin) : null;
   });
 
-  return { snapshot, nowSnapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView, portTwin };
+  return { world, snapshot, crossedEvents, nowSnapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView, portTwin };
 });

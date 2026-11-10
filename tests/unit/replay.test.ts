@@ -248,16 +248,18 @@ describe('historical notes', () => {
 });
 
 describe('replay clock and time display', () => {
-  it('clamps out-of-range seeks to the replay window', () => {
+  it('clamps out-of-range seeks to the scenario window', () => {
     setActivePinia(createPinia());
     const clock = useClockStore();
-    clock.configure({ anchorMs: NOW, startMs: START, dataVersion: 'test' });
+    clock.configure({ anchorMs: NOW, minMs: START, maxMs: NOW + 6 * 3_600_000, dataVersion: 'test' });
     expect(clock.seek('2026-11-08T12:00:00Z')).toBe(true);
     expect(clock.timeMs).toBe(START);
-    expect(clock.mode).toBe('replay');
+    expect(clock.phase).toBe('history');
     clock.seek('2026-11-10T00:00:00Z');
-    expect(clock.timeMs).toBe(NOW);
-    expect(clock.mode).toBe('now');
+    expect(clock.timeMs).toBe(NOW + 6 * 3_600_000);
+    expect(clock.phase).toBe('simulation');
+    clock.reset();
+    expect(clock.phase).toBe('now');
     expect(clock.seek('not a time')).toBe(false);
     expect(clock.timeMs).toBe(NOW);
   });

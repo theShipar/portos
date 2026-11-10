@@ -4,6 +4,7 @@ import { DEFAULT_LAYERS, LAYERS, type LayerId, type ScopeLevel } from '@/core/la
 import { scopeKey, type Scope, type ViewMode } from '@/core/scope';
 import type { EntityKind, EntityRef } from '@/core/types';
 import type { KpiKey } from '@/engines/kpis';
+import type { FollowMode } from '@/core/follow';
 import { isRecord, loadStored, saveStored, STORAGE_KEYS } from './persist';
 
 export type { Scope } from '@/core/scope';
@@ -47,6 +48,10 @@ export const useViewStore = defineStore('view', () => {
   const sheetQuery = typeof matchMedia !== 'undefined' ? matchMedia('(max-width: 1024px)') : null;
   const sheetLayout = ref(sheetQuery?.matches ?? false);
   sheetQuery?.addEventListener('change', (e) => (sheetLayout.value = e.matches));
+  /** Follow camera on a vessel (3D scenes). Not persisted; a scope change or a cleared selection ends it. */
+  const follow = ref<{ vesselId: string; mode: FollowMode } | null>(null);
+  /** Why following is on hold: a manual pan moved away, or the vessel left the scene's bounds. */
+  const followHold = ref<'panned' | 'edge' | null>(null);
   /** Element that opened the inspector, so closing it can return focus. */
   let returnFocusEl: HTMLElement | null = null;
 
@@ -62,10 +67,37 @@ export const useViewStore = defineStore('view', () => {
       incidentTab.value = 'summary';
     } else if (opts.tab) inspectorTab.value = opts.tab;
     selection.value = ref;
+    // Selecting another vessel retargets the follow camera (time and filters stay); clearing ends it.
+    if (!follow.value) return;
+    if (!ref) stopFollow();
+    else if (ref.kind === 'vessel' && ref.id !== follow.value.vesselId) {
+      follow.value = { ...follow.value, vesselId: ref.id };
+      followHold.value = null;
+    }
+  }
+
+  function startFollow(vesselId: string, mode?: FollowMode) {
+    follow.value = { vesselId, mode: mode ?? follow.value?.mode ?? 'chase' };
+    followHold.value = null;
+  }
+
+  function setFollowMode(mode: FollowMode) {
+    if (follow.value) follow.value = { ...follow.value, mode };
+    followHold.value = null;
+  }
+
+  function stopFollow() {
+    follow.value = null;
+    followHold.value = null;
+  }
+
+  function resumeFollow() {
+    followHold.value = null;
   }
 
   function clearSelection() {
     selection.value = null;
+    stopFollow();
     const el = returnFocusEl;
     returnFocusEl = null;
     if (el && document.contains(el)) el.focus();
@@ -79,6 +111,7 @@ export const useViewStore = defineStore('view', () => {
     if (scopeKey(s) === scopeKey(scope.value)) return;
     scope.value = s;
     berthId.value = null;
+    stopFollow();
   }
 
   function selectBerth(id: string | null) {
@@ -101,6 +134,7 @@ export const useViewStore = defineStore('view', () => {
     viewMode.value = '3d';
     kpiDrill.value = null;
     replayOpen.value = false;
+    stopFollow();
   }
 
   function isSelected(kind: EntityKind, id: string) {
@@ -128,6 +162,12 @@ export const useViewStore = defineStore('view', () => {
     kpiDrill,
     comparing,
     replayOpen,
+    follow,
+    followHold,
+    startFollow,
+    setFollowMode,
+    stopFollow,
+    resumeFollow,
     select,
     clearSelection,
     setHover,

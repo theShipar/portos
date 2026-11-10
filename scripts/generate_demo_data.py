@@ -26,6 +26,10 @@ VSL1_QUEUE_SINCE = datetime(2026, 11, 9, 4, 0, tzinfo=UTC)
 VSL47_FIX = (108.056644, 3.501864)
 VSL47_FIX_AT = datetime(2026, 11, 9, 11, 15, tzinfo=UTC)
 VSL47_SOG = 13.5
+# Phase V2-6 demo: one AIS reporting outage (samples removed, nothing interpolated) for the "position unverified" path.
+GAP_VESSEL = 59
+GAP_FROM = datetime(2026, 11, 9, 5, 15, tzinfo=UTC)
+GAP_TO = datetime(2026, 11, 9, 8, 15, tzinfo=UTC)
 FLAGSHIP_COUNT = 30
 iso = lambda d: d.astimezone(UTC).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
@@ -449,6 +453,8 @@ def gen(seed=92026):
 
         if i == 1:
             cog = None
+        if i == GAP_VESSEL:
+            samples = [smp for smp in samples if not (GAP_FROM < smp[0] < GAP_TO)]
         vessel = {'vesselId': vid, 'name': name, 'vesselType': typ, 'imoDemo': f'DEMO{9100000 + i * 37:07d}',
                   'flagCountryIso2': 'MH' if i == 1 else rng.choice(['SG', 'NL', 'GB', 'PA', 'MH', 'LR', 'HK', 'GR']),
                   'lengthMeters': length, 'beamMeters': beam, 'draughtMeters': round(beam * 0.29, 1),
@@ -950,6 +956,7 @@ def gen_v2(data, ctx, seed):
         'baseReplayRange': {'startUtc': iso(REPLAY_START), 'endUtc': iso(ANCHOR)},
         'flagshipVesselIds': ctx['flagship'],
         'followDemo': {'vesselId': 'VSL-0047', 'voyageId': 'VYG-0047', 'routeId': 'RTE-SIN-MNL'},
+        'positionGapDemo': {'vesselId': f'VSL-{GAP_VESSEL:04d}', 'fromUtc': iso(GAP_FROM), 'toUtc': iso(GAP_TO)},
         'singaporeCase': {'vesselId': 'VSL-0001', 'portCallId': 'PCL-0001', 'incidentId': 'INC-0001', 'queueSinceUtc': iso(VSL1_QUEUE_SINCE),
                           'anchorageEnterUtc': '2026-11-09T09:15:00Z', 'estimatedBerthUtc': '2026-11-10T14:00:00Z', 'berthAssigned': False},
         'precedence': ['baseFixtureRecords', 'v2IllustrativeLayouts', 'versionedFutureMovementSamples', 'scenarioBranchEvents'],

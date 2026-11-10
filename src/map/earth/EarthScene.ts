@@ -10,6 +10,7 @@ import dayUrl from '@/assets/textures/world/earth-day.jpg';
 import lightsUrl from '@/assets/textures/world/earth-lights.png';
 import normalUrl from '@/assets/textures/world/earth-normal.jpg';
 import specularUrl from '@/assets/textures/world/earth-specular.jpg';
+import { followAlpha, FOLLOW_RELEASE_DISTANCE, type FollowStatus, type FollowTarget } from '@/core/follow';
 import { inverseSpherical, sphericalPosition } from '@/core/geo';
 import { portosMapTheme as T, QUALITY, type QualitySettings, type QualityTier } from '../theme';
 import { CameraTransitionController, EARTH_PRESET, EARTH_RADIUS, poseToPosition, positionToPose, type CameraPose, type CameraPreset } from './camera';
@@ -158,6 +159,9 @@ export class EarthScene implements MapSurface {
   private input: InputRouter | null = null;
   private inputUnsubs: (() => void)[] = [];
   private activeValue = true;
+  /** Pointer or wheel interaction in progress (OrbitControls start → end). */
+  private userDragging = false;
+  private readonly dragStartDir = new THREE.Vector3();
 
   constructor(host: HTMLElement, opts: { quality?: QualityTier; reducedMotion?: boolean; managed?: boolean } = {}) {
     this.host = host;
@@ -187,6 +191,7 @@ export class EarthScene implements MapSurface {
     this.controls.zoomSpeed = 0.8;
     this.controls.autoRotateSpeed = 0.18;
     this.controls.addEventListener('start', this.onControlsStart);
+    this.controls.addEventListener('end', this.onControlsEnd);
     this.controls.addEventListener('change', this.invalidate);
 
     this.flight = new CameraTransitionController(
@@ -565,6 +570,28 @@ export class EarthScene implements MapSurface {
     return this.flyTo({ id: 'focus', scope: 'earth', center: { lat, lon }, distance, minDistance: this.controls.minDistance, maxDistance: this.controls.maxDistance });
   }
 
+  /** On the globe the camera always looks at the centre, so every mode reduces to keeping the ship centred. */
+  followStep(t: FollowTarget, dtMs: number): FollowStatus {
+    if (this.flight.active || !this.activeValue) return 'idle';
+    const cur = this.camera.position.clone();
+    const dist = cur.length();
+    const goal = poseToPosition({ lat: t.lat, lon: t.lon, distance: 1 }).normalize();
+    // Ground distance the view centre moved during the drag, in camera altitudes.
+    if (this.userDragging) return cur.clone().normalize().angleTo(this.dragStartDir) * EARTH_RADIUS > FOLLOW_RELEASE_DISTANCE * Math.max(1e-3, dist - EARTH_RADIUS) ? 'released' : 'following';
+    const a = followAlpha(dtMs);
+    let d = dist;
+    if (t.frameMetres !== null) {
+      const want = Math.min(this.controls.maxDistance, Math.max(this.controls.minDistance, EARTH_RADIUS * (1 + t.frameMetres / 6_371_008.8)));
+      d = dist + (want - dist) * a;
+    }
+    const dir = cur.normalize().lerp(goal, a).normalize();
+    this.camera.position.copy(dir.multiplyScalar(d));
+    this.camera.lookAt(this.controls.target);
+    this.lastInteraction = performance.now();
+    this.invalidate();
+    return 'following';
+  }
+
   cancelFlight() {
     this.flight.cancel();
     this.controls.enabled = this.activeValue;
@@ -626,8 +653,14 @@ export class EarthScene implements MapSurface {
 
   private onControlsStart = () => {
     this.lastInteraction = performance.now();
+    this.userDragging = true;
+    this.dragStartDir.copy(this.camera.position).normalize();
     if (this.flight.active) this.cancelFlight();
     this.emit('userInteract');
+  };
+
+  private onControlsEnd = () => {
+    this.userDragging = false;
   };
 
   private onPointerDown = (e: PointerEvent) => {
@@ -702,6 +735,7 @@ export class EarthScene implements MapSurface {
     el.removeEventListener('pointerleave', this.onPointerLeave);
     el.removeEventListener('webglcontextlost', this.onContextLost);
     this.controls.removeEventListener('start', this.onControlsStart);
+    this.controls.removeEventListener('end', this.onControlsEnd);
     this.controls.removeEventListener('change', this.invalidate);
     this.controls.dispose();
     this.scene.traverse((o) => {

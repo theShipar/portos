@@ -59,6 +59,28 @@
       ],
       "additionalProperties": false
     },
+    "positionGapDemo": {
+      "type": "object",
+      "properties": {
+        "fromUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "toUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "vesselId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "fromUtc",
+        "toUtc",
+        "vesselId"
+      ],
+      "additionalProperties": false
+    },
     "precedence": {
       "type": "array",
       "items": {
@@ -136,6 +158,7 @@
     "disclosure",
     "flagshipVesselIds",
     "followDemo",
+    "positionGapDemo",
     "precedence",
     "scenarioVersion",
     "seed",

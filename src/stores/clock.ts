@@ -1,53 +1,96 @@
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
+import { computed, ref, shallowRef } from 'vue';
 import { parseUtc, toIsoUtc } from '@/core/time';
+import {
+  advance,
+  clampToWindow,
+  rangeAround,
+  rangeHours,
+  stepTarget,
+  type ClockMode,
+  type ClockState,
+  type LoopRangeKey,
+  type PlaybackRate,
+} from '@/core/scenarioClock';
 
-export type ClockMode = 'now' | 'replay';
-export const REPLAY_SPEEDS = [1, 10, 60] as const;
-export type ReplaySpeed = (typeof REPLAY_SPEEDS)[number];
+/** Where the clock stands against "Now (simulated)": recorded history, the anchor itself, or simulated time after it. */
+export type ClockPhase = 'history' | 'now' | 'simulation';
 
-/** Reactive commits are throttled; render loops read `frameTimeMs()` for per-frame motion. */
+/** Reactive commits run at 10 Hz (spec: selectors 5–15 Hz); render loops read `frameTimeMs()` every frame. */
 const COMMIT_INTERVAL_MS = 100;
-/** Large enough that throttled frame rates still play at wall-clock pace; hidden tabs pause instead. */
-const MAX_FRAME_DELTA_MS = 1000;
 
 const DEFAULT_ANCHOR = Date.parse('2026-11-09T12:00:00Z');
+const DEFAULT_RANGE: LoopRangeKey = '24h';
 
 /**
- * Single SimulationClock. "Now (simulated)" is pinned to the fixture anchor (DECISIONS D-008): the dataset has no
- * samples after it, so time only moves inside replay, between replay start and the anchor.
+ * The only scenario time source (DECISIONS D-036, superseding D-008). Time moves inside the scenario window
+ * [minMs, maxMs], past the anchor too; the playback range bounds play and loop. Committed time is whole seconds.
  */
 export const useClockStore = defineStore('clock', () => {
   const anchorMs = ref(DEFAULT_ANCHOR);
-  const startMs = ref(DEFAULT_ANCHOR - 12 * 3600_000);
+  const minMs = ref(DEFAULT_ANCHOR - 12 * 3600_000);
+  const maxMs = ref(DEFAULT_ANCHOR);
   const timeMs = ref(DEFAULT_ANCHOR);
-  const playing = ref(false);
-  const speed = ref<ReplaySpeed>(60);
+  const mode = ref<ClockMode>('paused');
+  const rate = ref<PlaybackRate>(10);
+  const rangeKey = ref<LoopRangeKey>(DEFAULT_RANGE);
+  const rangeStartMs = ref(minMs.value);
+  const rangeEndMs = ref(maxMs.value);
+  const loop = ref(false);
   const dataVersion = ref('');
+  /** Scenario interval covered by the latest playback commit, so event edges inside it are never dropped. */
+  const lastSpan = shallowRef<{ fromMs: number; toMs: number } | null>(null);
 
   let frameMs = DEFAULT_ANCHOR;
   let raf = 0;
   let lastWall = 0;
   let lastCommit = 0;
 
-  const mode = computed<ClockMode>(() => (timeMs.value >= anchorMs.value ? 'now' : 'replay'));
+  const playing = computed(() => mode.value === 'playing');
+  const phase = computed<ClockPhase>(() => (timeMs.value < anchorMs.value ? 'history' : timeMs.value > anchorMs.value ? 'simulation' : 'now'));
   const iso = computed(() => toIsoUtc(timeMs.value));
-  const progress = computed(() => (timeMs.value - startMs.value) / Math.max(1, anchorMs.value - startMs.value));
+  const progress = computed(() => (timeMs.value - rangeStartMs.value) / Math.max(1, rangeEndMs.value - rangeStartMs.value));
 
-  function configure(opts: { anchorMs: number; startMs: number; dataVersion: string }) {
+  function whole(ms: number) {
+    return Math.round(ms / 1000) * 1000;
+  }
+
+  function placeRange(t: number) {
+    const r = rangeAround(t, rangeHours(rangeKey.value), minMs.value, maxMs.value);
+    rangeStartMs.value = r.startUTC;
+    rangeEndMs.value = r.endUTC;
+  }
+
+  function configure(opts: { anchorMs: number; minMs: number; maxMs: number; dataVersion: string }) {
     anchorMs.value = opts.anchorMs;
-    startMs.value = opts.startMs;
+    minMs.value = Math.min(opts.minMs, opts.anchorMs);
+    maxMs.value = Math.max(opts.maxMs, opts.anchorMs);
     dataVersion.value = opts.dataVersion;
+    pause();
+    placeRange(opts.anchorMs);
     seekMs(opts.anchorMs);
   }
 
-  function clamp(ms: number) {
-    return Math.min(anchorMs.value, Math.max(startMs.value, Math.round(ms / 1000) * 1000));
+  function state(): ClockState {
+    return {
+      mode: mode.value,
+      scenarioNowUTC: frameMs,
+      playbackRate: rate.value,
+      minUTC: minMs.value,
+      maxUTC: maxMs.value,
+      rangeStartUTC: rangeStartMs.value,
+      rangeEndUTC: rangeEndMs.value,
+      loop: loop.value,
+    };
   }
 
+  /** Exact jump (clamped to the window); a time outside the playback range moves the range to it. */
   function seekMs(ms: number) {
-    timeMs.value = clamp(ms);
-    frameMs = timeMs.value;
+    const t = whole(clampToWindow(ms, minMs.value, maxMs.value));
+    if (t < rangeStartMs.value || t > rangeEndMs.value) placeRange(t);
+    timeMs.value = t;
+    frameMs = t;
+    lastSpan.value = null;
   }
 
   /** Accepts a UTC ISO string; invalid input is ignored and returns false. */
@@ -62,59 +105,153 @@ export const useClockStore = defineStore('clock', () => {
     return toIsoUtc(anchorMs.value);
   }
 
+  /** Unrounded scenario time of the current animation frame (between reactive commits while playing). */
   function frameTimeMs() {
     return frameMs;
   }
 
+  function commit(t: number) {
+    const from = timeMs.value;
+    const to = whole(t);
+    if (to === from) return;
+    lastSpan.value = to > from ? { fromMs: from, toMs: to } : null;
+    timeMs.value = to;
+  }
+
   function tick(wall: number) {
-    if (!playing.value) return;
-    const dt = Math.min(MAX_FRAME_DELTA_MS, wall - lastWall);
+    if (mode.value !== 'playing') return;
+    const r = advance(state(), wall - lastWall);
     lastWall = wall;
-    frameMs = Math.min(anchorMs.value, frameMs + dt * speed.value);
-    if (frameMs >= anchorMs.value) {
-      timeMs.value = anchorMs.value;
-      pause();
+    frameMs = r.state.scenarioNowUTC;
+    if (r.ended) {
+      commit(frameMs);
+      stopLoop();
+      mode.value = 'paused';
       return;
     }
-    if (wall - lastCommit >= COMMIT_INTERVAL_MS) {
-      timeMs.value = Math.round(frameMs / 1000) * 1000;
+    if (r.wrapped) {
+      timeMs.value = whole(frameMs);
+      lastSpan.value = null;
+      lastCommit = wall;
+    } else if (wall - lastCommit >= COMMIT_INTERVAL_MS) {
+      commit(frameMs);
       lastCommit = wall;
     }
     raf = requestAnimationFrame(tick);
   }
 
-  function play(s?: ReplaySpeed) {
-    if (s) speed.value = s;
-    if (timeMs.value >= anchorMs.value) seekMs(startMs.value);
-    if (playing.value) return;
-    playing.value = true;
+  function stopLoop() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+
+  function play(r?: PlaybackRate) {
+    if (r) rate.value = r;
+    if (timeMs.value >= rangeEndMs.value) seekMs(rangeStartMs.value);
+    if (mode.value === 'playing') return;
+    mode.value = 'playing';
     frameMs = timeMs.value;
     lastWall = performance.now();
     lastCommit = lastWall;
+    stopLoop();
     raf = requestAnimationFrame(tick);
   }
 
   function pause() {
-    playing.value = false;
-    cancelAnimationFrame(raf);
-    timeMs.value = Math.round(frameMs / 1000) * 1000;
+    const was = mode.value;
+    stopLoop();
+    mode.value = 'paused';
+    if (was === 'playing') commit(frameMs);
+    frameMs = timeMs.value;
   }
 
-  function setSpeed(s: ReplaySpeed) {
-    speed.value = s;
+  function toggle() {
+    if (mode.value === 'playing') pause();
+    else play();
   }
 
-  /** Back to "Now (simulated)". */
+  function setRate(r: PlaybackRate) {
+    rate.value = r;
+  }
+
+  function setRange(key: LoopRangeKey) {
+    rangeKey.value = key;
+    placeRange(timeMs.value);
+  }
+
+  function setLoop(v: boolean) {
+    loop.value = v;
+  }
+
+  /** ±5 min, or ±1 h with `big` (Shift+Arrow). Pauses playback. */
+  function step(dir: 1 | -1, big = false) {
+    pause();
+    seekMs(stepTarget(timeMs.value, dir, big, minMs.value, maxMs.value));
+  }
+
+  /** Scrubbing pauses playback; previews seek like a jump and `endScrub` settles on an exact time. */
+  function beginScrub() {
+    pause();
+    mode.value = 'scrubbing';
+  }
+
+  function scrub(ms: number) {
+    timeMs.value = whole(clampToWindow(ms, rangeStartMs.value, rangeEndMs.value));
+    frameMs = timeMs.value;
+    lastSpan.value = null;
+  }
+
+  function endScrub(ms?: number) {
+    if (ms !== undefined) scrub(ms);
+    if (mode.value === 'scrubbing') mode.value = 'paused';
+  }
+
+  /** Back to "Now (simulated)": paused at the anchor, range re-centred on it. */
   function reset() {
     pause();
+    placeRange(anchorMs.value);
     seekMs(anchorMs.value);
   }
 
   if (typeof document !== 'undefined') {
     document.addEventListener('visibilitychange', () => {
-      if (document.hidden && playing.value) pause();
+      if (document.hidden && mode.value === 'playing') pause();
     });
   }
 
-  return { anchorMs, startMs, timeMs, playing, speed, dataVersion, mode, iso, progress, configure, seek, seekMs, nowUtc, frameTimeMs, play, pause, setSpeed, reset };
+  return {
+    anchorMs,
+    minMs,
+    maxMs,
+    timeMs,
+    mode,
+    rate,
+    rangeKey,
+    rangeStartMs,
+    rangeEndMs,
+    loop,
+    dataVersion,
+    lastSpan,
+    playing,
+    phase,
+    iso,
+    progress,
+    configure,
+    state,
+    seek,
+    seekMs,
+    nowUtc,
+    frameTimeMs,
+    play,
+    pause,
+    toggle,
+    setRate,
+    setRange,
+    setLoop,
+    step,
+    beginScrub,
+    scrub,
+    endScrub,
+    reset,
+  };
 });

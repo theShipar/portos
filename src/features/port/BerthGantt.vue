@@ -148,7 +148,7 @@ function pickBar(berthId: string, vesselId: string) {
         </li>
       </ol>
       <span class="gantt__now" :style="nowStyle" data-testid="gantt-now">
-        <span class="gantt__now-label">{{ clock.mode === 'replay' ? 'Replay' : 'Now' }}</span>
+        <span class="gantt__now-label">{{ clock.phase === 'history' ? 'Replay' : clock.phase === 'simulation' ? 'Sim' : 'Now' }}</span>
       </span>
       <p class="gantt__note">{{ gantt.note }}</p>
     </div>

@@ -31,7 +31,15 @@ export interface PortosAdapter {
   surface(): unknown;
   bridge(): { timeline: { step: string; ms: number; plannedMs: number }[]; stageVisible: boolean; labelsHidden: boolean };
   compass(): { northDeg: number; metresPerPx: number } | null;
-  overlayStats(): { lod: number; drawnVessels: number; wakes: number; detailVessels: string[]; modelVessels: number; px: number; shipDrawCalls: number } | null;
+  overlayStats(): { lod: number; drawnVessels: number; wakes: number; detailVessels: string[]; modelVessels: number; px: number; shipDrawCalls: number; trackRuns: ('observed' | 'modelled' | 'unverified')[] } | null;
+  clock(): { timeMs: number; frameMs: number; mode: 'playing' | 'paused' | 'scrubbing'; rate: number; phase: 'history' | 'now' | 'simulation'; rangeStartMs: number; rangeEndMs: number };
+  follow(): {
+    follow: { vesselId: string; mode: 'chase' | 'above' | 'orbit' | 'courseUp' } | null;
+    hold: 'panned' | 'edge' | null;
+    edge: boolean;
+    centre: { x: number; y: number } | null;
+    ship: { x: number; y: number; visible: boolean } | null;
+  };
   vesselPose(id: string): {
     model: string;
     state: 'underway' | 'anchored' | 'moored' | 'stopped';

@@ -71,6 +71,15 @@ def validate_v2(folder: Path, by, vessel_samples, manifest):
         errors.append('v2/scenario: VSL-0001 is anchored and must not receive movement keyframes')
     if sc.get('followDemo', {}).get('vesselId') != 'VSL-0047':
         errors.append('v2/scenario: follow demo must use VSL-0047')
+    gap = sc.get('positionGapDemo')
+    if gap:
+        g_from, g_to = parse(gap['fromUtc']), parse(gap['toUtc'])
+        inside = [r for r in vessel_samples.get(gap['vesselId'], []) if g_from < parse(r['timestampUtc']) < g_to]
+        ends = {parse(r['timestampUtc']) for r in vessel_samples.get(gap['vesselId'], [])}
+        if gap['vesselId'] in flagship:
+            errors.append('v2/scenario: the position gap demo must use a vessel without keyframes')
+        if inside or g_from not in ends or g_to not in ends or (g_to - g_from) <= timedelta(minutes=MAX_GAP_MIN):
+            errors.append(f'v2/scenario: position gap demo for {gap["vesselId"]} must be bounded by samples and longer than {MAX_GAP_MIN} min')
 
     tracks = {t['vesselId']: t for t in v2['flagshipTracks']}
     if set(tracks) != set(flagship):
@@ -313,6 +322,14 @@ def run(folder: Path):
         loc(p.get('location'), p['positionId'])
         utc(p.get('timestampUtc'), p['positionId'])
         vessel_samples[p.get('vesselId')].append(p)
+    # The V2 scenario may declare one reporting outage; it is checked against its bounds in validate_v2.
+    declared_gap = None
+    try:
+        g = json.loads((folder / 'v2' / 'scenario.json').read_text('utf-8')).get('positionGapDemo')
+        if g:
+            declared_gap = (g['vesselId'], g['fromUtc'], g['toUtc'])
+    except (OSError, ValueError, KeyError):
+        pass
     for vid, seq in vessel_samples.items():
         ts = [s['timestampUtc'] for s in seq]
         if ts != sorted(ts) or len(ts) != len(set(ts)):
@@ -321,7 +338,7 @@ def run(folder: Path):
         if replay_start and (parse(ts[0]) < replay_start or parse(ts[-1]) > replay_end):
             errors.append(vid + ' positions outside replay range')
         for a, b in zip(ts, ts[1:]):
-            if (parse(b) - parse(a)) > timedelta(minutes=MAX_GAP_MIN):
+            if (parse(b) - parse(a)) > timedelta(minutes=MAX_GAP_MIN) and declared_gap != (vid, a, b):
                 errors.append(f'{vid} sample gap > {MAX_GAP_MIN} min between {a} and {b}')
                 break
         vessel = by['vessels'].get(vid)

@@ -48,6 +48,11 @@
     "voyageId": "VYG-0047",
     "routeId": "RTE-SIN-MNL"
   },
+  "positionGapDemo": {
+    "vesselId": "VSL-0059",
+    "fromUtc": "2026-11-09T05:15:00Z",
+    "toUtc": "2026-11-09T08:15:00Z"
+  },
   "singaporeCase": {
     "vesselId": "VSL-0001",
     "portCallId": "PCL-0001",

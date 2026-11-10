@@ -3,6 +3,7 @@ import { Line2 } from 'three/examples/jsm/lines/Line2.js';
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js';
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
 import type { GeoPoint } from '@/core/types';
+import type { TrackRun, TrackRunKind } from '@/engines/tracks';
 import type { DensityCell, HazardShape, MapFocus, PortMarker, RouteLine, VesselMarker } from '@/selectors/mapLayers';
 import { markerColors as MC } from '../theme';
 import { EARTH_RADIUS } from './camera';
@@ -118,7 +119,7 @@ export class MaritimeOverlay {
   private ports: PortMarker[] = [];
   private drawnPorts: PortMarker[] = [];
   private routes = new Map<string, { data: RouteLine; line: Line2; material: LineMaterial }>();
-  private trackLine: Line2 | null = null;
+  private trackLines: { kind: TrackRunKind; line: Line2 }[] = [];
   private hazardLines: Line2[] = [];
   private hazards: HazardShape[] = [];
   private density: DensityCell[] = [];
@@ -128,6 +129,9 @@ export class MaritimeOverlay {
   private layers: OverlayLayers = { fleet: true, ambient: true, ports: true, routes: true, weather: true, incidents: true, traffic: false };
   private focus: MapFocus = { vesselIds: [], routeIds: [], hazardIds: [], portIds: [], voyageId: null, point: null };
   private clustered: ReadonlySet<string> = new Set();
+  /** Per-frame pose of the followed vessel (between 10 Hz clock commits) and the instance slots it occupies. */
+  private live: { id: string; point: GeoPoint; cogDeg: number | null } | null = null;
+  private liveSlots: { b: InstanceBuffers; mesh: THREE.Mesh; k: number; ring: boolean }[] = [];
   private hoverId: string | null = null;
   private hoverPortId: string | null = null;
   private lod: VesselDetail = 0;
@@ -372,8 +376,11 @@ export class MaritimeOverlay {
     this.onScreen.clear();
     this.cullCheckedAt = performance.now();
     const col = new THREE.Color();
+    this.liveSlots = [];
     order.forEach((m, i) => {
-      const [x, y, z] = this.scene.markerCenter(m.point.lat, m.point.lon);
+      const live = this.live?.id === m.vesselId ? this.live : null;
+      const pt = live?.point ?? m.point;
+      const [x, y, z] = this.scene.markerCenter(pt.lat, pt.lon);
       const pinned = this.isPinned(m.vesselId);
       const hovered = m.vesselId === this.hoverId;
       const base = m.fleet === 'own' ? Math.min(1.2, Math.max(0.85, 0.85 + (m.lengthM - 180) / 500)) : 0.72;
@@ -383,8 +390,8 @@ export class MaritimeOverlay {
       if (hovered || pinned) col.lerp(new THREE.Color('#ffffff'), 0.18);
       const model = modelKeyOf(m.vesselType);
       const state = motionStateOf(m.navStatus, m.sogKn);
-      const headingDeg = displayHeadingDeg({ vesselId: m.vesselId, cogDeg: m.cogDeg, state, berthHeadingDeg: m.berthHeadingDeg }, this.sceneTimeMs);
-      const heading = headingDeg * DEG + (this.planar ? this.scene.headingOffset(m.point.lat, m.point.lon) : 0);
+      const headingDeg = displayHeadingDeg({ vesselId: m.vesselId, cogDeg: live?.cogDeg ?? m.cogDeg, state, berthHeadingDeg: m.berthHeadingDeg }, this.sceneTimeMs);
+      const heading = headingDeg * DEG + (this.planar ? this.scene.headingOffset(pt.lat, pt.lon) : 0);
       const wake = wakeLength(state, m.sogKn);
       const write = (b: InstanceBuffers, k: number) => {
         b.center.setXYZ(k, x, y, z);
@@ -394,20 +401,31 @@ export class MaritimeOverlay {
         b.length.setX(k, m.lengthM);
         b.wake.setX(k, wake);
       };
+      const slot = (b: InstanceBuffers, mesh: THREE.Mesh, k: number) => {
+        if (live) this.liveSlots.push({ b, mesh, k, ring: false });
+      };
       write(this.glyphBuffers, i);
+      slot(this.glyphBuffers, this.glyphMesh, i);
       const onScreen = this.lod >= 1 && (pinned || this.isOnScreen(m));
       if (onScreen) this.onScreen.add(m.vesselId);
       const detailed = onScreen && pinned && this.lod === 2 && (detailCounts.get(model) ?? 0) < DETAIL_CAPACITY;
       if (detailed) {
         const k = detailCounts.get(model) ?? 0;
-        write(this.detailBatch(model).buffers, k);
+        const batch = this.detailBatch(model);
+        write(batch.buffers, k);
+        slot(batch.buffers, batch.mesh, k);
         detailCounts.set(model, k + 1);
       } else if (onScreen) {
         const k = counts.get(model)!;
-        write(this.modelBatches.get(model)!.buffers, k);
+        const batch = this.modelBatches.get(model)!;
+        write(batch.buffers, k);
+        slot(batch.buffers, batch.mesh, k);
         counts.set(model, k + 1);
       }
-      if (onScreen && wake > 0) write(this.wakeBuffers, wakes++);
+      if (onScreen && wake > 0) {
+        slot(this.wakeBuffers, this.wakeMesh, wakes);
+        write(this.wakeBuffers, wakes++);
+      }
       this.poses.set(m.vesselId, { model, state, headingDeg, wake, detail: !onScreen ? 0 : detailed ? 2 : 1 });
     });
     this.commit(this.glyphBuffers, this.glyphMesh, order.length);
@@ -428,6 +446,7 @@ export class MaritimeOverlay {
   }
 
   private writeRings() {
+    this.liveSlots = this.liveSlots.filter((s) => !s.ring);
     let n = 0;
     const put = (b: InstanceBuffers, k: number, p: GeoPoint, color: THREE.Color, size: number, lengthM = 0) => {
       const [x, y, z] = this.scene.markerCenter(p.lat, p.lon);
@@ -440,7 +459,9 @@ export class MaritimeOverlay {
     };
     for (const id of this.focus.vesselIds) {
       const m = this.markerById.get(id);
-      if (m && n < 16) put(this.selectionBuffers, n++, m.point, MC.selected, 2.1, m.lengthM);
+      if (!m || n >= 16) continue;
+      if (this.live?.id === id) this.liveSlots.push({ b: this.selectionBuffers, mesh: this.selectionMesh, k: n, ring: true });
+      put(this.selectionBuffers, n++, this.pointOf(m), MC.selected, 2.1, m.lengthM);
     }
     if (this.layers.routes) {
       for (const id of this.focus.portIds) {
@@ -453,7 +474,8 @@ export class MaritimeOverlay {
     if (this.layers.incidents) {
       for (const m of this.drawn) {
         if (m.tone !== 'incident' || k >= 128) continue;
-        put(this.incidentBuffers, k++, m.point, MC.incident, this.isPinned(m.vesselId) ? 2.4 : 1.35, m.lengthM * (this.isPinned(m.vesselId) ? 1.15 : 1));
+        if (this.live?.id === m.vesselId) this.liveSlots.push({ b: this.incidentBuffers, mesh: this.incidentMesh, k, ring: true });
+        put(this.incidentBuffers, k++, this.pointOf(m), MC.incident, this.isPinned(m.vesselId) ? 2.4 : 1.35, m.lengthM * (this.isPinned(m.vesselId) ? 1.15 : 1));
       }
     }
     this.commit(this.incidentBuffers, this.incidentMesh, k);
@@ -536,24 +558,33 @@ export class MaritimeOverlay {
       material.opacity = isFocus ? 1 : anyFocus ? 0.2 : 0.48;
       line.renderOrder = isFocus ? RENDER_ORDER.routes + 1 : RENDER_ORDER.routes;
     }
-    if (this.trackLine) this.trackLine.visible = this.layers.routes || anyFocus;
+    for (const t of this.trackLines) t.line.visible = this.layers.routes || anyFocus;
     this.scene.invalidate();
   }
 
-  /** Recorded positions of the focused vessel up to the simulation time (historical path, dotted). */
-  setTrack(points: GeoPoint[] | null) {
-    if (this.trackLine) {
-      this.disposeLine(this.trackLine);
-      this.trackLine = null;
-    }
-    if (points && points.length >= 2) {
+  /**
+   * Visited path of the focused vessel up to the simulation time: observed reports solid, modelled keyframes finely
+   * dotted, and reporting gaps longer than the interpolation limit as a long-dashed "position unverified" hint.
+   */
+  setTrack(runs: TrackRun[] | null) {
+    for (const t of this.trackLines) this.disposeLine(t.line);
+    this.trackLines = [];
+    for (const r of runs ?? []) {
+      if (r.points.length < 2) continue;
       const g = new LineGeometry();
-      g.setPositions(linePositions(this.scene, points, LINE_RADIUS * 1.0004));
-      this.trackLine = new Line2(g, this.lineMaterial({ color: MC.track, width: 2, opacity: 0.9, dashed: true, dash: 0.006 }));
-      this.trackLine.computeLineDistances();
-      this.trackLine.renderOrder = RENDER_ORDER.track;
-      this.trackLine.frustumCulled = false;
-      this.group.add(this.trackLine);
+      g.setPositions(linePositions(this.scene, r.points, LINE_RADIUS * 1.0004));
+      const style =
+        r.kind === 'observed'
+          ? { color: MC.track, width: 2, opacity: 0.9 }
+          : r.kind === 'modelled'
+            ? { color: MC.track, width: 1.8, opacity: 0.75, dashed: true, dash: 0.006 }
+            : { color: MC.unverified, width: 1.6, opacity: 0.85, dashed: true, dash: 0.03 };
+      const line = new Line2(g, this.lineMaterial(style));
+      line.computeLineDistances();
+      line.renderOrder = RENDER_ORDER.track;
+      line.frustumCulled = false;
+      this.group.add(line);
+      this.trackLines.push({ kind: r.kind, line });
     }
     this.styleRoutes();
   }
@@ -646,7 +677,8 @@ export class MaritimeOverlay {
     // `drawn` is in paint order, so walking it backwards meets the glyph the user actually sees first.
     for (let i = this.drawn.length - 1; i >= 0; i--) {
       const m = this.drawn[i]!;
-      const p = this.scene.project(m.point.lat, m.point.lon);
+      const mp = this.pointOf(m);
+      const p = this.scene.project(mp.lat, mp.lon);
       if (!p.visible) continue;
       const d = Math.hypot(p.x - x, p.y - y);
       const scale = this.isPinned(m.vesselId) ? 1.4 : 1;
@@ -693,7 +725,51 @@ export class MaritimeOverlay {
   /** Screen position of a vessel (for tooltips and focus checks). */
   vesselScreen(id: string) {
     const m = this.markerById.get(id);
-    return m ? this.scene.project(m.point.lat, m.point.lon) : null;
+    if (!m) return null;
+    const p = this.pointOf(m);
+    return this.scene.project(p.lat, p.lon);
+  }
+
+  private pointOf(m: VesselMarker): GeoPoint {
+    return this.live?.id === m.vesselId ? this.live.point : m.point;
+  }
+
+  /**
+   * Per-frame position of one vessel (the followed one) between clock commits, from the same track engine at the
+   * frame's scenario time. Only its own instance slots are rewritten; `null` returns it to the committed marker.
+   */
+  setLivePose(id: string | null, point?: GeoPoint, cogDeg: number | null = null) {
+    if (!id || !point) {
+      if (this.live) {
+        this.live = null;
+        this.writeVessels();
+      }
+      return;
+    }
+    const retarget = this.live?.id !== id;
+    this.live = { id, point, cogDeg };
+    if (retarget || !this.liveSlots.length) {
+      this.writeVessels();
+      return;
+    }
+    const m = this.markerById.get(id);
+    if (!m) return;
+    const [x, y, z] = this.scene.markerCenter(point.lat, point.lon);
+    const state = motionStateOf(m.navStatus, m.sogKn);
+    const headingDeg = displayHeadingDeg({ vesselId: id, cogDeg: cogDeg ?? m.cogDeg, state, berthHeadingDeg: m.berthHeadingDeg }, this.sceneTimeMs);
+    const heading = headingDeg * DEG + (this.planar ? this.scene.headingOffset(point.lat, point.lon) : 0);
+    for (const s of this.liveSlots) {
+      s.b.center.setXYZ(s.k, x, y, z);
+      if (!s.ring) s.b.heading.setX(s.k, heading);
+      for (const a of s.ring ? [s.b.center] : [s.b.center, s.b.heading]) {
+        a.clearUpdateRanges();
+        a.addUpdateRange(s.k * a.itemSize, a.itemSize);
+        a.needsUpdate = true;
+      }
+    }
+    const pose = this.poses.get(id);
+    if (pose) this.poses.set(id, { ...pose, headingDeg });
+    this.scene.invalidate();
   }
 
   marker(id: string): VesselMarker | undefined {
@@ -715,7 +791,8 @@ export class MaritimeOverlay {
       routes: this.routes.size,
       highlightedRoutes: highlighted,
       focusVessels: [...this.focus.vesselIds],
-      trackPoints: this.trackLine ? ((this.trackLine.geometry as LineGeometry).attributes.instanceStart?.count ?? 0) + 1 : 0,
+      trackPoints: this.trackLines.reduce((n, t) => n + ((t.line.geometry as LineGeometry).attributes.instanceStart?.count ?? 0), 0) + (this.trackLines.length ? 1 : 0),
+      trackRuns: this.trackLines.map((t) => t.kind),
       hazards: this.hazards.length,
       lod: this.lod,
       wakes: (this.wakeMesh.geometry as THREE.InstancedBufferGeometry).instanceCount,
@@ -730,7 +807,7 @@ export class MaritimeOverlay {
 
   dispose() {
     for (const r of this.routes.values()) this.disposeLine(r.line);
-    if (this.trackLine) this.disposeLine(this.trackLine);
+    for (const t of this.trackLines) this.disposeLine(t.line);
     for (const l of this.hazardLines) this.disposeLine(l);
     this.scene.setOverlayCanvas(null);
     this.group.traverse((o) => {

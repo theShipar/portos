@@ -63,6 +63,7 @@ root copies are edited. The kit folder is not modified.
 - Users: `title`, `defaultWorkspace`, `permissionFlags` (`action.{resource}.{verb}`), `locale`, `timeZone`.
 
 ## D-008 Simulation clock: "Now" pinned to the anchor
+*Superseded by D-036 (V2 canonical scenario clock); kept for history.*
 The clock spec says "Now (simulated)" advances from session start, but the fixture has no samples after
 `2026-11-09T12:00Z`; advancing would make every vessel stale after 30 minutes and invent unknowns. "Now (simulated)" is
 therefore fixed at the anchor, and motion is shown only in replay (`00:00–12:00Z`, 1×/10×/60×/600×). The clock store
@@ -445,3 +446,44 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
   twin port now opens in 3D, so the 06-investigation and 04-singapore-port baselines were re-recorded. The
   journey test's 3D click now targets the ship alongside East Berth 1, since VSL-0001's anchorage lies outside the
   twin's default frame.
+
+## D-036 Canonical scenario clock 1–100×, world snapshot, follow camera
+
+- **Context:** specs 09 and 10 ask for one scenario clock driving every scene and panel at 1, 5, 10, 25, 50 and
+  100× (1 real second at 100× = 100 scenario seconds), loop ranges, step controls, a pure world snapshot, follow
+  modes for a selected ship, and an honest picture of reporting gaps. D-008 pinned "Now" at the anchor with replay
+  speeds 1/10/60/600× over 00:00–12:00Z only.
+- **Decision:**
+  - *Clock* (`src/core/scenarioClock.ts`, pure; `src/stores/clock.ts`): `ClockState {mode playing|paused|scrubbing,
+    scenarioNowUTC, playbackRate, minUTC, maxUTC, rangeStartUTC, rangeEndUTC, loop}`. The window is the V2 scenario
+    window (2026-11-05T12:00Z → 2026-11-12T12:00Z); the anchor 2026-11-09T12:00Z stays "Now (simulated)". `phase`
+    is `history` before the anchor, `now` at it and `simulation` after it (labelled "Simulated ahead"). One rAF
+    loop; a frame delta is capped at 1 s so a resumed tab never jumps; the clock pauses when the tab is hidden or
+    the WebGL context is lost. Reactive time commits at 10 Hz in whole seconds; scenes read `frameTimeMs()`.
+  - *Ranges and stepping:* 6 h / 24 h / 72 h / 7 d (default 24 h), centred on whole hours around the current time
+    and shifted to stay inside the window; playback pauses on the last instant of the range unless loop is on (off
+    by default), and wraps to the range start when it is. Step ±5 min, Shift ±1 h; step and scrub pause.
+  - *No skipped events:* each commit records `lastSpan {fromMs, toMs}`; `eventsBetween(c, from, to)` returns the
+    events in `(from, to]`, so the rail's "events passed this run" count sees every event however large the step.
+  - *World snapshot* (`src/engines/world.ts`, pure): `deriveWorldSnapshot(c, t)` folds vessels, incidents (the
+    existing event fold), berth occupancy per layout port, active and upcoming weather, event count and global KPIs
+    at one instant. It reads only the catalog and `t`, so forward and backward seeks give identical output.
+  - *Follow camera* (`src/core/follow.ts`; `followStep` on each surface): modes chase, above, orbit and course-up.
+    The camera eases toward the ship with τ = 90 ms (95 % in ≈ 270 ms) and on entry zooms in to 14 ship lengths.
+    Chase and course-up also steer azimuth to sit behind the course (with grid convergence); orbit keeps the user's
+    azimuth. The followed ship's position and heading are computed every frame from `frameTimeMs()` and written
+    into its instance slots only (`MaritimeOverlay.setLivePose`), so the ship and camera move smoothly between
+    10 Hz commits. A drag that moves the view centre by more than 8 % of the camera distance is a pan: follow holds
+    (`view.followHold = 'panned'`) and the "Resume following" chip appears. A rotate does not release. A ship
+    outside the scene's bounds shows "Vessel has left this map area". Selecting another vessel retargets follow;
+    clearing the selection, changing scope or resetting the view stops it.
+  - *Track honesty* (`trackRunsUntil`): the trail is split into runs; gaps between reports longer than 30 minutes
+    become an `unverified` run drawn as a long grey dash between the last and next known positions, and the vessel
+    is held at its last report (stale), never interpolated across the gap. Modelled keyframes stay dotted.
+  - *Fixture:* VSL-0059 has a declared reporting outage 05:15–08:15Z on 2026-11-09
+    (`scenario.positionGapDemo`); the validator requires it to be bounded by samples, longer than 30 minutes and
+    empty, and exempts it from the generic gap check.
+- **Consequences:** vessels without V2 keyframes become stale after the anchor while the 30 flagship vessels keep
+  their modelled forecast, which is the intended contrast. Workflow actions remain available only at "Now"
+  (`phase === 'now'`). `?time=` deep links work anywhere in the window.
+
