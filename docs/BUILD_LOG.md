@@ -630,3 +630,44 @@ blockers. Status values: implemented / tested / blocked.
   - Evidence (`PORTOS_EVIDENCE=1`): `docs/qa/v2-phase4/ships-lod0/1/2.png`, `cardinal-headings.png`,
     `region-sea-ships.png`, `port-sin-selected-vsl-0001.png`.
 - **Blockers:** none.
+
+## Phase V2-5 — Singapore port twin, DCSA berth timeline and Gantt
+
+- **Decisions:** D-035 (port3d as a Region3DScene variant, twin ports default to 3D, berth timeline engine, moored
+  poses, Gantt and card, declared yard counts, bottom inset, Gantt folding beside an open inspector).
+  TECHNICAL_DEVIATIONS gains the Port3DScene row.
+- **Implemented:**
+  - `Region3DScene.ts`: port variant (3 m land with no polygon offset, ocean −1.5 m, grid −1.2 m, ships at 0.2 m and
+    depth-tested, tilt 0.95), `PlanarSceneLayer`, `geoToWorld`, `addLayer` / `removeLayer`, `setBottomInset` via
+    `setViewOffset`.
+  - `src/spatial/scenes/portTwin/`: `twinGeometry.ts` (crane, container), `PortTwinLayer.ts` (decks, apron, berth
+    strips, cranes, yard blocks, berth proxy picking, `stats()`).
+  - `src/engines/berthTimeline.ts` (pure), `src/selectors/portTwin.ts` (twin model, moored poses, core frame,
+    anchorage labels, caption), `src/selectors/berthGantt.ts` (Gantt and card views).
+  - `src/features/port/BerthGantt.vue`, `BerthCard.vue`; `view` store gains `berthId`, `selectBerth`,
+    `bottomInsetPx`; `snapshot` store gains `portTwin`.
+  - `PortosEarthView.vue`: twin layer attached on build, berth hits, focus on the selected berth, test adapter
+    `twin()` and `berthPoint()`. `PortMap2D.vue`: berth selection synced with the store, card shows next booking and
+    conflicts. Routing: `defaultViewMode` / `viewModeQuery` take the twin predicate.
+  - Fixture: `yardContainers` per layout terminal in `generate_demo_data.py`, regenerated `sample-data/v2/`,
+    schema rebuilt, validator check added.
+- **Tested:**
+  - `python3 scripts/generate_demo_data.py && python3 scripts/build_schemas.py && python3 scripts/validate_data.py` →
+    exit 0 (scenario and V2 module verified).
+  - `npx vue-tsc --noEmit` → exit 0 (first pass failed: `catalog` not defined in `useNavigation`; fixed).
+  - `npx vitest run` → exit 0, 274 tests in 19 files. New `porttwin.test.ts` (15): milestone visibility over time,
+    bar kinds, planned and forecast conflicts on W-4 and W-1, occupancy, moored pose geometry, twin model counts
+    (Singapore 3 terminals, 10 berths, 41 cranes, 6,000 containers, 2 anchorages), Gantt windows and card, default
+    view mode (PRT-SIN 3D, PRT-SHA 2D).
+  - `npm run build` → exit 0.
+  - `npx playwright test tests/e2e/port3d.spec.ts` → 5 passed: city → port3d with the twin drawn and moored ships
+    on the quay, a berth click focusing the same berth in the scene, card and Gantt, Gantt bar kinds and conflict
+    basis, 3D ↔ 2D keeping berth and `?time=`, Rotterdam and Genoa procedural twins and PRT-SHA staying 2D.
+  - `npx playwright test` (full) → first run 5 failed. The journey 3D click targeted VSL-0001, which lies outside
+    the twin frame (the test now clicks the ship alongside East Berth 1). Visual 04-singapore-port (Gantt in 2D) and
+    06-investigation (incident now opens on the 3D twin) at 1440 and 1920 differed. The investigation frame showed
+    the open Gantt squeezed between the shelf and the inspector, so the Gantt now folds while an inspector is open.
+    After review the four baselines were re-recorded (`--update-snapshots`). Final run: exit 0, 62 passed,
+    6 skipped (opt-in perf/capture).
+  - Evidence: `docs/qa/v2-phase5/01-singapore-port-twin.png`, `02-berth-focus.png`, `03-rotterdam-procedural.png`.
+- **Blockers:** none.

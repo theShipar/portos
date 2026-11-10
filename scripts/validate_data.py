@@ -126,6 +126,8 @@ def validate_v2(folder: Path, by, vessel_samples, manifest):
         for t in l['terminals']:
             if t['terminalId'] not in by['terminals']:
                 errors.append(f'v2/portLayouts: unknown terminal {t["terminalId"]}')
+            if not isinstance(t.get('yardContainers'), int) or t['yardContainers'] < 0:
+                errors.append(f'v2/portLayouts: {t["terminalId"]} needs a declared yardContainers count')
             for b in t['berths']:
                 if b['berthId'] not in by['berths'] or by['berths'][b['berthId']]['terminalId'] != t['terminalId']:
                     errors.append(f'v2/portLayouts: berth link invalid {b["berthId"]}')

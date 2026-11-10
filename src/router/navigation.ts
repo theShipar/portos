@@ -17,8 +17,13 @@ export function decodeScope(c: Catalog, text: unknown, reg: SpatialRegistry | nu
 }
 
 /** `view` query value for a mode, or null when the mode is the scope's default (keeps URLs short). */
-export function viewModeQuery(s: Scope, mode: ViewMode): ViewMode | null {
-  return supportsViewMode(s, mode) && mode !== defaultViewMode(s) ? mode : null;
+export function viewModeQuery(s: Scope, mode: ViewMode, hasTwin?: (portId: string) => boolean): ViewMode | null {
+  return supportsViewMode(s, mode) && mode !== defaultViewMode(s, hasTwin) ? mode : null;
+}
+
+/** Ports with a 3D twin layout in the V2 module. */
+export function twinPredicate(c: Catalog | null): (portId: string) => boolean {
+  return (portId) => !!c?.v2?.layoutByPort.has(portId);
 }
 
 export function routeForScope(s: Scope, query: LocationQueryRaw = {}): RouteLocationRaw {

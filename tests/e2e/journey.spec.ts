@@ -56,10 +56,15 @@ test.describe('Core Singapore journey', () => {
     await page.waitForTimeout(400);
     await flightDone(page);
     await page.waitForTimeout(300);
-    const pt = await page.evaluate(() => window.__portos!.vesselPoint('VSL-0001'));
+    // The port twin frames the terminals: click the ship alongside East Berth 1.
+    const berth = await page.evaluate(() => window.__portos!.berthPoint('BRH-SIN-E-1'));
+    expect(berth?.visible).toBe(true);
+    const alongside = await page.evaluate(({ x, y }) => window.__portos!.vesselsNear(x, y, 40), berth!);
+    expect(alongside.length).toBeGreaterThan(0);
+    const pt = await page.evaluate((id) => window.__portos!.vesselPoint(id), alongside[0]);
     expect(pt?.visible).toBe(true);
     const near = await page.evaluate(({ x, y }) => window.__portos!.vesselsNear(x, y, 24), pt!);
-    expect(near).toContain('VSL-0001');
+    expect(near).toContain(alongside[0]);
     await page.mouse.click(pt!.x, pt!.y);
     // A stacked anchorage opens a picker; a lone marker selects directly.
     const stack = page.getByTestId('stack-menu');

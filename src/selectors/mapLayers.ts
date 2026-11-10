@@ -6,6 +6,7 @@ import { alternativeRoutes } from '@/engines/scenario';
 import type { Snapshot } from '@/engines/snapshot';
 import type { TrackState } from '@/engines/tracks';
 import type { HazardPhase } from '@/engines/weatherRisk';
+import { mooredPosesAt } from './portTwin';
 
 export type VesselClass = 'container' | 'bulk' | 'tanker' | 'lng' | 'roro' | 'general';
 export const VESSEL_CLASSES: VesselClass[] = ['container', 'bulk', 'tanker', 'lng', 'roro', 'general'];
@@ -54,6 +55,8 @@ export interface VesselMarker {
   incidentIds: string[];
   etaShiftMinutes: number | null;
   exceptionCount: number;
+  /** Alongside a twin-port berth: drawn parallel to the quay at this heading (the point is the alongside pose). */
+  berthHeadingDeg: number | null;
 }
 
 /** Vessels with a position at the snapshot time. Vessels without one are omitted, never placed at 0,0. */
@@ -67,10 +70,12 @@ export function buildVesselMarkers(c: Catalog, snap: Snapshot): VesselMarker[] {
     list.push(i.incidentId);
     openByVessel.set(i.vesselId, list);
   }
+  const moored = mooredPosesAt(c, snap.timeMs);
   const out: VesselMarker[] = [];
   for (const v of c.vessels) {
     const s = snap.vessels.get(v.vesselId);
     if (!s?.point) continue;
+    const alongside = s.navStatus === 'moored' ? moored.get(v.vesselId) : undefined;
     const voyage = v.currentVoyageId ? c.byId.voyage.get(v.currentVoyageId) : undefined;
     const eta = voyage ? snap.etas.get(voyage.voyageId) : undefined;
     const shift = eta?.etaShiftMinutes ?? null;
@@ -84,7 +89,7 @@ export function buildVesselMarkers(c: Catalog, snap: Snapshot): VesselMarker[] {
       vesselType: v.vesselType,
       vesselClass: vesselClassOf(v.vesselType),
       fleet: v.fleet,
-      point: s.point,
+      point: alongside?.point ?? s.point,
       cogDeg: s.cogDeg,
       sogKn: s.sogKn,
       navStatus: s.navStatus,
@@ -98,6 +103,7 @@ export function buildVesselMarkers(c: Catalog, snap: Snapshot): VesselMarker[] {
       incidentIds,
       etaShiftMinutes: shift,
       exceptionCount: incidentIds.length + (delayed ? 1 : 0) + (atRisk && !incidentIds.length ? 1 : 0),
+      berthHeadingDeg: alongside?.headingDeg ?? null,
     });
   }
   return out;

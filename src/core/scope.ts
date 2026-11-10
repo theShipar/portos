@@ -17,9 +17,12 @@ export const SCOPE_RANK: Record<Scope['level'], number> = { earth: 0, region: 1,
 
 export type ViewMode = '3d' | '2d';
 
-/** Port detail opens in 2D (precise positions); Earth, regions, countries and cities open in 3D. */
-export function defaultViewMode(s: Scope): ViewMode {
-  return s.level === 'port' ? '2d' : '3d';
+/**
+ * Port detail opens in 2D (precise positions) unless the port has a 3D twin; Earth, regions, countries and cities
+ * open in 3D.
+ */
+export function defaultViewMode(s: Scope, hasTwin: (portId: string) => boolean = () => false): ViewMode {
+  return s.level === 'port' && !hasTwin(s.portId) ? '2d' : '3d';
 }
 
 /** 2D exists for regions and ports (MapLibre); Earth, country and city scenes are 3D only. */

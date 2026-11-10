@@ -40,7 +40,10 @@ export type PlanarLevel = 'region' | 'country' | 'city';
 /** Land height and hover lift as fractions of the frame's larger horizontal span. */
 export const EXTRUDE_FRACTION = 0.012;
 export const HOVER_LIFT_FRACTION = 0.006;
-const UNITS_PER_METRE = 0.001;
+export const UNITS_PER_METRE = 0.001;
+/** Port twin scenes are true scale: land is a few metres above the water, not a fraction of the frame. */
+export const PORT_LAND_M = 3;
+const PORT_TILT = 0.95;
 const DEG = Math.PI / 180;
 /** Default camera tilt from vertical per level: wider frames look flatter, cities more oblique. */
 const TILT: Record<PlanarLevel, number> = { region: 0.58, country: 0.66, city: 0.78 };
@@ -48,6 +51,16 @@ const MAX_POLAR = 1.15;
 
 export const sceneKindForLevel = (level: PlanarLevel): SceneKind => (level === 'region' ? 'region3d' : level === 'country' ? 'country3d' : 'city3d');
 export const planarSceneKey = (level: PlanarLevel, id: string) => `${sceneKindForLevel(level)}:${id}`;
+export const portSceneKey = (portId: string) => `port3d:${portId}`;
+
+/** Host-owned scene content (port twin): rendered with the scene, picked before land, disposed with it. */
+export interface PlanarSceneLayer {
+  readonly object: THREE.Object3D;
+  pick?(raycaster: THREE.Raycaster): { distance: number; berthId?: string } | null;
+  /** Per-frame animation; returns true when the frame must be redrawn. */
+  update?(nowMs: number, dtMs: number): boolean;
+  dispose(): void;
+}
 
 /** Globe distance (R = 2, from the centre) ↔ planar camera distance in world units for the same ground scale. */
 export function globeToPlanarDistance(d: number, unitsPerMetre = UNITS_PER_METRE): number {
@@ -80,6 +93,8 @@ export interface Region3DOptions {
   onBuilt?: (scene: Region3DScene) => void;
   /** Before GPU resources are released (cache eviction): detach overlays. */
   onDispose?: (scene: Region3DScene) => void;
+  /** Builds the port twin variant of a city scene (true-scale land, ships at the waterline, oblique camera). */
+  port?: { portId: string };
 }
 
 interface Orbit {
@@ -106,6 +121,8 @@ export class Region3DScene implements SpatialScene, MapSurface {
   readonly controls: OrbitControls;
   readonly overlay = new THREE.Group();
   readonly globeUnitScale = (EARTH_RADIUS_M / EARTH_RADIUS) * UNITS_PER_METRE;
+  readonly portId: string | null;
+  readonly shipsDepthTested: boolean;
 
   private readonly opts: Region3DOptions;
   private readonly host: HTMLElement;
@@ -133,6 +150,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
   private width = 1;
   private height = 1;
   private viewOffsetPx = 0;
+  private viewOffsetBottomPx = 0;
   private dirty = true;
   private activeValue = false;
   private disposed = false;
@@ -144,13 +162,18 @@ export class Region3DScene implements SpatialScene, MapSurface {
   private selectedIso3: string | null = null;
   private inputUnsubs: (() => void)[] = [];
   private preloadPromise: Promise<void> | null = null;
+  private readonly tilt: number;
+  private readonly layers = new Set<PlanarSceneLayer>();
 
   constructor(opts: Region3DOptions) {
     this.opts = opts;
     this.level = opts.entry.type as PlanarLevel;
     this.entryId = opts.entry.id;
-    this.kind = sceneKindForLevel(this.level);
-    this.key = planarSceneKey(this.level, opts.entry.id);
+    this.portId = opts.port?.portId ?? null;
+    this.kind = this.portId ? 'port3d' : sceneKindForLevel(this.level);
+    this.key = this.portId ? portSceneKey(this.portId) : planarSceneKey(this.level, opts.entry.id);
+    this.shipsDepthTested = !!this.portId;
+    this.tilt = this.portId ? PORT_TILT : TILT[this.level];
     this.renderer = opts.renderer;
     this.host = opts.host;
     this.reducedMotion = !!opts.reducedMotion;
@@ -212,6 +235,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
     if (this.controls.update()) this.dirty = true;
     this.clampTarget();
     if (this.animateLift(ctx.dtMs)) this.dirty = true;
+    for (const l of this.layers) if (l.update?.(ctx.nowMs, ctx.dtMs)) this.dirty = true;
     this.updateClip();
     this.opts.projection.setViewport(this.width, this.height);
     for (const fn of this.frameHooks) fn(ctx.nowMs, this.dirty);
@@ -245,6 +269,8 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.disposed = true;
     this.cancelFlight();
     this.opts.onDispose?.(this);
+    for (const l of this.layers) l.dispose();
+    this.layers.clear();
     this.detachInput();
     this.resizeObserver.disconnect();
     this.controls.removeEventListener('start', this.onControlsStart);
@@ -294,18 +320,18 @@ export class Region3DScene implements SpatialScene, MapSurface {
     const zs = [sw.z, ne.z, nw.z, se.z];
     this.span = Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...zs) - Math.min(...zs));
     this.frameBounds = { west: Math.min(...xs), east: Math.max(...xs), north: Math.min(...zs), south: Math.max(...zs) };
-    this.topY = this.span * EXTRUDE_FRACTION;
+    this.topY = this.portId ? PORT_LAND_M * UNITS_PER_METRE : this.span * EXTRUDE_FRACTION;
     const tile = this.span / 7;
 
     const ocean = new THREE.Mesh(new THREE.PlaneGeometry(this.span * 6, this.span * 6), new THREE.MeshBasicMaterial({ color: T.ocean, fog: true }));
     ocean.rotation.x = -Math.PI / 2;
-    ocean.position.y = -this.topY * 0.02;
+    ocean.position.y = this.portId ? -1.5 * UNITS_PER_METRE : -this.topY * 0.02;
     ocean.renderOrder = 0;
     this.scene.add(ocean);
 
     const step = this.level === 'region' ? 5 : this.level === 'country' ? (this.span > 1500 ? 5 : 1) : 0.05;
     const gridMat = new THREE.LineBasicMaterial({ color: T.oceanGrid, transparent: true, opacity: 0.55, depthWrite: false, fog: true });
-    this.scene.add(graticule(f, step, proj, -this.topY * 0.01, gridMat));
+    this.scene.add(graticule(f, step, proj, this.portId ? -1.2 * UNITS_PER_METRE : -this.topY * 0.01, gridMat));
 
     const hemi = new THREE.HemisphereLight(0xcfe3ea, 0x0b1e28, 1.15);
     const sun = new THREE.DirectionalLight(0xffffff, 1.35);
@@ -323,6 +349,8 @@ export class Region3DScene implements SpatialScene, MapSurface {
       const tops: FeatureParts['top'] = [];
       const tone = feature.focus ? T.landScope : T.land;
       const material = createTerrainMaterial(tone);
+      // A few metres of land seen from kilometres away: depth offset would sink the tops below the water.
+      if (this.portId) material.polygonOffset = false;
       for (const poly of feature.polygons) {
         const rings = poly.map((r) => projectRing(r, proj)).filter((r) => r.length >= 3);
         if (!rings.length) continue;
@@ -336,7 +364,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
       }
       if (!allRings.length) continue;
       group.add(createSideWalls(allRings, this.topY, 0, wall));
-      group.add(boundarySegments(allRings, this.topY * 1.002, feature.focus ? coastMat : borderMat));
+      group.add(boundarySegments(allRings, this.portId ? this.topY + 0.4 * UNITS_PER_METRE : this.topY * 1.002, feature.focus ? coastMat : borderMat));
       this.land.add(group);
       const country: Country = { iso3: feature.iso3, name: feature.name, polygons: feature.polygons, bbox: ringsBbox(feature.polygons) };
       this.features.push({ doc: feature, group, top: tops, wall, rings: allRings, contour: null, country });
@@ -350,7 +378,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
     if (this.level !== 'region') this.selectFeature(doc.features.find((x) => x.focus)?.iso3 ?? null);
 
     const origin = proj.lonLatToWorld(doc.origin.lon, doc.origin.lat);
-    this.applyOrbit({ target: new THREE.Vector3(origin.x, 0, origin.z), distance: this.span * 0.9, polar: TILT[this.level], azimuth: 0 });
+    this.applyOrbit({ target: new THREE.Vector3(origin.x, 0, origin.z), distance: this.span * 0.9, polar: this.tilt, azimuth: 0 });
     this.controls.minDistance = this.span * 0.01;
     this.controls.maxDistance = this.span * 1.6;
   }
@@ -404,7 +432,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
       const color = hovered ? T.landHover : this.scopeIso3.has(f.doc.iso3) ? T.landScope : T.land;
       for (const t of f.top) t.material.color.copy(color);
       (f.wall.uniforms.topColor.value as THREE.Color).copy(hovered ? T.border : T.wallTop);
-      f.group.userData.targetLift = hovered ? this.span * HOVER_LIFT_FRACTION : 0;
+      f.group.userData.targetLift = hovered && !this.portId ? this.span * HOVER_LIFT_FRACTION : 0;
     }
     this.invalidate();
   }
@@ -504,8 +532,8 @@ export class Region3DScene implements SpatialScene, MapSurface {
     const w = Math.max(...pts.map((p) => p.x)) - Math.min(...pts.map((p) => p.x));
     const h = Math.max(...pts.map((p) => p.z)) - Math.min(...pts.map((p) => p.z));
     const { fov, aspect } = this.viewAspect;
-    const tanV = Math.tan((fov / 2) * DEG) * fill;
-    const tilt = TILT[this.level];
+    const tanV = Math.tan((fov / 2) * DEG) * fill * ((this.height - this.viewOffsetBottomPx) / this.height);
+    const tilt = this.tilt;
     // The tilted view foreshortens depth by cos(tilt); fit both axes.
     const d = Math.max(h * Math.cos(tilt) / 2 / tanV + (h / 2) * Math.sin(tilt) * 0.35, w / 2 / (tanV * aspect));
     const distance = planarToGlobeDistance(d);
@@ -514,7 +542,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
       scope,
       center,
       distance,
-      minDistance: planarToGlobeDistance(Math.max(this.span * 0.004, d * 0.06)),
+      minDistance: planarToGlobeDistance(this.portId ? Math.min(0.09, d * 0.06) : Math.max(this.span * 0.004, d * 0.06)),
       maxDistance: planarToGlobeDistance(Math.min(this.span * 1.6, Math.max(d * 2.2, this.span * 0.5))),
     };
   }
@@ -527,7 +555,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
     const goal: Orbit = {
       target: this.toWorld(preset.center.lat, preset.center.lon),
       distance: Math.min(this.span * 1.6, globeToPlanarDistance(preset.distance)),
-      polar: keepAngles ? from.polar : TILT[this.level],
+      polar: keepAngles ? from.polar : this.tilt,
       azimuth: keepAngles ? from.azimuth : 0,
     };
     this.controls.minDistance = Math.min(globeToPlanarDistance(preset.minDistance), goal.distance);
@@ -586,7 +614,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.applyOrbit({
       target: this.toWorld(preset.center.lat, preset.center.lon),
       distance: exact ? distance : distance * 1.4,
-      polar: exact ? TILT[this.level] : TILT[this.level] * 0.45,
+      polar: exact ? this.tilt : this.tilt * 0.45,
       azimuth: exact ? 0 : -0.16,
     });
   }
@@ -636,7 +664,8 @@ export class Region3DScene implements SpatialScene, MapSurface {
   isComfortablyInView(lat: number, lon: number, margin = 0.12): boolean {
     const s = this.project(lat, lon);
     const w = this.width - this.viewOffsetPx;
-    return s.visible && s.x > w * margin && s.x < w * (1 - margin) && s.y > this.height * margin && s.y < this.height * (1 - margin);
+    const h = this.height - this.viewOffsetBottomPx;
+    return s.visible && s.x > w * margin && s.x < w * (1 - margin) && s.y > h * margin && s.y < h * (1 - margin);
   }
 
   setRightInset(px: number, opts: { instant?: boolean } = {}): void {
@@ -653,8 +682,23 @@ export class Region3DScene implements SpatialScene, MapSurface {
     });
   }
 
+  /** Panels docked along the bottom (port schedule) shift the view centre up, like the inspector does sideways. */
+  setBottomInset(px: number, opts: { instant?: boolean } = {}): void {
+    const state = { v: this.viewOffsetBottomPx };
+    gsap.to(state, {
+      v: px,
+      duration: this.reducedMotion || opts.instant ? 0 : 0.18,
+      ease: 'power2.out',
+      onUpdate: () => {
+        this.viewOffsetBottomPx = state.v;
+        this.applyViewOffset();
+        this.invalidate();
+      },
+    });
+  }
+
   private applyViewOffset() {
-    if (this.viewOffsetPx > 0.5) this.camera.setViewOffset(this.width, this.height, this.viewOffsetPx / 2, 0, this.width, this.height);
+    if (this.viewOffsetPx > 0.5 || this.viewOffsetBottomPx > 0.5) this.camera.setViewOffset(this.width, this.height, this.viewOffsetPx / 2, this.viewOffsetBottomPx / 2, this.width, this.height);
     else this.camera.clearViewOffset();
     this.camera.updateProjectionMatrix();
   }
@@ -686,7 +730,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
   }
 
   get viewAspect() {
-    return { fov: this.camera.fov, aspect: (this.width - this.viewOffsetPx) / this.height };
+    return { fov: this.camera.fov, aspect: (this.width - this.viewOffsetPx) / (this.height - this.viewOffsetBottomPx) };
   }
 
   get pxToWorld() {
@@ -717,15 +761,45 @@ export class Region3DScene implements SpatialScene, MapSurface {
 
   project(lat: number, lon: number): ScreenPoint {
     if (!this.proj) return { x: -9999, y: -9999, visible: false };
-    const p = this.toWorld(lat, lon, this.topY * 1.02).project(this.camera);
+    const p = this.toWorld(lat, lon, this.anchorY).project(this.camera);
     return { x: ((p.x + 1) / 2) * this.width, y: ((1 - p.y) / 2) * this.height, visible: p.z > -1 && p.z < 1 };
   }
 
-  /** Overlay anchors sit just above the land tops so berths drawn inside coarse coastlines stay visible. */
+  /**
+   * Overlay anchors sit just above the land tops so berths drawn inside coarse coastlines stay visible; port twins
+   * float ships on the water.
+   */
   markerCenter(lat: number, lon: number): [number, number, number] {
     if (!this.proj) return [0, -1e6, 0];
     const w = this.proj.lonLatToWorld(lon, lat);
-    return [w.x, this.topY * 1.02, w.z];
+    return [w.x, this.anchorY, w.z];
+  }
+
+  private get anchorY() {
+    return this.portId ? 0.2 * UNITS_PER_METRE : this.topY * 1.02;
+  }
+
+  /** World position of a geographic point at a height in metres (host-built scene layers). */
+  geoToWorld(lat: number, lon: number, heightM = 0): THREE.Vector3 {
+    return this.toWorld(lat, lon, heightM * UNITS_PER_METRE);
+  }
+
+  addLayer(layer: PlanarSceneLayer): void {
+    this.layers.add(layer);
+    this.scene.add(layer.object);
+    this.invalidate();
+  }
+
+  removeLayer(layer: PlanarSceneLayer): void {
+    if (!this.layers.delete(layer)) return;
+    this.scene.remove(layer.object);
+    layer.dispose();
+    this.invalidate();
+  }
+
+  /** Land height in metres (port twins: true scale). */
+  get landHeightM() {
+    return this.topY / UNITS_PER_METRE;
   }
 
   linePosition(lat: number, lon: number): [number, number, number] {
@@ -770,7 +844,23 @@ export class Region3DScene implements SpatialScene, MapSurface {
     if (!ground) return null;
     const g = this.proj.worldToLonLat(ground.x, ground.z);
     const iso3 = hits[0]?.object.userData.iso3 as string | undefined;
-    return { lat: g.lat, lon: normalizeLon(g.lon), screenX: clientX - rect.left, screenY: clientY - rect.top, country: iso3 ? (this.features.find((f) => f.doc.iso3 === iso3)?.country ?? null) : null };
+    let berthId: string | undefined;
+    let nearest = Infinity;
+    for (const l of this.layers) {
+      const h = l.pick?.(this.raycaster);
+      if (h?.berthId && h.distance < nearest) {
+        nearest = h.distance;
+        berthId = h.berthId;
+      }
+    }
+    return {
+      lat: g.lat,
+      lon: normalizeLon(g.lon),
+      screenX: clientX - rect.left,
+      screenY: clientY - rect.top,
+      country: iso3 ? (this.features.find((f) => f.doc.iso3 === iso3)?.country ?? null) : null,
+      ...(berthId ? { berthId } : {}),
+    };
   }
 
   // ---- events & input ---------------------------------------------------------------------------------------------

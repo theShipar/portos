@@ -9,6 +9,20 @@ export interface PortosAdapter {
   vesselPoint(id: string): { x: number; y: number; visible: boolean } | null;
   vesselsNear(x: number, y: number, radius: number): string[];
   portPoint(id: string): { x: number; y: number; visible: boolean } | null;
+  berthPoint(id: string): { x: number; y: number; visible: boolean } | null;
+  twin(): {
+    portId: string;
+    sceneKey: string;
+    landHeightM: number;
+    moored: number;
+    terminals: number;
+    berths: number;
+    cranes: number;
+    containers: number;
+    anchorages: number;
+    conflicts: number;
+    selected: string | null;
+  } | null;
   loseContext(): void;
   spatialV2: boolean;
   director(): { phase: string; activeSceneKey: string | null; activeKind: string | null; activeFocusId: string | null; flights: number; cancelled: number; lastOutcome: string | null } | null;

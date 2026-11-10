@@ -12,6 +12,8 @@ import AppHeader from '@/components/shell/AppHeader.vue';
 import KpiRow from '@/components/shell/KpiRow.vue';
 import NoticeStack from '@/components/shell/NoticeStack.vue';
 import PortKpiRow from '@/components/shell/PortKpiRow.vue';
+import BerthCard from '@/features/port/BerthCard.vue';
+import BerthGantt from '@/features/port/BerthGantt.vue';
 import PortQueueShelf from '@/features/port/PortQueueShelf.vue';
 import IncidentQueue from '@/features/workflow/IncidentQueue.vue';
 import ScopeBreadcrumb from '@/components/shell/ScopeBreadcrumb.vue';
@@ -30,6 +32,12 @@ const nav = useNavigation();
 const header = ref<InstanceType<typeof AppHeader> | null>(null);
 const crumbs = ref<InstanceType<typeof ScopeBreadcrumb> | null>(null);
 const railOpen = computed(() => catalog.status === 'ready' && (view.replayOpen || clock.mode === 'replay'));
+/** Port-scope panels avoid the queue shelf (left) and the inspector (right). */
+const workspaceVars = computed(() => ({
+  '--shelf-w': snap.portView ? (view.queueShelfOpen ? '340px' : '220px') : '0px',
+  '--card-right': view.inspectorOpen && !view.sheetLayout ? 'calc(var(--inspector-w) + var(--map-control-gap))' : '0px',
+  '--gantt-right': view.inspectorOpen && !view.sheetLayout ? 'calc(var(--inspector-w) + 96px)' : '84px',
+}));
 
 useRouteSync();
 
@@ -69,7 +77,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
   <div class="shell">
     <a class="skip-link" href="#global-search">Skip to search</a>
     <AppHeader ref="header" />
-    <main class="workspace" :class="{ 'workspace--rail': railOpen, 'workspace--inspector': view.inspectorOpen }" aria-label="Operations map workspace">
+    <main class="workspace" :class="{ 'workspace--rail': railOpen, 'workspace--inspector': view.inspectorOpen }" :style="workspaceVars" aria-label="Operations map workspace">
       <p class="narrow-note" role="note">The map needs a window at least 768 px wide. Cases, search and the inspector still work here.</p>
       <MapWorkspace v-if="catalog.status === 'ready'" />
       <div v-if="catalog.status === 'ready'" class="overlay overlay--tl">
@@ -79,6 +87,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
         <PortQueueShelf v-if="snap.portView" />
         <IncidentQueue v-else />
       </div>
+      <BerthGantt v-if="catalog.status === 'ready' && snap.portTwin" />
+      <BerthCard v-if="catalog.status === 'ready' && snap.portTwin && view.berthId && view.viewMode === '3d'" />
       <EntityInspector v-if="catalog.status === 'ready'" />
       <ReplayRail v-if="railOpen" />
       <div v-if="catalog.status === 'loading' || catalog.status === 'idle'" class="state" role="status">

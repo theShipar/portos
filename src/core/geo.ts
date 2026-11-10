@@ -38,6 +38,14 @@ export function bearingDeg(a: GeoPoint, b: GeoPoint): number {
   return (Math.atan2(y, x) / DEG + 360) % 360;
 }
 
+/** Point `metres` from `p` along `bearing` (local flat-earth step; for harbour-scale offsets only). */
+export function offsetMeters(p: GeoPoint, bearing: number, metres: number): GeoPoint {
+  const b = (bearing * Math.PI) / 180;
+  const dLat = (metres * Math.cos(b)) / (EARTH_RADIUS_KM * 1000);
+  const dLon = (metres * Math.sin(b)) / (EARTH_RADIUS_KM * 1000 * Math.cos((p.lat * Math.PI) / 180));
+  return { lat: p.lat + (dLat * 180) / Math.PI, lon: normalizeLon(p.lon + (dLon * 180) / Math.PI) };
+}
+
 /** Linear lon/lat interpolation along the short way across the antimeridian (matches the fixture generator). */
 export function lerpGeo(a: GeoPoint, b: GeoPoint, t: number): GeoPoint {
   const dLon = normalizeLon(b.lon - a.lon);

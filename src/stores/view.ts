@@ -26,6 +26,10 @@ export const useViewStore = defineStore('view', () => {
 
   const scope = ref<Scope>({ level: 'earth' });
   const selection = ref<EntityRef | null>(null);
+  /** Port twin berth in focus (3D twin, 2D port map, berth Gantt); local to the port scope. */
+  const berthId = ref<string | null>(null);
+  /** Height of panels docked along the map's bottom edge (berth schedule); scenes keep their focus above it. */
+  const bottomInsetPx = ref(0);
   const hover = ref<EntityRef | null>(null);
   const inspectorTab = ref<InspectorTab>('overview');
   const incidentTab = ref<IncidentTab>('summary');
@@ -72,7 +76,13 @@ export const useViewStore = defineStore('view', () => {
   }
 
   function setScope(s: Scope) {
-    if (scopeKey(s) !== scopeKey(scope.value)) scope.value = s;
+    if (scopeKey(s) === scopeKey(scope.value)) return;
+    scope.value = s;
+    berthId.value = null;
+  }
+
+  function selectBerth(id: string | null) {
+    berthId.value = id;
   }
 
   function toggleLayer(id: LayerId, on?: boolean) {
@@ -87,6 +97,7 @@ export const useViewStore = defineStore('view', () => {
     layers.value = { ...DEFAULT_LAYERS };
     scope.value = { level: 'earth' };
     selection.value = null;
+    berthId.value = null;
     viewMode.value = '3d';
     kpiDrill.value = null;
     replayOpen.value = false;
@@ -102,6 +113,9 @@ export const useViewStore = defineStore('view', () => {
     scope,
     level,
     selection,
+    berthId,
+    selectBerth,
+    bottomInsetPx,
     hover,
     inspectorTab,
     incidentTab,

@@ -11,7 +11,7 @@ import { useCatalogStore } from '@/stores/catalog';
 import { useClockStore } from '@/stores/clock';
 import { useNoticeStore } from '@/stores/notices';
 import { useViewStore, type Scope } from '@/stores/view';
-import { routeForEntity, routeForScope, routeForScopeKeepingSelection, viewModeQuery } from './navigation';
+import { routeForEntity, routeForScope, routeForScopeKeepingSelection, twinPredicate, viewModeQuery } from './navigation';
 import { isOpsRoute, opsRoute, parseOpsLocation, portScope, sceneRefForScope, scopeFromSceneRef, type OpsLocation } from './opsLocation';
 
 const SELECTION_LABEL: Record<EntityRef['kind'], string> = {
@@ -100,7 +100,7 @@ export function useRouteSync() {
     view.select(loc.selection);
 
     const requested = loc.view;
-    view.viewMode = requested && supportsViewMode(scope, requested) ? requested : defaultViewMode(scope);
+    view.viewMode = requested && supportsViewMode(scope, requested) ? requested : defaultViewMode(scope, twinPredicate(c));
     view.kpiDrill = loc.kpi && (KPI_KEYS as string[]).includes(loc.kpi) ? (loc.kpi as KpiKey) : null;
     view.comparing = loc.panel === 'compare' && loc.selection?.kind === 'voyage';
     if (view.comparing) clock.pause();
@@ -150,13 +150,14 @@ const URL_TIME_DEBOUNCE_MS = 300;
 /** Navigation helpers that keep replay time and the scene in the URL. */
 export function useNavigation() {
   const router = useRouter();
+  const catalog = useCatalogStore();
   const view = useViewStore();
   const clock = useClockStore();
 
   const timeQuery = (): LocationQueryRaw => (clock.mode === 'replay' ? { time: clock.iso } : {});
   /** Selections inside a scope keep the current 3D/2D mode; scope changes fall back to the target's default. */
   const modeQuery = (): LocationQueryRaw => {
-    const q = viewModeQuery(view.scope, view.viewMode);
+    const q = viewModeQuery(view.scope, view.viewMode, twinPredicate(catalog.catalog));
     return q ? { view: q } : {};
   };
   const kpiQuery = (): LocationQueryRaw => (view.kpiDrill ? { kpi: view.kpiDrill } : {});
@@ -222,7 +223,7 @@ export function useNavigation() {
     setViewMode(mode: ViewMode) {
       if (!supportsViewMode(view.scope, mode) || mode === view.viewMode) return;
       return replaceQuery((q) => {
-        const v = viewModeQuery(view.scope, mode);
+        const v = viewModeQuery(view.scope, mode, twinPredicate(catalog.catalog));
         if (v) q.view = v;
         else delete q.view;
       });

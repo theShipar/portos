@@ -15,6 +15,8 @@ export interface SurfacePointerHit {
   screenX: number;
   screenY: number;
   country: Country | null;
+  /** Port twin berth under the pointer (port scenes only). */
+  berthId?: string;
 }
 
 export interface SurfaceEvents {
@@ -49,6 +51,8 @@ export interface MapSurface {
   readonly globeUnitScale: number;
   readonly flying: boolean;
   readonly motionReduced: boolean;
+  /** True-scale scenes (port twin) depth-test ships against land and structures instead of drawing them on top. */
+  readonly shipsDepthTested?: boolean;
   invalidate(): void;
   resize(): void;
   project(lat: number, lon: number, radius?: number): ScreenPoint;

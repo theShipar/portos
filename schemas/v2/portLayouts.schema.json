@@ -191,6 +191,9 @@
             "terminalId": {
               "type": "string"
             },
+            "yardContainers": {
+              "type": "integer"
+            },
             "yardDepthMeters": {
               "type": "integer"
             }
@@ -202,6 +205,7 @@
             "quayBearingDeg",
             "quayLine",
             "terminalId",
+            "yardContainers",
             "yardDepthMeters"
           ],
           "additionalProperties": false

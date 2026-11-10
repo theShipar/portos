@@ -39,7 +39,9 @@ import { InputRouter } from '@/spatial/InputRouter';
 import { OverlayProjectionAdapter } from '@/spatial/OverlayProjectionAdapter';
 import { CITIES } from '@/spatial/registry';
 import { EARTH_SCENE_KEY, EarthGlobeScene } from '@/spatial/scenes/EarthGlobeScene';
-import { planarSceneKey, Region3DScene, sceneKindForLevel, type PlanarLevel } from '@/spatial/scenes/Region3DScene';
+import { planarSceneKey, planarToGlobeDistance, portSceneKey, Region3DScene, sceneKindForLevel, type PlanarLevel } from '@/spatial/scenes/Region3DScene';
+import { PortTwinLayer } from '@/spatial/scenes/portTwin/PortTwinLayer';
+import { BERTH_STATUS_LABEL, buildPortTwin, TWIN_CAPTION, type PortTwinModel } from '@/selectors/portTwin';
 import { SpatialDirector } from '@/spatial/SpatialDirector';
 import type { SceneTarget, SpatialScene } from '@/spatial/types';
 import { boundsPreset, distanceToFitBounds, EARTH_PRESET, EARTH_RADIUS, pointPreset, regionPreset, type CameraPose, type CameraPreset } from './earth/camera';
@@ -71,13 +73,28 @@ const surface = shallowRef<MapSurface | null>(null);
 const overlay = shallowRef<MaritimeOverlay | null>(null);
 const overlays = new Map<MapSurface, MaritimeOverlay>();
 const surfaceUnsubs = new Map<MapSurface, (() => void)[]>();
-const planarInfo = ref<{ illustrative: boolean } | null>(null);
+const planarInfo = ref<{ illustrative: boolean; twinCaption: string | null } | null>(null);
+/** Port twin layers by port scene; the coarse frame is fixed per port, state follows the clock and berth focus. */
+const twinLayers = new Map<Region3DScene, { portId: string; layer: PortTwinLayer; coreBounds: Bounds }>();
+const twinVersion = ref(0);
+const berthLabelEls = new Map<string, HTMLElement>();
+const anchorageLabelEls = new Map<string, HTMLElement>();
 const compassEl = ref<HTMLElement | null>(null);
 const scaleBarEl = ref<HTMLElement | null>(null);
 const scaleTextEl = ref<HTMLElement | null>(null);
 const tooltip = ref<{ x: number; y: number; title: string; lines: string[] } | null>(null);
 const labelEls = new Map<string, HTMLElement>();
 const portLabelEls = new Map<string, HTMLElement>();
+const activeTwin = computed(() => {
+  void twinVersion.value;
+  const surf = surface.value;
+  const t = surf instanceof Region3DScene ? twinLayers.get(surf) : undefined;
+  const model = snapStore.portTwin;
+  return t && model && model.portId === t.portId ? { ...t, model } : null;
+});
+/** Berth and anchorage labels on the port twin (3D only; the 2D port map draws its own). */
+const twinBerths = computed(() => activeTwin.value?.model.berths ?? []);
+const twinAnchorages = computed(() => activeTwin.value?.model.anchorages ?? []);
 const cityLabelEls = new Map<string, HTMLElement>();
 const clusterEls = new Map<string, HTMLElement>();
 const clusterCell = ref(0);
@@ -178,6 +195,8 @@ function presetFor(s: Scope, surf: MapSurface): CameraPreset {
   if (s.level === 'port') {
     const p = c.byId.port.get(s.portId)!;
     const e = catalog.registry?.get(p.portId);
+    const twin = planar ? twinLayers.get(planar) : undefined;
+    if (twin && twin.portId === p.portId) return planar!.fitPreset(p.portId, 'port', twin.coreBounds, 0.94);
     return planar && e ? planar.fitPreset(p.portId, 'port', e.bbox, 0.7) : pointPreset(p.portId, 'port', p.location, 0.7);
   }
   if (s.level === 'country' || s.level === 'city') {
@@ -196,8 +215,8 @@ function highlightFor(s: Scope, surf?: MapSurface): string[] | null {
 }
 
 /**
- * Regions, countries and cities render as extruded scenes; a port shows inside its city (or its region) until the
- * port twin lands. Entries without built geometry fall back to the globe.
+ * Regions, countries and cities render as extruded scenes. Ports with a layout open their twin (built on the city
+ * geometry); other ports show inside their city or region. Entries without built geometry fall back to the globe.
  */
 function targetForScope(s: Scope): SceneTarget {
   const focusId = scopeFocusId(s);
@@ -207,6 +226,7 @@ function targetForScope(s: Scope): SceneTarget {
   if (s.level === 'region' || s.level === 'country' || s.level === 'city') level = s.level;
   else if (s.level === 'port') {
     const city = reg?.cityOfPort(s.portId);
+    if (city?.geometryPath && reg?.get(s.portId)?.availableViews[0] === 'port3d') return { kind: 'port3d', sceneKey: portSceneKey(s.portId), focusId };
     level = city ? 'city' : 'region';
     id = city ? city.id : s.regionId;
   }
@@ -330,6 +350,18 @@ function onHover(hit: SurfacePointerHit | null, e: PointerEvent) {
     canvas.style.cursor = '';
     return;
   }
+  const berth = hit.berthId ? activeTwin.value?.model.berths.find((b) => b.berthId === hit.berthId) : undefined;
+  if (berth) {
+    sc.setHoverHighlight(null);
+    canvas.style.cursor = 'pointer';
+    const occupant = berth.occupantVesselId ? (c.byId.vessel.get(berth.occupantVesselId)?.name ?? berth.occupantVesselId) : null;
+    setTooltip(x, y, `${berth.name} · ${berth.terminalName}`, [
+      `${BERTH_STATUS_LABEL[berth.status]}${occupant ? ` · ${occupant}` : ''}`,
+      `${Math.round(berth.lengthM)} m quay · ${berth.craneCount} crane${berth.craneCount === 1 ? '' : 's'} (illustrative)`,
+      'Click to focus berth',
+    ]);
+    return;
+  }
   const hz = hazardAt(hit.lon, hit.lat);
   if (hz) {
     sc.setHoverHighlight(null);
@@ -429,6 +461,11 @@ function onClick(hit: SurfacePointerHit | null, e: PointerEvent) {
     return;
   }
   if (!hit) return;
+  if (hit.berthId) {
+    tooltip.value = null;
+    view.selectBerth(hit.berthId);
+    return;
+  }
   const hz = hazardAt(hit.lon, hit.lat);
   if (hz) {
     tooltip.value = null;
@@ -574,8 +611,11 @@ function onFrame(_now: number, dirty: boolean) {
   for (const r of regions.value) place(labelEls.get(r.regionId), sc, r.center.lat, r.center.lon, atEarth, 0, atEarth ? taken : undefined);
   for (const ct of scopeCities.value) place(cityLabelEls.get(ct.id), sc, ct.center.lat, ct.center.lon, true, 0, taken, -22);
   for (const p of scopePorts.value) place(portLabelEls.get(p.portId), sc, p.point.lat, p.point.lon, true, 9, taken);
+  for (const b of twinBerths.value) place(berthLabelEls.get(b.berthId), sc, b.center.lat, b.center.lon, true, 0, b.berthId === view.berthId ? undefined : taken, 14);
+  for (const a of twinAnchorages.value) place(anchorageLabelEls.get(a.anchorageId), sc, a.labelPoint.lat, a.labelPoint.lon, true, 0, taken);
   for (const cl of clusters.value.clusters) placeBadge(clusterEls.get(cl.id), sc, cl.center.lat, cl.center.lon, taken);
 }
+
 
 async function init() {
   if (!host.value) return;
@@ -664,6 +704,7 @@ function bridgeHost(globe: EarthScene, st: HandoffStage, surfaceOf: (s: SpatialS
     prepare: (surf) => {
       surf.setReducedMotion(session.reducedMotion);
       surf.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0, { instant: true });
+      if (surf instanceof Region3DScene) surf.setBottomInset(surf.portId ? view.bottomInsetPx : 0, { instant: true });
       surf.setRegionHighlight(highlightFor(pendingNav.scope, surf));
       surf.setHoverHighlight(null);
       overlays.get(surf)?.update();
@@ -698,10 +739,14 @@ function onKeydown(e: KeyboardEvent) {
   router.back();
 }
 
-/** Extruded region / country / city scene for a director target; it shares the globe's renderer and input. */
+/**
+ * Extruded region / country / city scene (or a port twin on its city geometry) for a director target; it shares the
+ * globe's renderer and input.
+ */
 function createPlanarScene(t: SceneTarget, globe: EarthScene): SpatialScene {
   const entryId = t.sceneKey.slice(t.sceneKey.indexOf(':') + 1);
-  const entry = catalog.registry?.get(entryId);
+  const portId = t.kind === 'port3d' ? entryId : null;
+  const entry = portId ? catalog.registry?.cityOfPort(portId) : catalog.registry?.get(entryId);
   if (!entry || !host.value) throw new Error(`No geography for ${t.sceneKey}`);
   const s = markRaw(
     new Region3DScene({
@@ -710,13 +755,46 @@ function createPlanarScene(t: SceneTarget, globe: EarthScene): SpatialScene {
       host: host.value,
       projection,
       reducedMotion: session.reducedMotion,
+      port: portId ? { portId } : undefined,
       focus: (_target, _restore, surf) => (nextFlight ? nextFlight(surf) : Promise.resolve(true)),
-      onBuilt: (surf) => bindSurface(surf, markRaw(new MaritimeOverlay(surf, catalog.catalog?.vessels.length ?? 512))),
+      onBuilt: (surf) => {
+        if (portId) attachTwin(surf, portId);
+        bindSurface(surf, markRaw(new MaritimeOverlay(surf, catalog.catalog?.vessels.length ?? 512)));
+      },
       onDispose: unbindSurface,
     }),
   );
   if (input) s.attachInput(input);
   return s;
+}
+
+function attachTwin(surf: Region3DScene, portId: string) {
+  const c = catalog.catalog;
+  const model = c ? buildPortTwin(c, portId, clock.timeMs) : null;
+  if (!model) return;
+  const layer = markRaw(new PortTwinLayer(model, (lat, lon, h) => surf.geoToWorld(lat, lon, h)));
+  surf.addLayer(layer);
+  twinLayers.set(surf, { portId, layer, coreBounds: model.coreBounds });
+  twinVersion.value++;
+  syncTwin(surf, model);
+}
+
+function syncTwin(surf: Region3DScene, model: PortTwinModel | null) {
+  const t = twinLayers.get(surf);
+  if (!t || !model || model.portId !== t.portId) return;
+  t.layer.setState(model, view.berthId);
+  surf.invalidate();
+}
+
+/** Berth focus from any source (3D pick, label, Gantt row, 2D card) frames the berth on the twin. */
+function focusBerth(berthId: string | null) {
+  const surf = surface.value;
+  const twin = activeTwin.value;
+  if (!(surf instanceof Region3DScene) || !twin) return;
+  syncTwin(surf, twin.model);
+  const b = berthId ? twin.model.berths.find((x) => x.berthId === berthId) : null;
+  if (b && !surf.isComfortablyInView(b.center.lat, b.center.lon, 0.2)) surf.focusPoint(b.center.lat, b.center.lon, { maxDistance: planarToGlobeDistance(1.6) });
+  else if (b && surf.equivalentDistance > planarToGlobeDistance(3.2)) surf.focusPoint(b.center.lat, b.center.lon, { maxDistance: planarToGlobeDistance(1.6) });
 }
 
 /** Every surface gets its own overlay fed from the same selectors; only the active one reacts to input. */
@@ -745,6 +823,7 @@ function bindSurface(surf: MapSurface, ov: MaritimeOverlay) {
 }
 
 function unbindSurface(surf: MapSurface) {
+  if (surf instanceof Region3DScene && twinLayers.delete(surf)) twinVersion.value++;
   surfaceUnsubs.get(surf)?.forEach((u) => u());
   surfaceUnsubs.delete(surf);
   overlays.get(surf)?.dispose();
@@ -774,7 +853,11 @@ function setActiveSurface(surf: MapSurface) {
   tooltip.value = null;
   surf.setReducedMotion(session.reducedMotion);
   surf.setRightInset(view.inspectorOpen && !view.sheetLayout ? inspectorInset() : 0, { instant: true });
-  planarInfo.value = surf instanceof Region3DScene ? { illustrative: surf.illustrativeBounds } : null;
+  planarInfo.value = surf instanceof Region3DScene ? { illustrative: surf.illustrativeBounds && !surf.portId, twinCaption: twinLayers.has(surf) ? TWIN_CAPTION : null } : null;
+  if (surf instanceof Region3DScene) {
+    syncTwin(surf, snapStore.portTwin);
+    surf.setBottomInset(surf.portId ? view.bottomInsetPx : 0, { instant: true });
+  }
   labelsHidden.value = overlayHidden.has(surf);
   surf.invalidate();
 }
@@ -822,6 +905,14 @@ function exposeTestAdapter(sc: EarthScene) {
           return !!p?.visible && Math.hypot(p.x - x, p.y - y) <= radius;
         })
         .map((m) => m.vesselId),
+    twin: () => {
+      const t = activeTwin.value;
+      return t ? { portId: t.portId, sceneKey: (surface.value as Region3DScene).key, landHeightM: (surface.value as Region3DScene).landHeightM, moored: t.model.moored.length, ...t.layer.stats() } : null;
+    },
+    berthPoint: (id: string) => {
+      const b = activeTwin.value?.model.berths.find((x) => x.berthId === id);
+      return b ? pointOf(b.center.lat, b.center.lon) : null;
+    },
     portPoint: (id: string) => {
       const m = ports.value.find((p) => p.portId === id);
       return m ? pointOf(m.point.lat, m.point.lon) : null;
@@ -892,6 +983,23 @@ watch(
   },
 );
 watch(markers, (m) => eachOverlay((ov) => ov.setVessels(m, clock.timeMs)));
+watch(
+  () => snapStore.portTwin,
+  (model) => {
+    for (const surf of twinLayers.keys()) syncTwin(surf, model);
+  },
+);
+watch(
+  () => view.berthId,
+  (id) => focusBerth(id),
+);
+watch(
+  () => view.bottomInsetPx,
+  (px) => {
+    const surf = surface.value;
+    if (surf instanceof Region3DScene && surf.portId) surf.setBottomInset(px);
+  },
+);
 watch(ports, (p) => eachOverlay((ov) => ov.setPorts(p)));
 watch(hazardKey, () => eachOverlay((ov) => ov.setHazards(hazards.value)));
 watch(densityKey, () => eachOverlay((ov) => ov.setDensity(density.value)));
@@ -1021,6 +1129,29 @@ defineExpose({ resetCamera, scene, surface, overlay });
         {{ ct.label }} <span aria-hidden="true">›</span>
       </button>
       <button
+        v-for="b in twinBerths"
+        :key="b.berthId"
+        :ref="refSetter(berthLabelEls, b.berthId)"
+        type="button"
+        class="berth-label"
+        :class="[`berth-label--${b.status}`, { 'berth-label--active': b.berthId === view.berthId, 'berth-label--conflict': b.timeline.conflicts.length > 0 }]"
+        :aria-label="`Focus berth ${b.name}, ${BERTH_STATUS_LABEL[b.status]}`"
+        :aria-pressed="b.berthId === view.berthId"
+        :data-testid="`berth-label-${b.berthId}`"
+        @click="view.selectBerth(b.berthId)"
+      >
+        {{ b.name }}
+      </button>
+      <span
+        v-for="a in twinAnchorages"
+        :key="a.anchorageId"
+        :ref="refSetter(anchorageLabelEls, a.anchorageId)"
+        class="anchorage-label"
+        :data-testid="`anchorage-label-${a.anchorageId}`"
+      >
+        {{ a.name }}
+      </span>
+      <button
         v-for="r in regions"
         :key="r.regionId"
         :ref="refSetter(labelEls, r.regionId)"
@@ -1037,6 +1168,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
     </div>
     <div v-if="state === 'ready' && planarInfo" v-show="active" class="planar-hud" data-testid="planar-hud">
       <span v-if="planarInfo.illustrative" class="planar-hud__chip" data-testid="illustrative-bounds">Illustrative operational bounds · not a border</span>
+      <span v-if="planarInfo.twinCaption" class="planar-hud__chip" data-testid="twin-caption">{{ planarInfo.twinCaption }}</span>
       <div class="planar-hud__row">
         <span class="planar-hud__north" role="img" aria-label="North arrow" data-testid="north-arrow">
           <svg ref="compassEl" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
@@ -1140,6 +1272,8 @@ defineExpose({ resetCamera, scene, surface, overlay });
 .region-label,
 .port-label,
 .city-label,
+.berth-label,
+.anchorage-label,
 .cluster {
   position: absolute;
   left: 0;
@@ -1185,6 +1319,64 @@ defineExpose({ resetCamera, scene, surface, overlay });
 .city-label:focus-visible {
   border-color: rgba(233, 103, 34, 0.7);
   background: rgba(6, 26, 40, 0.95);
+}
+.berth-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border: 1px solid rgba(207, 225, 234, 0.28);
+  border-left: 3px solid #a6a9b4;
+  border-radius: var(--radius-chip);
+  background: rgba(6, 26, 40, 0.78);
+  color: rgba(247, 250, 252, 0.92);
+  font-size: var(--text-11);
+  font-weight: 600;
+  line-height: 15px;
+}
+.berth-label--occupied {
+  border-left-color: #5aadb7;
+}
+.berth-label--reserved {
+  border-left-color: #8c98a1;
+}
+.berth-label--free {
+  border-left-color: #2e9c84;
+}
+.berth-label--unavailable {
+  border-left-color: #c63b3b;
+  color: rgba(247, 250, 252, 0.7);
+}
+.berth-label--conflict::after {
+  content: '!';
+  display: inline-grid;
+  place-items: center;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d49a2e;
+  color: #13191e;
+  font-size: 9px;
+  font-weight: 700;
+}
+.berth-label:hover,
+.berth-label:focus-visible,
+.berth-label--active {
+  border-color: rgba(230, 106, 45, 0.85);
+  background: rgba(6, 26, 40, 0.96);
+}
+.berth-label--active {
+  z-index: 2;
+  box-shadow: 0 0 0 2px rgba(230, 106, 45, 0.35);
+}
+.anchorage-label {
+  padding: 1px 6px;
+  border-radius: var(--radius-chip);
+  background: rgba(6, 26, 40, 0.5);
+  color: rgba(207, 225, 234, 0.8);
+  font-size: var(--text-11);
+  font-style: italic;
+  pointer-events: none;
 }
 .port-label {
   padding: 1px 5px;

@@ -150,7 +150,7 @@ export class MaritimeOverlay {
     this.group.name = 'maritime-overlay';
     scene.overlay.add(this.group);
 
-    if (this.planar) {
+    if (this.planar && !scene.shipsDepthTested) {
       // Screen-sized ships are far larger than true scale at region zoom; extruded coast must not swallow them.
       const reset = new THREE.Mesh(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute([0, 0, 0, 0, 0, 0, 0, 0, 0], 3)), new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false }));
       reset.renderOrder = RENDER_ORDER.depthReset;
@@ -383,7 +383,7 @@ export class MaritimeOverlay {
       if (hovered || pinned) col.lerp(new THREE.Color('#ffffff'), 0.18);
       const model = modelKeyOf(m.vesselType);
       const state = motionStateOf(m.navStatus, m.sogKn);
-      const headingDeg = displayHeadingDeg({ vesselId: m.vesselId, cogDeg: m.cogDeg, state }, this.sceneTimeMs);
+      const headingDeg = displayHeadingDeg({ vesselId: m.vesselId, cogDeg: m.cogDeg, state, berthHeadingDeg: m.berthHeadingDeg }, this.sceneTimeMs);
       const heading = headingDeg * DEG + (this.planar ? this.scene.headingOffset(m.point.lat, m.point.lon) : 0);
       const wake = wakeLength(state, m.sogKn);
       const write = (b: InstanceBuffers, k: number) => {

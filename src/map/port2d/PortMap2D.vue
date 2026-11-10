@@ -10,6 +10,7 @@ import { trackUntil } from '@/engines/tracks';
 import { useNavigation } from '@/router/useRouteSync';
 import { buildHazards, buildPortMarkers, buildRouteLines, describeVesselMarker, focusForSelection, TONE_LABEL, TONE_RANK, type MarkerTone } from '@/selectors/mapLayers';
 import { BERTH_STATUS_LABEL, QUEUE_STATUS_LABEL } from '@/selectors/port';
+import { berthCardView } from '@/selectors/berthGantt';
 import { useCatalogStore } from '@/stores/catalog';
 import { useClockStore } from '@/stores/clock';
 import { useSessionStore } from '@/stores/session';
@@ -60,6 +61,7 @@ const focus = computed(() => (c.value && snapStore.snapshot ? markRaw(focusForSe
 const selectedVesselId = computed(() => focus.value?.vesselIds[0] ?? null);
 const selectedRow = computed(() => vm.value?.queue.find((q) => q.vesselId === selectedVesselId.value) ?? null);
 const highlightBerthId = computed(() => {
+  if (view.berthId) return view.berthId;
   const id = selectedVesselId.value;
   if (!id || !vm.value) return null;
   return selectedRow.value?.berthId ?? vm.value.berths.find((b) => b.occupantVesselId === id || b.scheduledVesselId === id)?.berthId ?? null;
@@ -350,6 +352,7 @@ function anchorFor(kind: CardKind, id: string) {
 function openCard(kind: CardKind, id: string) {
   tooltip.value = null;
   card.value = { kind, id, x: 0, y: 0 };
+  if (kind === 'berth' && view.berthId !== id) view.selectBerth(id);
   positionCard();
   nextTick(() => {
     positionCard();
@@ -358,8 +361,19 @@ function openCard(kind: CardKind, id: string) {
 }
 
 function closeCard() {
+  if (card.value?.kind === 'berth') view.selectBerth(null);
   card.value = null;
 }
+
+/** Berth focus is shared with the 3D twin and the berth schedule. */
+watch(
+  () => view.berthId,
+  (id) => {
+    if (id && (card.value?.kind !== 'berth' || card.value.id !== id) && vm.value?.berths.some((b) => b.berthId === id)) openCard('berth', id);
+    else if (!id && card.value?.kind === 'berth') card.value = null;
+  },
+  { immediate: true },
+);
 
 function positionCard() {
   const m = map.value;
@@ -593,6 +607,7 @@ async function init() {
     nextTick(() => {
       placeLabels();
       ensureSelectionVisible();
+      positionCard();
     });
     emit('ready');
   });
@@ -645,6 +660,8 @@ onBeforeUnmount(() => {
 });
 
 const cardBerth = computed(() => (card.value?.kind === 'berth' ? (vm.value?.berths.find((b) => b.berthId === card.value!.id) ?? null) : null));
+/** Twin ports: next window and overlaps come from the DCSA berth timeline (same source as the 3D card and Gantt). */
+const cardTwin = computed(() => (cardBerth.value && c.value && snapStore.portTwin ? berthCardView(c.value, snapStore.portTwin, cardBerth.value.berthId) : null));
 const cardTerminal = computed(() => (card.value?.kind === 'terminal' ? (vm.value?.terminals.find((t) => t.terminalId === card.value!.id) ?? null) : null));
 const cardAnchorage = computed(() => (card.value?.kind === 'anchorage' ? (vm.value?.anchorages.find((a) => a.anchorageId === card.value!.id) ?? null) : null));
 const anchorageRows = computed(() => {
@@ -755,8 +772,18 @@ defineExpose({ getView, resetView, map });
             <button v-if="cardBerth.occupantVesselId" type="button" class="linkish" @click="openVessel(cardBerth.occupantVesselId)">{{ cardBerth.occupantName }}</button>
             <span v-else>—</span>
           </dd>
-          <dt>Next scheduled</dt>
-          <dd>
+          <template v-if="cardTwin">
+            <dt>Next</dt>
+            <dd data-testid="map-card-next">
+              <template v-if="cardTwin.next">
+                <button type="button" class="linkish" @click="openVessel(cardTwin.next.vesselId)">{{ cardTwin.next.name }}</button>
+                <span class="m2d-card__sub num">{{ cardTwin.next.basisLabel }} {{ cardTwin.next.atUtc }}</span>
+              </template>
+              <span v-else>—</span>
+            </dd>
+          </template>
+          <dt v-if="!cardTwin">Next scheduled</dt>
+          <dd v-if="!cardTwin">
             <template v-if="cardBerth.scheduledVesselId">
               <button type="button" class="linkish" @click="openVessel(cardBerth.scheduledVesselId)">{{ cardBerth.scheduledName }}</button>
               <span class="m2d-card__sub num">{{ formatUtc(cardBerth.scheduledWindowStartUtc) }} · {{ formatLocal(cardBerth.scheduledWindowStartUtc, tz) }}</span>
@@ -764,6 +791,12 @@ defineExpose({ getView, resetView, map });
             <span v-else>—</span>
           </dd>
         </dl>
+        <div v-if="cardTwin?.conflicts.length" class="m2d-card__conflicts" data-testid="map-card-conflicts">
+          <p class="m2d-card__kicker">Overlap · not yet validated</p>
+          <ul class="m2d-card__list">
+            <li v-for="x in cardTwin.conflicts" :key="x.key">{{ x.text }}</li>
+          </ul>
+        </div>
         <template v-if="cardBerth.linkedCalls.length">
           <p class="m2d-card__kicker">Linked calls · next 7 days</p>
           <ul class="m2d-card__list">
@@ -951,6 +984,12 @@ defineExpose({ getView, resetView, map });
 }
 .m2d-tip strong {
   color: #f7fafc;
+}
+.m2d-card__conflicts {
+  padding: 6px 8px;
+  border-radius: var(--radius-input);
+  background: rgba(212, 154, 46, 0.12);
+  border: 1px solid rgba(182, 123, 23, 0.45);
 }
 .m2d-card {
   position: absolute;

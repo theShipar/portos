@@ -5,6 +5,7 @@ import { getSnapshotAt, type Snapshot, type WorkflowOverlay } from '@/engines/sn
 import { buildVesselMarkers, type VesselMarker } from '@/selectors/mapLayers';
 import { drillVesselIds } from '@/selectors/kpiDrill';
 import { buildPortViewModel, type PortViewModel } from '@/selectors/port';
+import { buildPortTwin, type PortTwinModel } from '@/selectors/portTwin';
 import { useAssumptionStore } from './assumptions';
 import { useCatalogStore } from './catalog';
 import { useClockStore } from './clock';
@@ -69,5 +70,14 @@ export const useSnapshotStore = defineStore('snapshot', () => {
     return markRaw(markers.value.filter((m) => ids.has(m.vesselId) || m.vesselId === keep));
   });
 
-  return { snapshot, nowSnapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView };
+  /** Port twin (layout, berth timelines, conflicts) for the port in scope, when it has a layout. */
+  const portTwin = computed<PortTwinModel | null>(() => {
+    const c = catalog.catalog;
+    const s = view.scope;
+    if (!c || !snapshot.value || s.level !== 'port') return null;
+    const twin = buildPortTwin(c, s.portId, snapshot.value.timeMs);
+    return twin ? markRaw(twin) : null;
+  });
+
+  return { snapshot, nowSnapshot, globalKpis, kpis, markers, mapMarkers, activeDrill, portView, portTwin };
 });

@@ -314,6 +314,8 @@ export interface LayoutTerminal {
   quayLine: GeoPoint[];
   landSide: 'north' | 'east' | 'south' | 'west';
   yardDepthMeters: number;
+  /** Declared simulated box count drawn in the yard (not inferred from capacity). */
+  yardContainers: number;
   berths: LayoutBerth[];
 }
 

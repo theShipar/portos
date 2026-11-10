@@ -406,3 +406,42 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
   the QA page. Playwright runs at most 4 workers, and the wall-clock handoff gate runs as a dependent
   `chromium-timing` project after the rest of the suite, because SwiftShader renders on the CPU and parallel
   browsers starve its frame loop.
+
+## D-035 Port twin as a Region3DScene variant, DCSA berth timeline, berth Gantt
+
+- **Context:** spec 07 asks for a Singapore port twin with berths, cranes, yard, anchorage and a berth schedule that
+  keeps actual, planned and forecast apart, plus procedural twins for Genoa and Rotterdam and a 3D ↔ 2D switch that
+  keeps time and selection.
+- **Decision:**
+  - *Scene:* `port3d` is a `Region3DScene` variant (`opts.port`) on the port's city GeoDoc, not a separate scene
+    class. Land is extruded to a true 3 m, the ocean sits at −1.5 m, ships ride at 0.2 m and are depth-tested
+    against land (`shipsDepthTested`, so the overlay skips its depth-reset mesh), the camera tilts to 0.95 rad, and
+    the default frame covers the terminals within 6 km plus the waiting-anchorage vertices (margin 25 % of the
+    extent, clamped to 600–1,500 m). The scene exposes `geoToWorld`, `addLayer` / `removeLayer` (a
+    `PlanarSceneLayer` with optional `pick` and `update`), `landHeightM` and `setBottomInset`.
+  - *Twin layer* (`src/spatial/scenes/portTwin/`): quay decks, apron, berth strips coloured by status, ship-to-shore
+    cranes, and yard blocks filled 7 rows × 18 bays at a typical 2.5 tiers (max 5) up to the terminal's declared
+    `yardContainers`. Berths are picked through invisible proxy boxes. Cranes are static.
+  - *Which ports:* any port with a `portLayouts` entry opens in 3D by default (`defaultViewMode(scope, hasTwin)` with
+    `twinPredicate(catalog)`); ports without one keep 2D. Singapore is the authored twin; Genoa and Rotterdam use
+    the procedural layout from the fixture.
+  - *Berth timeline engine* (`src/engines/berthTimeline.ts`, pure): DCSA-style milestones count only once recorded
+    (`recordedAtUtc ≤ t`), and actuals only once they happened, so replay never leaks later plans. Bars are actual
+    (solid), planned (hatched) and forecast (dashed), never merged; requested arrivals are marks. Conflicts are
+    computed per basis: two planned windows overlapping within the larger buffer (`planned`), or an estimate running
+    into the next window (`forecast`). Every conflict carries `validated: false` and the UI says "not yet validated",
+    because draft, tide, services and berth policy are not modelled.
+  - *Moored poses:* a ship alongside a twin berth is drawn parallel to the quay, offset seaward by half its beam
+    (`mooredPosesAt`), on both the 3D twin and the 2D map.
+  - *UI:* `BerthGantt` (24 / 48 / 72 h windows, now line, conflict count) and `BerthCard` (3D only). Berth focus
+    lives in `view.berthId` and syncs the 3D strips and labels, the card, the 2D map card and the Gantt row. The
+    Gantt reports its height as `view.bottomInsetPx` and the port camera shifts by it. While an inspector is open
+    on desktop the Gantt folds to its header (overlap count still visible); the user can reopen it, and it reopens
+    when the inspector closes.
+  - *Fixture:* each layout terminal declares `yardContainers` (Singapore West 2,400, Central 2,000, East 1,600). The
+    validator rejects a terminal without one; the box count is declared, never inferred from capacity.
+- **Consequences:** coarse city coastline under true-scale terminals means the twin is illustrative only (caption
+  "Illustrative terminal configuration · Simulated · not for navigation"). The incident investigation view at a
+  twin port now opens in 3D, so the 06-investigation and 04-singapore-port baselines were re-recorded. The
+  journey test's 3D click now targets the ship alongside East Berth 1, since VSL-0001's anchorage lies outside the
+  twin's default frame.

@@ -34,6 +34,7 @@
         ],
         "landSide": "north",
         "yardDepthMeters": 420,
+        "yardContainers": 2400,
         "berths": [
           {
             "berthId": "BRH-SIN-W-1",
@@ -105,6 +106,7 @@
         ],
         "landSide": "north",
         "yardDepthMeters": 420,
+        "yardContainers": 2000,
         "berths": [
           {
             "berthId": "BRH-SIN-C-1",
@@ -164,6 +166,7 @@
         ],
         "landSide": "north",
         "yardDepthMeters": 420,
+        "yardContainers": 1600,
         "berths": [
           {
             "berthId": "BRH-SIN-E-1",
@@ -309,6 +312,7 @@
         ],
         "landSide": "east",
         "yardDepthMeters": 260,
+        "yardContainers": 600,
         "berths": [
           {
             "berthId": "BRH-RTM-1",
@@ -419,6 +423,7 @@
         ],
         "landSide": "east",
         "yardDepthMeters": 260,
+        "yardContainers": 600,
         "berths": [
           {
             "berthId": "BRH-GOA-1",

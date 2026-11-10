@@ -848,6 +848,9 @@ def gen_v2(data, ctx, seed):
                        'sourceType': 'synthetic-v2-keyframes'})
 
     # ---------------- port twin layouts ----------------
+    # Declared simulated yard box counts (drawn as instanced stacks); never inferred from TEU capacity.
+    yard_containers = {'TRM-SIN-W': 2400, 'TRM-SIN-C': 2000, 'TRM-SIN-E': 1600}
+
     def terminal_layout(t, quay_depth_m, cranes):
         bpts = [berth_map[b]['location'] for b in t['berthIds']]
         bearing = berth_bearing(bpts)
@@ -858,7 +861,7 @@ def gen_v2(data, ctx, seed):
                                'lengthMeters': 300 + 40 * ((k + len(bid)) % 3), 'depthMeters': round(quay_depth_m + 0.5 * (k % 3), 1),
                                'craneCount': 0 if b['status'] == 'unavailable' else cranes - (k % 2), 'constraintsValidated': False})
         return {'terminalId': t['terminalId'], 'name': t['name'], 'quayBearingDeg': bearing, 'quayLine': bpts, 'landSide': 'north' if t['portId'] == 'PRT-SIN' else 'east',
-                'yardDepthMeters': 420 if t['portId'] == 'PRT-SIN' else 260, 'berths': berths_out}
+                'yardDepthMeters': 420 if t['portId'] == 'PRT-SIN' else 260, 'yardContainers': yard_containers.get(t['terminalId'], 600), 'berths': berths_out}
 
     terminals = {t['terminalId']: t for t in data['terminals.json']}
     layouts = [{
@@ -895,6 +898,9 @@ def gen_v2(data, ctx, seed):
             continue
         berthed = parse(c['estimatedBerthUtc'])
         dep = berthed + timedelta(hours=rng.randint(20, 34))
+        if dep <= ANCHOR + timedelta(hours=2):
+            # Still alongside at the anchor, so the planned departure lies ahead (deterministic, no extra draws).
+            dep = ANCHOR + timedelta(hours=3 + (berthed.hour * 7 + berthed.day) % 16)
         free_at[c['berthId']] = dep
         bookings.append({'bookingId': None, 'portCallId': c['portCallId'], 'vesselId': c['vesselId'], 'berthId': c['berthId'], 'terminalId': c['terminalId'],
                          'status': 'at_berth', 'bufferMinutes': buffer_min,
