@@ -52,7 +52,7 @@ test.describe('Failure paths', () => {
     await page.addInitScript(() => {
       if (sessionStorage.getItem('__corrupt')) return;
       sessionStorage.setItem('__corrupt', '1');
-      localStorage.setItem('portos:workflow:v1', '{not json');
+      localStorage.setItem('portos:workflow:v2', '{not json');
       localStorage.setItem('portos:assumptions:v1', '{"version":99}');
     });
     await page.goto('/incidents/INC-0001');
@@ -66,17 +66,54 @@ test.describe('Failure paths', () => {
   });
 });
 
+test.describe('Storage migration', () => {
+  test('a V1 saved demo state is upgraded to the V2 case lifecycle with a notice', async ({ page }) => {
+    await page.addInitScript(() => {
+      if (sessionStorage.getItem('__v1')) return;
+      sessionStorage.setItem('__v1', '1');
+      localStorage.removeItem('portos:workflow:v2');
+      localStorage.setItem(
+        'portos:workflow:v1',
+        JSON.stringify({ version: 1, seq: 1, incidents: { 'INC-0001': { status: 'acknowledged', ownerUserId: 'USR-002', dueAtUtc: null, notes: [], resolution: null } }, tasks: [], drafts: [], decisions: [], audit: [] }),
+      );
+    });
+    await page.goto('/incidents/INC-0001');
+    await expectHeading(page, /Forecast ETA shift/);
+    await expect(page.getByRole('status').filter({ hasText: /upgraded to the V2 case lifecycle/ }).first()).toBeVisible();
+    await inspector(page).getByRole('tab', { name: 'Actions' }).click();
+    await expect(page.getByTestId('incident-status')).toContainText(/Investigating/i);
+    expect(await page.evaluate(() => [localStorage.getItem('portos:workflow:v1'), !!localStorage.getItem('portos:workflow:v2')])).toEqual([null, true]);
+  });
+});
+
 test.describe('Motion and accessibility', () => {
   test('reduced motion makes scope changes instant', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await open(page, '/operations');
     await globeReady(page);
     expect(await page.evaluate(() => window.__portos!.reducedMotion())).toBe(true);
+    // Time from the end of scene preparation (geometry build, not motion) to idle, sampled per frame in the page.
+    await page.evaluate(() => {
+      const w = window as unknown as { __rm: { ready: number | null; done: number | null } };
+      w.__rm = { ready: null, done: null };
+      const tick = () => {
+        const d = window.__portos?.director();
+        const busy = window.__portos?.flying() ?? true;
+        if (w.__rm.ready === null && d && d.phase !== 'idle' && d.phase !== 'preparing') w.__rm.ready = performance.now();
+        if (w.__rm.ready !== null && !busy) w.__rm.done = performance.now();
+        else requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
     await page.getByTestId('region-label-REG-SEA').click();
     await expect(page).toHaveURL(/\/region\/REG-SEA/);
-    const t0 = Date.now();
     await flightDone(page);
-    expect(Date.now() - t0).toBeLessThan(1500);
+    await page.waitForFunction(() => (window as unknown as { __rm: { done: number | null } }).__rm.done !== null);
+    const motionMs = await page.evaluate(() => {
+      const r = (window as unknown as { __rm: { ready: number; done: number } }).__rm;
+      return r.done - r.ready;
+    });
+    expect(motionMs).toBeLessThan(1500);
     const sheetAnim = await page.evaluate(() => {
       const el = document.querySelector('[data-testid="inspector"]');
       return el ? getComputedStyle(el).animationDuration : null;
@@ -122,6 +159,8 @@ test.describe('Motion and accessibility', () => {
     }
     expect(seen.has('header')).toBe(true);
     expect(seen.has('inspector')).toBe(true);
+    // The walk may end in the search box, where Escape clears the query; close from inside the inspector.
+    await inspector(page).getByRole('tab').first().focus();
     await page.keyboard.press('Escape');
     await expect(inspector(page)).toBeHidden();
   });

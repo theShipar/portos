@@ -30,6 +30,7 @@ radius 6px inputs / 10px panels / 4px dense chips; 8px spacing unit. (Specs vari
 inspector, 52–64px rail, 8/12px radius.)
 
 ## D-004 Incident lifecycle
+*Superseded by D-037 (V2 case lifecycle); the fixture still records these statuses and maps them to stages.*
 `open -> acknowledged -> investigating -> mitigation_planned -> monitoring -> resolved`, reopen via explicit audited
 action. Fixture status `open` is the entry state. (Screen spec 07/05 listed `mitigated`; workflow spec 09/01 listed
 `new`.)
@@ -487,3 +488,56 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
   their modelled forecast, which is the intended contrast. Workflow actions remain available only at "Now"
   (`phase === 'now'`). `?time=` deep links work anywhere in the window.
 
+## D-037 V2 case lifecycle, decision branches, value engines
+
+- **Context:** spec 12 asks for pure value engines (ETA variance like with like, congestion, JIT, exposure,
+  route and weather feasibility, berth conflicts, service chain) attached to the physical object the user selected,
+  and a case lifecycle `detected → untriaged → investigating → optionProposed → approvedForSimulation → monitoring →
+  resolved / closed`, with local decisions kept as branches and storage moved from `portos:workflow:v1` to `v2`.
+  D-004's six fixture statuses did not distinguish a proposed option from an approved one and had no closed state.
+- **Decision:**
+  - *Stages* (`src/core/caseStage.ts`): fixture `IncidentStatus` stays as recorded vocabulary and maps through
+    `STAGE_FROM_FIXTURE` (open → untriaged, acknowledged and investigating → investigating, mitigation_planned →
+    optionProposed, monitoring, resolved). `detected` is the instant between detection and opening; it is never a
+    local state. Folded and snapshot incidents carry `CaseStage`; closed stages are resolved and closed.
+  - *Transitions* (`incidentMachine.ts`): triage (untriaged → investigating), monitor (approved → monitoring),
+    back to investigating, resolve (any active stage, with a reason and evidence), close (resolved → closed, manager),
+    reopen (resolved or closed → investigating). Propose and approve are not buttons: they happen only through
+    decision branches.
+  - *Escalation:* `incident.escalate` raises severity one or more steps (never lowers), needs a reason and is
+    audited; the snapshot shows the local severity with an "escalated" flag and priority scoring uses it.
+  - *Decision branches* (`DecisionBranch`): proposing an option forks a branch at the current simulation time with
+    its inputs and a recorded outcome (baseline vs branch ETA delta and exposure, confidence, formula), creates a
+    follow-up task and moves the case to optionProposed. A manager approves one branch per voyage for simulation
+    (any previously approved branch returns to proposed) and the case moves to approvedForSimulation; discarding
+    the last live branch steps the case back. Nothing is sent anywhere: branches are local, simulated decisions.
+  - *Storage:* `portos:workflow:v2` (`WORKFLOW_VERSION = 2`). On first load a valid V1 state is migrated
+    (statuses through `STAGE_FROM_FIXTURE`, decisions → branches with outcome null, IDs, tasks, drafts and audit
+    kept), saved as V2 and V1 is removed, with the notice "Saved demo decisions were upgraded to the V2 case
+    lifecycle." Invalid or unparseable V1 data falls back to the clean demo with the reset notice.
+  - *Value engines* (all pure, in `src/engines`):
+    - `etaVariance.portCallVariance`: per milestone (pilot boarding, berth arrival, berth departure), actual or
+      estimate against planned (else requested) of the same milestone; ±0.5 h is on time; a missing baseline is
+      "no baseline", never compared with another milestone.
+    - `jit.jitOpportunity`: forecast arrival alongside (berth estimate, or pilot-boarding estimate + a 1 h pilotage
+      allowance stated as an assumption) earlier than the planned or requested berth by ≥ 2 h is an opportunity.
+      The options are "coordinate slot timing" and "assess a voyage speed change, subject to approval"; it is never
+      a speed order and no fuel or emissions saving is claimed. No slot gives "Unconfirmed slot".
+    - `serviceChain`: pilot boarding, towage, mooring, berth arrival, cargo operations, departure from the DCSA
+      milestones; a planned time that passed without an actual is "Missed plan"; towage and mooring are "Not in
+      dataset".
+    - `routeFeasibility.compareRoutes`: base corridor and curated alternatives with geodesic distance, sailing time
+      at 16 kn, detour and hazard exposure along each candidate's own traversal (reusing `computeRouteHazards`,
+      tested geometrically on every candidate); severe exposure is "avoid", any exposure "caution", no weather feed
+      "unknown". Labelled as a planning illustration, not approved routing.
+    - Existing engines kept: congestion, exposure `max(0, h) × rate / 24`, berth conflicts ("not yet validated").
+  - *Port-call value* (`selectors/portCall.ts`, shown as a card in the vessel inspector): queue since and anchorage
+    since from the recorded events (the fold now keeps `anchoredSince`), estimated berth with "unconfirmed",
+    waiting total / elapsed / remaining, destination ETA and exposure from the shared impact model, variance, JIT
+    and service chain, each with its source IDs and "Simulated · as of" time.
+  - *JIT demo fixture:* the earliest scheduled Singapore call arriving 12–36 h after the anchor (PCL-0046,
+    VSL-0245, BKG-0040) gets requested and planned berth times 9 h after its pilot-boarding estimate
+    (`scenario.jitDemo`); fixed offsets, no extra random draws, validator check.
+- **Consequences:** the Phase 7 gate reads straight from the selector: VSL-0001 / PCL-0001 in queue since 04:00,
+  at anchorage since 09:15, estimated berth 2026-11-10 14:00 UTC unconfirmed, 34 h in queue with 26 h remaining,
+  destination ETA +18 h and $32,000/day × 18/24 = $24,000, sources PCL-0001, EVT-0004, EVT-0002, EVT-0008.

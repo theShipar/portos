@@ -1,3 +1,4 @@
+import { isClosedStage } from '@/core/caseStage';
 import { formatDuration, formatHours, formatUsd, formatUtc, sentenceCase } from '@/core/format';
 import type { EntityRef, EventType, TimelineEvent } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
@@ -271,7 +272,7 @@ export function compareWithNow(c: Catalog, then: Snapshot, now: Snapshot, sel: E
     if (vesselId) row('At anchorage', anchoredAt(then) === portId ? 'Yes' : 'No', anchoredAt(now) === portId ? 'Yes' : 'No');
     else {
       row('At anchorage', String(then.fold.anchored.get(portId)?.size ?? 0), String(now.fold.anchored.get(portId)?.size ?? 0));
-      const openHere = (snap: Snapshot) => c.incidents.filter((i) => i.portId === portId && snap.incidents.get(i.incidentId)?.visible && snap.incidents.get(i.incidentId)?.status !== 'resolved').length;
+      const openHere = (snap: Snapshot) => c.incidents.filter((i) => i.portId === portId && snap.incidents.get(i.incidentId)?.visible && !isClosedStage(snap.incidents.get(i.incidentId)!.status)).length;
       row('Open cases here', String(openHere(then)), String(openHere(now)));
     }
   }

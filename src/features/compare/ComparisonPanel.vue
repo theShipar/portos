@@ -13,8 +13,8 @@ import { useSessionStore } from '@/stores/session';
 import { useSnapshotStore } from '@/stores/snapshot';
 import { useWorkflowStore } from '@/stores/workflow';
 import { PERMISSION, permissionCheck } from '@/workflows/incidentMachine';
-import type { ScenarioInputs } from '@/workflows/types';
-import { statusStyle } from '@/styles/tokens';
+import type { BranchStatus, ScenarioInputs } from '@/workflows/types';
+import { statusStyle, type StatusStyle } from '@/styles/tokens';
 import InspectorDrawer from '@/components/shell/InspectorDrawer.vue';
 import StatusChip from '@/components/ui/StatusChip.vue';
 
@@ -54,10 +54,17 @@ const inputError = computed(() => validateScenarioInputs(inputs.value));
 const cmp = computed(() => (catalog.catalog && snap.snapshot && !inputError.value ? compareScenarios(catalog.catalog, snap.snapshot, props.voyageId, inputs.value) : null));
 
 const canPropose = computed(() => permissionCheck(session.user, PERMISSION.propose, 'propose scenario plans'));
-const canAccept = computed(() => permissionCheck(session.user, PERMISSION.accept, 'accept scenario plans'));
+const canAccept = computed(() => permissionCheck(session.user, PERMISSION.accept, 'approve options for simulation'));
 const assignees = computed(() => (catalog.catalog?.users ?? []).filter((u) => u.role !== 'viewer'));
 const followUp = ref(session.user && session.user.role !== 'viewer' ? session.user.userId : 'USR-005');
-const decisions = computed(() => wf.state.decisions.filter((d) => d.voyageId === props.voyageId).reverse());
+const branches = computed(() => wf.state.branches.filter((b) => b.voyageId === props.voyageId).reverse());
+const BRANCH_STATUS: Record<BranchStatus, StatusStyle> = {
+  proposed: { tone: 'info', label: 'Proposed', icon: 'clock' },
+  approvedForSimulation: { tone: 'healthy', label: 'Approved for simulation', icon: 'check' },
+  discarded: { tone: 'neutral', label: 'Discarded', icon: 'info' },
+};
+const outcomeText = (x: { etaDeltaHours: number | null; exposureUsd: number | null }) =>
+  `${x.etaDeltaHours === null ? 'delay n/a' : formatHours(x.etaDeltaHours, { signed: true })} · ${x.exposureUsd === null ? 'cost n/a' : formatUsd(x.exposureUsd)}`;
 const actionError = ref<string | null>(null);
 
 const diffText = (o: ScenarioOption) => {
@@ -72,12 +79,25 @@ const diffText = (o: ScenarioOption) => {
 function propose(o: ScenarioOption) {
   const v = voyage.value;
   if (!v) return;
-  const r = wf.dispatch({ type: 'scenario.propose', voyageId: props.voyageId, incidentId: caseId.value, optionId: o.optionId, optionName: o.name, inputs: inputs.value, followUpAssigneeUserId: followUp.value, portId: v.originPortId });
+  const base = cmp.value?.options.find((x) => x.optionId === 'baseline');
+  if (!v || !base) return;
+  const outcome = {
+    baseline: { etaDeltaHours: base.etaDeltaHours, exposureUsd: base.exposureUsd },
+    branch: { etaDeltaHours: o.etaDeltaHours, exposureUsd: o.exposureUsd },
+    confidence: o.confidence,
+    formula: o.formula,
+  };
+  const r = wf.dispatch({ type: 'branch.propose', voyageId: props.voyageId, incidentId: caseId.value, optionId: o.optionId, optionName: o.name, inputs: inputs.value, outcome, followUpAssigneeUserId: followUp.value, portId: v.originPortId });
   actionError.value = r.ok ? null : r.error;
 }
 
-function accept(decisionId: string) {
-  const r = wf.dispatch({ type: 'scenario.accept', decisionId });
+function approve(branchId: string) {
+  const r = wf.dispatch({ type: 'branch.approve', branchId });
+  actionError.value = r.ok ? null : r.error;
+}
+
+function discard(branchId: string) {
+  const r = wf.dispatch({ type: 'branch.discard', branchId });
   actionError.value = r.ok ? null : r.error;
 }
 
@@ -177,29 +197,37 @@ function backToCase() {
       <p v-if="actionError" class="form-error" role="alert">{{ actionError }}</p>
 
       <div>
-        <h3 class="section-title">Proposals for {{ voyage.voyageId }}</h3>
-        <ul v-if="decisions.length" class="decisions">
-          <li v-for="d in decisions" :key="d.decisionId" class="decision">
+        <h3 class="section-title">Decision branches for {{ voyage.voyageId }}</h3>
+        <ul v-if="branches.length" class="decisions" data-testid="branches">
+          <li v-for="b in branches" :key="b.branchId" class="decision" :data-testid="`branch-${b.branchId}`">
             <div class="opt__head">
-              <span><strong>{{ d.optionName }}</strong> <span class="mono form-hint">{{ d.decisionId }}</span></span>
-              <StatusChip :status="{ tone: d.status === 'accepted' ? 'healthy' : 'info', label: d.status === 'accepted' ? 'Accepted (scenario only)' : 'Proposed', icon: d.status === 'accepted' ? 'check' : 'clock' }" dense />
+              <span><strong>{{ b.optionName }}</strong> <span class="mono form-hint">{{ b.branchId }}</span></span>
+              <StatusChip :status="BRANCH_STATUS[b.status]" dense />
             </div>
-            <span class="form-hint mono">wait +{{ d.inputs.extraWaitHours }} h · {{ d.inputs.dailyCostUsd === null ? 'no rate' : `${formatUsd(d.inputs.dailyCostUsd)}/day` }} · {{ d.inputs.speedAssumptionKn }} kn · by {{ catalog.catalog?.byId.user.get(d.proposedByUserId)?.displayName }}</span>
-            <button
-              v-if="d.status === 'proposed'"
-              type="button"
-              class="btn btn--sm"
-              :disabled="!!wf.blockReason || !canAccept.ok"
-              :title="canAccept.ok ? undefined : canAccept.reason"
-              data-testid="accept-plan"
-              @click="accept(d.decisionId)"
-            >
-              Accept plan
-            </button>
-            <span v-if="d.status === 'proposed' && !canAccept.ok" class="form-hint">{{ canAccept.reason }}</span>
+            <span class="form-hint mono">forked {{ formatUtc(b.forkedAtUtc) }} · wait +{{ b.inputs.extraWaitHours }} h · {{ b.inputs.dailyCostUsd === null ? 'no rate' : `${formatUsd(b.inputs.dailyCostUsd)}/day` }} · {{ b.inputs.speedAssumptionKn }} kn · by {{ catalog.catalog?.byId.user.get(b.proposedByUserId)?.displayName }}</span>
+            <dl v-if="b.outcome" class="branch-outcome">
+              <div><dt>Baseline</dt><dd class="mono">{{ outcomeText(b.outcome.baseline) }}</dd></div>
+              <div><dt>Branch · simulated</dt><dd class="mono" data-testid="branch-outcome">{{ outcomeText(b.outcome.branch) }}</dd></div>
+            </dl>
+            <span v-else class="form-hint">Proposed before V2: outcome not recorded. Propose again to compare.</span>
+            <div v-if="b.status !== 'discarded'" class="form-row">
+              <button
+                v-if="b.status === 'proposed'"
+                type="button"
+                class="btn btn--sm"
+                :disabled="!!wf.blockReason || !canAccept.ok"
+                :title="canAccept.ok ? undefined : canAccept.reason"
+                data-testid="approve-branch"
+                @click="approve(b.branchId)"
+              >
+                Approve for simulation
+              </button>
+              <button type="button" class="btn btn--sm btn--ghost" :disabled="!!wf.blockReason || !canPropose.ok" data-testid="discard-branch" @click="discard(b.branchId)">Discard</button>
+            </div>
+            <span v-if="b.status === 'proposed' && !canAccept.ok" class="form-hint">{{ canAccept.reason }}</span>
           </li>
         </ul>
-        <p v-else class="empty-state">No proposals yet.</p>
+        <p v-else class="empty-state">No decision branches yet.</p>
       </div>
 
       <div class="form-row">
@@ -336,6 +364,19 @@ function backToCase() {
   margin: 4px 0 0;
   padding-left: 16px;
   color: var(--color-ink-secondary);
+}
+.branch-outcome {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin: 0;
+}
+.branch-outcome dt {
+  font-size: var(--text-12);
+  color: var(--color-text-muted);
+}
+.branch-outcome dd {
+  margin: 0;
 }
 .decisions {
   list-style: none;

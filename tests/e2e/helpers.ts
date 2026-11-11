@@ -68,6 +68,7 @@ export async function cleanStart(page: Page) {
     if (sessionStorage.getItem('__portos_e2e')) return;
     sessionStorage.setItem('__portos_e2e', '1');
     localStorage.removeItem('portos:workflow:v1');
+    localStorage.removeItem('portos:workflow:v2');
     localStorage.removeItem('portos:assumptions:v1');
     localStorage.setItem('portos:preferences:v1', JSON.stringify({ userId: 'USR-005', reducedMotion: null }));
   });

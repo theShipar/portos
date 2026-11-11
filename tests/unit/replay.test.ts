@@ -2,7 +2,8 @@ import { createPinia, setActivePinia } from 'pinia';
 import { describe, expect, it } from 'vitest';
 import { formatLocal, formatUtc } from '@/core/format';
 import { parseUtc, toIsoUtc } from '@/core/time';
-import type { Incident, IncidentStatus } from '@/core/types';
+import { STAGE_FROM_FIXTURE } from '@/core/caseStage';
+import type { CaseStage, Incident, IncidentStatus } from '@/core/types';
 import { emptyFold, foldEvents } from '@/engines/fold';
 import { getSnapshotAt, incidentStatusAt, type Snapshot } from '@/engines/snapshot';
 import { buildVesselInspector } from '@/selectors/vessel';
@@ -18,8 +19,13 @@ const NOW = c.anchorMs;
 const at = (hhmm: string) => Date.parse(`2026-11-09T${hhmm}:00Z`);
 const record = (id: string) => c.byId.incident.get(id);
 
-/** The pre-fold timestamp rule from the incident record fields, kept here as an independent oracle. */
-function recordStatusAt(i: Incident, t: number): { visible: boolean; status: IncidentStatus; ownerUserId: string | null } {
+/** The pre-fold timestamp rule from the incident record fields (fixture vocabulary, mapped to V2 stages). */
+function recordStatusAt(i: Incident, t: number): { visible: boolean; status: CaseStage; ownerUserId: string | null } {
+  const r = recordFixtureStatusAt(i, t);
+  return { ...r, status: r.visible ? STAGE_FROM_FIXTURE[r.status] : 'detected' };
+}
+
+function recordFixtureStatusAt(i: Incident, t: number): { visible: boolean; status: IncidentStatus; ownerUserId: string | null } {
   const opened = parseUtc(i.openedAtUtc) ?? 0;
   const ack = parseUtc(i.acknowledgedAtUtc);
   const res = parseUtc(i.resolvedAtUtc);
@@ -132,7 +138,7 @@ describe('deterministic snapshots', () => {
 
   it('jumping to the INC-0001 marker shows a consistent vessel, ETA and port picture', () => {
     const s = getSnapshotAt(c, at('10:59'));
-    expect(s.incidents.get('INC-0001')?.status).toBe('open');
+    expect(s.incidents.get('INC-0001')?.status).toBe('untriaged');
     expect(s.etas.get('VYG-0001')?.etaShiftMinutes).toBe(18 * 60);
     expect(s.fold.anchored.get('PRT-SIN')?.has('VSL-0001')).toBe(true);
     expect(s.vessels.get('VSL-0001')?.point).not.toBeNull();
@@ -225,7 +231,7 @@ describe('historical notes', () => {
     wallNowIso: '2026-11-09T20:00:00Z',
     baseIncident: (id) => {
       const inc = c.byId.incident.get(id);
-      return inc ? incidentStatusAt(c, inc, NOW) : null;
+      return inc ? { ...incidentStatusAt(c, inc, NOW), severity: inc.severity } : null;
     },
     incidentRefs: (id) => [{ kind: 'incident', id }],
     needsVerification: () => false,

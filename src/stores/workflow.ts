@@ -6,11 +6,11 @@ import { needsVerification } from '@/engines/priority';
 import { getSnapshotAt, incidentStatusAt } from '@/engines/snapshot';
 import { incidentOverlay, reduceWorkflow, type WorkflowCommand, type WorkflowContext, type WorkflowResult } from '@/workflows/reducer';
 import { emptyWorkflow, type WorkflowState } from '@/workflows/types';
-import { isWorkflowState } from '@/workflows/validate';
+import { isWorkflowState, migrateWorkflowV1 } from '@/workflows/validate';
 import { useCatalogStore } from './catalog';
 import { useClockStore } from './clock';
 import { useNoticeStore } from './notices';
-import { loadStored, saveStored, STORAGE_KEYS } from './persist';
+import { clearStored, loadStored, readStoredJson, saveStored, STORAGE_KEYS } from './persist';
 import { useSessionStore } from './session';
 
 /** Local demo decisions (incident lifecycle, tasks, drafts, proposals, audit). Fixture data is never mutated. */
@@ -20,9 +20,13 @@ export const useWorkflowStore = defineStore('workflow', () => {
   const clock = useClockStore();
   const notices = useNoticeStore();
 
-  const loaded = loadStored(STORAGE_KEYS.workflow, isWorkflowState, emptyWorkflow());
+  const loaded = loadWorkflow();
   const state = shallowRef<WorkflowState>(loaded.value);
-  const storageWarning = loaded.corrupted ? 'Saved demo decisions were unreadable and have been reset. The simulated event history is unchanged.' : null;
+  const storageWarning = loaded.corrupted
+    ? 'Saved demo decisions were unreadable and have been reset. The simulated event history is unchanged.'
+    : loaded.migrated
+      ? 'Saved demo decisions were upgraded to the V2 case lifecycle. Earlier proposals are kept as decision branches.'
+      : null;
   /** False when the browser refused to store the latest change (blocked or full storage). */
   const saved = ref(true);
   watch(state, (v) => (saved.value = saveStored(STORAGE_KEYS.workflow, v)));
@@ -44,7 +48,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
       wallNowIso: toIsoUtc(Date.now()),
       baseIncident: (id) => {
         const inc = c.byId.incident.get(id);
-        return inc ? incidentStatusAt(c, inc, c.anchorMs) : null;
+        return inc ? { ...incidentStatusAt(c, inc, c.anchorMs), severity: inc.severity } : null;
       },
       incidentRefs: (id) => {
         const inc = c.byId.incident.get(id);
@@ -86,3 +90,18 @@ export const useWorkflowStore = defineStore('workflow', () => {
 
   return { state, storageWarning, saved, overlay, blockReason, outstandingTasks, dispatch, reset };
 });
+
+/** V2 storage, or a one-time migration of V1 storage (written back as V2, V1 key removed). */
+function loadWorkflow(): { value: WorkflowState; corrupted: boolean; migrated: boolean } {
+  const fallback = emptyWorkflow();
+  const v2 = loadStored(STORAGE_KEYS.workflow, isWorkflowState, fallback);
+  if (v2.value !== fallback || v2.corrupted) return { ...v2, migrated: false };
+  const legacy = readStoredJson(STORAGE_KEYS.legacyWorkflow);
+  if (legacy === undefined) return { value: fallback, corrupted: false, migrated: false };
+  const migrated = migrateWorkflowV1(legacy);
+  clearStored(STORAGE_KEYS.legacyWorkflow);
+  if (!migrated) return { value: fallback, corrupted: true, migrated: false };
+  saveStored(STORAGE_KEYS.workflow, migrated);
+  return { value: migrated, corrupted: false, migrated: true };
+}
+

@@ -1,3 +1,4 @@
+import { isClosedStage } from '@/core/caseStage';
 import { describe, expect, it } from 'vitest';
 import { parseUtc } from '@/core/time';
 import { computePortCongestion } from '@/engines/congestion';
@@ -118,10 +119,10 @@ describe('snapshot', () => {
   });
 
   it('hides incidents before they were opened and applies local overlay only at Now', () => {
-    const before = getSnapshotAt(c, parseUtc('2026-11-09T10:00:00Z')!, { incidents: { 'INC-0001': { status: 'investigating', ownerUserId: 'USR-005' } } });
+    const before = getSnapshotAt(c, parseUtc('2026-11-09T10:00:00Z')!, { incidents: { 'INC-0001': { status: 'investigating', ownerUserId: 'USR-005', severity: null } } });
     expect(before.incidents.get('INC-0001')!.visible).toBe(false);
     expect(before.incidents.get('INC-0001')!.locallyModified).toBe(false);
-    const now = getSnapshotAt(c, NOW, { incidents: { 'INC-0001': { status: 'investigating', ownerUserId: 'USR-005' } } });
+    const now = getSnapshotAt(c, NOW, { incidents: { 'INC-0001': { status: 'investigating', ownerUserId: 'USR-005', severity: null } } });
     expect(now.incidents.get('INC-0001')!.status).toBe('investigating');
   });
 });
@@ -133,7 +134,7 @@ describe('KPIs', () => {
     const ex = dedupedExposureUsd(c, snap, sets);
     expect(ex.voyageIds.filter((v) => v === 'VYG-0001')).toHaveLength(1);
     const naive = c.incidents
-      .filter((i) => snap.incidents.get(i.incidentId)!.status !== 'resolved')
+      .filter((i) => !isClosedStage(snap.incidents.get(i.incidentId)!.status))
       .reduce((s, i) => s + (snap.exposures.get(i.voyageId)!.estimatedUsd ?? 0), 0);
     expect(ex.usd).toBeLessThan(naive);
   });

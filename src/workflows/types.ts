@@ -1,6 +1,6 @@
-import type { EntityRef, IncidentStatus, IsoUtc, Role } from '@/core/types';
+import type { CaseStage, Confidence, EntityRef, IsoUtc, Role, Severity } from '@/core/types';
 
-export const WORKFLOW_VERSION = 1;
+export const WORKFLOW_VERSION = 2;
 
 export interface IncidentNote {
   noteId: string;
@@ -29,7 +29,9 @@ export const RESOLUTION_LABEL: Record<ResolutionReason, string> = {
 
 /** Local demo decisions for one incident; the fixture record is never mutated. */
 export interface IncidentLocal {
-  status: IncidentStatus;
+  status: CaseStage;
+  /** Local severity escalation; null keeps the fixture severity. */
+  severity: Severity | null;
   ownerUserId: string | null;
   dueAtUtc: IsoUtc | null;
   notes: IncidentNote[];
@@ -88,16 +90,33 @@ export interface ScenarioInputs {
   speedAssumptionKn: number;
 }
 
-export interface ScenarioDecision {
-  decisionId: string;
-  voyageId: string;
+/** Frozen outcome of one option at the moment it was proposed (computed by the scenario engine). */
+export interface BranchOutcome {
+  baseline: { etaDeltaHours: number | null; exposureUsd: number | null };
+  branch: { etaDeltaHours: number | null; exposureUsd: number | null };
+  confidence: Confidence;
+  formula: string;
+}
+
+export type BranchStatus = 'proposed' | 'approvedForSimulation' | 'discarded';
+
+/**
+ * A local scenario branch forked from the baseline forecast at `forkedAtUtc`. It never changes fixture data or a
+ * vessel; approving it only lets the UI show the projected effect beside the baseline, labelled simulated.
+ */
+export interface DecisionBranch {
+  branchId: string;
   incidentId: string | null;
+  voyageId: string;
   optionId: string;
   optionName: string;
   inputs: ScenarioInputs;
-  status: 'proposed' | 'accepted';
+  forkedAtUtc: IsoUtc;
+  /** Null for proposals migrated from V1 storage (outcome was not recorded then). */
+  outcome: BranchOutcome | null;
+  status: BranchStatus;
   proposedByUserId: string;
-  acceptedByUserId: string | null;
+  approvedByUserId: string | null;
   createdAtUtc: IsoUtc;
   updatedAtUtc: IsoUtc;
 }
@@ -108,12 +127,17 @@ export type AuditActionType =
   | 'incident.assign'
   | 'incident.note'
   | 'incident.undo'
+  | 'incident.escalate'
   | 'history.note'
   | 'task.create'
   | 'task.status'
   | 'draft.create'
   | 'draft.ready'
   | 'draft.discard'
+  | 'branch.propose'
+  | 'branch.approve'
+  | 'branch.discard'
+  /** V1 audit entries kept after migration. */
   | 'scenario.propose'
   | 'scenario.accept';
 
@@ -140,8 +164,8 @@ export interface WorkflowState {
   incidents: Record<string, IncidentLocal>;
   tasks: Task[];
   drafts: NotificationDraft[];
-  decisions: ScenarioDecision[];
+  branches: DecisionBranch[];
   audit: AuditEvent[];
 }
 
-export const emptyWorkflow = (): WorkflowState => ({ version: WORKFLOW_VERSION, seq: 0, incidents: {}, tasks: [], drafts: [], decisions: [], audit: [] });
+export const emptyWorkflow = (): WorkflowState => ({ version: WORKFLOW_VERSION, seq: 0, incidents: {}, tasks: [], drafts: [], branches: [], audit: [] });

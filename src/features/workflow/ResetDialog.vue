@@ -34,7 +34,7 @@ const decisionCounts = computed(() => {
     `${Object.keys(s.incidents).length} local case ${Object.keys(s.incidents).length === 1 ? 'change' : 'changes'} (status, owner, due time, notes)`,
     `${s.tasks.length} ${s.tasks.length === 1 ? 'task' : 'tasks'}`,
     `${s.drafts.length} communication ${s.drafts.length === 1 ? 'draft' : 'drafts'}`,
-    `${s.decisions.length} route ${s.decisions.length === 1 ? 'proposal' : 'proposals'}`,
+    `${s.branches.length} decision ${s.branches.length === 1 ? 'branch' : 'branches'}`,
     `${s.audit.length} audit ${s.audit.length === 1 ? 'event' : 'events'}`,
     `${rates} edited daily delay ${rates === 1 ? 'rate' : 'rates'} (back to fixture values)`,
   ];

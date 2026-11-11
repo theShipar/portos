@@ -1437,6 +1437,27 @@
         "classifier": "EST",
         "atUtc": "2026-11-10T00:20:00Z",
         "recordedAtUtc": "2026-11-09T11:25:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "REQ",
+        "atUtc": "2026-11-10T09:20:00Z",
+        "recordedAtUtc": "2026-11-08T16:00:00Z"
+      },
+      {
+        "eventType": "ARRIVAL",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-10T09:20:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
+      },
+      {
+        "eventType": "DEPARTURE",
+        "location": "BERTH",
+        "classifier": "PLN",
+        "atUtc": "2026-11-11T07:20:00Z",
+        "recordedAtUtc": "2026-11-09T09:00:00Z"
       }
     ]
   },

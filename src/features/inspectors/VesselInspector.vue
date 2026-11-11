@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { auditRows } from '@/selectors/activity';
+import { selectPortCallValue } from '@/selectors/portCall';
 import { buildVesselInspector } from '@/selectors/vessel';
 import { useNavigation } from '@/router/useRouteSync';
 import { useCatalogStore } from '@/stores/catalog';
@@ -14,6 +15,7 @@ import InspectorDrawer from '@/components/shell/InspectorDrawer.vue';
 import FieldList from '@/components/ui/FieldList.vue';
 import Icon from '@/components/ui/Icon.vue';
 import StatusChip from '@/components/ui/StatusChip.vue';
+import PortCallCard from './PortCallCard.vue';
 import VoyageImpactCard from './VoyageImpactCard.vue';
 
 const props = defineProps<{ vesselId: string }>();
@@ -26,6 +28,7 @@ const wf = useWorkflowStore();
 const nav = useNavigation();
 
 const model = computed(() => (catalog.catalog && snap.snapshot ? buildVesselInspector(catalog.catalog, snap.snapshot, props.vesselId) : null));
+const portCall = computed(() => (catalog.catalog && snap.snapshot ? selectPortCallValue(catalog.catalog, snap.snapshot, props.vesselId) : null));
 const tabs: { id: InspectorTab; label: string }[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'voyage', label: 'Voyage' },
@@ -83,6 +86,7 @@ function openPort(portId: string) {
     <section v-if="view.inspectorTab === 'overview'" class="stack">
       <VoyageImpactCard v-if="model.impact" :impact="model.impact" />
       <div v-else class="empty">No assigned voyage. Identity and tracking remain available below.</div>
+      <PortCallCard v-if="portCall" :value="portCall" />
       <div class="links">
         <button
           type="button"

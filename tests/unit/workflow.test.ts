@@ -10,7 +10,7 @@ import { checkTransition, transitionsFrom } from '@/workflows/incidentMachine';
 import { auditFor, draftTemplate, exportAudit, handoffSummary } from '@/workflows/handoff';
 import { incidentOverlay, reduceWorkflow, type WorkflowCommand, type WorkflowContext } from '@/workflows/reducer';
 import { emptyWorkflow, type WorkflowState } from '@/workflows/types';
-import { isWorkflowState } from '@/workflows/validate';
+import { isWorkflowState, migrateWorkflowV1 } from '@/workflows/validate';
 import { auditMatches, auditRows, hubTasks } from '@/selectors/activity';
 import { buildQueueRows, filterQueueRows } from '@/selectors/queue';
 import { catalog } from './fixtures';
@@ -28,7 +28,7 @@ function ctx(userId: string, cat: Catalog = c, simNowMs = NOW): WorkflowContext 
     wallNowIso: '2026-11-09T20:00:00Z',
     baseIncident: (id) => {
       const inc = cat.byId.incident.get(id);
-      return inc ? incidentStatusAt(cat, inc, cat.anchorMs) : null;
+      return inc ? { ...incidentStatusAt(cat, inc, cat.anchorMs), severity: inc.severity } : null;
     },
     incidentRefs: (id) => [{ kind: 'incident', id }, ...(cat.byId.incident.get(id)?.entityRefs ?? [])],
     needsVerification: (id) => {
@@ -51,29 +51,35 @@ const DISPATCHER = 'USR-005';
 const MANAGER = 'USR-001';
 const ANALYST = 'USR-003';
 const VIEWER = 'USR-004';
-const ack: WorkflowCommand = { type: 'incident.transition', incidentId: 'INC-0001', transition: 'acknowledge' };
-const investigate: WorkflowCommand = { type: 'incident.transition', incidentId: 'INC-0001', transition: 'investigate' };
+const ack: WorkflowCommand = { type: 'incident.transition', incidentId: 'INC-0001', transition: 'triage' };
 const assign: WorkflowCommand = { type: 'incident.assign', incidentId: 'INC-0001', assigneeUserId: 'USR-002', dueAtUtc: '2026-11-09T18:00:00Z', note: 'Port agent call' };
 
 describe('incident state machine', () => {
   it('offers only legal next steps from each status', () => {
-    expect(transitionsFrom('open').map((t) => t.id)).toEqual(['acknowledge', 'resolve']);
-    expect(transitionsFrom('investigating').map((t) => t.id)).toEqual(['plan', 'resolve']);
-    expect(transitionsFrom('resolved').map((t) => t.id)).toEqual(['reopen']);
+    expect(transitionsFrom('untriaged').map((t) => t.id)).toEqual(['triage', 'resolve']);
+    expect(transitionsFrom('investigating').map((t) => t.id)).toEqual(['resolve']);
+    expect(transitionsFrom('optionProposed').map((t) => t.id)).toEqual(['investigate', 'resolve']);
+    expect(transitionsFrom('approvedForSimulation').map((t) => t.id)).toEqual(['monitor', 'investigate', 'resolve']);
+    expect(transitionsFrom('resolved').map((t) => t.id)).toEqual(['close', 'reopen']);
+    expect(transitionsFrom('closed').map((t) => t.id)).toEqual(['reopen']);
+    expect(transitionsFrom('detected')).toEqual([]);
   });
 
   it('enforces role guards with an explanation', () => {
     const viewer = c.byId.user.get(VIEWER)!;
-    const r = checkTransition('open', 'acknowledge', viewer);
+    const r = checkTransition('untriaged', 'triage', viewer);
     expect(r.ok).toBe(false);
-    expect(!r.ok && r.reason).toMatch(/Viewer role cannot acknowledge/);
+    expect(!r.ok && r.reason).toMatch(/Viewer role cannot triage/);
     expect(checkTransition('investigating', 'resolve', c.byId.user.get(DISPATCHER)!, { resolution: { reason: 'berth_confirmed', evidenceNote: 'x', simulationAck: false } }).ok).toBe(false);
-    expect(checkTransition('acknowledged', 'investigate', c.byId.user.get(ANALYST)!).ok).toBe(false);
+    expect(checkTransition('optionProposed', 'investigate', c.byId.user.get(ANALYST)!).ok).toBe(false);
+    expect(checkTransition('resolved', 'close', c.byId.user.get(DISPATCHER)!).ok).toBe(false);
   });
 
   it('rejects skipping states', () => {
-    const r = reduceWorkflow(emptyWorkflow(), { type: 'incident.transition', incidentId: 'INC-0001', transition: 'plan' }, ctx(DISPATCHER));
+    const r = reduceWorkflow(emptyWorkflow(), { type: 'incident.transition', incidentId: 'INC-0001', transition: 'monitor' }, ctx(DISPATCHER));
     expect(r.ok).toBe(false);
+    const viaButton = reduceWorkflow(run([[DISPATCHER, ack]]), { type: 'incident.transition', incidentId: 'INC-0001', transition: 'propose' }, ctx(DISPATCHER));
+    expect(!viaButton.ok && viaButton.error).toMatch(/decision branches/);
   });
 
   it('requires a reason and evidence (or explicit simulation acknowledgement) to resolve', () => {
@@ -110,10 +116,9 @@ describe('incident state machine', () => {
   });
 });
 
-describe('INC-0001 pass condition: open → acknowledged → investigating, assigned', () => {
+describe('INC-0001 pass condition: untriaged → investigating (triage), assigned', () => {
   const s = run([
     [DISPATCHER, ack],
-    [DISPATCHER, investigate],
     [DISPATCHER, assign],
     [DISPATCHER, { type: 'incident.note', incidentId: 'INC-0001', text: 'Agent says berth W-1 tomorrow 14:00 local, unconfirmed.' }],
   ]);
@@ -127,10 +132,9 @@ describe('INC-0001 pass condition: open → acknowledged → investigating, assi
   });
 
   it('audit captures each action with actor, role, both times and previous/next state', () => {
-    expect(s.audit).toHaveLength(4);
+    expect(s.audit).toHaveLength(3);
     expect(s.audit.map((a) => [a.actionType, a.previousState, a.nextState])).toEqual([
-      ['incident.transition', 'open', 'acknowledged'],
-      ['incident.transition', 'acknowledged', 'investigating'],
+      ['incident.transition', 'untriaged', 'investigating'],
       ['incident.assign', 'unassigned', 'USR-002'],
       ['incident.note', undefined, undefined],
     ]);
@@ -146,13 +150,13 @@ describe('INC-0001 pass condition: open → acknowledged → investigating, assi
     const now = getSnapshotAt(c, NOW, { incidents: incidentOverlay(s) });
     expect(now.incidents.get('INC-0001')).toMatchObject({ status: 'investigating', ownerUserId: 'USR-002', locallyModified: true });
     const past = getSnapshotAt(c, Date.parse('2026-11-09T11:30:00Z'), { incidents: incidentOverlay(s) });
-    expect(past.incidents.get('INC-0001')).toMatchObject({ status: 'open', locallyModified: false });
+    expect(past.incidents.get('INC-0001')).toMatchObject({ status: 'untriaged', locallyModified: false });
   });
 
   it('is visible in both the incident and the vessel audit views', () => {
-    expect(auditFor(c, s, { kind: 'incident', id: 'INC-0001' })).toHaveLength(4);
-    expect(auditFor(c, s, { kind: 'vessel', id: 'VSL-0001' })).toHaveLength(4);
-    expect(auditFor(c, s, { kind: 'voyage', id: 'VYG-0001' })).toHaveLength(4);
+    expect(auditFor(c, s, { kind: 'incident', id: 'INC-0001' })).toHaveLength(3);
+    expect(auditFor(c, s, { kind: 'vessel', id: 'VSL-0001' })).toHaveLength(3);
+    expect(auditFor(c, s, { kind: 'voyage', id: 'VYG-0001' })).toHaveLength(3);
     expect(auditFor(c, s, { kind: 'vessel', id: 'VSL-0002' })).toHaveLength(0);
   });
 
@@ -193,11 +197,13 @@ describe('assignment, undo and guards', () => {
   it('undo reverts the latest change only', () => {
     const s = run([
       [DISPATCHER, ack],
-      [DISPATCHER, investigate],
+      [DISPATCHER, assign],
     ]);
     const last = s.audit[1];
     const undone = run([[DISPATCHER, { type: 'incident.undo', incidentId: 'INC-0001', auditId: last.auditId }]], s);
-    expect(undone.incidents['INC-0001'].status).toBe('acknowledged');
+    expect(undone.incidents['INC-0001']).toMatchObject({ status: 'investigating', ownerUserId: null });
+    const triageUndone = run([[DISPATCHER, { type: 'incident.undo', incidentId: 'INC-0001', auditId: s.audit[0].auditId }]], run([[DISPATCHER, ack]]));
+    expect(triageUndone.incidents['INC-0001'].status).toBe('untriaged');
     expect(undone.audit.at(-1)!.actionType).toBe('incident.undo');
     const stale = reduceWorkflow(s, { type: 'incident.undo', incidentId: 'INC-0001', auditId: s.audit[0].auditId }, ctx(DISPATCHER));
     expect(!stale.ok && stale.error).toMatch(/later change/);
@@ -232,7 +238,7 @@ describe('tasks and drafts', () => {
       s,
     );
     expect(done.tasks[0].status).toBe('done');
-    expect(done.incidents['INC-0001'].status).toBe('acknowledged');
+    expect(done.incidents['INC-0001'].status).toBe('investigating');
     expect(reduceWorkflow(done, { type: 'task.status', taskId: id, status: 'in_progress' }, ctx(DISPATCHER)).ok).toBe(false);
   });
 
@@ -309,18 +315,122 @@ describe('scenario comparison', () => {
     expect(validateScenarioInputs(inputs)).toBeNull();
   });
 
-  it('propose records a decision plus follow-up task; accept is manager-only', () => {
-    const propose: WorkflowCommand = { type: 'scenario.propose', voyageId: 'VYG-0001', incidentId: 'INC-0001', optionId: 'agent_confirmation', optionName: 'Request port-agent ETA confirmation', inputs, followUpAssigneeUserId: 'USR-005', portId: 'PRT-SIN' };
-    const s = run([[DISPATCHER, propose]]);
-    expect(s.decisions[0]).toMatchObject({ status: 'proposed', optionId: 'agent_confirmation' });
+  const outcomeFor = (optionId: string) => {
+    const cmp = compareScenarios(c, live, 'VYG-0001', inputs)!;
+    const base = cmp.options[0];
+    const o = cmp.options.find((x) => x.optionId === optionId)!;
+    return { baseline: { etaDeltaHours: base.etaDeltaHours, exposureUsd: base.exposureUsd }, branch: { etaDeltaHours: o.etaDeltaHours, exposureUsd: o.exposureUsd }, confidence: o.confidence, formula: o.formula };
+  };
+  const propose = (optionId = 'agent_confirmation', optionName = 'Request port-agent ETA confirmation'): WorkflowCommand => ({
+    type: 'branch.propose',
+    voyageId: 'VYG-0001',
+    incidentId: 'INC-0001',
+    optionId,
+    optionName,
+    inputs,
+    outcome: outcomeFor(optionId),
+    followUpAssigneeUserId: 'USR-005',
+    portId: 'PRT-SIN',
+  });
+
+  it('propose forks a branch with a frozen outcome and moves the case to option proposed', () => {
+    const s = run([[DISPATCHER, ack], [DISPATCHER, propose()]]);
+    expect(s.branches[0]).toMatchObject({ branchId: 'LOC-BR-0002', status: 'proposed', optionId: 'agent_confirmation', forkedAtUtc: '2026-11-09T12:00:00Z' });
+    expect(s.branches[0].outcome).toMatchObject({ baseline: { etaDeltaHours: 18, exposureUsd: 24_000 }, branch: { etaDeltaHours: 18, exposureUsd: 24_000 } });
+    expect(s.incidents['INC-0001'].status).toBe('optionProposed');
     expect(s.tasks[0]).toMatchObject({ type: 'scenario_followup', relatedIncidentId: 'INC-0001' });
-    expect(s.audit[0].notes).toMatch(/No route or ETA changed/);
-    expect(reduceWorkflow(s, propose, ctx(DISPATCHER)).ok).toBe(false);
-    const id = s.decisions[0].decisionId;
-    expect(reduceWorkflow(s, { type: 'scenario.accept', decisionId: id }, ctx(DISPATCHER)).ok).toBe(false);
-    const accepted = run([[MANAGER, { type: 'scenario.accept', decisionId: id }]], s);
-    expect(accepted.decisions[0]).toMatchObject({ status: 'accepted', acceptedByUserId: MANAGER });
+    expect(s.audit.at(-1)).toMatchObject({ actionType: 'branch.propose', previousState: 'investigating', nextState: 'optionProposed' });
+    expect(s.audit.at(-1)!.notes).toMatch(/No route or ETA changed/);
+    expect(reduceWorkflow(s, propose(), ctx(DISPATCHER)).ok).toBe(false);
+  });
+
+  it('approve for simulation is manager-only, one approved branch per voyage, and never touches fixture data', () => {
+    const s = run([[DISPATCHER, ack], [DISPATCHER, propose()], [DISPATCHER, propose('alternative_corridor', 'Flag alternative')]]);
+    const [a, b] = s.branches;
+    expect(reduceWorkflow(s, { type: 'branch.approve', branchId: a.branchId }, ctx(DISPATCHER)).ok).toBe(false);
+    const one = run([[MANAGER, { type: 'branch.approve', branchId: a.branchId }]], s);
+    expect(one.branches[0]).toMatchObject({ status: 'approvedForSimulation', approvedByUserId: MANAGER });
+    expect(one.incidents['INC-0001'].status).toBe('approvedForSimulation');
+    const two = run([[MANAGER, { type: 'branch.approve', branchId: b.branchId }]], one);
+    expect(two.branches.map((x) => x.status)).toEqual(['proposed', 'approvedForSimulation']);
+    const monitoring = run([[DISPATCHER, { type: 'incident.transition', incidentId: 'INC-0001', transition: 'monitor' }]], two);
+    expect(monitoring.incidents['INC-0001'].status).toBe('monitoring');
     expect(c.byId.voyage.get('VYG-0001')!.routeId).toBe('RTE-SIN-RTM');
+    expect(getSnapshotAt(c, NOW, { incidents: incidentOverlay(monitoring) }).etas.get('VYG-0001')!.etaShiftMinutes).toBe(18 * 60);
+  });
+
+  it('discarding the last live branch returns the case to investigating', () => {
+    const s = run([[DISPATCHER, ack], [DISPATCHER, propose()]]);
+    const d = run([[DISPATCHER, { type: 'branch.discard', branchId: s.branches[0].branchId }]], s);
+    expect(d.branches[0].status).toBe('discarded');
+    expect(d.incidents['INC-0001'].status).toBe('investigating');
+    expect(reduceWorkflow(d, { type: 'branch.approve', branchId: s.branches[0].branchId }, ctx(MANAGER)).ok).toBe(false);
+  });
+});
+
+describe('escalation, close and reopen', () => {
+  it('escalation raises severity with a reason and reorders the queue score', () => {
+    const s = run([[DISPATCHER, ack]]);
+    const noReason = reduceWorkflow(s, { type: 'incident.escalate', incidentId: 'INC-0001', severity: 'critical', note: ' ' }, ctx(DISPATCHER));
+    expect(!noReason.ok && noReason.error).toMatch(/facts changed/);
+    expect(reduceWorkflow(s, { type: 'incident.escalate', incidentId: 'INC-0001', severity: 'medium', note: 'x' }, ctx(DISPATCHER)).ok).toBe(false);
+    const e = run([[DISPATCHER, { type: 'incident.escalate', incidentId: 'INC-0001', severity: 'critical', note: 'Wait estimate doubled at 11:22' }]], s);
+    expect(e.incidents['INC-0001'].severity).toBe('critical');
+    expect(e.audit.at(-1)).toMatchObject({ actionType: 'incident.escalate', previousState: 'high', nextState: 'critical' });
+    const before = buildCaseQueue(c, getSnapshotAt(c, NOW, { incidents: incidentOverlay(s) })).find((q) => q.caseId === 'INC-0001')!;
+    const after = buildCaseQueue(c, getSnapshotAt(c, NOW, { incidents: incidentOverlay(e) })).find((q) => q.caseId === 'INC-0001')!;
+    expect(after.priority.score - before.priority.score).toBe(15);
+    expect(after.priority.rationale[0]).toMatch(/Critical severity \(escalated\) \+45/);
+  });
+
+  it('a resolved case can be closed by a manager and reopened with a reason', () => {
+    const resolved = run([
+      [MANAGER, ack],
+      [MANAGER, { type: 'incident.transition', incidentId: 'INC-0001', transition: 'resolve', resolution: { reason: 'berth_confirmed', evidenceNote: 'W-1 confirmed', simulationAck: false } }],
+    ]);
+    expect(reduceWorkflow(resolved, { type: 'incident.transition', incidentId: 'INC-0001', transition: 'close' }, ctx(DISPATCHER)).ok).toBe(false);
+    const closed = run([[MANAGER, { type: 'incident.transition', incidentId: 'INC-0001', transition: 'close' }]], resolved);
+    expect(closed.incidents['INC-0001'].status).toBe('closed');
+    expect(buildCaseQueue(c, getSnapshotAt(c, NOW, { incidents: incidentOverlay(closed) })).some((q) => q.incidentIds.includes('INC-0001'))).toBe(false);
+    expect(reduceWorkflow(closed, { type: 'incident.escalate', incidentId: 'INC-0001', severity: 'critical', note: 'x' }, ctx(MANAGER)).ok).toBe(false);
+    const reopened = run([[DISPATCHER, { type: 'incident.transition', incidentId: 'INC-0001', transition: 'reopen', note: 'Terminal withdrew the slot' }]], closed);
+    expect(reopened.incidents['INC-0001'].status).toBe('investigating');
+  });
+});
+
+describe('storage migration v1 → v2', () => {
+  const v1 = {
+    version: 1,
+    seq: 6,
+    incidents: {
+      'INC-0001': { status: 'mitigation_planned', ownerUserId: 'USR-002', dueAtUtc: null, notes: [], resolution: null },
+      'INC-0002': { status: 'acknowledged', ownerUserId: null, dueAtUtc: null, notes: [], resolution: null },
+      'INC-0003': { status: 'open', ownerUserId: null, dueAtUtc: null, notes: [], resolution: null },
+    },
+    tasks: [],
+    drafts: [],
+    decisions: [
+      { decisionId: 'LOC-DEC-0004', voyageId: 'VYG-0001', incidentId: 'INC-0001', optionId: 'agent_confirmation', optionName: 'Request port-agent ETA confirmation', inputs: { extraWaitHours: 0, dailyCostUsd: 32000, speedAssumptionKn: 14 }, status: 'accepted', proposedByUserId: 'USR-005', acceptedByUserId: 'USR-001', createdAtUtc: '2026-11-09T12:00:00Z', updatedAtUtc: '2026-11-09T12:00:00Z' },
+    ],
+    audit: [{ auditId: 'LOC-AUD-0005', actorUserId: 'USR-001', actorRole: 'manager', occurredAtUtc: '2026-11-09T20:00:00Z', simulatedContextTimeUtc: '2026-11-09T12:00:00Z', entityRefs: [{ kind: 'voyage', id: 'VYG-0001' }], actionType: 'scenario.accept', summary: 'Accepted plan', source: 'local-demo' }],
+  };
+
+  it('maps statuses to stages, decisions to branches, and keeps IDs and audit', () => {
+    const m = migrateWorkflowV1(v1)!;
+    expect(m).not.toBeNull();
+    expect(isWorkflowState(m)).toBe(true);
+    expect(m.version).toBe(2);
+    expect(m.seq).toBe(6);
+    expect(Object.fromEntries(Object.entries(m.incidents).map(([k, v]) => [k, v.status]))).toEqual({ 'INC-0001': 'optionProposed', 'INC-0002': 'investigating', 'INC-0003': 'untriaged' });
+    expect(m.incidents['INC-0001'].severity).toBeNull();
+    expect(m.branches[0]).toMatchObject({ branchId: 'LOC-DEC-0004', status: 'approvedForSimulation', approvedByUserId: 'USR-001', outcome: null, forkedAtUtc: '2026-11-09T12:00:00Z' });
+    expect(m.audit).toEqual(v1.audit);
+  });
+
+  it('rejects invalid V1 data instead of guessing', () => {
+    expect(migrateWorkflowV1({ ...v1, incidents: { 'INC-0001': { status: 'optionProposed', ownerUserId: null, dueAtUtc: null, notes: [], resolution: null } } })).toBeNull();
+    expect(migrateWorkflowV1({ ...v1, version: 2 })).toBeNull();
+    expect(migrateWorkflowV1('nope')).toBeNull();
   });
 });
 
@@ -363,8 +473,10 @@ describe('exception queue', () => {
 describe('persistence validation', () => {
   it('rejects corrupted or duplicate-ID state', () => {
     const s = run([[DISPATCHER, ack]]);
-    expect(isWorkflowState({ ...s, version: 2 })).toBe(false);
-    expect(isWorkflowState({ ...s, incidents: { 'INC-0001': { ...s.incidents['INC-0001'], status: 'closed' } } })).toBe(false);
+    expect(isWorkflowState({ ...s, version: 1 })).toBe(false);
+    expect(isWorkflowState({ ...s, incidents: { 'INC-0001': { ...s.incidents['INC-0001'], status: 'acknowledged' } } })).toBe(false);
+    expect(isWorkflowState({ ...s, incidents: { 'INC-0001': { ...s.incidents['INC-0001'], status: 'detected' } } })).toBe(false);
+    expect(isWorkflowState({ ...s, incidents: { 'INC-0001': { ...s.incidents['INC-0001'], severity: 'low' } } })).toBe(false);
     expect(isWorkflowState({ ...s, audit: [...s.audit, s.audit[0]] })).toBe(false);
     expect(isWorkflowState('nope')).toBe(false);
   });
@@ -393,7 +505,7 @@ describe('queue and activity read models', () => {
   });
 
   it('queue reflects a local owner', () => {
-    const s = run([[DISPATCHER, ack], [DISPATCHER, investigate], [DISPATCHER, assign]]);
+    const s = run([[DISPATCHER, ack], [DISPATCHER, assign]]);
     const snap = getSnapshotAt(c, NOW, { incidents: incidentOverlay(s) });
     const row = buildQueueRows(c, snap, s, null).find((r) => r.caseId === 'INC-0001');
     expect(row?.ownerName).toBe('Jordan Lee');
@@ -401,10 +513,10 @@ describe('queue and activity read models', () => {
   });
 
   it('audit filters combine actor, action and entity', () => {
-    const s = run([[DISPATCHER, ack], [DISPATCHER, investigate], [DISPATCHER, assign]]);
+    const s = run([[DISPATCHER, ack], [DISPATCHER, assign]]);
     expect(s.audit.filter((a) => auditMatches(a, { actorUserId: DISPATCHER, actionType: 'incident.assign', entity: '' }))).toHaveLength(1);
     expect(s.audit.filter((a) => auditMatches(a, { actorUserId: MANAGER, actionType: null, entity: '' }))).toHaveLength(0);
-    expect(s.audit.filter((a) => auditMatches(a, { actorUserId: null, actionType: null, entity: 'vsl-0001' }))).toHaveLength(3);
+    expect(s.audit.filter((a) => auditMatches(a, { actorUserId: null, actionType: null, entity: 'vsl-0001' }))).toHaveLength(2);
     expect(auditRows(c, s.audit)[0].actorText).toBe('Taylor Cruz (dispatcher)');
   });
 

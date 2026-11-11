@@ -164,6 +164,17 @@ def validate_v2(folder: Path, by, vessel_samples, manifest):
         if bk['vesselId'] == 'VSL-0001':
             if bk.get('berthId') is not None or any(m['classifier'] in ('PLN', 'ACT') for m in bk['milestones']):
                 errors.append('VSL-0001 berth booking must stay estimate-only (no planned or actual berth)')
+
+    jit = sc.get('jitDemo')
+    if jit:
+        bk = next((b for b in v2['berthSchedule'] if b['portCallId'] == jit['portCallId']), None)
+        if not bk or bk['vesselId'] != jit['vesselId'] or bk['status'] != 'scheduled':
+            errors.append('v2/scenario: JIT demo must reference a scheduled berth booking')
+        else:
+            pbp = [parse(m['atUtc']) for m in bk['milestones'] if m['location'] == 'PBP' and m['classifier'] == 'EST']
+            pln = [parse(m['atUtc']) for m in bk['milestones'] if m['location'] == 'BERTH' and m['eventType'] == 'ARRIVAL' and m['classifier'] == 'PLN']
+            if not pbp or not pln or (pln[0] - pbp[0]) < timedelta(hours=3) or pln[0] != parse(jit['plannedBerthUtc']):
+                errors.append('v2/scenario: JIT demo needs a planned berth at least 3 h after the pilot boarding estimate')
     return errors
 
 

@@ -1,3 +1,4 @@
+import { isClosedStage } from '@/core/caseStage';
 import { boundsContain } from '@/core/geo';
 import { toIsoUtc } from '@/core/time';
 import type { EntityRef } from '@/core/types';
@@ -71,7 +72,7 @@ function voyagesWithOpenIncident(c: Catalog, snap: Snapshot, sets: CohortSets): 
   for (const id of sets.incidentIds) {
     const st = snap.incidents.get(id);
     const inc = c.byId.incident.get(id);
-    if (st && inc && st.status !== 'resolved') out.add(inc.voyageId);
+    if (st && inc && !isClosedStage(st.status)) out.add(inc.voyageId);
   }
   return out;
 }
@@ -135,7 +136,7 @@ export function selectKpis(c: Catalog, snap: Snapshot, cohort: KpiCohort = {}): 
   const withIncident = voyagesWithOpenIncident(c, snap, sets);
   const crossing = voyagesCrossingHazards(snap, sets);
   const atRisk = [...new Set([...withIncident, ...crossing])].sort((a, b) => (snap.risks.get(b)?.score ?? 0) - (snap.risks.get(a)?.score ?? 0) || a.localeCompare(b));
-  const unresolved = [...sets.incidentIds].filter((id) => snap.incidents.get(id)?.status !== 'resolved').sort();
+  const unresolved = [...sets.incidentIds].filter((id) => { const st = snap.incidents.get(id); return !st || !isClosedStage(st.status); }).sort();
   const exposure = dedupedExposureUsd(c, snap, sets);
   const exposureOrder = [...exposure.voyageIds].sort((a, b) => (snap.exposures.get(b)?.estimatedUsd ?? -1) - (snap.exposures.get(a)?.estimatedUsd ?? -1) || a.localeCompare(b));
   const base = { asOfUtc, cohort: cohortLabel, quality: 'derived' as const };

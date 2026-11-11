@@ -59,6 +59,32 @@
       ],
       "additionalProperties": false
     },
+    "jitDemo": {
+      "type": "object",
+      "properties": {
+        "pilotBoardingEstUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "plannedBerthUtc": {
+          "type": "string",
+          "pattern": "Z$"
+        },
+        "portCallId": {
+          "type": "string"
+        },
+        "vesselId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pilotBoardingEstUtc",
+        "plannedBerthUtc",
+        "portCallId",
+        "vesselId"
+      ],
+      "additionalProperties": false
+    },
     "positionGapDemo": {
       "type": "object",
       "properties": {
@@ -158,6 +184,7 @@
     "disclosure",
     "flagshipVesselIds",
     "followDemo",
+    "jitDemo",
     "positionGapDemo",
     "precedence",
     "scenarioVersion",

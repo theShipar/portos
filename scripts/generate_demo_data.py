@@ -940,12 +940,21 @@ def gen_v2(data, ctx, seed):
                      'status': 'awaiting_berth', 'bufferMinutes': buffer_min,
                      'milestones': [ms('ARRIVAL', 'BERTH', 'EST', parse(one['estimatedBerthUtc']), datetime(2026, 11, 9, 11, 40, tzinfo=UTC)),
                                     ms('DEPARTURE', 'BERTH', 'EST', parse(voyage1['estimatedDepartureUtc']), datetime(2026, 11, 9, 11, 40, tzinfo=UTC))]})
+    # JIT demo (spec 16 optional): the earliest scheduled call arriving 12-36 h after the anchor gets requested and
+    # planned berth times later than its pilot-boarding estimate. Fixed offsets, so no extra random draws.
+    jit_call = min((c for c in calls if c['status'] == 'scheduled' and c['vesselId'] != 'VSL-0001'
+                    and ANCHOR + timedelta(hours=12) <= parse(c['arrivalAtUtc']) <= ANCHOR + timedelta(hours=36)),
+                   key=lambda c: (c['arrivalAtUtc'], c['portCallId']))
     for c in calls:
         if c['status'] == 'scheduled':
             eta = parse(c['arrivalAtUtc'])
+            miles = [ms('ARRIVAL', 'PBP', 'EST', eta, ANCHOR - timedelta(minutes=rng.randint(5, 60)))]
+            if c is jit_call:
+                miles += [ms('ARRIVAL', 'BERTH', 'REQ', eta + timedelta(hours=9), ANCHOR - timedelta(hours=20)),
+                          ms('ARRIVAL', 'BERTH', 'PLN', eta + timedelta(hours=9), ANCHOR - timedelta(hours=3)),
+                          ms('DEPARTURE', 'BERTH', 'PLN', eta + timedelta(hours=31), ANCHOR - timedelta(hours=3))]
             bookings.append({'bookingId': None, 'portCallId': c['portCallId'], 'vesselId': c['vesselId'], 'berthId': None, 'terminalId': c['terminalId'],
-                             'status': 'scheduled', 'bufferMinutes': buffer_min,
-                             'milestones': [ms('ARRIVAL', 'PBP', 'EST', eta, ANCHOR - timedelta(minutes=rng.randint(5, 60)))]})
+                             'status': 'scheduled', 'bufferMinutes': buffer_min, 'milestones': miles})
     for k, b in enumerate(sorted(bookings, key=lambda b: b['portCallId']), 1):
         b['bookingId'] = f'BKG-{k:04d}'
     bookings.sort(key=lambda b: b['bookingId'])
@@ -957,6 +966,8 @@ def gen_v2(data, ctx, seed):
         'flagshipVesselIds': ctx['flagship'],
         'followDemo': {'vesselId': 'VSL-0047', 'voyageId': 'VYG-0047', 'routeId': 'RTE-SIN-MNL'},
         'positionGapDemo': {'vesselId': f'VSL-{GAP_VESSEL:04d}', 'fromUtc': iso(GAP_FROM), 'toUtc': iso(GAP_TO)},
+        'jitDemo': {'vesselId': jit_call['vesselId'], 'portCallId': jit_call['portCallId'], 'pilotBoardingEstUtc': jit_call['arrivalAtUtc'],
+                    'plannedBerthUtc': iso(parse(jit_call['arrivalAtUtc']) + timedelta(hours=9))},
         'singaporeCase': {'vesselId': 'VSL-0001', 'portCallId': 'PCL-0001', 'incidentId': 'INC-0001', 'queueSinceUtc': iso(VSL1_QUEUE_SINCE),
                           'anchorageEnterUtc': '2026-11-09T09:15:00Z', 'estimatedBerthUtc': '2026-11-10T14:00:00Z', 'berthAssigned': False},
         'precedence': ['baseFixtureRecords', 'v2IllustrativeLayouts', 'versionedFutureMovementSamples', 'scenarioBranchEvents'],

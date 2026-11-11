@@ -1,3 +1,4 @@
+import { isClosedStage } from '@/core/caseStage';
 import { densifyPath, inverseSpherical, sphericalPosition } from '@/core/geo';
 import type { Bounds, EntityRef, GeoPoint, NavStatus, WeatherHazard } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
@@ -65,7 +66,7 @@ export function buildVesselMarkers(c: Catalog, snap: Snapshot): VesselMarker[] {
   const openByVessel = new Map<string, string[]>();
   for (const i of c.incidents) {
     const st = snap.incidents.get(i.incidentId);
-    if (!st?.visible || st.status === 'resolved') continue;
+    if (!st?.visible || isClosedStage(st.status)) continue;
     const list = openByVessel.get(i.vesselId) ?? [];
     list.push(i.incidentId);
     openByVessel.set(i.vesselId, list);
@@ -136,7 +137,7 @@ export function buildPortMarkers(c: Catalog, snap: Snapshot): PortMarker[] {
   const incidents = new Map<string, number>();
   for (const i of c.incidents) {
     const st = snap.incidents.get(i.incidentId);
-    if (st?.visible && st.status !== 'resolved') incidents.set(i.portId, (incidents.get(i.portId) ?? 0) + 1);
+    if (st?.visible && !isClosedStage(st.status)) incidents.set(i.portId, (incidents.get(i.portId) ?? 0) + 1);
   }
   return c.ports.map((p) => {
     const w = snap.portWait.get(p.portId) ?? null;

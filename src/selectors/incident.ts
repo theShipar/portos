@@ -1,13 +1,14 @@
+import { isClosedStage, SEVERITY_ORDER, severityRank } from '@/core/caseStage';
 import { formatCoord, formatDuration, formatLocal, formatTimestampFreshness, formatUsd, formatUtc, sentenceCase } from '@/core/format';
 import { parseUtc } from '@/core/time';
-import type { EntityRef, Evidence, Incident, User } from '@/core/types';
+import type { EntityRef, Evidence, Incident, Severity, User } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import { incidentPriority, type CasePriority } from '@/engines/priority';
 import { freshnessOf, makeProvenance, type FeedKind, type Freshness, type Provenance } from '@/engines/provenance';
 import type { IncidentState, Snapshot } from '@/engines/snapshot';
 import { checkTransition, PERMISSION, permissionCheck, transitionsFrom, type Check, type TransitionRule } from '@/workflows/incidentMachine';
 import { auditFor } from '@/workflows/handoff';
-import { TASK_TYPE_LABEL, type AuditEvent, type NotificationDraft, type ScenarioDecision, type Task, type WorkflowState } from '@/workflows/types';
+import { TASK_TYPE_LABEL, type AuditEvent, type NotificationDraft, type DecisionBranch, type Task, type WorkflowState } from '@/workflows/types';
 import { statusStyle, type StatusStyle } from '@/styles/tokens';
 import { selectVoyageImpact, type VoyageImpact } from './impact';
 import { describeEvent, type InspectorField } from './vessel';
@@ -75,11 +76,13 @@ export interface IncidentModel {
   localHiddenInReplay: number;
   tasks: TaskRow[];
   drafts: NotificationDraft[];
-  decisions: ScenarioDecision[];
+  branches: DecisionBranch[];
+  /** Severities this case can be escalated to (higher than the current one). */
+  escalateTo: Severity[];
   notes: { noteId: string; author: string; atText: string; text: string }[];
   resolutionText: string | null;
   transitions: TransitionOption[];
-  can: { assign: Check; note: Check; task: Check; propose: Check };
+  can: { assign: Check; note: Check; task: Check; propose: Check; escalate: Check };
 }
 
 const FIELD_LABEL: Record<string, string> = {
@@ -238,7 +241,7 @@ export function buildIncidentModel(c: Catalog, snap: Snapshot, wf: WorkflowState
     vesselName: c.byId.vessel.get(inc.vesselId)?.name ?? inc.vesselId,
     portName,
     portTimeZone: tz,
-    severityStyle: statusStyle('severity', inc.severity),
+    severityStyle: statusStyle('severity', st.severity),
     statusStyle: statusStyle('incident', status),
     confidenceStyle: statusStyle('confidence', impact.eta?.confidence ?? 'unknown'),
     ageText: st.visible ? `Open ${formatDuration(Math.max(0, (t - opened) / 60_000))}` : 'Not yet opened',
@@ -264,7 +267,8 @@ export function buildIncidentModel(c: Catalog, snap: Snapshot, wf: WorkflowState
     localHiddenInReplay: snap.isHistorical ? audit.length : 0,
     tasks,
     drafts: wf.drafts.filter((d) => d.relatedEntityIds.some((r) => r.kind === 'incident' && r.id === incidentId)),
-    decisions: wf.decisions.filter((d) => d.incidentId === incidentId || d.voyageId === inc.voyageId),
+    branches: wf.branches.filter((b) => b.incidentId === incidentId || b.voyageId === inc.voyageId),
+    escalateTo: isClosedStage(status) ? [] : SEVERITY_ORDER.filter((x) => severityRank(x) > severityRank(st.severity)),
     notes: (local?.notes ?? []).map((n) => ({ noteId: n.noteId, author: userName(n.authorUserId), atText: formatUtc(n.simulatedAtUtc), text: n.text })),
     resolutionText: local?.resolution ? `${local.resolution.evidenceNote || 'Resolved in simulation (no external confirmation).'}` : null,
     transitions,
@@ -273,6 +277,7 @@ export function buildIncidentModel(c: Catalog, snap: Snapshot, wf: WorkflowState
       note: permissionCheck(user, PERMISSION.note, 'add case notes'),
       task: permissionCheck(user, PERMISSION.task, 'create tasks or drafts'),
       propose: permissionCheck(user, PERMISSION.propose, 'propose scenario plans'),
+      escalate: permissionCheck(user, 'action.incident.transition', 'escalate cases'),
     },
   };
 }

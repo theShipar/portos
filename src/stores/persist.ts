@@ -1,6 +1,8 @@
 export const STORAGE_KEYS = {
   preferences: 'portos:preferences:v1',
-  workflow: 'portos:workflow:v1',
+  workflow: 'portos:workflow:v2',
+  /** Read once for migration to v2, then removed (D-037). */
+  legacyWorkflow: 'portos:workflow:v1',
   view: 'portos:view:v1',
   layers: 'portos:layers:v1',
   assumptions: 'portos:assumptions:v1',
@@ -35,6 +37,17 @@ export function loadStored<T>(key: StorageKey, validate: (v: unknown) => v is T,
   }
   s?.removeItem(key);
   return { value: fallback, corrupted: true };
+}
+
+/** Raw parsed value of a key: undefined when absent, null when unreadable JSON. */
+export function readStoredJson(key: StorageKey): unknown {
+  const text = storage()?.getItem(key);
+  if (!text) return undefined;
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return null;
+  }
 }
 
 /** Returns false when storage is unavailable or full; the caller keeps the state in memory. */

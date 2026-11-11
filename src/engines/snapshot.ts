@@ -1,4 +1,4 @@
-import type { Incident, IncidentStatus, TimelineEvent, Voyage, WeatherHazard } from '@/core/types';
+import type { CaseStage, Incident, Severity, TimelineEvent, Voyage, WeatherHazard } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import { computeEta, type EtaResult } from './eta';
 import { emptyFold, foldEvents, incidentFromFold, type FoldState } from './fold';
@@ -9,8 +9,11 @@ import { getVesselAtTime, type VesselAtTime } from './tracks';
 export interface IncidentState {
   incidentId: string;
   visible: boolean;
-  status: IncidentStatus;
+  status: CaseStage;
   ownerUserId: string | null;
+  /** Fixture severity, or the local escalation when one was recorded. */
+  severity: Severity;
+  escalated: boolean;
   /** True when the status comes from local demo decisions rather than fixture history. */
   locallyModified: boolean;
 }
@@ -26,7 +29,7 @@ export interface UserRateOverride {
  * Daily-rate overrides are what-if assumptions and apply at every time, labelled as user scenario.
  */
 export interface WorkflowOverlay {
-  incidents?: Record<string, { status: IncidentStatus; ownerUserId: string | null }>;
+  incidents?: Record<string, { status: CaseStage; ownerUserId: string | null; severity: Severity | null }>;
   dailyRates?: Record<string, UserRateOverride>;
 }
 
@@ -53,7 +56,7 @@ export function rateAssumption(vo: Voyage, override: UserRateOverride | undefine
 }
 
 /** Fixture lifecycle of one incident at time t, folded from its own events. */
-export function incidentStatusAt(c: Catalog, i: Incident, t: number): { visible: boolean; status: IncidentStatus; ownerUserId: string | null } {
+export function incidentStatusAt(c: Catalog, i: Incident, t: number): { visible: boolean; status: CaseStage; ownerUserId: string | null } {
   const fold = foldEvents(emptyFold(), c.eventsByEntity.get(`incident:${i.incidentId}`) ?? [], t, () => i);
   return incidentFromFold(fold, i, t);
 }
@@ -97,6 +100,8 @@ export function getSnapshotAt(c: Catalog, t: number, overlay?: WorkflowOverlay):
       visible: base.visible,
       status: o?.status ?? base.status,
       ownerUserId: o ? o.ownerUserId : base.ownerUserId,
+      severity: o?.severity ?? i.severity,
+      escalated: !!o?.severity && o.severity !== i.severity,
       locallyModified: !!o,
     });
   }

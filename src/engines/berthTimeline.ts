@@ -69,11 +69,11 @@ function known(m: BerthMilestone, t: number): boolean {
   return true;
 }
 
-/** Latest-recorded berth milestone of a kind known at `t`. */
-export function milestoneMs(b: BerthBooking, event: BerthMilestone['eventType'], classifier: DcsaClassifier, t: number): number | null {
+/** Latest-recorded milestone of a kind known at `t` (berth by default, or the pilot boarding place). */
+export function milestoneMs(b: BerthBooking, event: BerthMilestone['eventType'], classifier: DcsaClassifier, t: number, location: BerthMilestone['location'] = 'BERTH'): number | null {
   let best: { at: number; rec: number } | null = null;
   for (const m of b.milestones) {
-    if (m.location !== 'BERTH' || m.eventType !== event || m.classifier !== classifier || !known(m, t)) continue;
+    if (m.location !== location || m.eventType !== event || m.classifier !== classifier || !known(m, t)) continue;
     const at = parseUtc(m.atUtc);
     const rec = parseUtc(m.recordedAtUtc)!;
     if (at !== null && (!best || rec >= best.rec)) best = { at, rec };

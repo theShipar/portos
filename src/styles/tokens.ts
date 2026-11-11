@@ -1,5 +1,6 @@
 import raw from './tokens.json';
-import type { BerthStatus, Confidence, IncidentStatus, NavStatus, Severity } from '@/core/types';
+import { STAGE_LABEL } from '@/core/caseStage';
+import type { BerthStatus, CaseStage, Confidence, NavStatus, Severity } from '@/core/types';
 
 export const tokens = raw;
 
@@ -48,13 +49,15 @@ const SEVERITY: Record<Severity, StatusStyle> = {
   critical: { tone: 'critical', label: 'Critical', icon: 'octagon' },
 };
 
-const INCIDENT: Record<IncidentStatus, StatusStyle> = {
-  open: { tone: 'critical', label: 'Open', icon: 'alert' },
-  acknowledged: { tone: 'warning', label: 'Acknowledged', icon: 'check' },
-  investigating: { tone: 'warning', label: 'Investigating', icon: 'clock' },
-  mitigation_planned: { tone: 'info', label: 'Mitigation planned', icon: 'info' },
-  monitoring: { tone: 'info', label: 'Monitoring', icon: 'clock' },
-  resolved: { tone: 'healthy', label: 'Resolved', icon: 'check' },
+const INCIDENT: Record<CaseStage, StatusStyle> = {
+  detected: { tone: 'unknown', label: STAGE_LABEL.detected, icon: 'info' },
+  untriaged: { tone: 'critical', label: STAGE_LABEL.untriaged, icon: 'alert' },
+  investigating: { tone: 'warning', label: STAGE_LABEL.investigating, icon: 'clock' },
+  optionProposed: { tone: 'info', label: STAGE_LABEL.optionProposed, icon: 'info' },
+  approvedForSimulation: { tone: 'info', label: STAGE_LABEL.approvedForSimulation, icon: 'check' },
+  monitoring: { tone: 'info', label: STAGE_LABEL.monitoring, icon: 'clock' },
+  resolved: { tone: 'healthy', label: STAGE_LABEL.resolved, icon: 'check' },
+  closed: { tone: 'neutral', label: STAGE_LABEL.closed, icon: 'check' },
 };
 
 const BERTH: Record<BerthStatus, StatusStyle> = {

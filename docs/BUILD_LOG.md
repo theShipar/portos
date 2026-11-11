@@ -716,3 +716,44 @@ blockers. Status values: implemented / tested / blocked.
     unchanged within tolerance.
   - Evidence: `docs/qa/v2-phase6/follow-vsl0047-x100.png`, `gap-vsl0059-unverified.png`.
 - **Blockers:** none.
+
+## Phase V2-7 — Value engines, V2 case lifecycle, decision branches
+
+- **Decisions:** D-037 (V2 stages mapped from fixture statuses, transitions, escalation, decision branches,
+  `portos:workflow:v2` with V1 migration, ETA variance / JIT / service chain / route feasibility engines, port-call
+  value selector, JIT demo fixture). D-004 marked superseded. TECHNICAL_DEVIATIONS gains the JIT demo, towage and
+  mooring, and fixture-status rows.
+- **Implemented:**
+  - `src/core/caseStage.ts`; `CaseStage` through fold, snapshot, priority, KPIs, map layers, replay, vessel and
+    incident selectors and tokens. `incidentMachine.ts` rewritten (triage, monitor, investigate, resolve, close,
+    reopen; propose and approve only via branches; `checkEscalation`).
+  - Workflow V2: `DecisionBranch` with recorded outcome, `branch.propose / approve / discard`, `incident.escalate`;
+    validator for V2 and V1; `migrateWorkflowV1`; store loads V2, migrates V1 once and removes it.
+  - UI: escalate form and stage hints in `IncidentActions.vue`; branch list with baseline vs "Branch · simulated",
+    approve and discard in `ComparisonPanel.vue`; `PortCallCard.vue` in the vessel inspector overview.
+  - Engines: `etaVariance.ts`, `jit.ts`, `serviceChain.ts`, `routeFeasibility.ts`; `milestoneMs` takes a location;
+    fold keeps `anchoredSince`. Selector `src/selectors/portCall.ts`.
+  - Fixture: JIT demo on PCL-0046 / VSL-0245 / BKG-0040 (`scenario.jitDemo`) in `generate_demo_data.py`, validator
+    check; only `sample-data/v2/berthSchedule.json`, `sample-data/v2/scenario.json` and the scenario schema changed.
+- **Tested:**
+  - `python3 scripts/generate_demo_data.py && python3 scripts/build_schemas.py && python3 scripts/validate_data.py` →
+    exit 0 ("PCL-0001 34 h queue / 26 h remaining … verified").
+  - `npx vue-tsc --noEmit` → exit 0 (first pass after the stage refactor listed callers of `decisions`,
+    `scenario.*` audit types and `IncidentStatus`; all migrated).
+  - `npx vitest run` → exit 0, 312 tests in 21 files. New `value.test.ts` (14): the Phase 7 gate (queue 04:00,
+    anchorage 09:15, estimated berth 2026-11-10 14:00 unconfirmed, 34 h / 8 h elapsed / 26 h remaining, +18 h,
+    $24,000, sources EVT-0004 / EVT-0002 / EVT-0008, time-aware before the queue event and 6 h later); variance like
+    with like, REQ fallback, tolerance, recordedAt; JIT opportunity, threshold, unconfirmed slot, fixture demo
+    (8.0 h indicative wait); service chain missed plan and future-recorded actuals; route comparison baseline,
+    unknown without weather, determinism. Workflow tests cover branches, escalation, close / reopen and V1 → V2
+    migration.
+  - `npm run build` → exit 0.
+  - `npx playwright test` (full) → first run 1 failed, second run 2 failed, both in `resilience.spec.ts` under four
+    workers: the keyboard walk now ended in the search box (the port-call card adds a tab stop) where Escape clears
+    the query by design, and the reduced-motion check measured 1509 ms of wall clock that included building the
+    scene. The walk now closes from inside the inspector; the reduced-motion budget (still 1500 ms) is measured in the
+    page from the end of scene preparation to idle. Third run → exit 0, 68 passed, 6 skipped (opt-in perf/capture),
+    3.6 min. New e2e: VSL-0001 port-call card, proposing a decision branch, V1 storage migration notice; journey uses
+    `transition-triage`.
+  - Evidence: `docs/qa/v2-phase7/port-call-vsl0001.png`, `decision-branch.png`.
+- **Blockers:** none.

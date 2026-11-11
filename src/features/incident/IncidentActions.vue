@@ -8,6 +8,7 @@ import { useClockStore } from '@/stores/clock';
 import { useWorkflowStore } from '@/stores/workflow';
 import { LIFECYCLE, type TransitionId } from '@/workflows/incidentMachine';
 import { RESOLUTION_LABEL, RESOLUTION_REASONS, type ResolutionReason } from '@/workflows/types';
+import type { Severity } from '@/core/types';
 import { statusStyle } from '@/styles/tokens';
 import DraftPanel from '@/features/workflow/DraftPanel.vue';
 import TaskPanel from '@/features/workflow/TaskPanel.vue';
@@ -17,7 +18,7 @@ const catalog = useCatalogStore();
 const clock = useClockStore();
 const wf = useWorkflowStore();
 const nav = useNavigation();
-const ids = { reason: useId(), evidence: useId(), ack: useId(), reopen: useId(), assignee: useId(), due: useId(), assignNote: useId(), note: useId(), block: useId() };
+const ids = { reason: useId(), evidence: useId(), ack: useId(), reopen: useId(), escSeverity: useId(), escReason: useId(), assignee: useId(), due: useId(), assignNote: useId(), note: useId(), block: useId() };
 
 const id = computed(() => props.model.incident.incidentId);
 const status = computed(() => props.model.state.status);
@@ -26,7 +27,7 @@ const steps = computed(() => LIFECYCLE.map((s, i) => ({ status: s, label: status
 const assignees = computed(() => (catalog.catalog?.users ?? []).filter((u) => u.role !== 'viewer'));
 const block = computed(() => wf.blockReason);
 
-const panel = ref<null | 'resolve' | 'reopen'>(null);
+const panel = ref<null | 'resolve' | 'reopen' | 'escalate'>(null);
 const error = ref<string | null>(null);
 const resolveForm = ref({ reason: '' as ResolutionReason | '', evidence: '', ack: false });
 const reopenReason = ref('');
@@ -54,6 +55,25 @@ function submitResolve() {
     transition: 'resolve',
     resolution: f.reason ? { reason: f.reason, evidenceNote: f.evidence, simulationAck: f.ack } : undefined,
   });
+  if (!r.ok) error.value = r.error;
+  else panel.value = null;
+}
+
+const escalation = ref<{ severity: Severity | ''; reason: string }>({ severity: '', reason: '' });
+async function openEscalate() {
+  error.value = null;
+  escalation.value = { severity: props.model.escalateTo[0] ?? '', reason: '' };
+  panel.value = 'escalate';
+  await nextTick();
+  firstField.value?.focus();
+}
+function submitEscalate() {
+  const e = escalation.value;
+  if (!e.severity) {
+    error.value = 'Choose the new severity.';
+    return;
+  }
+  const r = wf.dispatch({ type: 'incident.escalate', incidentId: id.value, severity: e.severity, note: e.reason });
   if (!r.ok) error.value = r.error;
   else panel.value = null;
 }
@@ -116,11 +136,24 @@ function openComparison() {
         >
           {{ t.rule.label }}
         </button>
+        <button
+          v-if="model.escalateTo.length"
+          type="button"
+          class="btn btn--sm btn--ghost"
+          :disabled="!!block || !model.can.escalate.ok"
+          :title="block ?? (model.can.escalate.ok ? 'Raise severity when the facts change' : model.can.escalate.reason)"
+          data-testid="escalate-open"
+          @click="openEscalate"
+        >
+          Escalate severity
+        </button>
       </div>
       <ul v-if="!block && model.transitions.some((t) => !t.check.ok)" class="reasons">
         <li v-for="t in model.transitions.filter((x) => !x.check.ok)" :key="t.rule.id" class="form-hint">{{ t.rule.label }}: {{ !t.check.ok ? t.check.reason : '' }}</li>
       </ul>
-      <p v-if="model.state.status === 'acknowledged'" class="form-hint">Acknowledged means someone is looking at it, not that the problem is solved.</p>
+      <p v-if="model.state.status === 'investigating'" class="form-hint">Triaged means someone owns the case, not that the problem is solved.</p>
+      <p v-if="model.state.status === 'investigating' || model.state.status === 'optionProposed'" class="form-hint">Options are proposed and approved for simulation from the option comparison, as decision branches.</p>
+      <p v-if="model.state.escalated" class="form-hint" data-testid="incident-escalated">Escalated locally from {{ model.incident.severity }} to {{ model.state.severity }}.</p>
       <p v-if="error" class="form-error" role="alert">{{ error }}</p>
 
       <form v-if="panel === 'resolve'" class="form sub-form" novalidate data-testid="resolve-form" @submit.prevent="submitResolve" @keydown.esc.stop.prevent="panel = null">
@@ -139,6 +172,21 @@ function openComparison() {
         </label>
         <div class="form-row">
           <button type="submit" class="btn btn--sm btn--primary" data-testid="resolve-submit">Resolve case</button>
+          <button type="button" class="btn btn--sm" @click="panel = null">Cancel</button>
+        </div>
+      </form>
+
+      <form v-if="panel === 'escalate'" class="form sub-form" novalidate data-testid="escalate-form" @submit.prevent="submitEscalate" @keydown.esc.stop.prevent="panel = null">
+        <label class="field" :for="ids.escSeverity">New severity
+          <select :id="ids.escSeverity" ref="firstField" v-model="escalation.severity" class="control" data-testid="escalate-severity">
+            <option v-for="sv in model.escalateTo" :key="sv" :value="sv">{{ statusStyle('severity', sv).label }}</option>
+          </select>
+        </label>
+        <label class="field" :for="ids.escReason">Which facts changed
+          <textarea :id="ids.escReason" v-model="escalation.reason" class="control" rows="2" maxlength="1000" data-testid="escalate-reason" />
+        </label>
+        <div class="form-row">
+          <button type="submit" class="btn btn--sm btn--primary" data-testid="escalate-submit">Escalate</button>
           <button type="button" class="btn btn--sm" @click="panel = null">Cancel</button>
         </div>
       </form>

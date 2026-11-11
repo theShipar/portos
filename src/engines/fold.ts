@@ -1,12 +1,13 @@
 import { parseUtc } from '@/core/time';
-import type { GeoPoint, Incident, IncidentStatus, TimelineEvent } from '@/core/types';
+import { STAGE_FROM_FIXTURE } from '@/core/caseStage';
+import type { CaseStage, GeoPoint, Incident, IncidentStatus, TimelineEvent } from '@/core/types';
 
 /** Fixture statuses that follow the recorded assignment (the dataset has no separate "investigating" event). */
 const PROGRESSED: ReadonlySet<IncidentStatus> = new Set(['investigating', 'mitigation_planned', 'monitoring']);
 
 export interface FoldedIncident {
   visible: boolean;
-  status: IncidentStatus;
+  status: CaseStage;
   ownerUserId: string | null;
   lastEventId: string | null;
 }
@@ -23,6 +24,8 @@ export interface FoldState {
   portWait: Map<string, { hours: number; asOfUtc: string; eventId: string }>;
   /** portId → vessels currently inside the anchorage. */
   anchored: Map<string, Set<string>>;
+  /** vesselId → latest anchorage entry still in force. */
+  anchoredSince: Map<string, { portId: string; anchorageId: string | null; sinceUtc: string; eventId: string }>;
   /** berthId → current occupant. */
   berths: Map<string, { vesselId: string; sinceUtc: string }>;
   /** vesselId → latest scheduled berth window. */
@@ -46,6 +49,7 @@ export function emptyFold(): FoldState {
     incidents: new Map(),
     portWait: new Map(),
     anchored: new Map(),
+    anchoredSince: new Map(),
     berths: new Map(),
     berthWindows: new Map(),
     queued: new Map(),
@@ -63,6 +67,7 @@ function clone(s: FoldState): FoldState {
     incidents: new Map(s.incidents),
     portWait: new Map(s.portWait),
     anchored: new Map([...s.anchored].map(([k, v]) => [k, new Set(v)])),
+    anchoredSince: new Map(s.anchoredSince),
     berths: new Map(s.berths),
     berthWindows: new Map(s.berthWindows),
     queued: new Map(s.queued),
@@ -90,15 +95,15 @@ function apply(s: FoldState, e: TimelineEvent, record: (id: string) => Incident 
   const prev = incidentId ? s.incidents.get(incidentId) : undefined;
   switch (e.type) {
     case 'INCIDENT_OPENED':
-      if (incidentId) s.incidents.set(incidentId, { visible: true, status: 'open', ownerUserId: null, lastEventId: e.eventId });
+      if (incidentId) s.incidents.set(incidentId, { visible: true, status: 'untriaged', ownerUserId: null, lastEventId: e.eventId });
       break;
     case 'INCIDENT_ACKNOWLEDGED':
-      if (incidentId && prev) s.incidents.set(incidentId, { ...prev, status: 'acknowledged', ownerUserId: prev.ownerUserId ?? str(p.userId), lastEventId: e.eventId });
+      if (incidentId && prev) s.incidents.set(incidentId, { ...prev, status: 'investigating', ownerUserId: prev.ownerUserId ?? str(p.userId), lastEventId: e.eventId });
       break;
     case 'ACTION_ASSIGNED':
       if (incidentId && prev) {
         const recorded = record(incidentId)?.status;
-        const status = recorded && PROGRESSED.has(recorded) && prev.status === 'acknowledged' ? recorded : prev.status;
+        const status = recorded && PROGRESSED.has(recorded) && prev.status === 'investigating' ? STAGE_FROM_FIXTURE[recorded] : prev.status;
         s.incidents.set(incidentId, { ...prev, status, ownerUserId: str(p.assigneeUserId) ?? prev.ownerUserId, lastEventId: e.eventId });
       }
       break;
@@ -117,8 +122,13 @@ function apply(s: FoldState, e: TimelineEvent, record: (id: string) => Incident 
       const vesselId = str(p.vesselId);
       if (!portId || !vesselId) break;
       const set = s.anchored.get(portId) ?? new Set<string>();
-      if (e.type === 'ANCHORAGE_ENTER') set.add(vesselId);
-      else set.delete(vesselId);
+      if (e.type === 'ANCHORAGE_ENTER') {
+        set.add(vesselId);
+        s.anchoredSince.set(vesselId, { portId, anchorageId: str(p.anchorageId), sinceUtc: e.occurredAtUtc, eventId: e.eventId });
+      } else {
+        set.delete(vesselId);
+        s.anchoredSince.delete(vesselId);
+      }
       s.anchored.set(portId, set);
       break;
     }
@@ -135,6 +145,7 @@ function apply(s: FoldState, e: TimelineEvent, record: (id: string) => Incident 
       if (!vesselId || !berthId) break;
       s.berths.set(berthId, { vesselId, sinceUtc: e.occurredAtUtc });
       if (portId) s.anchored.get(portId)?.delete(vesselId);
+      s.anchoredSince.delete(vesselId);
       s.queued.delete(vesselId);
       break;
     }
@@ -192,6 +203,8 @@ export function foldEvents(base: FoldState, events: readonly TimelineEvent[], t:
 export function incidentFromFold(fold: FoldState, inc: Incident, t: number): Omit<FoldedIncident, 'lastEventId'> {
   const f = fold.incidents.get(inc.incidentId);
   if (f) return { visible: f.visible, status: f.status, ownerUserId: f.ownerUserId };
+  // Before INCIDENT_OPENED the rule has fired (`detectedAtUtc`) but no case exists yet: not visible, stage detected.
   const opened = parseUtc(inc.openedAtUtc);
-  return { visible: opened !== null && t >= opened, status: 'open', ownerUserId: null };
+  const visible = opened !== null && t >= opened;
+  return { visible, status: visible ? 'untriaged' : 'detected', ownerUserId: null };
 }

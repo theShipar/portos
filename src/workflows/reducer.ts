@@ -1,11 +1,14 @@
-import type { EntityRef, IncidentStatus, User } from '@/core/types';
-import { checkAssignee, checkDue, checkTransition, permissionCheck, PERMISSION, TRANSITIONS, type TransitionId } from './incidentMachine';
+import { isClosedStage, STAGE_LABEL } from '@/core/caseStage';
+import type { CaseStage, EntityRef, Severity, User } from '@/core/types';
+import { checkAssignee, checkDue, checkEscalation, checkTransition, permissionCheck, PERMISSION, TRANSITIONS, type TransitionId } from './incidentMachine';
 import {
   RECIPIENT_LABEL,
   RESOLUTION_LABEL,
   TASK_TYPE_LABEL,
   type AuditActionType,
   type AuditEvent,
+  type BranchOutcome,
+  type DecisionBranch,
   type IncidentLocal,
   type IncidentResolution,
   type NotificationDraft,
@@ -24,7 +27,7 @@ export interface WorkflowContext {
   simNowIso: string;
   wallNowIso: string;
   /** Fixture status/owner at "Now" (before local decisions). */
-  baseIncident: (incidentId: string) => { status: IncidentStatus; ownerUserId: string | null; visible: boolean } | null;
+  baseIncident: (incidentId: string) => { status: CaseStage; ownerUserId: string | null; visible: boolean; severity: Severity } | null;
   incidentRefs: (incidentId: string) => EntityRef[];
   needsVerification: (incidentId: string) => boolean;
 }
@@ -34,6 +37,7 @@ export type WorkflowCommand =
   | { type: 'incident.assign'; incidentId: string; assigneeUserId: string | null; dueAtUtc?: string | null; note?: string }
   | { type: 'incident.note'; incidentId: string; text: string }
   | { type: 'incident.undo'; incidentId: string; auditId: string }
+  | { type: 'incident.escalate'; incidentId: string; severity: Severity; note: string }
   /** Note about a historical instant; the only command accepted during replay. Changes no case state. */
   | { type: 'history.note'; text: string; entityRefs: EntityRef[] }
   | {
@@ -55,16 +59,19 @@ export type WorkflowCommand =
   | { type: 'draft.ready'; draftId: string }
   | { type: 'draft.discard'; draftId: string }
   | {
-      type: 'scenario.propose';
+      type: 'branch.propose';
       voyageId: string;
       incidentId: string | null;
       optionId: string;
       optionName: string;
       inputs: ScenarioInputs;
+      /** Computed by the scenario engine at the current simulation time; frozen into the branch. */
+      outcome: BranchOutcome;
       followUpAssigneeUserId: string;
       portId: string | null;
     }
-  | { type: 'scenario.accept'; decisionId: string };
+  | { type: 'branch.approve'; branchId: string }
+  | { type: 'branch.discard'; branchId: string };
 
 export type WorkflowResult =
   | { ok: true; state: WorkflowState; audit: AuditEvent; message: string; undoable: boolean }
@@ -81,7 +88,7 @@ export const DRAFT_RECIPIENTS: Record<NotificationDraft['kind'], NotificationDra
 
 export const MAX_NOTE_LENGTH = 1000;
 
-const STATE_CHANGING = new Set<AuditActionType>(['incident.transition', 'incident.reopen', 'incident.assign', 'incident.undo']);
+const STATE_CHANGING = new Set<AuditActionType>(['incident.transition', 'incident.reopen', 'incident.assign', 'incident.undo', 'incident.escalate', 'branch.propose', 'branch.approve', 'branch.discard']);
 
 function userLabel(users: ReadonlyMap<string, User>, id: string | null): string {
   if (!id) return 'Unassigned';
@@ -93,7 +100,7 @@ function currentIncident(s: WorkflowState, ctx: WorkflowContext, id: string): In
   if (local) return local;
   const base = ctx.baseIncident(id);
   if (!base) return null;
-  return { status: base.status, ownerUserId: base.ownerUserId, dueAtUtc: null, notes: [], resolution: null };
+  return { status: base.status, severity: null, ownerUserId: base.ownerUserId, dueAtUtc: null, notes: [], resolution: null };
 }
 
 /**
@@ -131,9 +138,10 @@ export function reduceWorkflow(s: WorkflowState, cmd: WorkflowCommand, ctx: Work
       const cur = currentIncident(s, ctx, cmd.incidentId);
       if (!cur || !ctx.baseIncident(cmd.incidentId)?.visible) return fail(`Incident ${cmd.incidentId} is not open at the current simulation time.`);
       const needsVerification = ctx.needsVerification(cmd.incidentId);
+      const rule = TRANSITIONS[cmd.transition];
+      if (rule.viaBranch) return fail('Options are proposed and approved from the option comparison, as decision branches.');
       const check = checkTransition(cur.status, cmd.transition, actor, { note: cmd.note, resolution: cmd.resolution, needsVerification });
       if (!check.ok) return fail(check.reason);
-      const rule = TRANSITIONS[cmd.transition];
       const note = cmd.note?.trim() || undefined;
       if (note && note.length > MAX_NOTE_LENGTH) return fail(`Keep the note under ${MAX_NOTE_LENGTH} characters.`);
       const resolution = cmd.transition === 'resolve' ? { ...cmd.resolution!, evidenceNote: cmd.resolution!.evidenceNote.trim() } : cmd.transition === 'reopen' ? null : cur.resolution;
@@ -152,15 +160,15 @@ export function reduceWorkflow(s: WorkflowState, cmd: WorkflowCommand, ctx: Work
           nextState: rule.to,
           notes,
         },
-        cmd.transition === 'reopen' ? `${cmd.incidentId} reopened and back to investigating.` : `${cmd.incidentId} is now ${rule.to.replace(/_/g, ' ')}.`,
-        cmd.transition !== 'resolve' && cmd.transition !== 'reopen',
+        cmd.transition === 'reopen' ? `${cmd.incidentId} reopened and back to investigating.` : `${cmd.incidentId} is now ${STAGE_LABEL[rule.to].toLowerCase()}.`,
+        cmd.transition !== 'resolve' && cmd.transition !== 'reopen' && cmd.transition !== 'close',
       );
     }
 
     case 'incident.assign': {
       const cur = currentIncident(s, ctx, cmd.incidentId);
       if (!cur || !ctx.baseIncident(cmd.incidentId)?.visible) return fail(`Incident ${cmd.incidentId} is not open at the current simulation time.`);
-      if (cur.status === 'resolved') return fail('Reopen the case before changing its owner.');
+      if (isClosedStage(cur.status)) return fail('Reopen the case before changing its owner.');
       const perm = permissionCheck(actor, PERMISSION.assign, 'assign cases');
       if (!perm.ok) return fail(perm.reason);
       const who = checkAssignee(ctx.users, cmd.assigneeUserId);
@@ -198,6 +206,22 @@ export function reduceWorkflow(s: WorkflowState, cmd: WorkflowCommand, ctx: Work
       return commit(withIncident(cmd.incidentId, next), { actionType: 'incident.note', entityRefs: ctx.incidentRefs(cmd.incidentId), summary: `Note on ${cmd.incidentId}`, notes: text }, 'Note saved locally.');
     }
 
+    case 'incident.escalate': {
+      const cur = currentIncident(s, ctx, cmd.incidentId);
+      const base = ctx.baseIncident(cmd.incidentId);
+      if (!cur || !base?.visible) return fail(`Incident ${cmd.incidentId} is not open at the current simulation time.`);
+      const current = cur.severity ?? base.severity;
+      const check = checkEscalation(cur.status, current, cmd.severity, actor, cmd.note);
+      if (!check.ok) return fail(check.reason);
+      const note = cmd.note.trim();
+      if (note.length > MAX_NOTE_LENGTH) return fail(`Keep the note under ${MAX_NOTE_LENGTH} characters.`);
+      return commit(
+        withIncident(cmd.incidentId, { ...cur, severity: cmd.severity }),
+        { actionType: 'incident.escalate', entityRefs: ctx.incidentRefs(cmd.incidentId), summary: `Escalated ${cmd.incidentId} to ${cmd.severity}`, previousState: current, nextState: cmd.severity, notes: note },
+        `${cmd.incidentId} escalated to ${cmd.severity} severity.`,
+      );
+    }
+
     case 'history.note': {
       const perm = permissionCheck(actor, PERMISSION.note, 'add notes');
       if (!perm.ok) return fail(perm.reason);
@@ -220,9 +244,9 @@ export function reduceWorkflow(s: WorkflowState, cmd: WorkflowCommand, ctx: Work
       const cur = currentIncident(s, ctx, cmd.incidentId);
       if (!cur || target.previousState === undefined) return fail('That action cannot be undone.');
       const isAssign = target.actionType === 'incident.assign';
-      if (!isAssign && target.nextState === 'resolved') return fail('Resolved cases are reopened, not undone.');
+      if (!isAssign && (target.nextState === 'resolved' || target.nextState === 'closed')) return fail('Resolved cases are reopened, not undone.');
       const prevOwner = target.previousState === 'unassigned' ? null : target.previousState;
-      const next: IncidentLocal = isAssign ? { ...cur, ownerUserId: prevOwner } : { ...cur, status: target.previousState as IncidentStatus };
+      const next: IncidentLocal = isAssign ? { ...cur, ownerUserId: prevOwner } : { ...cur, status: target.previousState as CaseStage };
       return commit(
         withIncident(cmd.incidentId, next),
         {
@@ -326,14 +350,24 @@ export function reduceWorkflow(s: WorkflowState, cmd: WorkflowCommand, ctx: Work
       );
     }
 
-    case 'scenario.propose': {
+    case 'branch.propose': {
       const perm = permissionCheck(actor, PERMISSION.propose, 'propose scenario plans');
       if (!perm.ok) return fail(perm.reason);
       const who = checkAssignee(ctx.users, cmd.followUpAssigneeUserId);
       if (!who.ok) return fail(who.reason);
-      const active = s.decisions.find((d) => d.voyageId === cmd.voyageId && d.optionId === cmd.optionId && sameInputs(d.inputs, cmd.inputs));
-      if (active) return fail(`"${cmd.optionName}" with these inputs is already ${active.status} (${active.decisionId}).`);
-      const decisionId = nextId('LOC-DEC');
+      const active = s.branches.find((b) => b.status !== 'discarded' && b.voyageId === cmd.voyageId && b.optionId === cmd.optionId && sameInputs(b.inputs, cmd.inputs));
+      if (active) return fail(`"${cmd.optionName}" with these inputs is already ${active.status === 'proposed' ? 'proposed' : 'approved for simulation'} (${active.branchId}).`);
+      let incidents = s.incidents;
+      let previousStage: CaseStage | undefined;
+      if (cmd.incidentId) {
+        const cur = currentIncident(s, ctx, cmd.incidentId);
+        if (!cur || !ctx.baseIncident(cmd.incidentId)?.visible) return fail(`Incident ${cmd.incidentId} is not open at the current simulation time.`);
+        if (isClosedStage(cur.status)) return fail('Reopen the case before proposing options.');
+        previousStage = cur.status;
+        // A proposal on a later stage (approved, monitoring) adds a branch without moving the case back.
+        if (TRANSITIONS.propose.from.includes(cur.status)) incidents = { ...incidents, [cmd.incidentId]: { ...cur, status: 'optionProposed' } };
+      }
+      const branchId = nextId('LOC-BR');
       const taskId = nextId('LOC-TSK');
       const refs: EntityRef[] = [{ kind: 'voyage', id: cmd.voyageId }, ...(cmd.incidentId ? [{ kind: 'incident' as const, id: cmd.incidentId }] : [])];
       const task: Task = {
@@ -348,59 +382,103 @@ export function reduceWorkflow(s: WorkflowState, cmd: WorkflowCommand, ctx: Work
         assigneeUserId: cmd.followUpAssigneeUserId,
         createdByUserId: actor.userId,
         dueAtUtc: null,
-        notes: `Follow-up for ${decisionId}. Proposal only; no route or ETA was changed.`,
+        notes: `Follow-up for branch ${branchId}. Proposal only; no route or ETA was changed.`,
         createdAtUtc: ctx.simNowIso,
         updatedAtUtc: ctx.simNowIso,
         source: 'local-demo',
       };
+      const branch: DecisionBranch = {
+        branchId,
+        incidentId: cmd.incidentId,
+        voyageId: cmd.voyageId,
+        optionId: cmd.optionId,
+        optionName: cmd.optionName,
+        inputs: { ...cmd.inputs },
+        forkedAtUtc: ctx.simNowIso,
+        outcome: cmd.outcome,
+        status: 'proposed',
+        proposedByUserId: actor.userId,
+        approvedByUserId: null,
+        createdAtUtc: ctx.simNowIso,
+        updatedAtUtc: ctx.simNowIso,
+      };
       return commit(
+        { incidents, branches: [...s.branches, branch], tasks: [...s.tasks, task] },
         {
-          decisions: [
-            ...s.decisions,
-            {
-              decisionId,
-              voyageId: cmd.voyageId,
-              incidentId: cmd.incidentId,
-              optionId: cmd.optionId,
-              optionName: cmd.optionName,
-              inputs: { ...cmd.inputs },
-              status: 'proposed',
-              proposedByUserId: actor.userId,
-              acceptedByUserId: null,
-              createdAtUtc: ctx.simNowIso,
-              updatedAtUtc: ctx.simNowIso,
-            },
-          ],
-          tasks: [...s.tasks, task],
-        },
-        {
-          actionType: 'scenario.propose',
+          actionType: 'branch.propose',
           entityRefs: refs,
-          summary: `Proposed "${cmd.optionName}" for ${cmd.voyageId} (${decisionId})`,
-          nextState: 'proposed',
-          notes: `Inputs: wait +${cmd.inputs.extraWaitHours} h, rate ${cmd.inputs.dailyCostUsd ?? 'n/a'} USD/day, speed ${cmd.inputs.speedAssumptionKn} kn. Follow-up ${taskId}. No route or ETA changed.`,
+          summary: `Proposed "${cmd.optionName}" for ${cmd.voyageId} (branch ${branchId})`,
+          previousState: previousStage,
+          nextState: cmd.incidentId ? incidents[cmd.incidentId]?.status ?? previousStage : 'proposed',
+          notes: `Inputs: wait +${cmd.inputs.extraWaitHours} h, rate ${cmd.inputs.dailyCostUsd ?? 'n/a'} USD/day, speed ${cmd.inputs.speedAssumptionKn} kn. ${cmd.outcome.formula}. Follow-up ${taskId}. No route or ETA changed.`,
         },
-        `Proposal ${decisionId} recorded with follow-up task ${taskId}. Actual route and ETA are unchanged.`,
+        `Branch ${branchId} proposed with follow-up task ${taskId}. Actual route and ETA are unchanged.`,
       );
     }
 
-    case 'scenario.accept': {
-      const d = s.decisions.find((x) => x.decisionId === cmd.decisionId);
-      if (!d) return fail(`Proposal ${cmd.decisionId} no longer exists.`);
-      const perm = permissionCheck(actor, PERMISSION.accept, 'accept scenario plans');
+    case 'branch.approve': {
+      const b = s.branches.find((x) => x.branchId === cmd.branchId);
+      if (!b) return fail(`Branch ${cmd.branchId} no longer exists.`);
+      const perm = permissionCheck(actor, PERMISSION.accept, 'approve options for simulation');
       if (!perm.ok) return fail(perm.reason);
-      if (d.status === 'accepted') return fail('This plan is already accepted.');
+      if (b.status !== 'proposed') return fail(b.status === 'approvedForSimulation' ? 'This branch is already approved for simulation.' : 'A discarded branch cannot be approved; propose it again.');
+      let incidents = s.incidents;
+      let previousStage: CaseStage | undefined;
+      if (b.incidentId) {
+        const cur = currentIncident(s, ctx, b.incidentId);
+        if (!cur || isClosedStage(cur.status)) return fail('Reopen the case before approving an option.');
+        previousStage = cur.status;
+        if (TRANSITIONS.approve.from.includes(cur.status)) incidents = { ...incidents, [b.incidentId]: { ...cur, status: 'approvedForSimulation' } };
+      }
+      // One approved branch per voyage: a newer approval returns the previous one to proposed.
+      const branches = s.branches.map((x) =>
+        x.branchId === b.branchId
+          ? { ...x, status: 'approvedForSimulation' as const, approvedByUserId: actor.userId, updatedAtUtc: ctx.simNowIso }
+          : x.voyageId === b.voyageId && x.status === 'approvedForSimulation'
+            ? { ...x, status: 'proposed' as const, approvedByUserId: null, updatedAtUtc: ctx.simNowIso }
+            : x,
+      );
       return commit(
-        { decisions: s.decisions.map((x) => (x.decisionId === d.decisionId ? { ...x, status: 'accepted' as const, acceptedByUserId: actor.userId, updatedAtUtc: ctx.simNowIso } : x)) },
+        { incidents, branches },
         {
-          actionType: 'scenario.accept',
-          entityRefs: [{ kind: 'voyage', id: d.voyageId }, ...(d.incidentId ? [{ kind: 'incident' as const, id: d.incidentId }] : [])],
-          summary: `Accepted plan "${d.optionName}" (${d.decisionId})`,
-          previousState: 'proposed',
-          nextState: 'accepted',
-          notes: 'Scenario decision status only; no vessel routing or external system was changed.',
+          actionType: 'branch.approve',
+          entityRefs: [{ kind: 'voyage', id: b.voyageId }, ...(b.incidentId ? [{ kind: 'incident' as const, id: b.incidentId }] : [])],
+          summary: `Approved "${b.optionName}" for simulation (branch ${b.branchId})`,
+          previousState: previousStage,
+          nextState: b.incidentId ? incidents[b.incidentId]?.status ?? previousStage : 'approvedForSimulation',
+          notes: 'Scenario branch only; no vessel routing or external system was changed.',
         },
-        `Plan ${d.decisionId} accepted as the scenario decision. Vessel route and ETA data are unchanged.`,
+        `Branch ${b.branchId} approved for simulation. The projected effect is shown beside the baseline; vessel data is unchanged.`,
+      );
+    }
+
+    case 'branch.discard': {
+      const b = s.branches.find((x) => x.branchId === cmd.branchId);
+      if (!b) return fail(`Branch ${cmd.branchId} no longer exists.`);
+      const perm = permissionCheck(actor, PERMISSION.propose, 'discard scenario branches');
+      if (!perm.ok) return fail(perm.reason);
+      if (b.status === 'discarded') return fail('This branch is already discarded.');
+      const branches = s.branches.map((x) => (x.branchId === b.branchId ? { ...x, status: 'discarded' as const, updatedAtUtc: ctx.simNowIso } : x));
+      let incidents = s.incidents;
+      let previousStage: CaseStage | undefined;
+      if (b.incidentId) {
+        const cur = currentIncident(s, ctx, b.incidentId);
+        const live = branches.filter((x) => x.incidentId === b.incidentId && x.status !== 'discarded');
+        previousStage = cur?.status;
+        // With no live branch left, the case goes back to investigating.
+        if (cur && !live.length && (cur.status === 'optionProposed' || cur.status === 'approvedForSimulation')) incidents = { ...incidents, [b.incidentId]: { ...cur, status: 'investigating' } };
+        else if (cur && cur.status === 'approvedForSimulation' && !live.some((x) => x.status === 'approvedForSimulation')) incidents = { ...incidents, [b.incidentId]: { ...cur, status: 'optionProposed' } };
+      }
+      return commit(
+        { incidents, branches },
+        {
+          actionType: 'branch.discard',
+          entityRefs: [{ kind: 'voyage', id: b.voyageId }, ...(b.incidentId ? [{ kind: 'incident' as const, id: b.incidentId }] : [])],
+          summary: `Discarded branch ${b.branchId} ("${b.optionName}")`,
+          previousState: previousStage ?? b.status,
+          nextState: b.incidentId ? incidents[b.incidentId]?.status ?? previousStage : 'discarded',
+        },
+        `Branch ${b.branchId} discarded. It stays in the audit trail.`,
       );
     }
   }
@@ -419,8 +497,8 @@ function taskRefs(t: Task, ctx: WorkflowContext): EntityRef[] {
 }
 
 /** Incident status/owner overlay for the snapshot (only incidents with local decisions). */
-export function incidentOverlay(s: WorkflowState): Record<string, { status: IncidentStatus; ownerUserId: string | null }> {
-  const out: Record<string, { status: IncidentStatus; ownerUserId: string | null }> = {};
-  for (const [id, v] of Object.entries(s.incidents)) out[id] = { status: v.status, ownerUserId: v.ownerUserId };
+export function incidentOverlay(s: WorkflowState): Record<string, { status: CaseStage; ownerUserId: string | null; severity: Severity | null }> {
+  const out: Record<string, { status: CaseStage; ownerUserId: string | null; severity: Severity | null }> = {};
+  for (const [id, v] of Object.entries(s.incidents)) out[id] = { status: v.status, ownerUserId: v.ownerUserId, severity: v.severity };
   return out;
 }

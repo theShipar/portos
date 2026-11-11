@@ -12,7 +12,10 @@ export type Quality = 'synthetic' | 'derived' | 'unknown' | 'stale' | 'assumptio
 export type Confidence = 'high' | 'medium' | 'low' | 'unknown';
 export type NavStatus = 'underway' | 'at_anchor' | 'moored' | 'not_under_command' | 'unknown';
 export type Severity = 'medium' | 'high' | 'critical';
+/** Status as recorded in `incidents.json` (fixture vocabulary; the app maps it to a `CaseStage`). */
 export type IncidentStatus = 'open' | 'acknowledged' | 'investigating' | 'mitigation_planned' | 'monitoring' | 'resolved';
+/** V2 case lifecycle used by the snapshot, workflow and UI (D-037). */
+export type CaseStage = 'detected' | 'untriaged' | 'investigating' | 'optionProposed' | 'approvedForSimulation' | 'monitoring' | 'resolved' | 'closed';
 export type BerthStatus = 'occupied' | 'scheduled' | 'unavailable' | 'free' | 'unknown';
 export type Role = 'viewer' | 'analyst' | 'dispatcher' | 'manager';
 
@@ -354,6 +357,8 @@ export interface V2Scenario {
   followDemo: { vesselId: string; voyageId: string; routeId: string };
   /** A deliberate reporting outage: no samples strictly between the bounds, shown as an unverified path. */
   positionGapDemo?: { vesselId: string; fromUtc: IsoUtc; toUtc: IsoUtc };
+  /** A scheduled call whose planned berth is later than its pilot-boarding estimate: a Just-in-Time arrival case. */
+  jitDemo?: { vesselId: string; portCallId: string; pilotBoardingEstUtc: IsoUtc; plannedBerthUtc: IsoUtc };
   singaporeCase: {
     vesselId: string;
     portCallId: string;

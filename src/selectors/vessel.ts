@@ -1,5 +1,6 @@
+import { isClosedStage } from '@/core/caseStage';
 import { formatCoord, formatKn, formatNm, formatTimestampFreshness, formatUtc } from '@/core/format';
-import type { GeoPoint, IncidentStatus, Severity, TimelineEvent } from '@/core/types';
+import type { CaseStage, GeoPoint, Severity, TimelineEvent } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import type { EtaResult } from '@/engines/eta';
 import type { ExposureEstimate } from '@/engines/exposure';
@@ -21,7 +22,7 @@ export interface LinkedIncident {
   incidentId: string;
   title: string;
   severity: Severity;
-  status: IncidentStatus;
+  status: CaseStage;
   statusStyle: StatusStyle;
   severityStyle: StatusStyle;
 }
@@ -157,13 +158,13 @@ export function buildVesselInspector(c: Catalog, snap: Snapshot, vesselId: strin
     .map(({ i, st }) => ({
       incidentId: i.incidentId,
       title: i.title,
-      severity: i.severity,
+      severity: st!.severity,
       status: st!.status,
       statusStyle: statusStyle('incident', st!.status),
-      severityStyle: statusStyle('severity', i.severity),
+      severityStyle: statusStyle('severity', st!.severity),
     }));
   const sevRank: Record<Severity, number> = { critical: 3, high: 2, medium: 1 };
-  const active = incidents.filter((i) => i.status !== 'resolved').sort((a, b) => sevRank[b.severity] - sevRank[a.severity] || a.incidentId.localeCompare(b.incidentId));
+  const active = incidents.filter((i) => !isClosedStage(i.status)).sort((a, b) => sevRank[b.severity] - sevRank[a.severity] || a.incidentId.localeCompare(b.incidentId));
 
   return {
     vesselId,

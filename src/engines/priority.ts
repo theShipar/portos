@@ -1,6 +1,7 @@
 import { formatDuration, formatUsd } from '@/core/format';
 import { parseUtc } from '@/core/time';
-import type { Confidence, Incident, IncidentStatus, Severity } from '@/core/types';
+import { isClosedStage, STAGE_LABEL } from '@/core/caseStage';
+import type { CaseStage, Confidence, Incident, Severity } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import type { Snapshot } from './snapshot';
 
@@ -12,7 +13,8 @@ export const PRIORITY_WEIGHTS = {
   exposureMax: 30,
   /** One point per hour open, capped. */
   ageMax: 15,
-  status: { open: 10, acknowledged: 5 } as Partial<Record<IncidentStatus, number>>,
+  /** An untriaged case has nobody on it yet. */
+  status: { untriaged: 10 } as Partial<Record<CaseStage, number>>,
   lowConfidencePenalty: 5,
 };
 
@@ -23,7 +25,8 @@ const FORECAST_CATEGORIES = new Set(['schedule_variance', 'port_delay', 'port_co
 export interface CasePriority {
   incidentId: string;
   severity: Severity;
-  status: IncidentStatus;
+  escalated: boolean;
+  status: CaseStage;
   exposureUsd: number | null;
   ageMinutes: number;
   confidence: Confidence;
@@ -63,21 +66,21 @@ export function incidentPriority(c: Catalog, snap: Snapshot, inc: Incident): Cas
   const confidence = snap.etas.get(inc.voyageId)?.confidence ?? 'unknown';
   const verify = needsVerification(c, snap, inc);
 
-  const sev = w.severity[inc.severity];
+  const sev = w.severity[st.severity];
   const exp = exposureUsd === null ? 0 : Math.round((Math.min(exposureUsd, w.exposureCapUsd) / w.exposureCapUsd) * w.exposureMax);
   const age = Math.min(w.ageMax, Math.floor(ageMinutes / 60));
   const stat = w.status[st.status] ?? 0;
   const conf = confidence === 'low' || confidence === 'unknown' ? -w.lowConfidencePenalty : 0;
-  const statusLabel = st.status === 'open' ? 'not yet acknowledged' : st.status.replace(/_/g, ' ');
+  const statusLabel = st.status === 'untriaged' ? 'not yet triaged' : STAGE_LABEL[st.status].toLowerCase();
 
   const rationale = [
-    `${inc.severity[0].toUpperCase()}${inc.severity.slice(1)} severity +${sev}`,
+    `${st.severity[0].toUpperCase()}${st.severity.slice(1)} severity${st.escalated ? ' (escalated)' : ''} +${sev}`,
     exposureUsd === null ? 'Exposure unavailable +0' : `${formatUsd(exposureUsd)} exposure +${exp}`,
     `Open ${formatDuration(ageMinutes)} +${age}`,
     `${statusLabel[0].toUpperCase()}${statusLabel.slice(1)} +${stat}`,
     ...(conf ? [`${confidence === 'low' ? 'Low' : 'Unknown'} confidence −${w.lowConfidencePenalty}`] : []),
   ];
-  return { incidentId: inc.incidentId, severity: inc.severity, status: st.status, exposureUsd, ageMinutes, confidence, needsVerification: verify, score: sev + exp + age + stat + conf, rationale };
+  return { incidentId: inc.incidentId, severity: st.severity, escalated: st.escalated, status: st.status, exposureUsd, ageMinutes, confidence, needsVerification: verify, score: sev + exp + age + stat + conf, rationale };
 }
 
 /**
@@ -89,7 +92,7 @@ export function buildCaseQueue(c: Catalog, snap: Snapshot, opts: { includeResolv
   const groups = new Map<string, { inc: Incident; p: CasePriority }[]>();
   for (const inc of c.incidents) {
     const p = incidentPriority(c, snap, inc);
-    if (!p || (!opts.includeResolved && p.status === 'resolved')) continue;
+    if (!p || (!opts.includeResolved && isClosedStage(p.status))) continue;
     const opened = parseUtc(inc.openedAtUtc) ?? 0;
     const key = FORECAST_CATEGORIES.has(inc.category) ? `${inc.voyageId}|${inc.category}|${Math.floor(opened / (DEDUPE_BUCKET_HOURS * 3600_000))}` : inc.incidentId;
     groups.set(key, [...(groups.get(key) ?? []), { inc, p }]);

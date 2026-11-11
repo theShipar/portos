@@ -10,14 +10,18 @@ export const AUDIT_ACTION_LABEL: Record<AuditActionType, string> = {
   'incident.assign': 'Assignment',
   'incident.note': 'Note',
   'incident.undo': 'Undo',
+  'incident.escalate': 'Escalated',
   'history.note': 'Historical note',
   'task.create': 'Task created',
   'task.status': 'Task updated',
   'draft.create': 'Draft prepared',
   'draft.ready': 'Draft marked ready',
   'draft.discard': 'Draft discarded',
-  'scenario.propose': 'Plan proposed',
-  'scenario.accept': 'Plan accepted',
+  'branch.propose': 'Option proposed',
+  'branch.approve': 'Approved for simulation',
+  'branch.discard': 'Branch discarded',
+  'scenario.propose': 'Plan proposed (V1)',
+  'scenario.accept': 'Plan accepted (V1)',
 };
 
 export interface AuditFilter {

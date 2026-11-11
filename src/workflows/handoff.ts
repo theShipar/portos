@@ -1,3 +1,4 @@
+import { STAGE_LABEL } from '@/core/caseStage';
 import { formatDuration, formatUsd, formatUtc } from '@/core/format';
 import type { EntityRef } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
@@ -39,7 +40,7 @@ export function handoffSummary(c: Catalog, snap: Snapshot, wf: WorkflowState, in
   const lines = [
     `Handoff · ${inc.incidentId} · ${inc.title}`,
     `Vessel ${c.byId.vessel.get(inc.vesselId)?.name ?? inc.vesselId} · voyage ${inc.voyageId}`,
-    `Status: ${st.status.replace(/_/g, ' ')} · owner: ${user(st.ownerUserId)}${local?.dueAtUtc ? ` · due ${formatUtc(local.dueAtUtc)}` : ''}`,
+    `Status: ${STAGE_LABEL[st.status].toLowerCase()} · owner: ${user(st.ownerUserId)}${local?.dueAtUtc ? ` · due ${formatUtc(local.dueAtUtc)}` : ''}`,
     `Latest ETA: ${formatUtc(eta?.estimatedArrivalUtc)} (${formatDuration(eta?.etaShiftMinutes, { signed: true })} vs plan, ${eta?.confidence ?? 'unknown'} confidence, as of ${formatUtc(eta?.asOfUtc)})`,
     `Estimated exposure: ${ex?.estimatedUsd === null || ex?.estimatedUsd === undefined ? 'unavailable' : formatUsd(ex.estimatedUsd)} (estimate, not invoice)`,
     `Evidence freshness: position ${vessel?.state ?? 'unknown'}; ETA ${eta?.provenance.freshness ?? 'unknown'}`,

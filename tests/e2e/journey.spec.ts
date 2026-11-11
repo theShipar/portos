@@ -95,18 +95,43 @@ test.describe('Core Singapore journey', () => {
     await expect(cmp).toContainText('$24,000');
   });
 
-  test('acknowledge, investigate and assign INC-0001; the decision survives reload', async ({ page }) => {
+  test('VSL-0001 port call shows the wait forecast with its sources, never a confirmed slot', async ({ page }) => {
+    await open(page, '/vessel/VSL-0001');
+    const card = page.getByTestId('port-call-value');
+    await expect(card).toContainText('PCL-0001');
+    await expect(page.getByTestId('port-call-queue')).toContainText('2026-11-09 04:00 UTC');
+    await expect(page.getByTestId('port-call-anchorage')).toContainText('2026-11-09 09:15 UTC');
+    await expect(page.getByTestId('port-call-berth')).toContainText('2026-11-10 14:00 UTC · unconfirmed');
+    await expect(page.getByTestId('port-call-wait')).toContainText('34.0 h in queue · 26.0 h remaining');
+    await expect(page.getByTestId('port-call-eta')).toContainText('+18.0 h');
+    await expect(page.getByTestId('port-call-exposure')).toContainText('$24,000');
+    await expect(card).toContainText('EVT-0008');
+    await expect(card).toContainText('Simulated');
+    if (process.env.PORTOS_EVIDENCE) await card.screenshot({ path: 'docs/qa/v2-phase7/port-call-vsl0001.png' });
+  });
+
+  test('proposing an option creates a decision branch with baseline and simulated outcome', async ({ page }) => {
+    await open(page, '/compare/VYG-0001');
+    const cmp = page.getByTestId('comparison');
+    await expect(cmp).toBeVisible();
+    await cmp.locator('[data-testid^="propose-"]:enabled').first().click();
+    const branch = cmp.locator('[data-testid^="branch-LOC-BR"]').first();
+    await expect(branch).toBeVisible();
+    await expect(branch).toContainText(/Proposed/);
+    await expect(branch.getByTestId('branch-outcome')).not.toBeEmpty();
+    if (process.env.PORTOS_EVIDENCE) await branch.screenshot({ path: 'docs/qa/v2-phase7/decision-branch.png' });
+    await open(page, '/incidents/INC-0001');
+    await inspector(page).getByRole('tab', { name: 'Actions' }).click();
+    await expect(page.getByTestId('incident-status')).toContainText(/Option proposed/i);
+  });
+
+  test('triage and assign INC-0001; the decision survives reload', async ({ page }) => {
     await open(page, '/incidents/INC-0001?in=actions');
     await inspector(page).getByRole('tab', { name: 'Actions' }).click();
     const status = page.getByTestId('incident-status');
-    const ack = page.getByTestId('transition-acknowledge');
-    if (await ack.isVisible().catch(() => false)) {
-      await ack.click();
-      await expect(status).toContainText(/Acknowledged/i);
-    }
-    const investigate = page.getByTestId('transition-investigate');
-    if (await investigate.isEnabled().catch(() => false)) {
-      await investigate.click();
+    const triage = page.getByTestId('transition-triage');
+    if (await triage.isVisible().catch(() => false)) {
+      await triage.click();
       await expect(status).toContainText(/Investigating/i);
     }
     await page.getByTestId('assign-user').selectOption('USR-002');
