@@ -32,8 +32,18 @@ routing advisory or a safety-critical system. Everything below is a known gap, n
   correct because animation is time-based.
 - 2D basemap tiles come from the public OpenFreeMap service (no key, no SLA). Offline or when tiles fail, the port
   overlays, queue and inspector keep working on a plain water background with a "Retry tiles" action.
-- Singapore is the authored demo port (three terminals and the scenario anchorage). Every other port has one generic
-  synthetic terminal and anchorage, so its 2D view is schematic.
+- Singapore is the authored demo port (three terminals and the scenario anchorage). Rotterdam and Genoa get
+  procedural 3D twins; every other port has one generic synthetic terminal and anchorage, so its view is a
+  schematic 2D map.
+- Extruded region, country and city scenes use Natural Earth coastlines at 1:50m and 1:10m scale and are labelled
+  illustrative; small islands and harbour detail are simplified. Planar scenes draw hazard outlines only, not the
+  globe's hazard fills.
+- 3D ships are procedural models by category (container, tanker, gas, bulk, RoRo, tug, other), not class-accurate
+  hulls.
+- If a region or city scene fails to load, the previous surface frames the requested scope and offers Retry; there
+  is no offline copy of the scene geometry.
+- The Earth → region handoff takes about 2.8 s on a fast GPU because the cinematic transition is authored; reduced
+  motion replaces it with a short crossfade.
 
 ## Layout and accessibility
 
@@ -51,6 +61,9 @@ routing advisory or a safety-critical system. Everything below is a known gap, n
 - E2E and visual baselines run on Playwright Chromium only (SwiftShader WebGL). Firefox and Safari are untested.
 - Visual baselines include public basemap tiles and can drift with upstream map data.
 - The performance probe measured one machine (Apple M4 Pro); see `docs/PERF_REPORT.md` for what was not measured.
+- Spec 19 acceptance rows are verified by automated browser tests only; no manual pass was performed. Pixel
+  baselines exist at 1440×900 and 1920×1080 only, and clicking a ship during active playback is not automated
+  (`docs/PORTOS_V2_QA_EVIDENCE.md`).
 
 ## Dependencies
 

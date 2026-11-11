@@ -1,4 +1,4 @@
-import { isClosedStage } from '@/core/caseStage';
+import { isClosedStage, STAGE_LABEL } from '@/core/caseStage';
 import { formatDuration, formatHours, formatUsd, formatUtc, sentenceCase } from '@/core/format';
 import type { EntityRef, EventType, TimelineEvent } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
@@ -228,7 +228,7 @@ function positionText(snap: Snapshot, vesselId: string): string {
 
 const incidentText = (snap: Snapshot, id: string) => {
   const st = snap.incidents.get(id);
-  return !st?.visible ? 'Not yet detected' : sentenceCase(st.status.replace(/_/g, ' '));
+  return !st?.visible ? 'Not yet detected' : (STAGE_LABEL[st.status] ?? sentenceCase(st.status));
 };
 
 /**

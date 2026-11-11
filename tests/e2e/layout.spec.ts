@@ -91,6 +91,17 @@ test.describe('Phase 8 · map-first layout at 1440×900', () => {
     await expect(page.getByTestId('replay-histogram')).toBeVisible();
     await expect(page.getByTestId('replay-rate')).toBeVisible();
     await expect(page.getByTestId('replay-time')).toBeVisible();
+
+    // Away from Now the compare panel joins on the right; every row still fits inside the expanded height.
+    await rail.getByTestId('replay-prev').click();
+    await expect(page.getByTestId('replay-compare')).toBeVisible();
+    const box = (await rail.boundingBox())!;
+    expect(box.height).toBeLessThanOrEqual(130);
+    for (const id of ['replay-histogram', 'replay-range-24h', 'replay-loop', 'replay-follow', 'replay-now', 'replay-time']) {
+      const b = (await page.getByTestId(id).boundingBox())!;
+      expect(b.y + b.height, `${id} inside the timeline`).toBeLessThanOrEqual(box.y + box.height + 0.5);
+      expect(b.y, `${id} inside the timeline`).toBeGreaterThanOrEqual(box.y - 0.5);
+    }
   });
 
   test('port scope with replay open: queue, HUD, schedule, rail and legend never overlap', async ({ page }) => {

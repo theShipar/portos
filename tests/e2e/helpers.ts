@@ -31,6 +31,8 @@ export interface PortosAdapter {
   surface(): unknown;
   bridge(): { timeline: { step: string; ms: number; plannedMs: number }[]; stageVisible: boolean; labelsHidden: boolean };
   compass(): { northDeg: number; metresPerPx: number } | null;
+  orbit(): { polarDeg: number; azimuthDeg: number; distance: number } | null;
+  vesselScreen(id: string): { x: number; y: number; visible: boolean } | null;
   overlayStats(): { lod: number; drawnVessels: number; wakes: number; detailVessels: string[]; modelVessels: number; px: number; shipDrawCalls: number; trackRuns: ('observed' | 'modelled' | 'unverified')[] } | null;
   clock(): { timeMs: number; frameMs: number; mode: 'playing' | 'paused' | 'scrubbing'; rate: number; phase: 'history' | 'now' | 'simulation'; rangeStartMs: number; rangeEndMs: number };
   follow(): {

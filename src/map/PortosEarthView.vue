@@ -148,6 +148,8 @@ const stageVeil = ref<HTMLElement | null>(null);
 const overlayHidden = new Set<MapSurface>();
 const labelsHidden = ref(false);
 const preparingLabel = ref<string | null>(null);
+/** Destination whose scene failed to load; the previous scene stays on screen until Retry or Back. */
+const sceneFailure = ref<string | null>(null);
 let preparingTimer = 0;
 
 const markers = computed(() => snapStore.mapMarkers);
@@ -293,7 +295,9 @@ async function applyScope(next: Scope, opts: { initial?: boolean } = {}) {
   let done: boolean;
   if (director) {
     nextFlight = fly;
-    done = (await director.navigate(targetForScope(next), { restoreCamera: false })) === 'done';
+    const outcome = await director.navigate(targetForScope(next), { restoreCamera: false });
+    // A destination that cannot load leaves the previous surface active; frame the requested scope on it instead.
+    done = outcome === 'done' || (outcome === 'error' && !!surface.value && (await fly(surface.value)));
   } else done = await fly(globe);
   scoping = false;
   if (!done) return;
@@ -733,12 +737,16 @@ async function init() {
       // Spec 05: no repeat selections while a flight runs; Back (history) still cancels it.
       input?.setEnabled(phase === 'idle' || phase === 'error');
       clearTimeout(preparingTimer);
+      if (phase === 'preparing') sceneFailure.value = null;
       if (phase === 'preparing' && target) {
         const label = catalog.registry?.get(target.focusId)?.label ?? target.focusId;
         preparingTimer = window.setTimeout(() => (preparingLabel.value = label), 300);
       } else preparingLabel.value = null;
     });
     director.on('active', (s) => setActiveSurface(surfaceOf(s) ?? sc));
+    director.on('error', (_err, target) => {
+      sceneFailure.value = (target && catalog.registry?.get(target.focusId)?.label) ?? 'this view';
+    });
   }
   try {
     const world = await loadWorld();
@@ -972,6 +980,12 @@ function exposeTestAdapter(sc: EarthScene) {
     surface: () => surface.value,
     surfaceKind: () => surface.value?.surfaceKind ?? null,
     compass: () => (surface.value instanceof Region3DScene ? surface.value.compass() : null),
+    orbit: () => (surface.value instanceof Region3DScene ? surface.value.orbitState() : null),
+    vesselScreen: (id: string) => {
+      const s = overlay.value?.vesselScreen(id);
+      const r = host.value?.getBoundingClientRect();
+      return s && r ? { x: r.left + s.x, y: r.top + s.y, visible: s.visible } : null;
+    },
     state: () => state.value,
     stats: () => (surface.value ?? sc).stats(),
     flying: () => !!surface.value?.flying || !!director?.busy,
@@ -1134,6 +1148,11 @@ function onVisibility() {
   }
 }
 
+function retryScene() {
+  sceneFailure.value = null;
+  applyScope(view.scope);
+}
+
 function dispose() {
   unsubs.forEach((u) => u());
   unsubs = [];
@@ -1144,6 +1163,7 @@ function dispose() {
   nextFlight = null;
   clearTimeout(preparingTimer);
   preparingLabel.value = null;
+  sceneFailure.value = null;
   stage?.clear();
   stage = null;
   overlayHidden.clear();
@@ -1181,6 +1201,11 @@ defineExpose({ resetCamera, scene, surface, overlay });
     <canvas ref="stageFrame" class="handoff-frame" aria-hidden="true" data-testid="handoff-frame" />
     <div ref="stageVeil" class="handoff-veil" aria-hidden="true" />
     <div v-if="preparingLabel" class="earth__preparing" role="status" data-testid="scene-preparing">Preparing {{ preparingLabel }}…</div>
+    <div v-if="sceneFailure" class="earth__failure" role="alert" data-testid="scene-failure">
+      <span>{{ sceneFailure }} could not be loaded. Showing the last stable view.</span>
+      <button type="button" class="btn btn--primary btn--sm" data-testid="scene-retry" @click="retryScene">Retry</button>
+      <button type="button" class="btn btn--quiet btn--sm" @click="router.back()">Back</button>
+    </div>
     <div v-if="state === 'ready'" v-show="active" class="earth__labels" data-map-content :class="{ 'earth__labels--hidden': labelsHidden }">
       <button
         v-for="cl in clusters.clusters"
@@ -1377,6 +1402,23 @@ defineExpose({ resetCamera, scene, surface, overlay });
   font-size: var(--text-11);
   line-height: 16px;
   pointer-events: none;
+}
+.earth__failure {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 17;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(-50%);
+  padding: 6px 8px 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  background: var(--color-panel);
+  color: var(--color-ink);
+  font-size: var(--text-12);
+  box-shadow: 0 4px 16px rgba(7, 26, 39, 0.24);
 }
 .region-label,
 .port-label,

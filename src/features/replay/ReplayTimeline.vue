@@ -288,23 +288,6 @@ function saveNote() {
         <span v-if="expanded && localText" class="rail__sub mono">{{ localText }}</span>
       </div>
       <div class="rail__actions">
-        <template v-if="expanded">
-          <button
-            type="button"
-            class="btn btn--sm"
-            :class="{ 'btn--active': following }"
-            :disabled="!followVesselId"
-            :aria-pressed="following"
-            :title="followVesselId ? undefined : 'Select a vessel to follow it.'"
-            data-testid="replay-follow"
-            @click="toggleFollow"
-          >
-            <Icon name="crosshair" :size="14" /> Follow
-          </button>
-          <button type="button" class="btn btn--sm" :disabled="!historical" :title="historical ? undefined : 'Move back in time to note a historical moment.'" aria-label="Add a note about this historical moment" data-testid="replay-note" @click="startNote">
-            <Icon name="bookmark" :size="13" /> Note
-          </button>
-        </template>
         <button type="button" class="btn btn--sm btn--primary" :disabled="!away" data-testid="replay-now" @click="clock.reset()">
           <Icon name="reset" :size="14" /> Now
         </button>
@@ -333,6 +316,21 @@ function saveNote() {
       </div>
       <button type="button" class="btn btn--sm rail__loop" :class="{ 'btn--active': clock.loop }" :aria-pressed="clock.loop" title="Off: playback pauses at the end of the range" data-testid="replay-loop" @click="clock.setLoop(!clock.loop)">
         <Icon name="loop" :size="13" /> Loop
+      </button>
+      <button
+        type="button"
+        class="btn btn--sm rail__loop"
+        :class="{ 'btn--active': following }"
+        :disabled="!followVesselId"
+        :aria-pressed="following"
+        :title="followVesselId ? undefined : 'Select a vessel to follow it.'"
+        data-testid="replay-follow"
+        @click="toggleFollow"
+      >
+        <Icon name="crosshair" :size="13" /> Follow
+      </button>
+      <button type="button" class="btn btn--sm rail__loop" :disabled="!historical" :title="historical ? undefined : 'Move back in time to note a historical moment.'" aria-label="Add a note about this historical moment" data-testid="replay-note" @click="startNote">
+        <Icon name="bookmark" :size="12" /> Note
       </button>
       <p class="rail__event" data-testid="replay-current">
         <span class="rail__event-text">

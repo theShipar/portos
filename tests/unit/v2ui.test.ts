@@ -128,3 +128,15 @@ describe('Phase 8 · port inspector mini-Gantt and replay bookmarks', () => {
     expect(b[0].at).toBeCloseTo(8 / 24, 5);
   });
 });
+
+describe('Phase 9 · spec 19 data assertions', () => {
+  it('a vessel without an assigned voyage shows no destination ETA, exposure or ETA peek', () => {
+    const v = c.vessels.find((x) => !x.currentVoyageId)!;
+    const m = buildVesselInspector(c, snap, v.vesselId)!;
+    expect(m.voyage).toBeNull();
+    expect([m.eta, m.exposure]).toEqual([null, null]);
+    expect([m.etaShiftText, m.exposureText]).toEqual(['—', '—']);
+    expect(peekDeltas(m).some((d) => /ETA|\$/.test(d.label))).toBe(false);
+    expect(vesselPriorities(m, null).some((p) => p.key === 'eta')).toBe(false);
+  });
+});

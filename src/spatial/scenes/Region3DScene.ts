@@ -850,6 +850,12 @@ export class Region3DScene implements SpatialScene, MapSurface {
   /** Hazard fills and density use the globe's equirectangular canvas; planar scenes show outlines only. */
   setOverlayCanvas(): void {}
 
+  /** Camera orbit in degrees and scene units (test adapter and QA evidence). */
+  orbitState(): { polarDeg: number; azimuthDeg: number; distance: number } {
+    const o = this.orbit();
+    return { polarDeg: THREE.MathUtils.radToDeg(o.polar), azimuthDeg: THREE.MathUtils.radToDeg(o.azimuth), distance: o.distance };
+  }
+
   /** North arrow rotation (degrees clockwise on screen) and ground metres per CSS pixel at the view centre. */
   compass(): { northDeg: number; metresPerPx: number } | null {
     if (!this.proj) return null;

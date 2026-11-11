@@ -1,5 +1,5 @@
 {
-  "recordedAtUtc": "2026-11-09T21:20:19.514Z",
+  "recordedAtUtc": "2026-11-11T00:47:41.955Z",
   "angle": "metal",
   "device": {
     "cpu": "Apple M4 Pro",
@@ -17,19 +17,19 @@
     "width": 1440,
     "height": 900
   },
-  "firstInteractiveMs": 696,
+  "firstInteractiveMs": 643,
   "navTiming": {
-    "domContentLoaded": 256,
-    "load": 496
+    "domContentLoaded": 239,
+    "load": 612
   },
   "scopeSwitchMs": {
-    "earthToRegion": 1235,
-    "regionToPort": 983,
-    "repeatedP50": 1384,
-    "repeatedMax": 1745
+    "earthToRegion": 2766,
+    "regionToPort": 1685,
+    "repeatedP50": 2859,
+    "repeatedMax": 3229
   },
   "flight": {
-    "frames": 72,
+    "frames": 153,
     "p50Fps": 59.9,
     "p5Fps": 59.5,
     "p95FrameMs": 16.8
@@ -43,64 +43,64 @@
   "renderer": {
     "earth": {
       "calls": 34,
-      "triangles": 56762,
+      "triangles": 90152,
       "lines": 145571,
       "points": 1300,
       "geometries": 35,
       "textures": 7
     },
     "region": {
-      "calls": 40,
-      "triangles": 73319,
-      "lines": 162960,
-      "points": 1300,
-      "geometries": 42,
-      "textures": 7
+      "calls": 246,
+      "triangles": 277638,
+      "lines": 3807,
+      "points": 0,
+      "geometries": 293,
+      "textures": 9
     },
     "port": {
-      "calls": 40,
-      "triangles": 73319,
-      "lines": 162960,
-      "points": 1300,
-      "geometries": 41,
-      "textures": 7
+      "calls": 55,
+      "triangles": 107279,
+      "lines": 1780,
+      "points": 0,
+      "geometries": 360,
+      "textures": 9
     },
     "earthAfter20Switches": {
       "calls": 34,
-      "triangles": 56762,
+      "triangles": 90152,
       "lines": 145571,
       "points": 1300,
-      "geometries": 47,
-      "textures": 7
+      "geometries": 359,
+      "textures": 9
     },
     "geometriesAtEarthPerRoundTrip": [
-      47,
-      47,
-      47,
-      47,
-      47,
-      47,
-      47,
-      47,
-      47,
-      47
+      359,
+      359,
+      359,
+      359,
+      359,
+      359,
+      359,
+      359,
+      359,
+      359
     ]
   },
   "heapMb": {
-    "start": 17.2,
-    "after20Switches": 24.8,
-    "delta": 7.6,
+    "start": 20.9,
+    "after20Switches": 26.6,
+    "delta": 5.7,
     "perRoundTrip": [
-      24.2,
-      24.4,
-      24.6,
-      24.6,
-      24.7,
-      24.7,
-      24.8,
-      24.8,
-      24.8,
-      24.9
+      25.7,
+      25.9,
+      26.2,
+      26.4,
+      26.4,
+      26.4,
+      26.5,
+      26.5,
+      26.6,
+      26.6
     ]
   }
 }

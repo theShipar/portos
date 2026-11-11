@@ -1,0 +1,63 @@
+# Three Scope Map skill checks, 2026-11-11T00:54:22Z, commit 0ed82b0 + Phase 9 working tree
+
+$ python3 verify_template_integrity.py
+Bundled template integrity check passed: 31 files
+exit 0
+
+$ python3 check_three_map_project.py --strict .
+three-scope-map project check: /Users/theshipar/Portfolio Stuffs/Vibe Code Projects/Three Scope Map
+
+PASS
+  - Dependencies present: vue, vite, three, @types/three
+  - Vite config found
+  - Earth template file found: src/assets/maps/world.earth-render.json
+  - Asset path found: src/assets/maps
+  - Effect check passed: WebGLRenderer
+  - Effect check passed: extrusionDepth
+  - Effect check passed: hoverLift
+  - Effect check passed: cameraControls
+  - Single authoritative Earth entrance check passed
+  - Privacy/scope check passed: absolute local path
+  - Privacy/scope check passed: local preview URL
+  - Privacy/scope check passed: chat temporary path
+  - Privacy/scope check passed: dashboard business copy
+  - .map-host fixed-size check passed
+  - No SVG fallback map detected
+  - No full-map transparent texture plane detected
+  - No unapproved chase-light ribbon detected
+
+WARN
+  - Asset path missing or moved: src/assets/textures/map
+
+BLOCKERS
+  - Three map component missing; copy assets/templates/smart-mine-vue/src first.
+  - Earth template file missing: src/components/map/EarthView.vue
+  - Earth template file missing: src/components/map/EarthChinaMap.vue
+  - Earth template file missing: src/components/map/ChinaMap.vue
+  - Earth template file missing: src/components/map/mapTheme.ts
+  - Earth template file missing: src/assets/maps/china.json
+  - Earth template file missing: src/assets/maps/world.json
+  - Earth template file missing: src/assets/textures/map/china/china-height-legacy.png
+  - Earth template file missing: src/assets/textures/map/china/china-normal-legacy.png
+  - Earth template file missing: src/assets/textures/map/world/earth-day.jpg
+  - Earth template file missing: src/assets/textures/map/world/earth-lights.png
+  - Earth template file missing: src/assets/textures/map/world/earth-normal.jpg
+  - Earth template file missing: src/assets/textures/map/world/earth-specular.jpg
+  - Effect check missing: outerContour
+  - Effect check missing: chaseLight
+  - Effect check missing: flyLines
+  - Earth effect check missing: Earth SphereGeometry
+  - Earth effect check missing: Earth postprocessing
+  - Earth effect check missing: Earth terrain tessellation
+  - Earth effect check missing: Earth China extrusion
+  - Earth effect check missing: Earth atmosphere
+  - Earth effect check missing: Earth grid scan
+  - Earth effect check missing: Earth international fly lines
+  - Earth effect check missing: Earth batched world outlines
+  - Earth effect check missing: Earth spherical JD dashed line
+  - Earth effect check missing: Earth handoff events
+  - Earth and 3D map are not both connected to mapTheme.ts/MAP_THEME_PRIMARY.
+  - Earth handoff must reveal a static precompiled destination frame and keep map animation inactive until enter-china.
+  - Earth visible intro must start only after the inactive destination static frame is ready.
+  - South China Sea SVG must follow camera distance and remain clamped to 62-92px.
+exit 1
