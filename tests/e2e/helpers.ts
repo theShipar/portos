@@ -25,6 +25,7 @@ export interface PortosAdapter {
   } | null;
   loseContext(): void;
   spatialV2: boolean;
+  flags: Record<'spatialV2' | 'v3Glass' | 'v3RegionExtrusion' | 'v3ShipPreview' | 'v3PortTwin' | 'v3TradeBI' | 'v3Mobile', boolean>;
   director(): { phase: string; activeSceneKey: string | null; activeKind: string | null; activeFocusId: string | null; flights: number; cancelled: number; lastOutcome: string | null } | null;
   sceneCache(): { size: number; created: number; disposed: number; keys: string[] } | null;
   surfaceKind(): 'globe' | 'planar' | null;

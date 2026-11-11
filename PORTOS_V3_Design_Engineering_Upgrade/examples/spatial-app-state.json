@@ -1,0 +1,31 @@
+{
+  "scope": "port",
+  "regionId": "SEA",
+  "countryCode": "SG",
+  "cityId": "SG-SINGAPORE",
+  "portId": "SGSIN",
+  "selected": {
+    "type": "vessel",
+    "id": "VSL-0047"
+  },
+  "camera": {
+    "mode": "chase",
+    "bearingDeg": 190,
+    "pitchDeg": 55,
+    "zoom": 8
+  },
+  "simulation": {
+    "clockUtc": "2026-11-09T12:00:00Z",
+    "paused": false,
+    "speed": 100
+  },
+  "ui": {
+    "inspector": "vessel",
+    "bottomSheet": "half",
+    "layers": [
+      "ports",
+      "vessels",
+      "routes"
+    ]
+  }
+}

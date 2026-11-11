@@ -1,0 +1,21 @@
+{
+  "vesselId": "VSL-0047",
+  "type": "container",
+  "geometry": {
+    "modelId": "ship-container-panamax-v1",
+    "lengthM": 245,
+    "beamM": 32.2,
+    "draftM": 11.5,
+    "meshForwardAxis": "+Z",
+    "waterlineY": 0
+  },
+  "lod": {
+    "iconPxMax": 16,
+    "lowMeshPxMax": 55,
+    "mediumMeshPxMax": 160
+  },
+  "assetSources": {
+    "license": "verify-before-commercial-use",
+    "modelPath": "to-be-implemented"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "containerId": "CONT-DEMO-00001",
+  "vesselId": "VSL-0047",
+  "shipmentId": "SHP-DEMO-00001",
+  "slot": {
+    "bay": 12,
+    "row": 4,
+    "tier": 82,
+    "sizeFt": 40
+  },
+  "cargo": {
+    "category": "consumer electronics",
+    "netMassKg": 18300,
+    "detailsVisibility": "cargo_manager"
+  },
+  "movement": {
+    "originPortId": "SGSIN",
+    "destinationPortId": "NLRTM",
+    "status": "on_board"
+  },
+  "provenance": "synthetic"
+}

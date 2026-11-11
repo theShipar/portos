@@ -1016,6 +1016,7 @@ function exposeTestAdapter(sc: EarthScene) {
     },
     loseContext: () => sc.renderer.getContext().getExtension('WEBGL_lose_context')?.loseContext(),
     spatialV2: flags.spatialV2,
+    flags: { ...flags },
     bridge: () => ({ timeline: [...bridgeTimeline], stageVisible: !!stage?.visible, labelsHidden: labelsHidden.value }),
     director: () => director?.state() ?? null,
     sceneCache: () => director?.cache.stats() ?? null,

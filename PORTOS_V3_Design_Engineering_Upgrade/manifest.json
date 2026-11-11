@@ -1,0 +1,465 @@
+{
+  "project": "PORTOS",
+  "version": "V3",
+  "specCount": 64,
+  "groupCounts": {
+    "01-product-integration": 6,
+    "02-design-system": 12,
+    "03-earth-geographic-3d": 9,
+    "04-vessel-modeling-and-interaction": 10,
+    "05-port-and-cargo-digital-twin": 9,
+    "06-trade-network-and-visual-intelligence": 7,
+    "07-simulation-control-and-workflows": 6,
+    "08-mobile-performance-validation": 5
+  },
+  "files": [
+    {
+      "module": "01-product-integration",
+      "name": "Existing-code audit and non-destructive upgrade",
+      "path": "instructions/01-product-integration/01_existing-code-audit-and-non-destructive-upgrade.md",
+      "words": 735,
+      "chars": 5381
+    },
+    {
+      "module": "01-product-integration",
+      "name": "Product positioning and core buyer jobs",
+      "path": "instructions/01-product-integration/02_product-positioning-and-core-buyer-jobs.md",
+      "words": 699,
+      "chars": 5155
+    },
+    {
+      "module": "01-product-integration",
+      "name": "Multi-role navigation and access",
+      "path": "instructions/01-product-integration/03_multi-role-navigation-and-access.md",
+      "words": 665,
+      "chars": 4901
+    },
+    {
+      "module": "01-product-integration",
+      "name": "Spatial app state and URL contracts",
+      "path": "instructions/01-product-integration/04_spatial-app-state-and-url-contracts.md",
+      "words": 680,
+      "chars": 5098
+    },
+    {
+      "module": "01-product-integration",
+      "name": "Data migration and entity integrity",
+      "path": "instructions/01-product-integration/05_data-migration-and-entity-integrity.md",
+      "words": 682,
+      "chars": 5085
+    },
+    {
+      "module": "01-product-integration",
+      "name": "Incremental implementation roadmap and decision gates",
+      "path": "instructions/01-product-integration/06_incremental-implementation-roadmap-and-decision-gates.md",
+      "words": 686,
+      "chars": 5040
+    },
+    {
+      "module": "02-design-system",
+      "name": "Art direction and visual hierarchy",
+      "path": "instructions/02-design-system/01_art-direction-and-visual-hierarchy.md",
+      "words": 702,
+      "chars": 5227
+    },
+    {
+      "module": "02-design-system",
+      "name": "Color system, semantic meanings and transparency",
+      "path": "instructions/02-design-system/02_color-system-semantic-meanings-and-transparency.md",
+      "words": 678,
+      "chars": 5078
+    },
+    {
+      "module": "02-design-system",
+      "name": "Urbanist typography and numeric typography",
+      "path": "instructions/02-design-system/03_urbanist-typography-and-numeric-typography.md",
+      "words": 761,
+      "chars": 5647
+    },
+    {
+      "module": "02-design-system",
+      "name": "Spatial grid, padding and alignment",
+      "path": "instructions/02-design-system/04_spatial-grid-padding-and-alignment.md",
+      "words": 690,
+      "chars": 5073
+    },
+    {
+      "module": "02-design-system",
+      "name": "Frosted glass panels and backdrop compositing",
+      "path": "instructions/02-design-system/05_frosted-glass-panels-and-backdrop-compositing.md",
+      "words": 760,
+      "chars": 5744
+    },
+    {
+      "module": "02-design-system",
+      "name": "Navigation bar, breadcrumbs and scope switcher",
+      "path": "instructions/02-design-system/06_navigation-bar-breadcrumbs-and-scope-switcher.md",
+      "words": 671,
+      "chars": 4919
+    },
+    {
+      "module": "02-design-system",
+      "name": "Floating HUD, chips and detail cards",
+      "path": "instructions/02-design-system/07_floating-hud-chips-and-detail-cards.md",
+      "words": 685,
+      "chars": 4982
+    },
+    {
+      "module": "02-design-system",
+      "name": "Buttons, filters, layers and control components",
+      "path": "instructions/02-design-system/08_buttons-filters-layers-and-control-components.md",
+      "words": 653,
+      "chars": 4871
+    },
+    {
+      "module": "02-design-system",
+      "name": "Data visual language, charts and visual reports",
+      "path": "instructions/02-design-system/09_data-visual-language-charts-and-visual-reports.md",
+      "words": 685,
+      "chars": 5054
+    },
+    {
+      "module": "02-design-system",
+      "name": "Microinteractions and motion choreography",
+      "path": "instructions/02-design-system/10_microinteractions-and-motion-choreography.md",
+      "words": 688,
+      "chars": 5138
+    },
+    {
+      "module": "02-design-system",
+      "name": "Accessibility, keyboard and visual safety",
+      "path": "instructions/02-design-system/11_accessibility-keyboard-and-visual-safety.md",
+      "words": 678,
+      "chars": 5046
+    },
+    {
+      "module": "02-design-system",
+      "name": "Adaptive typography, design tokens and breakpoint strategy",
+      "path": "instructions/02-design-system/12_adaptive-typography-design-tokens-and-breakpoint-strategy.md",
+      "words": 663,
+      "chars": 4956
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "Realistic 3D Earth surface and atmosphere",
+      "path": "instructions/03-earth-geographic-3d/01_realistic-3d-earth-surface-and-atmosphere.md",
+      "words": 682,
+      "chars": 5167
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "Earth-to-independent-scene transition",
+      "path": "instructions/03-earth-geographic-3d/02_earth-to-independent-scene-transition.md",
+      "words": 781,
+      "chars": 6047
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "Complete continent polygons and clean geometry",
+      "path": "instructions/03-earth-geographic-3d/03_complete-continent-polygons-and-clean-geometry.md",
+      "words": 784,
+      "chars": 5911
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "Surrounding context and wireframe ghosts",
+      "path": "instructions/03-earth-geographic-3d/04_surrounding-context-and-wireframe-ghosts.md",
+      "words": 675,
+      "chars": 5054
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "Country hover elevation and selected extrusions",
+      "path": "instructions/03-earth-geographic-3d/05_country-hover-elevation-and-selected-extrusions.md",
+      "words": 676,
+      "chars": 4980
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "City, coastal district and port drilldown",
+      "path": "instructions/03-earth-geographic-3d/06_city-coastal-district-and-port-drilldown.md",
+      "words": 691,
+      "chars": 5078
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "Coordinate systems, dateline and ship placement",
+      "path": "instructions/03-earth-geographic-3d/07_coordinate-systems-dateline-and-ship-placement.md",
+      "words": 687,
+      "chars": 5083
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "Terrain materials, sea surface and map shader restraint",
+      "path": "instructions/03-earth-geographic-3d/08_terrain-materials-sea-surface-and-map-shader-restraint.md",
+      "words": 670,
+      "chars": 4998
+    },
+    {
+      "module": "03-earth-geographic-3d",
+      "name": "Camera orbit, fit, cinematic follow and scene QA",
+      "path": "instructions/03-earth-geographic-3d/09_camera-orbit-fit-cinematic-follow-and-scene-qa.md",
+      "words": 673,
+      "chars": 5002
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Vessel model catalog and source standards",
+      "path": "instructions/04-vessel-modeling-and-interaction/01_vessel-model-catalog-and-source-standards.md",
+      "words": 682,
+      "chars": 5102
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Procedural ship hull and deck geometry",
+      "path": "instructions/04-vessel-modeling-and-interaction/02_procedural-ship-hull-and-deck-geometry.md",
+      "words": 669,
+      "chars": 5009
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Container vessel stack and stowage modeling",
+      "path": "instructions/04-vessel-modeling-and-interaction/03_container-vessel-stack-and-stowage-modeling.md",
+      "words": 780,
+      "chars": 5791
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Tanker, LNG, bulk and Ro-Ro specializations",
+      "path": "instructions/04-vessel-modeling-and-interaction/04_tanker-lng-bulk-and-ro-ro-specializations.md",
+      "words": 655,
+      "chars": 4890
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Multi-distance LOD and distant-ship aesthetics",
+      "path": "instructions/04-vessel-modeling-and-interaction/05_multi-distance-lod-and-distant-ship-aesthetics.md",
+      "words": 788,
+      "chars": 5722
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Vessel motion, heading, wakes and sea behavior",
+      "path": "instructions/04-vessel-modeling-and-interaction/06_vessel-motion-heading-wakes-and-sea-behavior.md",
+      "words": 695,
+      "chars": 5113
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Chase, orbit, deck and free cameras",
+      "path": "instructions/04-vessel-modeling-and-interaction/07_chase-orbit-deck-and-free-cameras.md",
+      "words": 680,
+      "chars": 5020
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Vessel 3D preview and exploded inspection",
+      "path": "instructions/04-vessel-modeling-and-interaction/08_vessel-3d-preview-and-exploded-inspection.md",
+      "words": 680,
+      "chars": 5095
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Cargo compartment selection and manifest drilldown",
+      "path": "instructions/04-vessel-modeling-and-interaction/09_cargo-compartment-selection-and-manifest-drilldown.md",
+      "words": 685,
+      "chars": 5138
+    },
+    {
+      "module": "04-vessel-modeling-and-interaction",
+      "name": "Vessel sidebar visual architecture and cruise progress",
+      "path": "instructions/04-vessel-modeling-and-interaction/10_vessel-sidebar-visual-architecture-and-cruise-progress.md",
+      "words": 696,
+      "chars": 5106
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Port digital twin architecture",
+      "path": "instructions/05-port-and-cargo-digital-twin/01_port-digital-twin-architecture.md",
+      "words": 676,
+      "chars": 5104
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Container terminal geometry and movements",
+      "path": "instructions/05-port-and-cargo-digital-twin/02_container-terminal-geometry-and-movements.md",
+      "words": 685,
+      "chars": 5095
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Dry bulk and mineral port terminal",
+      "path": "instructions/05-port-and-cargo-digital-twin/03_dry-bulk-and-mineral-port-terminal.md",
+      "words": 657,
+      "chars": 4951
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Liquid and LNG terminal environment",
+      "path": "instructions/05-port-and-cargo-digital-twin/04_liquid-and-lng-terminal-environment.md",
+      "words": 664,
+      "chars": 4969
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Ro-Ro ferry and passenger terminal environment",
+      "path": "instructions/05-port-and-cargo-digital-twin/05_ro-ro-ferry-and-passenger-terminal-environment.md",
+      "words": 660,
+      "chars": 4914
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Cranes, berths, tugs and port microanimations",
+      "path": "instructions/05-port-and-cargo-digital-twin/06_cranes-berths-tugs-and-port-microanimations.md",
+      "words": 669,
+      "chars": 4937
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Berth planning, anchorage and queue intelligence",
+      "path": "instructions/05-port-and-cargo-digital-twin/07_berth-planning-anchorage-and-queue-intelligence.md",
+      "words": 708,
+      "chars": 5329
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Yard stowage, cargo movement and chain of custody",
+      "path": "instructions/05-port-and-cargo-digital-twin/08_yard-stowage-cargo-movement-and-chain-of-custody.md",
+      "words": 692,
+      "chars": 5028
+    },
+    {
+      "module": "05-port-and-cargo-digital-twin",
+      "name": "Port interactions and technical inspection",
+      "path": "instructions/05-port-and-cargo-digital-twin/09_port-interactions-and-technical-inspection.md",
+      "words": 678,
+      "chars": 5059
+    },
+    {
+      "module": "06-trade-network-and-visual-intelligence",
+      "name": "Global commodity and cargo flow network",
+      "path": "instructions/06-trade-network-and-visual-intelligence/01_global-commodity-and-cargo-flow-network.md",
+      "words": 730,
+      "chars": 5398
+    },
+    {
+      "module": "06-trade-network-and-visual-intelligence",
+      "name": "Spatial routes, corridor geometry and interpolation",
+      "path": "instructions/06-trade-network-and-visual-intelligence/02_spatial-routes-corridor-geometry-and-interpolation.md",
+      "words": 685,
+      "chars": 5094
+    },
+    {
+      "module": "06-trade-network-and-visual-intelligence",
+      "name": "Voyage chain and point-to-point product tracing",
+      "path": "instructions/06-trade-network-and-visual-intelligence/03_voyage-chain-and-point-to-point-product-tracing.md",
+      "words": 670,
+      "chars": 4978
+    },
+    {
+      "module": "06-trade-network-and-visual-intelligence",
+      "name": "Global executive view and spatial KPI reporting",
+      "path": "instructions/06-trade-network-and-visual-intelligence/04_global-executive-view-and-spatial-kpi-reporting.md",
+      "words": 661,
+      "chars": 4914
+    },
+    {
+      "module": "06-trade-network-and-visual-intelligence",
+      "name": "Port performance and terminal business reports",
+      "path": "instructions/06-trade-network-and-visual-intelligence/05_port-performance-and-terminal-business-reports.md",
+      "words": 666,
+      "chars": 4988
+    },
+    {
+      "module": "06-trade-network-and-visual-intelligence",
+      "name": "Vessel performance, cost and cargo reports",
+      "path": "instructions/06-trade-network-and-visual-intelligence/06_vessel-performance-cost-and-cargo-reports.md",
+      "words": 661,
+      "chars": 4965
+    },
+    {
+      "module": "06-trade-network-and-visual-intelligence",
+      "name": "Weather, disruptions and risk visualization",
+      "path": "instructions/06-trade-network-and-visual-intelligence/07_weather-disruptions-and-risk-visualization.md",
+      "words": 661,
+      "chars": 4969
+    },
+    {
+      "module": "07-simulation-control-and-workflows",
+      "name": "One deterministic simulation clock",
+      "path": "instructions/07-simulation-control-and-workflows/01_one-deterministic-simulation-clock.md",
+      "words": 768,
+      "chars": 5736
+    },
+    {
+      "module": "07-simulation-control-and-workflows",
+      "name": "Persistent play/pause speed and scrub controls",
+      "path": "instructions/07-simulation-control-and-workflows/02_persistent-play-pause-speed-and-scrub-controls.md",
+      "words": 680,
+      "chars": 4999
+    },
+    {
+      "module": "07-simulation-control-and-workflows",
+      "name": "Position replay, vessels and route-follow synchronization",
+      "path": "instructions/07-simulation-control-and-workflows/03_position-replay-vessels-and-route-follow-synchronization.md",
+      "words": 669,
+      "chars": 4974
+    },
+    {
+      "module": "07-simulation-control-and-workflows",
+      "name": "Exception investigation and event visual replay",
+      "path": "instructions/07-simulation-control-and-workflows/04_exception-investigation-and-event-visual-replay.md",
+      "words": 670,
+      "chars": 5000
+    },
+    {
+      "module": "07-simulation-control-and-workflows",
+      "name": "Decision simulator and draft outcomes",
+      "path": "instructions/07-simulation-control-and-workflows/05_decision-simulator-and-draft-outcomes.md",
+      "words": 670,
+      "chars": 5018
+    },
+    {
+      "module": "07-simulation-control-and-workflows",
+      "name": "Microinteraction orchestration and feedback system",
+      "path": "instructions/07-simulation-control-and-workflows/06_microinteraction-orchestration-and-feedback-system.md",
+      "words": 658,
+      "chars": 4923
+    },
+    {
+      "module": "08-mobile-performance-validation",
+      "name": "Mobile-first spatial workspace and sheets",
+      "path": "instructions/08-mobile-performance-validation/01_mobile-first-spatial-workspace-and-sheets.md",
+      "words": 734,
+      "chars": 5374
+    },
+    {
+      "module": "08-mobile-performance-validation",
+      "name": "Touch, keyboard, accessibility and alternatives",
+      "path": "instructions/08-mobile-performance-validation/02_touch-keyboard-accessibility-and-alternatives.md",
+      "words": 664,
+      "chars": 4934
+    },
+    {
+      "module": "08-mobile-performance-validation",
+      "name": "3D performance, memory and fallback budgets",
+      "path": "instructions/08-mobile-performance-validation/03_3d-performance-memory-and-fallback-budgets.md",
+      "words": 676,
+      "chars": 5044
+    },
+    {
+      "module": "08-mobile-performance-validation",
+      "name": "Functional data, interaction and visual regression",
+      "path": "instructions/08-mobile-performance-validation/04_functional-data-interaction-and-visual-regression.md",
+      "words": 668,
+      "chars": 4979
+    },
+    {
+      "module": "08-mobile-performance-validation",
+      "name": "Release gates, licenses and final portfolio polish",
+      "path": "instructions/08-mobile-performance-validation/05_release-gates-licenses-and-final-portfolio-polish.md",
+      "words": 666,
+      "chars": 5069
+    }
+  ]
+}

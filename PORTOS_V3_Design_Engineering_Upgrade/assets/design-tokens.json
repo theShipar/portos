@@ -1,0 +1,123 @@
+{
+  "meta": {
+    "name": "PORTOS-V3",
+    "typography": "Urbanist",
+    "status": "proposed-spec-not-implemented"
+  },
+  "colors": {
+    "canvas": "#07161B",
+    "surface1": "#0E1B1F",
+    "surface2": "#15282B",
+    "glass": "rgba(14,26,29,0.82)",
+    "glassBorder": "rgba(231,242,237,0.10)",
+    "textPrimary": "#EDF3F0",
+    "textSecondary": "#A7B9B8",
+    "textMuted": "#829594",
+    "selection": "#F09A58",
+    "success": "#9CCDB0",
+    "warning": "#E3B86A",
+    "danger": "#E87170",
+    "info": "#80BFC9"
+  },
+  "typography": {
+    "family": [
+      "Urbanist",
+      "Inter",
+      "system-ui",
+      "sans-serif"
+    ],
+    "scale": {
+      "display": [
+        40,
+        44,
+        600
+      ],
+      "h1": [
+        28,
+        34,
+        600
+      ],
+      "h2": [
+        22,
+        28,
+        600
+      ],
+      "title": [
+        16,
+        22,
+        600
+      ],
+      "body": [
+        14,
+        21,
+        400
+      ],
+      "meta": [
+        12,
+        17,
+        500
+      ]
+    }
+  },
+  "spacingPx": [
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64
+  ],
+  "radiiPx": {
+    "control": 8,
+    "card": 12,
+    "panel": 16,
+    "sheet": 20
+  },
+  "layout": {
+    "headerDesktopPx": 64,
+    "headerMobilePx": 56,
+    "drawerMinPx": 360,
+    "drawerMaxPx": 464,
+    "minimumTouchPx": 44,
+    "mapDesktopShareWhenCollapsed": 0.8
+  },
+  "motionMs": {
+    "uiHover": [
+      120,
+      160
+    ],
+    "panel": [
+      180,
+      260
+    ],
+    "countryLift": [
+      220,
+      320
+    ],
+    "sceneHandoff": [
+      850,
+      1400
+    ]
+  },
+  "breakpointsPx": [
+    320,
+    480,
+    768,
+    1024,
+    1440
+  ],
+  "simulationSpeedPresets": [
+    0.25,
+    1,
+    2,
+    5,
+    10,
+    25,
+    50,
+    100
+  ]
+}

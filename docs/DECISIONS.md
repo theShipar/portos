@@ -642,3 +642,24 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
   - All M01–M20 rows are PASS. The QA evidence doc lists what each row does not cover.
   - The scope switch on Metal is about 2.8 s because of the cinematic handoff. This is documented in
     `PERF_REPORT.md` and is not a regression in frame time.
+
+## D-040 PORTOS V3 adoption: kit location, gates, flags and IDs
+
+- **Context:**
+  - The V3 kit (`PORTOS_V3_Design_Engineering_Upgrade/`, 101 files, 64 instruction specs) supersedes V2 for visual
+    work and asks for 11 gated deliveries (0–10). Each gate needs 1440×900 and 390×844 evidence and a QA record.
+  - Its README suggests copying the kit into `docs/portos-v3/`. Its examples use other ID conventions
+    (`SGSIN`, `SEA`, `CONT-DEMO-00001`) than our fixtures (`PRT-SIN`, `REG-SEA`).
+- **Decision:**
+  - *Kit location:* kept read-only at the repo root next to `PORTOS_Codex_Master_Kit/`;
+    `docs/portos-v3/README.md` points to it. One copy to cite, no duplicated 1.7 MB of reference images.
+  - *Gates:* recorded in `docs/PORTOS_V3_QA.md` (P0 rubric table plus one entry per gate). Evidence comes from
+    `tests/e2e/v3capture.spec.ts` (`V3CAPTURE=gN`), written to `docs/qa/v3-gN/{desktop,mobile}-*.png`.
+  - *Flags:* `src/core/flags.ts` reads `v3Glass`, `v3RegionExtrusion`, `v3ShipPreview`, `v3PortTwin`, `v3TradeBI`
+    and `v3Mobile` the same way as `spatialV2` (`VITE_*=0` at build, `?flag=0` per session). `?v3=0` / `VITE_V3=0`
+    turns every V3 flag off. All default on; the test adapter exposes them as `flags`.
+  - *IDs:* our canonical IDs stay. Kit example IDs are mapped by `src/v3/idAdapter.ts` only where an example is
+    imported; no fixture ID is renamed.
+  - *Data scale:* first-slice scale (existing 500 vessels / 100 ports / 200 voyages; new cargo and trade data in
+    `sample-data/v3/` at about 1,000 containers and 80 trade flows).
+- **Consequences:** V2 behaviour stays reachable with `?v3=0` for comparison and rollback at every gate.

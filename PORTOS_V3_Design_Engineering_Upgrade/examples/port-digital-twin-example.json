@@ -1,0 +1,32 @@
+{
+  "portId": "SGSIN",
+  "name": "Singapore",
+  "countryCode": "SG",
+  "loc": {
+    "lat": 1.29,
+    "lon": 103.86
+  },
+  "sceneSource": "synthetic-demonstration-layout",
+  "types": [
+    "container",
+    "bulk",
+    "liquid"
+  ],
+  "berths": [
+    {
+      "id": "BRTH-DEMO-01",
+      "terminalId": "TERM-CNT-01",
+      "geometryRef": "quay-01",
+      "status": "occupied",
+      "vesselId": "VSL-0047"
+    }
+  ],
+  "assets": [
+    {
+      "id": "CRANE-DEMO-01",
+      "type": "STS_crane",
+      "berthId": "BRTH-DEMO-01",
+      "operationPhase": "idle"
+    }
+  ]
+}

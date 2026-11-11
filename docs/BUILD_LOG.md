@@ -874,3 +874,29 @@ blockers. Status values: implemented / tested / blocked.
   click during active playback, and a manual pass. No user-facing "live" claim exists; `rg -i "\blive\b" src` finds
   only variable names and `aria-live`.
 - **Blockers:** none.
+
+## Phase V3-0 — Audit and freeze
+
+- **Decisions:** D-040 (kit referenced in place, gate records, V3 flags, canonical IDs, first-slice data scale).
+- **Implemented:**
+  - `docs/PORTOS_V3_AUDIT.md`: routes, renderer ownership, data schema, all 64 V3 specs mapped to modules with
+    status and target gate, planned reuse/wrap/replace list, baseline defects, rollback.
+  - `docs/PORTOS_V3_QA.md`: P0 rubric table and the Gate 0 entry. `docs/portos-v3/README.md` points to the kit.
+  - `src/core/flags.ts`: generic flag reader; six V3 flags plus `spatialV2`; `?v3=0` master switch. The test
+    adapter exposes `flags`.
+  - `tests/e2e/v3capture.spec.ts`: gate evidence at 1440×900 and 390×844 (Earth, SEA, NEU, NLD, Singapore port,
+    VSL-0047, VSL-0001, INC-0001).
+- **Tested:**
+  - `V3CAPTURE=g0 npx playwright test v3capture --project=chromium` (Metal) → 16 passed, 1.2 min; 16 images in
+    `docs/qa/v3-g0/`. The first attempt failed at browser launch because the sandbox pointed Playwright at an
+    empty cache; `PLAYWRIGHT_BROWSERS_PATH` now points at the installed chromium-1254.
+  - `npx vue-tsc --noEmit` → exit 0. `npx vitest run` → 329 passed (22 files).
+  - `python3 scripts/validate_data.py` → exit 0. `npm run build` → exit 0.
+  - `npx playwright test` (full) → 77 passed, 2 failed, 5 did not run, 22 skipped (opt-in capture/perf).
+    - The failures were wall-clock ratio checks: follow at 100× measured 76.6 (limit > 85) and the flagship 1×
+      ratio 0.83 (limit > 0.85), while unit tests and an npm install ran alongside four SwiftShader browsers.
+      The 5 timing tests depend on the first project and were skipped.
+    - `npx playwright test follow flagship --project=chromium` alone → 4 passed, 50 s.
+    - The clock drops simulated time when frames stall under load. Gate 6 (one clock at 100×) addresses this.
+- **Gate:** routes, renderer, schema and baseline screenshots recorded; flags in place. PASS.
+- **Blockers:** none.
