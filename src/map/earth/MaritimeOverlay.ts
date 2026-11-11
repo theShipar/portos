@@ -8,11 +8,12 @@ import type { DensityCell, HazardShape, MapFocus, PortMarker, RouteLine, VesselM
 import { markerColors as MC } from '../theme';
 import { EARTH_RADIUS } from './camera';
 import type { MapSurface } from '../surface';
-import { markerPxForAltitude, nextLod, type VesselDetail } from './lod';
+import { flags } from '@/core/flags';
+import { allocateBands, BAND_CAPS, LOD_BANDS, markerPxForAltitude, nextBand, nextLod, selectedBand, type BandCandidate, type LodBand, type VesselDetail } from './lod';
 import { createInstanceBuffers, createMarkerMaterial, createWakeMaterial, instancedFrom, variantWithBeam, type InstanceBuffers } from './markerShader';
 import { portGeometry, ringGeometry } from './markerGeometry';
 import { modelKeyOf, SHIP_MODEL_KEYS, type ShipModelKey } from '../vessels3d/categories';
-import { buildShipGeometry, LOD_BEAM_BOOST, wakeGeometry } from '../vessels3d/library';
+import { buildShipGeometry, buildShipIcon, LOD_BEAM_BOOST, shipDotGeometry, triangleCount, wakeGeometry } from '../vessels3d/library';
 import { displayHeadingDeg, motionStateOf, wakeLength, type MotionState } from '../vessels3d/motion';
 
 export interface OverlayLayers {
@@ -78,6 +79,9 @@ export interface VesselPose {
   headingDeg: number;
   wake: number;
   detail: 0 | 1 | 2;
+  /** V3 band (dot … inspection) and the projected hull length in CSS px that chose it. */
+  band?: LodBand;
+  px?: number;
 }
 
 /**
@@ -141,10 +145,25 @@ export class MaritimeOverlay {
   private resolution = new THREE.Vector2(1, 1);
   private lodListeners = new Set<(lod: VesselDetail) => void>();
 
+  /** V3 per-ship bands by projected length (`v3ShipPreview`); V2 keeps one overlay-wide LOD. */
+  private readonly v3Lod = flags.v3ShipPreview;
+  private readonly metre: number;
+  /** Band before the close-model caps, kept per ship for hysteresis. */
+  private readonly rawBands = new Map<string, LodBand>();
+  private readonly dotMaterial: THREE.ShaderMaterial | null = null;
+  private readonly dotBuffers: InstanceBuffers | null = null;
+  private readonly dotMesh: THREE.Mesh | null = null;
+  private readonly iconBatches = new Map<ShipModelKey, ModelBatch>();
+  private readonly inspectBatches = new Map<ShipModelKey, ModelBatch>();
+  private readonly capacity: number;
+  private readonly tmp = new THREE.Vector3();
+
   constructor(scene: MapSurface, capacity: number) {
     this.scene = scene;
     this.planar = scene.surfaceKind === 'planar';
+    this.capacity = capacity;
     const metre = (scene.globeUnitScale * EARTH_RADIUS) / EARTH_RADIUS_M;
+    this.metre = metre;
     this.vesselMaterial = createMarkerMaterial({ planar: this.planar, metre, beam: LOD_BEAM_BOOST[0] });
     this.modelMaterial = variantWithBeam(this.vesselMaterial, LOD_BEAM_BOOST[1]);
     this.detailMaterial = variantWithBeam(this.vesselMaterial, LOD_BEAM_BOOST[2]);
@@ -173,6 +192,15 @@ export class MaritimeOverlay {
     this.wakeBuffers = createInstanceBuffers(capacity);
     this.wakeMesh = this.mesh(instancedFrom(wakeGeometry(), this.wakeBuffers), this.wakeMaterial, RENDER_ORDER.wakes, true);
     this.wakeMesh.visible = false;
+    if (this.v3Lod) {
+      this.dotMaterial = variantWithBeam(this.vesselMaterial, 1);
+      this.dotBuffers = createInstanceBuffers(capacity);
+      this.dotMesh = this.mesh(instancedFrom(shipDotGeometry(), this.dotBuffers), this.dotMaterial, RENDER_ORDER.vessels, false);
+      this.glyphMesh.visible = false;
+      this.wakeMesh.visible = true;
+      for (const b of this.modelBatches.values()) b.mesh.visible = true;
+      for (const key of SHIP_MODEL_KEYS) this.iconBatch(key);
+    }
     this.selectionMesh = this.mesh(instancedFrom(ringGeometry(0.4, 0.5), this.selectionBuffers), this.ringMaterial, RENDER_ORDER.rings, false);
     this.incidentBuffers = createInstanceBuffers(128);
     this.incidentMesh = this.mesh(instancedFrom(ringGeometry(0.44, 0.5, 3), this.incidentBuffers), this.ringMaterial, RENDER_ORDER.rings, false);
@@ -246,11 +274,11 @@ export class MaritimeOverlay {
       this.lod = lod;
       this.applyLodVisibility();
       for (const fn of this.lodListeners) fn(lod);
-    } else if (lod >= 1) {
+    } else if (lod >= 1 || this.v3Lod) {
       const now = performance.now();
       if (now - this.cullCheckedAt >= CULL_INTERVAL_MS) {
         this.cullCheckedAt = now;
-        if (this.onScreenChanged()) this.writeVessels();
+        if (this.onScreenChanged() || (this.v3Lod && this.bandsChanged())) this.writeVessels();
       }
     }
     const { width, height } = this.scene.viewport;
@@ -265,7 +293,7 @@ export class MaritimeOverlay {
     let root: THREE.Object3D = this.glyphMesh;
     while (root.parent) root = root.parent;
     if (!(root as THREE.Scene).isScene || typeof this.scene.renderer.compileAsync !== 'function') return;
-    const shown: THREE.Object3D[] = [this.glyphMesh, this.wakeMesh, ...[...this.modelBatches.values()].map((b) => b.mesh)];
+    const shown: THREE.Object3D[] = [this.glyphMesh, this.wakeMesh, ...(this.dotMesh ? [this.dotMesh] : []), ...[...this.modelBatches.values(), ...this.iconBatches.values()].map((b) => b.mesh)];
     for (let o = this.glyphMesh.parent; o; o = o.parent) shown.push(o);
     const was = shown.map((o) => o.visible);
     for (const o of shown) o.visible = true;
@@ -274,6 +302,10 @@ export class MaritimeOverlay {
   }
 
   private applyLodVisibility() {
+    if (this.v3Lod) {
+      this.writeVessels();
+      return;
+    }
     this.glyphMesh.visible = this.lod === 0;
     for (const b of this.modelBatches.values()) b.mesh.visible = this.lod >= 1;
     for (const b of this.detailBatches.values()) b.mesh.visible = this.lod === 2;
@@ -282,17 +314,75 @@ export class MaritimeOverlay {
     this.writeVessels();
   }
 
-  /** LOD2 batch for a model, built on first use (only selected ships ever need it). */
+  /**
+   * Close-model batch for a model, built on first use. V2: the selected ship's inspection model (library LOD3, which
+   * V2 called LOD2). V3: the detailed band's medium model (LOD2), up to the detailed cap.
+   */
   private detailBatch(key: ShipModelKey): ModelBatch {
     let b = this.detailBatches.get(key);
     if (!b) {
-      const buffers = createInstanceBuffers(DETAIL_CAPACITY);
-      const mesh = this.mesh(instancedFrom(buildShipGeometry(key, 2), buffers), this.detailMaterial, RENDER_ORDER.vessels, true);
-      mesh.visible = this.lod === 2;
+      const buffers = createInstanceBuffers(this.v3Lod ? BAND_CAPS.detailed : DETAIL_CAPACITY);
+      const mesh = this.mesh(instancedFrom(buildShipGeometry(key, this.v3Lod ? 2 : 3), buffers), this.detailMaterial, RENDER_ORDER.vessels, true);
+      mesh.visible = this.v3Lod || this.lod === 2;
       b = { buffers, mesh };
       this.detailBatches.set(key, b);
     }
     return b;
+  }
+
+  /** V3 inspection band (> 160 px): library LOD3, at most `BAND_CAPS.inspection` ships. */
+  private inspectBatch(key: ShipModelKey): ModelBatch {
+    let b = this.inspectBatches.get(key);
+    if (!b) {
+      const buffers = createInstanceBuffers(BAND_CAPS.inspection);
+      const mesh = this.mesh(instancedFrom(buildShipGeometry(key, 3), buffers), this.detailMaterial, RENDER_ORDER.vessels, true);
+      b = { buffers, mesh };
+      this.inspectBatches.set(key, b);
+    }
+    return b;
+  }
+
+  /** V3 icon band (4–16 px): flat oriented type icons, drawn without depth like the V2 glyph. */
+  private iconBatch(key: ShipModelKey): ModelBatch {
+    let b = this.iconBatches.get(key);
+    if (!b) {
+      const buffers = createInstanceBuffers(this.capacity);
+      const mesh = this.mesh(instancedFrom(buildShipIcon(key), buffers), this.vesselMaterial, RENDER_ORDER.vessels, false);
+      b = { buffers, mesh };
+      this.iconBatches.set(key, b);
+    }
+    return b;
+  }
+
+  /**
+   * Displayed hull length in CSS px: the screen-sized marker (`size × px`) or the true length at the ship's depth,
+   * whichever is larger (the marker shader draws the same maximum).
+   */
+  private projectedPx(pt: GeoPoint, lengthM: number, size: number): number {
+    const [x, y, z] = this.scene.markerCenter(pt.lat, pt.lon);
+    const v = this.tmp.set(x, y, z);
+    if (!this.planar) v.normalize().multiplyScalar(this.vesselMaterial.uniforms.uRadius.value as number);
+    v.applyMatrix4(this.group.matrixWorld).applyMatrix4(this.scene.camera.matrixWorldInverse);
+    const depth = Math.max(-v.z, 1e-9);
+    const truePx = (lengthM * this.metre) / (depth * this.scene.pxToWorld);
+    return Math.max(size * this.px, truePx);
+  }
+
+  private sizeOf(m: VesselMarker): number {
+    const base = m.fleet === 'own' ? Math.min(1.2, Math.max(0.85, 0.85 + (m.lengthM - 180) / 500)) : 0.72;
+    return base * (this.isPinned(m.vesselId) ? 1.45 : m.vesselId === this.hoverId ? 1.22 : 1);
+  }
+
+  /** True when a drawn ship would now pick a different band (zoom or camera move since the last write). */
+  private bandsChanged(): boolean {
+    for (const m of this.drawn) {
+      const pinned = this.isPinned(m.vesselId);
+      if (!pinned && !this.onScreen.has(m.vesselId)) continue;
+      const prev = this.rawBands.get(m.vesselId);
+      const pt = this.live?.id === m.vesselId ? this.live.point : m.point;
+      if (nextBand(prev, this.projectedPx(pt, m.lengthM, this.sizeOf(m))) !== prev) return true;
+    }
+    return false;
   }
 
   setLayers(layers: OverlayLayers) {
@@ -369,6 +459,10 @@ export class MaritimeOverlay {
     const rank = (m: VesselMarker) => (this.isPinned(m.vesselId) ? 10 : m.vesselId === this.hoverId ? 9 : m.tone === 'incident' ? 4 : m.tone === 'atRisk' ? 3 : m.tone === 'delayed' ? 2 : m.fleet === 'own' ? 1 : 0);
     order.sort((a, b) => rank(a) - rank(b));
     this.drawn = order;
+    if (this.v3Lod) {
+      this.writeVesselsV3(order);
+      return;
+    }
     const counts = new Map<ShipModelKey, number>(SHIP_MODEL_KEYS.map((c) => [c, 0]));
     const detailCounts = new Map<ShipModelKey, number>();
     let wakes = 0;
@@ -433,6 +527,91 @@ export class MaritimeOverlay {
     for (const [key, b] of this.detailBatches) this.commit(b.buffers, b.mesh, detailCounts.get(key) ?? 0);
     this.commit(this.wakeBuffers, this.wakeMesh, wakes);
     this.writeRings();
+  }
+
+  /**
+   * V3: each on-screen (or selected) ship takes the band of its projected length with hysteresis; the selection sits
+   * one band up; close-model caps demote the smallest overflow. Off-screen ships cost nothing. Wakes only from the
+   * low-poly band up, and only underway (moored and anchored ships never draw one).
+   */
+  private writeVesselsV3(order: VesselMarker[]) {
+    this.poses.clear();
+    this.onScreen.clear();
+    this.cullCheckedAt = performance.now();
+    this.liveSlots = [];
+    const cands: BandCandidate[] = [];
+    const px = new Map<string, number>();
+    for (const m of order) {
+      const pinned = this.isPinned(m.vesselId);
+      if (!pinned && !this.isOnScreen(m)) continue;
+      this.onScreen.add(m.vesselId);
+      const pt = this.live?.id === m.vesselId ? this.live.point : m.point;
+      const p = this.projectedPx(pt, m.lengthM, this.sizeOf(m));
+      const raw = nextBand(this.rawBands.get(m.vesselId), p);
+      this.rawBands.set(m.vesselId, raw);
+      px.set(m.vesselId, p);
+      cands.push({ id: m.vesselId, band: pinned ? selectedBand(raw) : raw, px: p, pinned });
+    }
+    const bands = allocateBands(cands);
+    let dots = 0;
+    let wakes = 0;
+    const counts = new Map<ModelBatch, number>();
+    const col = new THREE.Color();
+    for (const m of order) {
+      const band = bands.get(m.vesselId);
+      if (band === undefined) continue;
+      const live = this.live?.id === m.vesselId ? this.live : null;
+      const pt = live?.point ?? m.point;
+      const [x, y, z] = this.scene.markerCenter(pt.lat, pt.lon);
+      const pinned = this.isPinned(m.vesselId);
+      const hovered = m.vesselId === this.hoverId;
+      col.copy(toneColor(m));
+      if (m.stale) col.lerp(MC.stale, 0.6);
+      if (hovered || pinned) col.lerp(new THREE.Color('#ffffff'), 0.18);
+      const model = modelKeyOf(m.vesselType);
+      const state = motionStateOf(m.navStatus, m.sogKn);
+      const headingDeg = displayHeadingDeg({ vesselId: m.vesselId, cogDeg: live?.cogDeg ?? m.cogDeg, state, berthHeadingDeg: m.berthHeadingDeg }, this.sceneTimeMs);
+      const heading = headingDeg * DEG + (this.planar ? this.scene.headingOffset(pt.lat, pt.lon) : 0);
+      const wake = band >= 2 ? wakeLength(state, m.sogKn) : 0;
+      const size = this.sizeOf(m);
+      const write = (b: InstanceBuffers, mesh: THREE.Mesh, k: number) => {
+        b.center.setXYZ(k, x, y, z);
+        b.heading.setX(k, heading);
+        b.color.setXYZ(k, col.r, col.g, col.b);
+        b.size.setX(k, size);
+        b.length.setX(k, m.lengthM);
+        b.wake.setX(k, wake);
+        if (live) this.liveSlots.push({ b, mesh, k, ring: false });
+      };
+      if (band === 0) write(this.dotBuffers!, this.dotMesh!, dots++);
+      else {
+        const batch = band === 1 ? this.iconBatch(model) : band === 2 ? this.modelBatches.get(model)! : band === 3 ? this.detailBatch(model) : this.inspectBatch(model);
+        const k = counts.get(batch) ?? 0;
+        write(batch.buffers, batch.mesh, k);
+        counts.set(batch, k + 1);
+      }
+      if (wake > 0) write(this.wakeBuffers, this.wakeMesh, wakes++);
+      this.poses.set(m.vesselId, { model, state, headingDeg, wake, detail: band <= 1 ? 0 : band === 2 ? 1 : 2, band, px: Math.round(px.get(m.vesselId)! * 10) / 10 });
+    }
+    this.commit(this.glyphBuffers, this.glyphMesh, 0);
+    this.commit(this.dotBuffers!, this.dotMesh!, dots);
+    for (const b of [...this.iconBatches.values(), ...this.modelBatches.values(), ...this.detailBatches.values(), ...this.inspectBatches.values()]) this.commit(b.buffers, b.mesh, counts.get(b) ?? 0);
+    this.commit(this.wakeBuffers, this.wakeMesh, wakes);
+    this.writeRings();
+  }
+
+  /** Ship meshes that draw this frame (one instanced call each) and their triangles. */
+  private shipBudget(): { drawCalls: number; triangles: number } {
+    const meshes = [this.glyphMesh, this.wakeMesh, ...(this.dotMesh ? [this.dotMesh] : []), ...[...this.iconBatches.values(), ...this.modelBatches.values(), ...this.detailBatches.values(), ...this.inspectBatches.values()].map((b) => b.mesh)];
+    let drawCalls = 0;
+    let triangles = 0;
+    for (const mesh of meshes) {
+      const g = mesh.geometry as THREE.InstancedBufferGeometry;
+      if (!mesh.visible || g.instanceCount <= 0) continue;
+      drawCalls++;
+      triangles += triangleCount(g) * g.instanceCount;
+    }
+    return { drawCalls, triangles };
   }
 
   private commit(b: InstanceBuffers, mesh: THREE.Mesh, count: number) {
@@ -796,12 +975,13 @@ export class MaritimeOverlay {
       hazards: this.hazards.length,
       lod: this.lod,
       wakes: (this.wakeMesh.geometry as THREE.InstancedBufferGeometry).instanceCount,
-      shipDrawCalls: [this.glyphMesh, this.wakeMesh, ...[...this.modelBatches.values(), ...this.detailBatches.values()].map((b) => b.mesh)].filter(
-        (m) => m.visible && (m.geometry as THREE.InstancedBufferGeometry).instanceCount > 0,
-      ).length,
+      shipDrawCalls: this.shipBudget().drawCalls,
+      shipTriangles: this.shipBudget().triangles,
       detailVessels: [...this.poses].filter(([, p]) => p.detail === 2).map(([id]) => id),
-      modelVessels: this.lod >= 1 ? this.onScreen.size : 0,
+      modelVessels: this.v3Lod ? [...this.poses.values()].filter((p) => (p.band ?? 0) >= 2).length : this.lod >= 1 ? this.onScreen.size : 0,
       px: Math.round(this.px * 10) / 10,
+      bandMode: this.v3Lod ? ('v3' as const) : ('v2' as const),
+      bands: Object.fromEntries(LOD_BANDS.map((name, i) => [name, [...this.poses.values()].filter((p) => p.band === i).length])) as Record<(typeof LOD_BANDS)[number], number>,
     };
   }
 
@@ -821,7 +1001,7 @@ export class MaritimeOverlay {
         (mesh.material as THREE.Material).dispose();
       }
     });
-    for (const m of [this.vesselMaterial, this.modelMaterial, this.detailMaterial, this.wakeMaterial, this.portMaterial, this.ringMaterial, ...this.flatVariants.values()]) m.dispose();
+    for (const m of [this.vesselMaterial, this.modelMaterial, this.detailMaterial, this.wakeMaterial, this.portMaterial, this.ringMaterial, ...(this.dotMaterial ? [this.dotMaterial] : []), ...this.flatVariants.values()]) m.dispose();
     this.scene.overlay.remove(this.group);
     this.lodListeners.clear();
   }

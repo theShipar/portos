@@ -19,6 +19,67 @@ export function nextLod(current: VesselDetail, px: number): VesselDetail {
   return lod as VesselDetail;
 }
 
+/**
+ * V3 per-ship LOD bands by projected (displayed) hull length in CSS px (spec 04/05):
+ * < 4 dot · 4–16 oriented type icon · 16–55 low-poly model · 55–160 detailed model · > 160 inspection model.
+ */
+export const LOD_BANDS = ['dot', 'icon', 'lowpoly', 'detailed', 'inspection'] as const;
+export type LodBand = 0 | 1 | 2 | 3 | 4;
+export const BAND_THRESHOLDS_PX = [4, 16, 55, 160] as const;
+/** Enter a band 15 % above its threshold, leave it 15 % below (spec: 10–20 %). */
+export const BAND_HYSTERESIS = 0.15;
+
+/** Band with no history: plain thresholds. */
+export function bandFor(px: number): LodBand {
+  let b = 0;
+  while (b < 4 && px >= BAND_THRESHOLDS_PX[b]!) b++;
+  return b as LodBand;
+}
+
+/** Band with hysteresis: a ship near a threshold keeps its band until it is clearly past it. */
+export function nextBand(current: LodBand | undefined, px: number, hysteresis = BAND_HYSTERESIS): LodBand {
+  if (current === undefined) return bandFor(px);
+  let b: number = current;
+  while (b < 4 && px > BAND_THRESHOLDS_PX[b]! * (1 + hysteresis)) b++;
+  while (b > 0 && px < BAND_THRESHOLDS_PX[b - 1]! * (1 - hysteresis)) b--;
+  return b as LodBand;
+}
+
+/** The selected ship may sit one band above its neighbours (spec 04/05), never below the oriented icon. */
+export function selectedBand(band: LodBand): LodBand {
+  return Math.min(4, Math.max(2, band + 1)) as LodBand;
+}
+
+/** Close-model budgets per frame (device budget): ships beyond the cap fall back one band. */
+export const BAND_CAPS = { inspection: 2, detailed: 12 } as const;
+
+export interface BandCandidate {
+  id: string;
+  band: LodBand;
+  px: number;
+  pinned: boolean;
+}
+
+/**
+ * Enforces {@link BAND_CAPS}: pinned ships first, then the largest on screen. Inspection overflow drops to detailed,
+ * detailed overflow to low-poly. Returns the final band per id.
+ */
+export function allocateBands(cands: readonly BandCandidate[], caps: { inspection: number; detailed: number } = BAND_CAPS): Map<string, LodBand> {
+  const out = new Map<string, LodBand>();
+  const byPriority = [...cands].sort((a, b) => Number(b.pinned) - Number(a.pinned) || b.px - a.px || (a.id < b.id ? -1 : 1));
+  let inspect = 0;
+  let detail = 0;
+  for (const c of byPriority) {
+    let band = c.band;
+    if (band === 4 && inspect >= caps.inspection) band = 3;
+    if (band === 4) inspect++;
+    if (band === 3 && detail >= caps.detailed) band = 2;
+    if (band === 3) detail++;
+    out.set(c.id, band);
+  }
+  return out;
+}
+
 /** Geographic cluster cell (deg) by camera distance with hysteresis; 0 = no clustering. */
 export const CLUSTER_BANDS = [
   { cellDeg: 6, enterAbove: 6.2, leaveBelow: 5.8 },

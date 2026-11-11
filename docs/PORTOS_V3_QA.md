@@ -13,7 +13,7 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 |---|---|---|---|
 | 1 | Visual: map ≥ 75 % at 1440×900, Urbanist, token spacing, quiet glass | G1 | PASS (G1) |
 | 2 | Geographic: whole continent, no rectangular cutout, rotatable, country hover lifts top + sidewall, city/port drilldown | G2, G3 | PASS (G2 geometry; G3 lift, pins, presets, back) |
-| 3 | Vessel: type-differentiated near and far LOD, no popping, heading/status match, no wake when moored | G4 | pending |
+| 3 | Vessel: type-differentiated near and far LOD, no popping, heading/status match, no wake when moored | G4 | PASS (G4; instant band swap with hysteresis, no crossfade — D-044) |
 | 4 | Inspection: 3D preview, origin → destination tracker, container/hold selection from fixture, correct shipment | G5 | pending |
 | 5 | Simulation: pause/play/scrub, 1×–100×, one clock for movement/ETA/cargo/berth/KPI | G6 | pending |
 | 6 | Ports: container and bulk twins distinct, cranes/berths/yard tied to operations | G7 | pending |
@@ -127,3 +127,35 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
   TECHNICAL_DEVIATIONS).
 - **Rollback:** `?v3RegionExtrusion=0` (V2 translate lift, no pins, no presets, no hit discs) or revert the gate
   commit.
+
+## Gate 4 — Ship geometry and distant LOD
+
+- **Source paths:** `src/map/earth/lod.ts` (`LOD_BANDS`, `bandFor`, `nextBand`, `selectedBand`, `allocateBands`,
+  `BAND_CAPS`), `src/map/earth/MaritimeOverlay.ts` (V3 per-ship bands, projected length, dot / icon / inspection
+  batches, ship budget in `stats()`), `src/map/vessels3d/library.ts` (LOD2 medium, LOD3 inspection, `general`
+  hull, `buildShipIcon`, `shipDotGeometry`), `src/map/vessels3d/categories.ts` (`general` key and category),
+  `src/components/ui/ShipSilhouette.vue` (general cargo profile), `src/qa/shipsPage.ts` (`?lod=3`, `?lod=icon`,
+  band strip).
+- **Acceptance (spec 04/04, 04/05):**
+  - Container, tanker, LNG, bulk, Ro-Ro and general cargo are distinct at every level (icon, low-poly, detailed,
+    inspection), each inside its triangle range: PASS (`vessels3d.test.ts`; `ships.spec.ts` grids at LOD0–3 and
+    icons; `desktop-ships-icons.png`).
+  - Bands by projected length < 4 / 4–16 / 16–55 / 55–160 / > 160 px with 15 % hysteresis; no flicker at a ±8 %
+    oscillation: PASS (`maritime.test.ts`).
+  - No band change across 1.5 s at a still camera; the selected ship's band only climbs while zooming in: PASS
+    (`v3ships.spec.ts`).
+  - Every drawn ship's band matches its projected length (within the hysteresis): PASS (`ships.spec.ts` region).
+  - Selection one band up; close models capped (2 inspection, 12 detailed): PASS (`maritime.test.ts`,
+    `ships.spec.ts`: VSL-0001 in PRT-SIN at band ≥ 3).
+  - Heading matches COG underway; no wake when moored or anchored, and none on icons or dots: PASS
+    (`ships.spec.ts`, `vessels3d.test.ts`).
+  - Earth draws icons, not models, for distant ships, with no wakes: PASS (`v3ships.spec.ts`).
+  - Perf budget with 500 vessels (draw calls / triangles): Earth 6 / 7.6k (budget 12 / 150k), REG-SEA 13 / 179k
+    (18 / 400k), PRT-SIN 7 / 76k (24 / 900k): PASS (`v3ships.spec.ts`).
+  - `?v3ShipPreview=0` restores the V2 overlay-wide LOD: PASS (`v3ships.spec.ts`).
+  - Screenshots: `docs/qa/v3-g4/desktop-region-sea.png` (icons and low-poly models), `desktop-port-sin-close.png`
+    (selected ship at inspection detail), `desktop-ships-icons.png` (icon grid and band strip), plus Earth, port
+    and vessel at both sizes (12 images).
+- **PARTIAL:** no 120–220 ms crossfade between bands; dots rare because of the 7 px marker floor; fixed caps
+  instead of a device-quality tier (D-044, TECHNICAL_DEVIATIONS).
+- **Rollback:** `?v3ShipPreview=0` or revert the gate commit.

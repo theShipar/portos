@@ -761,3 +761,35 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
   - The lift reads clearly at region scale and stays inside the V2 hover budget: 16 % of the 1.2 % extrusion
     fraction is 0.19 % of the span (V2 allowed 0.6 %).
   - Pins only cover drillable countries. Context countries are ghosts and have no pin (D-042).
+
+## D-044 Projected-length ship LOD and type icons (V3 Gate 4)
+
+- **Context:**
+  - V2 chose one LOD for the whole overlay from the clamped marker size (7–44 px): a shared glyph, per-type models,
+    and the detailed model only for the selected ship. V3 spec 04/05 asks for five bands by each ship's projected
+    length (< 4 px dot, 4–16 icon, 16–55 low-poly, 55–160 detailed, > 160 inspection) with 10–20 % hysteresis,
+    type-specific icons, batched draws and capped close models.
+  - General cargo (63 of the 500 fixture vessels) used the neutral hull.
+- **Decision:**
+  - *Projected length:* the hull length actually drawn: the screen-sized marker (`size × px`) or the true length at
+    the ship's view depth, whichever is larger. This is the same maximum the marker shader uses, so the band follows
+    what the user sees.
+  - *Bands:* `nextBand()` enters a band 15 % above its threshold and leaves 15 % below; one call can move several
+    bands on a big zoom. The selected ship sits one band up, at least low-poly. `allocateBands()` caps inspection
+    at 2 and detailed at 12 per frame, with the selection first and then the largest ships; overflow drops one band.
+  - *Geometry:* dot = status-coloured disc. Icon = flat top-down hull in the status colour with the type's deck
+    layout in light paint (container blocks, tanker pipe line, gas domes, bulk hatches, Ro-Ro box, general holds
+    and posts), 30–73 triangles, pointed bow. Low-poly = library LOD1. Detailed = new LOD2 medium model (cargo and
+    bridge readable, window band, 3.4k–9.9k triangles). Inspection = LOD3 (windows, lifeboats, railings; the V2
+    "LOD2").
+  - *General cargo:* its own geared hull (three box holds, two derrick posts with booms, aft accommodation) and
+    silhouette.
+  - *Draws:* one instanced draw per type and band in view. Only on-screen ships (plus the selection) are written;
+    off-screen ships cost nothing. Wakes start at the low-poly band and only underway.
+  - *Flag:* `v3ShipPreview` (the vessel family). Off restores the V2 overlay-wide LOD and the neutral general hull.
+- **Consequences:**
+  - With 500 vessels: Earth 171 icons in 6 draws (7.6k triangles); REG-SEA 95 icons and 115 low-poly in 13 draws
+    (179k); PRT-SIN 38 low-poly plus the selected ship at inspection in 7 draws (76k).
+  - The dot band exists but is rare: the marker floor (7 px × the 0.72 ambient scale ≈ 5 px) keeps distant ships
+    at icon size, as V2 chose for legibility.
+  - Band swaps are instant, at a stable position, heading and size; there is no 120–220 ms crossfade (deviation).

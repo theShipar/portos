@@ -1020,3 +1020,45 @@ blockers. Status values: implemented / tested / blocked.
     --project=chromium --workers=2` → 25 passed. Visual baselines unchanged (all 16 passed).
 - **Gate:** P0 #2 PASS (geometry from Gate 2; lift, keyboard parity, pins, presets and back orientation here).
 - **Blockers:** none.
+
+## Phase V3-4 — Ship geometry and distant LOD
+
+- **Decisions:** D-044 (projected-length bands with 15 % hysteresis, selection one band up, close-model caps, type
+  icons, dot, LOD2 medium / LOD3 inspection, general cargo hull).
+- **Implemented:**
+  - `lod.ts`: `LOD_BANDS`, `BAND_THRESHOLDS_PX` (4 / 16 / 55 / 160), `bandFor`, `nextBand`, `selectedBand`,
+    `allocateBands` with `BAND_CAPS` (inspection 2, detailed 12).
+  - `library.ts`:
+    - LOD2 is now the medium model (window band, no railings; 3.4k–9.9k triangles);
+    - LOD3 is the inspection model (the V2 detailed model);
+    - `general` geared cargo hull;
+    - `buildShipIcon()` flat type icons (30–73 triangles) and `shipDotGeometry()`;
+    - `iconStats()`.
+  - `categories.ts`: `general` key and category. `modelKeyOf` maps General cargo / Multi-purpose to it under
+    `v3ShipPreview`.
+  - `MaritimeOverlay` (under `v3ShipPreview`):
+    - per-ship projected length (marker size or true length at view depth);
+    - per-ship band with hysteresis, re-checked every 200 ms while the camera moves;
+    - dot, icon, low-poly, detailed and inspection batches; off-screen ships skipped;
+    - wakes from low-poly up;
+    - `stats()` adds `bands`, `shipTriangles` and `bandMode`; `vesselPose` adds `band` and `px`.
+  - QA ship page: `?lod=3`, `?lod=icon`, band strip. `ShipSilhouette`: general cargo profile.
+- **Tested:**
+  - `npm run build` → typecheck and build pass (built in 2.96 s). The first build caught a missing `vessels` field
+    in the e2e adapter type; fixed.
+  - `npx vitest run` → 378 passed (24 files). New: band table, hysteresis (including a ±8 % oscillation with no
+    flicker), selection bump, caps (`maritime.test.ts`); LOD3, icons, general category, V2 rollback mapping
+    (`vessels3d.test.ts`).
+  - `npx playwright test ships.spec --project=chromium --workers=2` → 7 passed (grids LOD0–3, icons and band strip,
+    headings, V3 region / port bands).
+  - `npx playwright test v3ships --project=chromium` → 4 passed:
+    - budget with 500 vessels: Earth 6 draws / 7,628 triangles (171 icons); REG-SEA 13 / 179,046 (95 icons,
+      115 low-poly); PRT-SIN 7 / 76,042 (38 low-poly, 1 inspection);
+    - Earth icons only;
+    - no band change at rest; the selected ship's band only climbs while zooming in;
+    - `?v3ShipPreview=0` → V2.
+  - `V3CAPTURE=g4 V3SHOTS=earth,region-sea,port-sin,vessel-vsl0001,ships-icons,port-sin-close npx playwright test
+    v3capture --project=chromium` → 12 passed; images in `docs/qa/v3-g4/`.
+  - `npx playwright test` (full) → 106 passed, 30 skipped, 0 failed (5.6 min). Visual baselines unchanged.
+- **Gate:** P0 #3 PASS (with the crossfade deviation in D-044).
+- **Blockers:** none.

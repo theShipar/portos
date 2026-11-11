@@ -36,7 +36,7 @@ export interface PortosAdapter {
   geometry(): { id: string; clip: 'none' | 'wide-frame'; focusBounds: { west: number; south: number; east: number; north: number } | null; features: number; rings: number; pickable: boolean; lineOpacity: number } | null;
   lift(iso3: string): { progress: number; fraction: number } | null;
   vesselScreen(id: string): { x: number; y: number; visible: boolean } | null;
-  overlayStats(): { lod: number; drawnVessels: number; wakes: number; detailVessels: string[]; modelVessels: number; px: number; shipDrawCalls: number; trackRuns: ('observed' | 'modelled' | 'unverified')[] } | null;
+  overlayStats(): { lod: number; vessels: number; drawnVessels: number; wakes: number; detailVessels: string[]; modelVessels: number; px: number; shipDrawCalls: number; shipTriangles: number; bandMode: 'v2' | 'v3'; bands: Record<'dot' | 'icon' | 'lowpoly' | 'detailed' | 'inspection', number>; trackRuns: ('observed' | 'modelled' | 'unverified')[] } | null;
   clock(): { timeMs: number; frameMs: number; mode: 'playing' | 'paused' | 'scrubbing'; rate: number; phase: 'history' | 'now' | 'simulation'; rangeStartMs: number; rangeEndMs: number };
   follow(): {
     follow: { vesselId: string; mode: 'chase' | 'above' | 'orbit' | 'courseUp' } | null;
@@ -51,6 +51,8 @@ export interface PortosAdapter {
     headingDeg: number;
     wake: number;
     detail: 0 | 1 | 2;
+    band?: 0 | 1 | 2 | 3 | 4;
+    px?: number;
     lat: number;
     lon: number;
     navStatus: string;

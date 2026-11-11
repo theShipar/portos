@@ -1,18 +1,21 @@
 import * as THREE from 'three';
 import { mergeGeometries, mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import { SHIP_PRESETS, type ShipModelKey } from './categories';
-import { box, capsule, colored, cylinder, dome, loftedHull, seeded, tiltedBox, triangleCount, type HullShape, type Part } from './geometry';
+import { box, capsule, colored, cylinder, dome, hullShape, loftedHull, seeded, tiltedBox, triangleCount, type HullShape, type Part } from './geometry';
 
 /**
  * Procedural ship library (spec 08 fallback tier: code-built, no third-party models). LOD0 is one shared low-poly hull
  * glyph for instanced Earth views; LOD1 is a recognisable per-type model for regional / city views; LOD2 is the
- * detailed model drawn only for the selected ship. Model frame per `contract.ts`.
+ * medium model (cargo and bridge readable, V3 55–160 px); LOD3 is the inspection model with windows and railings
+ * (V2 drew it for the selected ship as "LOD2"). V3 adds flat per-type icons and a dot for the 4–16 px and < 4 px
+ * bands. Model frame per `contract.ts`.
  */
-export type ShipLod = 0 | 1 | 2;
+export type ShipLod = 0 | 1 | 2 | 3;
 
-export const LOD_TRIANGLE_RANGE: Record<ShipLod, readonly [number, number]> = { 0: [100, 500], 1: [1000, 5000], 2: [10000, 60000] };
+export const LOD_TRIANGLE_RANGE: Record<ShipLod, readonly [number, number]> = { 0: [100, 500], 1: [1000, 5000], 2: [3000, 30000], 3: [10000, 60000] };
+export const ICON_TRIANGLE_RANGE: readonly [number, number] = [20, 300];
 /** Beam exaggeration applied in the shader while a ship is drawn larger than true scale (legibility at 9–30 px). */
-export const LOD_BEAM_BOOST: Record<ShipLod, number> = { 0: 1.8, 1: 1.35, 2: 1 };
+export const LOD_BEAM_BOOST: Record<ShipLod, number> = { 0: 1.8, 1: 1.35, 2: 1, 3: 1 };
 
 const COL = {
   house: '#e1e6ea',
@@ -62,7 +65,7 @@ function accommodation(c: Ctx, o: { s: number; depth: number; width: number; tie
   const front = z - o.depth / 2;
   const bridgeY = top - o.tierH;
   if (o.wings !== false) parts.push(box(c.shape.halfBreadth(o.s) * 2 * 1.02, o.tierH * 0.22, o.depth * 0.3, 0, bridgeY + o.tierH * 0.62, front + o.depth * 0.15, COL.house));
-  if (lod === 2) {
+  if (lod === 3) {
     // Individual windows on every tier front and along both sides of the bridge.
     for (let k = 0; k < o.tiers; k++) {
       const tw = w * (1 - k * 0.05);
@@ -87,7 +90,7 @@ function accommodation(c: Ctx, o: { s: number; depth: number; width: number; tie
     parts.push(cylinder(w * 0.115, fh * 0.14, c.seg(8, 24), 0, top + fh * 0.55, fz, COL.funnelBand));
   }
   parts.push(cylinder(w * 0.012, o.tierH * 1.4, c.seg(5, 10), 0, top, front + o.depth * 0.3, COL.rail));
-  if (lod === 2) {
+  if (lod >= 2) {
     for (const side of [-1, 1]) parts.push(capsule(c.beam * 0.045, o.depth * 0.5, 10, side * (w / 2 + c.beam * 0.05), fb + o.tierH * 1.2, z + o.depth * 0.1, COL.boat));
   }
 }
@@ -123,7 +126,7 @@ function railings(c: Ctx, from = 0.03, to = 0.95, step = 0.012) {
 
 function container(c: Ctx) {
   const tierH = c.fb * 0.62;
-  const bays = c.lod === 2 ? 16 : 12;
+  const bays = c.lod >= 2 ? 16 : 12;
   const s0 = 0.14;
   const s1 = 0.8;
   for (let b = 0; b < bays; b++) {
@@ -133,7 +136,7 @@ function container(c: Ctx) {
     const len = ((s1 - s0) / bays) * 0.9;
     const width = Math.min(c.beam * 0.9, c.shape.halfBreadth(sb) * 2 * 0.92);
     const y0 = c.shape.deckY(sb);
-    if (c.lod === 2) {
+    if (c.lod >= 2) {
       const rows = 9;
       for (let r = 0; r < rows; r++) {
         const x = -width / 2 + (width / rows) * (r + 0.5);
@@ -161,7 +164,7 @@ function tanker(c: Ctx) {
   const zB = zOf(0.18);
   const len = zA - zB;
   const midZ = (zA + zB) / 2;
-  const pipes = c.lod === 2 ? 6 : 2;
+  const pipes = c.lod >= 2 ? 6 : 2;
   for (let i = 0; i < pipes; i++) {
     const x = (i - (pipes - 1) / 2) * c.beam * 0.035;
     c.parts.push(cylinder(c.beam * 0.012, Math.abs(len), c.seg(6, 12), x, deckY + c.fb * 0.25, midZ, i % 2 ? COL.pipeDark : COL.pipe, 'z'));
@@ -171,7 +174,7 @@ function tanker(c: Ctx) {
   const mz = zOf(0.5);
   c.parts.push(box(c.beam * 0.82, c.fb * 0.12, 0.02, 0, deckY, mz, COL.pipe));
   for (const side of [-1, 1]) c.parts.push(cylinder(c.beam * 0.02, c.fb * 0.9, c.seg(6, 12), side * c.beam * 0.3, deckY, mz + 0.03, COL.crane));
-  if (c.lod === 2) {
+  if (c.lod >= 2) {
     for (let i = 0; i < 10; i++) c.parts.push(cylinder(c.beam * 0.014, c.fb * 0.3, 12, (i - 4.5) * c.beam * 0.08, deckY + c.fb * 0.12, mz, COL.pipeDark));
     for (let i = 0; i < 12; i++) {
       const s = 0.22 + i * 0.05;
@@ -195,7 +198,7 @@ function gas(c: Ctx) {
   const zA = zOf(0.3 + 3 * 0.165);
   const zB = zOf(0.3);
   c.parts.push(box(c.beam * 0.1, c.fb * 0.12, Math.abs(zA - zB), 0, c.fb * 1.5 + r * 0.98, (zA + zB) / 2, COL.pipe));
-  if (c.lod === 2) {
+  if (c.lod >= 2) {
     for (let i = 0; i < domes; i++) c.parts.push(cylinder(r * 0.16, c.fb * 0.3, 24, 0, c.fb * 1.5 + r * 0.95, zOf(0.3 + i * 0.165), COL.pipeDark));
     for (const side of [-1, 1]) c.parts.push(cylinder(c.beam * 0.01, Math.abs(zA - zB), 12, side * c.beam * 0.38, c.fb * 1.15, (zA + zB) / 2, COL.pipe, 'z'));
   }
@@ -211,7 +214,7 @@ function bulk(c: Ctx) {
     const w = c.beam * 0.62;
     c.parts.push(box(w * 1.06, c.fb * 0.16, 0.066, 0, c.fb, z, COL.hatchRib));
     c.parts.push(box(w, c.fb * 0.14, 0.06, 0, c.fb + c.fb * 0.16, z, COL.hatch, 0));
-    if (c.lod === 2) for (let k = 0; k < 7; k++) c.parts.push(box(w, c.fb * 0.04, 0.003, 0, c.fb + c.fb * 0.3, z - 0.027 + k * 0.009, COL.hatchRib));
+    if (c.lod >= 2) for (let k = 0; k < 7; k++) c.parts.push(box(w, c.fb * 0.04, 0.003, 0, c.fb + c.fb * 0.3, z - 0.027 + k * 0.009, COL.hatchRib));
   }
   // Geared: four deck cranes between the holds, jibs alternating to port and starboard.
   for (let i = 0; i < 4; i++) {
@@ -244,7 +247,7 @@ function roro(c: Ctx) {
   // Stern ramp folded up against the transom.
   c.parts.push(tiltedBox(w * 0.42, 0.004, h * 0.75, -1.25, 0, w * 0.18, c.fb + h * 0.4, zB + 0.008, COL.ramp));
   c.parts.push(cylinder(w * 0.1, h * 0.25, c.seg(8, 24), 0, c.fb + h, zOf(0.12), COL.funnel));
-  if (c.lod === 2) {
+  if (c.lod >= 2) {
     for (let r = 0; r < 3; r++) for (let i = 0; i < 26; i++) c.parts.push(box(w * 0.06, h * 0.04, 0.012, (r - 1) * w * 0.3, c.fb + h, zOf(0.12 + i * 0.027), COL.vent));
     for (const side of [-1, 1]) {
       for (let i = 0; i < 40; i++) c.parts.push(box(0.002, h * 0.05, 0.012, side * (w / 2 + 0.001), c.fb + h * 0.66, zOf(0.08 + i * 0.019), COL.window));
@@ -266,7 +269,7 @@ function tug(c: Ctx) {
   c.parts.push(cylinder(c.beam * 0.07, c.beam * 0.4, c.seg(8, 20), 0, c.fb + c.beam * 0.07, zOf(0.3), COL.pipeDark, 'x'));
   c.parts.push(tiltedBox(c.beam * 0.7, c.fb * 0.25, 0.02, 0, 0, 0, c.fb * 1.6, zOf(0.17), COL.crane));
   // Rubber fender band along the gunwale.
-  const n = c.lod === 2 ? 64 : 16;
+  const n = c.lod >= 2 ? 64 : 16;
   for (const side of [-1, 1]) {
     for (let i = 0; i < n; i++) {
       const sa = 0.02 + (0.96 * i) / n;
@@ -280,9 +283,30 @@ function tug(c: Ctx) {
     }
   }
   c.parts.push(cylinder(c.beam * 0.08, c.beam * 0.5, c.seg(8, 20), 0, c.shape.deckY(0.98) * 0.85, zOf(0.985), COL.fender, 'x'));
-  if (c.lod === 2) {
+  if (c.lod >= 2) {
     for (const side of [-1, 1]) for (let i = 0; i < 10; i++) c.parts.push(cylinder(c.beam * 0.05, c.beam * 0.04, 16, side * c.shape.halfBreadth(0.2 + i * 0.06) * 1.05, c.fb * 0.3, zOf(0.2 + i * 0.06), COL.fender, 'x'));
   }
+}
+
+/** Geared general cargo / multi-purpose: three box holds, two derrick posts with booms, accommodation aft. */
+function general(c: Ctx) {
+  const w = c.beam * 0.66;
+  const holds = [0.33, 0.52, 0.71];
+  for (const s of holds) {
+    const z = zOf(s);
+    c.parts.push(box(w * 1.06, c.fb * 0.18, 0.13, 0, c.fb, z, COL.hatchRib));
+    c.parts.push(box(w, c.fb * 0.14, 0.12, 0, c.fb + c.fb * 0.18, z, COL.hatch, 0));
+    if (c.lod >= 2) for (let k = 0; k < 9; k++) c.parts.push(box(w, c.fb * 0.04, 0.003, 0, c.fb + c.fb * 0.32, z - 0.056 + k * 0.014, COL.hatchRib));
+  }
+  // Derrick posts between the holds, booms resting forward at a shallow angle.
+  for (const s of [0.425, 0.615]) {
+    const z = zOf(s);
+    c.parts.push(cylinder(c.beam * 0.035, c.fb * 2.6, c.seg(8, 18), 0, c.fb, z, COL.crane));
+    c.parts.push(box(c.beam * 0.4, c.fb * 0.12, c.beam * 0.05, 0, c.fb * 3.2, z, COL.crane));
+    for (const side of [-1, 1]) c.parts.push(tiltedBox(c.beam * 0.025, c.beam * 0.025, 0.12, 0.28, 0, side * c.beam * 0.14, c.fb * 2.2, z - 0.05, COL.crane));
+  }
+  accommodation(c, { s: 0.12, depth: 0.08, width: c.beam, tiers: 4, tierH: c.fb * 0.72 });
+  forecastle(c);
 }
 
 function other(c: Ctx) {
@@ -291,12 +315,12 @@ function other(c: Ctx) {
   forecastle(c);
 }
 
-const BUILDERS: Record<ShipModelKey, (c: Ctx) => void> = { container, tanker, gas, bulk, roro, tug, other };
+const BUILDERS: Record<ShipModelKey, (c: Ctx) => void> = { container, tanker, gas, bulk, roro, general, tug, other };
 
 function hullFor(key: ShipModelKey, lod: ShipLod) {
   const p = SHIP_PRESETS[key];
   const beam = 1 / p.lengthToBeam;
-  const res = lod === 2 ? { stations: 96, sections: 20 } : lod === 1 ? { stations: 32, sections: 8 } : { stations: 12, sections: 3 };
+  const res = lod === 3 ? { stations: 96, sections: 20 } : lod === 2 ? { stations: 56, sections: 12 } : lod === 1 ? { stations: 32, sections: 8 } : { stations: 12, sections: 3 };
   return {
     beam,
     ...loftedHull({
@@ -326,6 +350,110 @@ function glyph(): Part[] {
 
 const cache = new Map<string, THREE.BufferGeometry>();
 
+/** Flat part in the model frame: shape x = starboard, shape y = forward (−Z), lying at height `y`. */
+function flat(shape: THREE.Shape, y: number, color: string, tint: number): Part {
+  const g = new THREE.ShapeGeometry(shape, 6);
+  g.rotateX(-Math.PI / 2);
+  g.translate(0, y, 0);
+  return colored(g, color, tint);
+}
+
+function rect(x0: number, x1: number, s0: number, s1: number): THREE.Shape {
+  const sh = new THREE.Shape();
+  sh.moveTo(x0, s0 - 0.5);
+  sh.lineTo(x1, s0 - 0.5);
+  sh.lineTo(x1, s1 - 0.5);
+  sh.lineTo(x0, s1 - 0.5);
+  sh.closePath();
+  return sh;
+}
+
+function disc(r: number, s: number): THREE.Shape {
+  const sh = new THREE.Shape();
+  sh.absarc(0, s - 0.5, r, 0, Math.PI * 2, false);
+  return sh;
+}
+
+/**
+ * V3 oriented type icon (4–16 px band): the top-down hull outline in the status colour with the type's deck layout in
+ * light paint (container blocks, tanker pipe line, gas domes, bulk hatches, Ro-Ro box, general holds and posts).
+ * Flat, so it reads as a crisp vector mark; the pointed bow keeps the heading legible.
+ */
+export function buildShipIcon(key: ShipModelKey): THREE.BufferGeometry {
+  const cacheKey = `icon:${key}`;
+  const hit = cache.get(cacheKey);
+  if (hit) return hit;
+  const p = SHIP_PRESETS[key];
+  const beam = 1 / p.lengthToBeam;
+  const shape = hullShape({ beam, freeboard: p.freeboard, bowStart: p.bowStart, sheer: 0.4, transom: key === 'tug' ? 0.82 : 0.88 });
+  const outline = new THREE.Shape();
+  const N = 14;
+  for (let i = 0; i <= N; i++) {
+    const s = i / N;
+    const x = shape.halfBreadth(s);
+    if (i === 0) outline.moveTo(x, s - 0.5);
+    else outline.lineTo(x, s - 0.5);
+  }
+  for (let i = N; i >= 0; i--) outline.lineTo(-shape.halfBreadth(i / N), i / N - 0.5);
+  outline.closePath();
+  const light = '#e1e6ea';
+  const hb = beam / 2;
+  const parts: Part[] = [flat(outline, 0.001, COL.house, 1)];
+  const cue = (sh: THREE.Shape) => parts.push(flat(sh, 0.002, light, 0));
+  const house = (s: number) => cue(rect(-hb * 0.8, hb * 0.8, s - 0.04, s + 0.04));
+  switch (key) {
+    case 'container':
+      for (let i = 0; i < 4; i++) cue(rect(-hb * 0.82, hb * 0.82, 0.27 + i * 0.14, 0.27 + i * 0.14 + 0.12));
+      house(0.2);
+      break;
+    case 'tanker':
+      cue(rect(-hb * 0.12, hb * 0.12, 0.18, 0.86));
+      cue(rect(-hb * 0.75, hb * 0.75, 0.48, 0.52));
+      house(0.09);
+      break;
+    case 'gas':
+      for (let i = 0; i < 4; i++) cue(disc(hb * 0.8, 0.3 + i * 0.165));
+      house(0.09);
+      break;
+    case 'bulk':
+      for (let i = 0; i < 6; i++) cue(rect(-hb * 0.55, hb * 0.55, 0.22 + i * 0.105, 0.22 + i * 0.105 + 0.07));
+      house(0.09);
+      break;
+    case 'roro':
+      cue(rect(-hb * 0.9, hb * 0.9, 0.04, 0.84));
+      break;
+    case 'general':
+      for (const s of [0.33, 0.52, 0.71]) cue(rect(-hb * 0.62, hb * 0.62, s - 0.055, s + 0.055));
+      for (const s of [0.425, 0.615]) parts.push(flat(disc(hb * 0.22, s), 0.003, COL.window, 0));
+      house(0.12);
+      break;
+    case 'tug':
+      cue(rect(-hb * 0.6, hb * 0.6, 0.45, 0.67));
+      break;
+    default:
+      house(0.1);
+  }
+  const merged = mergeGeometries(parts, false);
+  if (!merged) throw new Error(`Ship icon merge failed for ${key}`);
+  parts.forEach((x) => x.dispose());
+  merged.computeBoundingBox();
+  merged.computeBoundingSphere();
+  merged.name = `ship:${cacheKey}`;
+  cache.set(cacheKey, merged);
+  return merged;
+}
+
+/** V3 dot (< 4 px band): a status-coloured disc as wide as the hull length. */
+export function shipDotGeometry(): THREE.BufferGeometry {
+  const hit = cache.get('dot');
+  if (hit) return hit;
+  const g = flat(disc(0.5, 0.5), 0.001, COL.house, 1);
+  g.computeBoundingSphere();
+  g.name = 'ship:dot';
+  cache.set('dot', g);
+  return g;
+}
+
 /** Merged, indexed geometry for a model at a LOD; cached and shared by every instance. LOD0 ignores `key`. */
 export function buildShipGeometry(key: ShipModelKey, lod: ShipLod): THREE.BufferGeometry {
   const cacheKey = lod === 0 ? 'glyph' : `${key}:${lod}`;
@@ -343,10 +471,10 @@ export function buildShipGeometry(key: ShipModelKey, lod: ShipLod): THREE.Buffer
       shape,
       parts: [hull, deck],
       rand: seeded(key.length * 7919 + lod * 104729),
-      seg: (lo, hi) => (lod === 2 ? hi : lo),
+      seg: (lo, hi) => (lod >= 2 ? hi : lo),
     };
     BUILDERS[key](c);
-    if (lod === 2) railings(c, key === 'roro' ? 0.88 : 0.03, 0.95);
+    if (lod === 3) railings(c, key === 'roro' ? 0.88 : 0.03, 0.95);
     parts = c.parts;
   }
   const flat = mergeGeometries(parts, false);
@@ -399,11 +527,16 @@ export function wakeGeometry(): THREE.BufferGeometry {
 
 export { triangleCount };
 
+/** Icon triangle counts per model (QA page and tests). */
+export function iconStats(): Record<ShipModelKey, number> {
+  return Object.fromEntries((Object.keys(SHIP_PRESETS) as ShipModelKey[]).map((k) => [k, triangleCount(buildShipIcon(k))])) as Record<ShipModelKey, number>;
+}
+
 /** Triangle counts for every model and LOD (QA page and tests). */
 export function libraryStats(): Record<ShipModelKey, Record<ShipLod, number>> {
   const out = {} as Record<ShipModelKey, Record<ShipLod, number>>;
   for (const key of Object.keys(SHIP_PRESETS) as ShipModelKey[]) {
-    out[key] = { 0: triangleCount(buildShipGeometry(key, 0)), 1: triangleCount(buildShipGeometry(key, 1)), 2: triangleCount(buildShipGeometry(key, 2)) };
+    out[key] = { 0: triangleCount(buildShipGeometry(key, 0)), 1: triangleCount(buildShipGeometry(key, 1)), 2: triangleCount(buildShipGeometry(key, 2)), 3: triangleCount(buildShipGeometry(key, 3)) };
   }
   return out;
 }

@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { describe, expect, it } from 'vitest';
 import { categoryOf, modelKeyOf, SHIP_MODEL_KEYS, SHIP_PRESETS, type ShipModelKey } from '@/map/vessels3d/categories';
 import { forwardForHeading, headingToYaw, MODEL_FORWARD, wrapDegrees, yawToHeading } from '@/map/vessels3d/contract';
-import { buildShipGeometry, LOD_TRIANGLE_RANGE, libraryStats, triangleCount, wakeGeometry, type ShipLod } from '@/map/vessels3d/library';
+import { buildShipGeometry, buildShipIcon, ICON_TRIANGLE_RANGE, iconStats, LOD_TRIANGLE_RANGE, libraryStats, shipDotGeometry, triangleCount, wakeGeometry, type ShipLod } from '@/map/vessels3d/library';
 import { ANCHOR_SWAY_DEG, anchorSwayDeg, displayHeadingDeg, motionStateOf, restingHeadingDeg, WAKE_MAX_LENGTHS, wakeLength } from '@/map/vessels3d/motion';
 import { catalog } from './fixtures';
 
-const LODS: ShipLod[] = [0, 1, 2];
+const LODS: ShipLod[] = [0, 1, 2, 3];
 
 function extent(g: THREE.BufferGeometry, pick: (z: number) => boolean): number {
   const p = g.getAttribute('position');
@@ -52,19 +52,21 @@ describe('ship coordinate contract', () => {
 });
 
 describe('ship categories', () => {
-  it('covers the six spec categories and maps every fixture type', () => {
-    expect(new Set(SHIP_MODEL_KEYS.map(categoryOf))).toEqual(new Set(['container', 'tanker', 'bulk', 'roro', 'tug', 'other']));
+  it('covers the V3 categories (general cargo added) and maps every fixture type', () => {
+    expect(new Set(SHIP_MODEL_KEYS.map(categoryOf))).toEqual(new Set(['container', 'tanker', 'bulk', 'roro', 'general', 'tug', 'other']));
     const expected: Record<string, ShipModelKey> = {
       'Container ship': 'container',
       'Oil tanker': 'tanker',
       'LNG carrier': 'gas',
       'Bulk carrier': 'bulk',
       RoRo: 'roro',
-      'General cargo': 'other',
+      'General cargo': 'general',
     };
     for (const v of catalog().vessels) expect(modelKeyOf(v.vesselType)).toBe(expected[v.vesselType]);
     expect(modelKeyOf('Hovercraft')).toBe('other');
     expect(modelKeyOf('Tug')).toBe('tug');
+    // V2 rollback (`v3ShipPreview=0`) draws general cargo with the neutral hull.
+    expect(modelKeyOf('General cargo', false)).toBe('other');
   });
 });
 
@@ -82,7 +84,7 @@ describe('procedural ship library', () => {
 
   it('is length-normalised with the bow at −Z, the waterline at y = 0 and plausible beam', () => {
     for (const key of SHIP_MODEL_KEYS) {
-      for (const lod of [1, 2] as ShipLod[]) {
+      for (const lod of [1, 2, 3] as ShipLod[]) {
         const g = buildShipGeometry(key, lod);
         const b = g.boundingBox!;
         expect(b.max.z - b.min.z, `${key} length`).toBeGreaterThan(0.98);
@@ -103,6 +105,32 @@ describe('procedural ship library', () => {
     expect(buildShipGeometry('container', 1)).toBe(buildShipGeometry('container', 1));
     expect(buildShipGeometry('container', 0)).toBe(buildShipGeometry('tug', 0));
     expect(triangleCount(buildShipGeometry('container', 2))).toBeGreaterThan(triangleCount(buildShipGeometry('container', 1)));
+    for (const key of SHIP_MODEL_KEYS) expect(triangleCount(buildShipGeometry(key, 3)), key).toBeGreaterThan(triangleCount(buildShipGeometry(key, 2)));
+  });
+
+  it('V3 icons: one flat, oriented icon per type inside its budget, status-coloured hull, pointed bow', () => {
+    const icons = iconStats();
+    const seen = new Set<string>();
+    for (const key of SHIP_MODEL_KEYS) {
+      const g = buildShipIcon(key);
+      expect(g).toBe(buildShipIcon(key));
+      expect(icons[key], key).toBeGreaterThanOrEqual(ICON_TRIANGLE_RANGE[0]);
+      expect(icons[key], key).toBeLessThanOrEqual(ICON_TRIANGLE_RANGE[1]);
+      const b = g.boundingBox!;
+      expect(b.max.y - b.min.y, `${key} is flat`).toBeLessThan(0.01);
+      expect(b.max.z - b.min.z, `${key} length`).toBeCloseTo(1, 2);
+      expect(extent(g, (z) => z < -0.44), `${key} bow`).toBeLessThan(extent(g, (z) => z > 0.44) * 0.7);
+      const t = g.getAttribute('tint');
+      let tinted = 0;
+      for (let i = 0; i < t.count; i++) if (t.getX(i) > 0.5) tinted++;
+      expect(tinted, `${key} hull carries status`).toBeGreaterThan(0);
+      expect(tinted, `${key} has a light deck layout`).toBeLessThan(t.count);
+      seen.add(`${icons[key]}:${g.getAttribute('position').count}`);
+    }
+    // Type-specific: the deck layouts differ (Ro-Ro, tug and other share a single block, the rest are distinct).
+    expect(seen.size).toBeGreaterThanOrEqual(5);
+    const d = shipDotGeometry();
+    expect(d.boundingSphere!.radius).toBeCloseTo(0.5, 2);
   });
 
   it('paints status only on the LOD0 glyph and the LOD1 deck, never whole LOD1/LOD2 hulls', () => {
@@ -116,6 +144,7 @@ describe('procedural ship library', () => {
     for (const key of SHIP_MODEL_KEYS) {
       expect(tinted(buildShipGeometry(key, 1)), key).toBeLessThan(0.2);
       expect(tinted(buildShipGeometry(key, 2)), key).toBe(0);
+      expect(tinted(buildShipGeometry(key, 3)), key).toBe(0);
     }
   });
 

@@ -1,9 +1,11 @@
-/** Ship categories of the V2 library (spec 08) and the geometry keys that implement them. */
-export type ShipCategory = 'container' | 'tanker' | 'bulk' | 'roro' | 'tug' | 'other';
-/** Geometry variants: the tanker category covers oil/product (`tanker`) and gas (`gas`, Moss domes). */
-export type ShipModelKey = 'container' | 'tanker' | 'gas' | 'bulk' | 'roro' | 'tug' | 'other';
+import { flags } from '@/core/flags';
 
-export const SHIP_MODEL_KEYS: readonly ShipModelKey[] = ['container', 'tanker', 'gas', 'bulk', 'roro', 'tug', 'other'];
+/** Ship categories of the library (V2 spec 08, V3 spec 04/04 adds general cargo) and the geometry keys that implement them. */
+export type ShipCategory = 'container' | 'tanker' | 'bulk' | 'roro' | 'general' | 'tug' | 'other';
+/** Geometry variants: the tanker category covers oil/product (`tanker`) and gas (`gas`, Moss domes). */
+export type ShipModelKey = 'container' | 'tanker' | 'gas' | 'bulk' | 'roro' | 'general' | 'tug' | 'other';
+
+export const SHIP_MODEL_KEYS: readonly ShipModelKey[] = ['container', 'tanker', 'gas', 'bulk', 'roro', 'general', 'tug', 'other'];
 
 const KEY_BY_TYPE: Record<string, ShipModelKey> = {
   'Container ship': 'container',
@@ -15,13 +17,19 @@ const KEY_BY_TYPE: Record<string, ShipModelKey> = {
   'Bulk carrier': 'bulk',
   RoRo: 'roro',
   'Car carrier': 'roro',
+  'General cargo': 'general',
+  'Multi-purpose': 'general',
   Tug: 'tug',
   'Pilot vessel': 'tug',
 };
 
-/** Fixture vessel type → geometry key. Unknown types (including general cargo) get the neutral hull, never borrowed features. */
-export function modelKeyOf(vesselType: string): ShipModelKey {
-  return KEY_BY_TYPE[vesselType] ?? 'other';
+/**
+ * Fixture vessel type → geometry key. Unknown types get the neutral hull, never borrowed features. General cargo has
+ * its own geared hull under `v3ShipPreview`; V2 drew it with the neutral hull.
+ */
+export function modelKeyOf(vesselType: string, generalHull = flags.v3ShipPreview): ShipModelKey {
+  const key = KEY_BY_TYPE[vesselType] ?? 'other';
+  return key === 'general' && !generalHull ? 'other' : key;
 }
 
 export function categoryOf(key: ShipModelKey): ShipCategory {
@@ -48,6 +56,7 @@ export const SHIP_PRESETS: Record<ShipModelKey, ShipPreset> = {
   gas: { label: 'Gas carrier', lengthToBeam: 6.3, freeboard: 0.036, bowStart: 0.72, fullness: 3.8, paint: { hull: '#c3cacf', bootTop: '#5a3a36', deck: '#7a868d' } },
   bulk: { label: 'Bulk carrier', lengthToBeam: 6.0, freeboard: 0.03, bowStart: 0.76, fullness: 4.4, paint: { hull: '#47443f', bootTop: '#5a3a36', deck: '#66625a' } },
   roro: { label: 'RoRo / car carrier', lengthToBeam: 6.1, freeboard: 0.03, bowStart: 0.74, fullness: 3.6, paint: { hull: '#3b4752', bootTop: '#5a3a36', deck: '#5b6870' } },
+  general: { label: 'General cargo', lengthToBeam: 6.6, freeboard: 0.034, bowStart: 0.7, fullness: 3.4, paint: { hull: '#3f4f45', bootTop: '#5a3a36', deck: '#606a62' } },
   tug: { label: 'Tug / pilot', lengthToBeam: 2.9, freeboard: 0.075, bowStart: 0.5, fullness: 2.6, paint: { hull: '#2f3a40', bootTop: '#4d3431', deck: '#5c666c' } },
   other: { label: 'Other vessel', lengthToBeam: 6.4, freeboard: 0.032, bowStart: 0.72, fullness: 3.4, paint: { hull: '#55626b', bootTop: '#4d3a37', deck: '#66727a' } },
 };

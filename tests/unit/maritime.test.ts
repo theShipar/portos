@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { getSnapshotAt } from '@/engines/snapshot';
-import { degreesPerPx, LOD_THRESHOLDS, markerPxForAltitude, nextClusterCell, nextLod, nextStackCell, STACK_CELLS } from '@/map/earth/lod';
+import { allocateBands, BAND_CAPS, BAND_HYSTERESIS, BAND_THRESHOLDS_PX, bandFor, degreesPerPx, LOD_THRESHOLDS, markerPxForAltitude, nextBand, nextClusterCell, nextLod, nextStackCell, selectedBand, STACK_CELLS } from '@/map/earth/lod';
 import { routeForEntity } from '@/router/navigation';
 import {
   buildHazards,
@@ -174,6 +174,43 @@ describe('LOD and cluster hysteresis', () => {
     expect(nextLod(0, 40)).toBe(2);
     expect(nextLod(2, LOD_THRESHOLDS.down[1]! + 0.5)).toBe(2);
     expect(nextLod(2, 5)).toBe(0);
+  });
+
+  it('V3 bands follow the projected-length table: <4 dot, 4–16 icon, 16–55 low-poly, 55–160 detailed, >160 inspection', () => {
+    expect(BAND_THRESHOLDS_PX).toEqual([4, 16, 55, 160]);
+    expect([2, 3.9, 4, 15.9, 16, 54, 55, 159, 160, 400].map(bandFor)).toEqual([0, 0, 1, 1, 2, 2, 3, 3, 4, 4]);
+    expect(BAND_HYSTERESIS).toBeGreaterThanOrEqual(0.1);
+    expect(BAND_HYSTERESIS).toBeLessThanOrEqual(0.2);
+  });
+
+  it('V3 bands hold inside the hysteresis gap and step several bands on a big zoom', () => {
+    // Entering detailed needs > 55 × 1.15; leaving needs < 55 × 0.85.
+    expect(nextBand(2, 60)).toBe(2);
+    expect(nextBand(2, 64)).toBe(3);
+    expect(nextBand(3, 50)).toBe(3);
+    expect(nextBand(3, 46)).toBe(2);
+    // A ship oscillating ±8 % around a threshold never flickers.
+    let b = nextBand(undefined, 16);
+    const seen = new Set<number>();
+    for (let i = 0; i < 40; i++) seen.add((b = nextBand(b, 16 * (i % 2 ? 1.08 : 0.92))));
+    expect(seen.size).toBe(1);
+    expect(nextBand(0, 500)).toBe(4);
+    expect(nextBand(4, 1)).toBe(0);
+    expect(nextBand(undefined, 30)).toBe(2);
+  });
+
+  it('V3 selection sits one band up (at least low-poly); close-model caps keep the selection and the largest', () => {
+    expect([0, 1, 2, 3, 4].map((b) => selectedBand(b as 0))).toEqual([2, 2, 3, 4, 4]);
+    const cands = Array.from({ length: 30 }, (_, i) => ({ id: `V${String(i).padStart(2, '0')}`, band: 4 as const, px: 200 + i, pinned: false }));
+    cands.push({ id: 'SEL', band: 4, px: 161, pinned: true });
+    const out = allocateBands(cands);
+    expect(out.get('SEL')).toBe(4);
+    const inspect = [...out].filter(([, b]) => b === 4).map(([id]) => id);
+    expect(inspect.length).toBe(BAND_CAPS.inspection);
+    expect(inspect).toContain('V29');
+    expect([...out.values()].filter((b) => b === 3).length).toBe(BAND_CAPS.detailed);
+    expect([...out.values()].filter((b) => b === 2).length).toBe(31 - BAND_CAPS.inspection - BAND_CAPS.detailed);
+    expect(allocateBands([{ id: 'A', band: 1, px: 10, pinned: false }]).get('A')).toBe(1);
   });
 
   it('Earth cluster bands hold inside their hysteresis gap', () => {

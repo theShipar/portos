@@ -41,6 +41,23 @@ export const V3_SHOTS: { name: string; go: (page: Page) => Promise<void> }[] = [
   { name: 'port-sin', go: async (page) => { await open(page, '/ops/port/PRT-SIN?time=2026-11-09T10:00:00Z'); await settle(page, 3000); } },
   { name: 'vessel-vsl0047', go: async (page) => { await open(page, '/ops/region/REG-SEA?vessel=VSL-0047'); await expect(inspector(page)).toBeVisible(); await settle(page); } },
   { name: 'vessel-vsl0001', go: async (page) => { await open(page, '/ops/port/PRT-SIN?vessel=VSL-0001&time=2026-11-09T10:00:00Z'); await settle(page, 3000); } },
+  { name: 'ships-icons', go: async (page) => { await page.goto('/qa/ships.html?lod=icon'); await expect(page.getByTestId('ship-qa')).toHaveAttribute('data-ready', '1'); } },
+  {
+    name: 'port-sin-close',
+    go: async (page) => {
+      await open(page, '/ops/port/PRT-SIN?vessel=VSL-0001&view=3d&time=2026-11-09T10:00:00Z');
+      await settle(page, 1500);
+      const p = await page.evaluate(() => (window as unknown as { __portos: { vesselPoint(id: string): { x: number; y: number } | null } }).__portos.vesselPoint('VSL-0001'));
+      if (p) {
+        await page.mouse.move(p.x, p.y);
+        for (let i = 0; i < 5; i++) {
+          await page.mouse.wheel(0, -240);
+          await page.waitForTimeout(200);
+        }
+      }
+      await settle(page, 1500);
+    },
+  },
   { name: 'incident', go: async (page) => { await open(page, '/incidents/INC-0001?t=2026-11-09T10:59:00Z'); await expect(inspector(page)).toBeVisible(); await settle(page); } },
 ];
 
