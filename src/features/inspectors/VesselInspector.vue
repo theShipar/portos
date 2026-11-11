@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
+import { flags } from '@/core/flags';
 import { auditRows } from '@/selectors/activity';
+import { selectCruiseProgress } from '@/selectors/vesselCargo';
 import { selectPortCallValue } from '@/selectors/portCall';
 import { buildVesselInspector } from '@/selectors/vessel';
 import { actionableEvents, routeProgress, vesselPriorities, type Priority } from '@/selectors/vesselBrief';
@@ -17,10 +19,35 @@ import FieldList from '@/components/ui/FieldList.vue';
 import Icon from '@/components/ui/Icon.vue';
 import ShipSilhouette from '@/components/ui/ShipSilhouette.vue';
 import StatusChip from '@/components/ui/StatusChip.vue';
+import ProgressTrack from '@/components/ui/ProgressTrack.vue';
+import CargoPanel from './CargoPanel.vue';
 import PortCallCard from './PortCallCard.vue';
+import VesselWorkshop from './VesselWorkshop.vue';
 import VoyageImpactCard from './VoyageImpactCard.vue';
+import { useVesselCargo } from './useVesselCargo';
 
 const props = defineProps<{ vesselId: string }>();
+const v3 = flags.v3ShipPreview;
+const EMPTY_FILLED = new Map<string, { swatch: number; restricted: boolean }>();
+const {
+  status: cargoStatus,
+  modelKey,
+  plan: cargoPlan,
+  workshop,
+  summary: cargoSummary,
+  focus: cargoFocus,
+  hold: cargoHold,
+  mode: camMode,
+  exploded,
+  bay: cargoBay,
+  baySection,
+  detail: cargoDetail,
+  setFocus,
+  setHold,
+  setBay,
+  setMode,
+  setExploded,
+} = useVesselCargo(toRef(props, 'vesselId'));
 
 const catalog = useCatalogStore();
 const snap = useSnapshotStore();
@@ -32,6 +59,7 @@ const nav = useNavigation();
 const model = computed(() => (catalog.catalog && snap.snapshot ? buildVesselInspector(catalog.catalog, snap.snapshot, props.vesselId) : null));
 const portCall = computed(() => (catalog.catalog && snap.snapshot ? selectPortCallValue(catalog.catalog, snap.snapshot, props.vesselId) : null));
 const progress = computed(() => (catalog.catalog && snap.snapshot ? routeProgress(catalog.catalog, snap.snapshot, props.vesselId) : null));
+const cruise = computed(() => (v3 && catalog.catalog && snap.snapshot ? selectCruiseProgress(catalog.catalog, snap.snapshot, props.vesselId) : null));
 const priorities = computed(() => (model.value ? vesselPriorities(model.value, portCall.value) : []));
 const recent = computed(() => (catalog.catalog && model.value ? actionableEvents(catalog.catalog, model.value) : []));
 const silhouetteTone = computed(() => (model.value?.activeIncident ? 'critical' : model.value?.positionStale ? 'unknown' : model.value?.impact?.shiftTone === 'warning' || model.value?.impact?.shiftTone === 'critical' ? 'warning' : 'ok'));
@@ -98,7 +126,109 @@ function openPort(portId: string) {
       </div>
     </template>
 
-    <section v-if="view.inspectorTab === 'overview'" class="stack">
+    <section v-if="view.inspectorTab === 'overview' && v3" class="stack" data-testid="vessel-overview-v3">
+      <div class="identity" data-testid="vessel-identity">
+        <VesselWorkshop
+          :vessel-type="model.vesselType"
+          :model-key="modelKey"
+          :plan="cargoPlan"
+          :filled="workshop?.filled ?? EMPTY_FILLED"
+          :selected="cargoFocus"
+          :hold="cargoHold"
+          :hold-of-slot="workshop?.holdOfSlot ?? null"
+          :mode="camMode"
+          :exploded="exploded"
+          @pick="setFocus"
+          @update:mode="setMode"
+          @update:exploded="setExploded"
+        />
+        <div class="identity__line">
+          <span class="identity__note">Procedural inspection model · not to scale</span>
+          <button
+            type="button"
+            class="btn btn--sm"
+            :class="{ 'btn--active': following }"
+            :aria-pressed="following"
+            :disabled="view.viewMode !== '3d'"
+            :title="view.viewMode !== '3d' ? 'Switch to 3D to follow the vessel.' : 'Camera follows the vessel through playback'"
+            data-testid="vessel-follow"
+            @click="toggleFollow"
+          >
+            <Icon name="crosshair" :size="14" /> {{ following ? 'Following' : 'Follow' }}
+          </button>
+        </div>
+      </div>
+
+      <div v-if="cruise" class="cruise" data-testid="route-progress" :data-basis="cruise.basis" :title="cruise.basisText">
+        <ProgressTrack
+          :origin="cruise.origin"
+          :destination="cruise.destination"
+          :origin-caption="cruise.originCaption"
+          :destination-caption="cruise.destinationCaption"
+          :progress="cruise.progress"
+          :label="cruise.label"
+          :value-text="cruise.valueText"
+          :tone="cruise.tone"
+        />
+        <span class="cruise__meta num">{{ cruise.progressText }} · {{ cruise.remainingText }}</span>
+      </div>
+      <p v-else class="progress__none">No assigned voyage · Simulated tracking only</p>
+
+      <p v-if="cargoStatus === 'loading' || cargoStatus === 'idle'" class="empty" data-testid="cargo-loading">Loading simulated cargo…</p>
+      <p v-else-if="cargoStatus === 'error'" class="empty" data-testid="cargo-error">Simulated cargo module unavailable; vessel data is unaffected.</p>
+      <CargoPanel
+        v-else-if="cargoSummary && cargoPlan"
+        :summary="cargoSummary"
+        :plan="cargoPlan"
+        :section="baySection"
+        :bay="cargoBay"
+        :hold="cargoHold"
+        :focus="cargoFocus"
+        :detail="cargoDetail"
+        @focus="setFocus"
+        @hold="setHold"
+        @bay="setBay"
+      />
+      <p v-else class="empty" data-testid="cargo-none">No cargo modelled for this vessel in the simulated dataset.</p>
+
+      <div data-testid="vessel-priorities">
+        <h3 class="section-title">Priorities <span class="section-note">Simulated</span></h3>
+        <ol v-if="priorities.length" class="priorities">
+          <li v-for="p in priorities" :key="p.key" class="priority" :class="`priority--${p.tone}`" :data-testid="`priority-${p.key}`">
+            <div class="priority__text">
+              <strong>{{ p.label }}</strong>
+              <span>{{ p.detail }}</span>
+            </div>
+            <button v-if="p.action" type="button" class="btn btn--sm" @click="runPriority(p)">{{ p.action.label }}</button>
+          </li>
+        </ol>
+        <p v-else class="empty">No open case, ETA slip or port wait for this vessel at the selected time.</p>
+      </div>
+      <VoyageImpactCard v-if="model.impact" :impact="model.impact" />
+      <PortCallCard v-if="portCall" :value="portCall" />
+      <div v-if="recent.length" data-testid="vessel-recent-events">
+        <h3 class="section-title">Latest events <span class="section-note">jump to replay that moment</span></h3>
+        <ul class="recent">
+          <li v-for="e in recent" :key="e.eventId">
+            <span class="mono recent__time">{{ e.timeText }}</span>
+            <span class="recent__label">{{ e.label }}</span>
+            <button type="button" class="icon-btn" :aria-label="`Go to ${e.timeText}`" title="Set the simulation clock to this event" :data-testid="`event-jump-${e.eventId}`" @click="jumpTo(e.ms)">
+              <Icon name="clock" :size="14" />
+            </button>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="section-title">Position <span class="section-note">{{ model.positionLabel }}</span></h3>
+        <FieldList :fields="model.position" />
+      </div>
+      <details class="specs" data-testid="vessel-specs">
+        <summary>Specifications <span class="section-note">{{ model.vesselType }}</span></summary>
+        <FieldList :fields="model.identity" />
+      </details>
+    </section>
+
+    <section v-else-if="view.inspectorTab === 'overview'" class="stack">
       <div class="preview" data-testid="vessel-preview">
         <ShipSilhouette :vessel-type="model.vesselType" :tone="silhouetteTone" />
         <div v-if="progress" class="progress" data-testid="route-progress" :data-basis="progress.basis">
@@ -465,6 +595,28 @@ function openPort(portId: string) {
 }
 .specs[open] summary {
   margin-bottom: 4px;
+}
+.identity {
+  display: grid;
+  gap: 8px;
+}
+.identity__line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.identity__note {
+  font-size: var(--text-11);
+  color: var(--color-ink-muted);
+}
+.cruise {
+  display: grid;
+  gap: 6px;
+}
+.cruise__meta {
+  font-size: var(--text-11);
+  color: var(--color-ink-secondary);
 }
 .drawer-missing {
   position: absolute;

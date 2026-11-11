@@ -268,7 +268,8 @@ test.describe('Spec 19 acceptance rows (Phase 9)', () => {
       await expectHeading(page, 'MV Emerald Star 047');
       await expect(page).toHaveURL(/[?&]vessel=VSL-0047/);
       return {
-        model: await inspector(page).getByTestId('ship-silhouette').getAttribute('data-model'),
+        // V3 previews the hull in the workshop; V2 (and the no-WebGL fallback) draws the silhouette.
+        model: await inspector(page).getByTestId('vessel-workshop').or(inspector(page).getByTestId('ship-silhouette')).first().getAttribute('data-model'),
         progress: (await inspector(page).getByTestId('route-progress').textContent())?.trim(),
         events: (await inspector(page).getByTestId('vessel-recent-events').textContent())?.trim(),
         pose: await page.evaluate(() => window.__portos!.vesselPose('VSL-0047')?.model ?? null),

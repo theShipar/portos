@@ -1,4 +1,5 @@
 import type { Confidence } from '@/core/types';
+import { delayExposureUsd } from './cargo';
 import { makeProvenance, type Provenance, type SourceRef } from './provenance';
 
 export interface ExposureComponent {
@@ -85,7 +86,7 @@ export function computeExposure(input: DelayCostInput): ExposureEstimate {
     };
   }
   const hours = Math.max(0, incrementalHours);
-  const est = Math.round((hours / 24) * daily);
+  const est = Math.round(delayExposureUsd(hours, daily));
   const formulaText = `${formatH(hours)} h ÷ 24 × ${usd(daily)}/day = ${usd(est)}`;
   const assumptions = [DISCLAIMER];
   if (incrementalHours < 0) assumptions.push('Forecast is early; counted as 0 h.');

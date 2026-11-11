@@ -976,7 +976,233 @@ def gen_v2(data, ctx, seed):
     return {'scenario.json': scenario, 'flagshipTracks.json': tracks, 'portLayouts.json': layouts, 'berthSchedule.json': bookings}
 
 
-COMPACT = {'positions.json', 'flagshipTracks.json'}
+# ---------------- V3 cargo module ----------------
+V3_CARGO_VERSION = '3.0'
+CONTAINER_CATEGORIES = [('consumer electronics', 9000, 19000), ('apparel', 5000, 12000), ('furniture', 6000, 14000), ('machinery parts', 12000, 26000),
+                        ('auto parts', 10000, 22000), ('chemicals (non-hazardous)', 14000, 24000), ('frozen food', 18000, 27000),
+                        ('paper products', 15000, 25000), ('plastics resin', 16000, 26000), ('household goods', 6000, 13000)]
+BULK_COMMODITIES = {'bulk': ('iron ore', 't'), 'tanker': ('crude oil', 'm3'), 'lng': ('liquefied natural gas', 'm3'),
+                    'roro': ('passenger vehicles', 'units'), 'general': ('project cargo', 't')}
+
+
+def iso6346_check(code):
+    """ISO 6346 check digit for a 10-character owner code + serial (synthetic container numbers)."""
+    letters = {c: v for c, v in zip('ABCDEFGHIJKLMNOPQRSTUVWXYZ', [10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38])}
+    total = sum((letters[ch] if ch.isalpha() else int(ch)) * (2 ** i) for i, ch in enumerate(code))
+    return total % 11 % 10
+
+
+def gen_v3(data, ctx, v2, seed):
+    """Versioned V3 cargo module (spec 05 / 13): containers, stowage, shipments, transfers and yard slots.
+
+    Locations are event-sourced: every unit has one initial location at the window start and an ordered list of
+    non-overlapping transfer events, so containerLocationAt(t) always resolves to exactly one place.
+    """
+    rng = random.Random(seed + 3)
+    vessel_map, voyage_map = ctx['vesselMap'], ctx['voyageMap']
+    window_start = V2_MIN
+    units, shipments, events, plans = [], [], [], []
+    serial = [100000]
+
+    def container_no():
+        serial[0] += 7
+        body = f'PRSU{serial[0]:06d}'
+        return f'{body}{iso6346_check(body)}'
+
+    def container_cargo():
+        cat, lo, hi = rng.choice(CONTAINER_CATEGORIES)
+        reefer = cat == 'frozen food'
+        return {'category': cat, 'netMassKg': rng.randrange(lo, hi, 50), 'reefer': reefer,
+                'hazardClass': '9' if cat.startswith('chemicals') and rng.random() < 0.3 else None,
+                'detailsVisibility': 'restricted' if rng.random() < 0.08 else 'summary'}, ('45R1' if reefer else '45G1')
+
+    def slot_id(bay, row, tier):
+        return f'{bay:02d}{row:02d}{tier:02d}'
+
+    def container_grid(bays, rows, below, above):
+        return [{'slotId': slot_id(b, r, t), 'bay': b, 'row': r, 'tier': t, 'deck': 'below' if t < 80 else 'above', 'sizeFt': 40}
+                for b in bays for r in rows for t in below + above]
+
+    def add_shipments(unit_ids, origin, dest, vessel_id, voyage_id, commodity_of, status):
+        k = 0
+        while k < len(unit_ids):
+            n = min(len(unit_ids) - k, rng.choice([1, 1, 2, 2, 3, 4, 6]))
+            ids = unit_ids[k:k + n]
+            sid = f'SHP-{len(shipments) + 1:05d}'
+            for uid in ids:
+                unit_by_id[uid]['shipmentId'] = sid
+            shipments.append({'shipmentId': sid, 'bookingRef': f'BKD-{seed % 1000:03d}-{len(shipments) + 1:05d}', 'shipper': f'Simulated Shipper {rng.randint(1, 60):03d}',
+                              'consignee': f'Simulated Consignee {rng.randint(1, 60):03d}', 'commodity': commodity_of(ids[0]),
+                              'originPortId': origin, 'destinationPortId': dest, 'vesselId': vessel_id, 'voyageId': voyage_id,
+                              'cargoUnitIds': ids, 'declaredValueUsd': rng.randrange(20000, 400000, 500) * len(ids), 'status': status,
+                              'sourceType': 'synthetic-cargo'})
+            k += n
+
+    unit_by_id = {}
+
+    def add_unit(u):
+        units.append(u)
+        unit_by_id[u['cargoUnitId']] = u
+        return u
+
+    def new_container(vessel_id, voyage_id, origin, dest, location):
+        cargo, iso_type = container_cargo()
+        return add_unit({'cargoUnitId': f'CU-{len(units) + 1:05d}', 'kind': 'container', 'containerNo': container_no(), 'isoType': iso_type, 'sizeFt': 40,
+                         'vesselId': vessel_id, 'shipmentId': None, 'originPortId': origin, 'destinationPortId': dest, 'cargo': cargo,
+                         'initialLocation': location, 'sourceType': 'synthetic-cargo'})
+
+    # ---- Singapore West yard slots (import blocks A-D, export blocks E-H) ----
+    yard = []
+    for blk in 'ABCDEFGH':
+        for bay in range(1, 11):
+            for row in range(1, 7):
+                for tier in (1, 2):
+                    yard.append({'yardSlotId': f'YRD-SINW-{blk}{bay:02d}{row}{tier}', 'portId': 'PRT-SIN', 'terminalId': 'TRM-SIN-W', 'block': blk,
+                                 'bay': bay, 'row': row, 'tier': tier, 'use': 'import' if blk in 'ABCD' else 'export', 'sourceType': 'synthetic-layout'})
+    tier_first = lambda use: sorted((y for y in yard if y['use'] == use), key=lambda y: (y['tier'], y['block'], y['bay'], y['row']))
+    import_slots, export_slots = iter(tier_first('import')), iter(tier_first('export'))
+
+    # ---- Flagship: VSL-0001, 800 slots (16 forty-foot bays x 10 rows x 3 below + 2 above) ----
+    v1, voy1 = vessel_map['VSL-0001'], voyage_map['VYG-0001']
+    bays = list(range(2, 66, 4))
+    rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    below, above = [2, 4, 6], [82, 84]
+    grid = container_grid(bays, rows, below, above)
+    plans.append({'stowagePlanId': 'STW-VSL-0001', 'vesselId': 'VSL-0001', 'voyageId': 'VYG-0001', 'archetype': 'container', 'asOfUtc': iso(window_start),
+                  'grid': {'bays': bays, 'rows': rows, 'tiersBelow': below, 'tiersAbove': above, 'slotCount': len(grid)},
+                  'slots': grid, 'compartments': [], 'sourceType': 'synthetic-stowage'})
+    prior_ports = ['PRT-SHA', 'PRT-NGB', 'PRT-BUS', 'PRT-HKG', 'PRT-SZX']
+    vloc = lambda vid, sid: {'type': 'vessel_slot', 'vesselId': vid, 'slotId': sid}
+    stacks_below = [(b, r) for b in bays for r in rows]
+    rng.shuffle(stacks_below)
+    through, imports = [], []
+    # Through cargo for Rotterdam fills the holds bottom-up (360 of 480); hatch-top stacks are left short.
+    heights = [3] * 40 + [2] * 120
+    for (b, r), h in zip(stacks_below, heights):
+        origin = rng.choice(prior_ports)
+        for t in below[:h]:
+            through.append(new_container('VSL-0001', 'VYG-0001', origin, 'PRT-RTM', vloc('VSL-0001', slot_id(b, r, t)))['cargoUnitId'])
+    # Singapore imports sit on deck (260 of 320): 100 stacks two high, 60 one high.
+    stacks_above = [(b, r) for b in bays for r in rows]
+    rng.shuffle(stacks_above)
+    for k, (b, r) in enumerate(stacks_above):
+        origin = rng.choice(prior_ports)
+        for t in above[:2 if k < 100 else 1]:
+            imports.append(new_container('VSL-0001', 'VYG-0001', origin, 'PRT-SIN', vloc('VSL-0001', slot_id(b, r, t)))['cargoUnitId'])
+    exports = [new_container('VSL-0001', 'VYG-0001', 'PRT-SIN', 'PRT-RTM', {'type': 'yard_slot', 'yardSlotId': next(export_slots)['yardSlotId']})['cargoUnitId']
+               for _ in range(200)]
+
+    # Quay crane plan: 4 cranes, 4 bays each; per bay discharge deck (top tier first), then load hold, then deck.
+    berth_est = datetime(2026, 11, 10, 14, tzinfo=UTC)
+    work_start = berth_est + timedelta(hours=1)
+    occupied = {u['initialLocation']['slotId']: uid for uid, u in unit_by_id.items() if u['initialLocation']['type'] == 'vessel_slot'}
+    export_queue = list(exports)
+    deck_quota = 5
+    ev_rows = []
+    for c in range(4):
+        crane = f'QC-SIN-W-{c + 1}'
+        t = work_start
+        for b in bays[c * 4:(c + 1) * 4]:
+            for tier in reversed(above):
+                for r in rows:
+                    sid = slot_id(b, r, tier)
+                    uid = occupied.get(sid)
+                    if uid and unit_by_id[uid]['destinationPortId'] == 'PRT-SIN':
+                        dur = timedelta(seconds=rng.randint(110, 170))
+                        ev_rows.append((uid, 'discharge', crane, t, t + dur, vloc('VSL-0001', sid), {'type': 'yard_slot', 'yardSlotId': None}))
+                        del occupied[sid]
+                        t += dur + timedelta(seconds=rng.randint(10, 40))
+            for tier in below:
+                for r in rows:
+                    sid = slot_id(b, r, tier)
+                    if sid not in occupied and export_queue:
+                        uid = export_queue.pop(0)
+                        dur = timedelta(seconds=rng.randint(120, 180))
+                        ev_rows.append((uid, 'load', crane, t, t + dur, unit_by_id[uid]['initialLocation'], vloc('VSL-0001', sid)))
+                        occupied[sid] = uid
+                        t += dur + timedelta(seconds=rng.randint(10, 40))
+            placed = 0
+            for r in rows:
+                sid = slot_id(b, r, above[0])
+                if placed < deck_quota and sid not in occupied and export_queue:
+                    uid = export_queue.pop(0)
+                    dur = timedelta(seconds=rng.randint(120, 180))
+                    ev_rows.append((uid, 'load', crane, t, t + dur, unit_by_id[uid]['initialLocation'], vloc('VSL-0001', sid)))
+                    occupied[sid] = uid
+                    placed += 1
+                    t += dur + timedelta(seconds=rng.randint(10, 40))
+    # Yard slots for imports are handed out in discharge-completion order, so stacks grow bottom-up.
+    ev_rows.sort(key=lambda e: (e[3], e[2]))
+    for k, e in enumerate(ev_rows):
+        if e[1] == 'discharge':
+            e[6]['yardSlotId'] = next(import_slots)['yardSlotId']
+    # A few imports leave by truck through the gate later in the window (only uncovered yard stacks).
+    covered = {y[:-1] for y in (e[6]['yardSlotId'] for e in ev_rows if e[1] == 'discharge') if y.endswith('2')}
+    dis = [e for e in ev_rows if e[1] == 'discharge' and e[6]['yardSlotId'].endswith('1') and e[6]['yardSlotId'][:-1] not in covered]
+    gate_rows = []
+    for k, e in enumerate(dis[:40]):
+        start = max(e[4] + timedelta(hours=3), datetime(2026, 11, 10, 20, tzinfo=UTC)) + timedelta(minutes=9 * k)
+        gate_rows.append((e[0], 'gate_out', None, start, start + timedelta(minutes=rng.randint(18, 35)), e[6], {'type': 'gate', 'portId': 'PRT-SIN', 'gateId': 'GATE-SIN-W'}))
+    for k, e in enumerate(sorted(ev_rows + gate_rows, key=lambda e: (e[3], e[0])), 1):
+        uid, kind, crane, start, end, frm, to = e
+        events.append({'transferEventId': f'TRF-{k:05d}', 'cargoUnitId': uid, 'kind': kind, 'portId': 'PRT-SIN', 'terminalId': 'TRM-SIN-W',
+                       'craneId': crane, 'via': 'quay_crane' if crane else 'truck', 'from': frm, 'to': to,
+                       'startUtc': iso(start), 'endUtc': iso(end), 'classifier': 'EST', 'sourceType': 'synthetic-transfer-plan'})
+    add_shipments(imports, 'mixed', 'PRT-SIN', 'VSL-0001', 'VYG-0001', lambda u: unit_by_id[u]['cargo']['category'], 'in_transit')
+    add_shipments(through, 'mixed', 'PRT-RTM', 'VSL-0001', 'VYG-0001', lambda u: unit_by_id[u]['cargo']['category'], 'in_transit')
+    add_shipments(exports, 'PRT-SIN', 'PRT-RTM', 'VSL-0001', 'VYG-0001', lambda u: unit_by_id[u]['cargo']['category'], 'booked')
+    for s in shipments:
+        if s['originPortId'] == 'mixed':
+            s['originPortId'] = unit_by_id[s['cargoUnitIds'][0]]['originPortId']
+            for uid in s['cargoUnitIds']:
+                unit_by_id[uid]['originPortId'] = s['originPortId']
+
+    # ---- Four more container ships: 192-slot grids, 45 boxes each, on board throughout the window ----
+    for vid in ('VSL-0012', 'VSL-0023', 'VSL-0024', 'VSL-0027'):
+        v, voy = vessel_map[vid], voyage_map[vessel_map[vid]['currentVoyageId']]
+        bays_s, rows_s, below_s, above_s = list(range(2, 34, 4)), [1, 2, 3, 4, 5, 6], [2, 4], [82, 84]
+        g = container_grid(bays_s, rows_s, below_s, above_s)
+        plans.append({'stowagePlanId': f'STW-{vid}', 'vesselId': vid, 'voyageId': voy['voyageId'], 'archetype': 'container', 'asOfUtc': iso(window_start),
+                      'grid': {'bays': bays_s, 'rows': rows_s, 'tiersBelow': below_s, 'tiersAbove': above_s, 'slotCount': len(g)},
+                      'slots': g, 'compartments': [], 'sourceType': 'synthetic-stowage'})
+        ids = []
+        for b in bays_s:
+            for r in rows_s:
+                if len(ids) >= 45:
+                    break
+                for t in below_s[:1 + (b + r) % 2]:
+                    if len(ids) < 45:
+                        ids.append(new_container(vid, voy['voyageId'], voy['originPortId'], voy['destinationPortId'], vloc(vid, slot_id(b, r, t)))['cargoUnitId'])
+        add_shipments(ids, voy['originPortId'], voy['destinationPortId'], vid, voy['voyageId'], lambda u: unit_by_id[u]['cargo']['category'], 'in_transit')
+
+    # ---- Non-container archetypes: holds, tanks and decks with one lot each ----
+    for vid, arche, count, cap in (('VSL-0047', 'lng', 4, 43500), ('VSL-0003', 'bulk', 7, 22000), ('VSL-0006', 'tanker', 6, 18500),
+                                   ('VSL-0002', 'roro', 6, 650), ('VSL-0016', 'general', 4, 5200)):
+        v, voy = vessel_map[vid], voyage_map[vessel_map[vid]['currentVoyageId']]
+        commodity, unit = BULK_COMMODITIES[arche]
+        kind = {'lng': 'tank', 'tanker': 'tank', 'roro': 'deck'}.get(arche, 'hold')
+        comps, lot_ids = [], []
+        for k in range(count):
+            cid = f'CMP-{vid[4:]}-{kind[0].upper()}{k + 1}'
+            fill = round(rng.uniform(0.9, 0.98) if arche in ('lng', 'tanker') else rng.uniform(0.6, 0.95), 3)
+            lot = add_unit({'cargoUnitId': f'CU-{len(units) + 1:05d}', 'kind': {'lng': 'liquid_lot', 'tanker': 'liquid_lot', 'roro': 'vehicle_lot'}.get(arche, 'bulk_lot'),
+                            'vesselId': vid, 'shipmentId': None, 'originPortId': voy['originPortId'], 'destinationPortId': voy['destinationPortId'],
+                            'quantity': round(cap * fill) if unit != 'units' else int(cap * fill), 'unit': unit,
+                            'cargo': {'category': commodity, 'detailsVisibility': 'summary', 'hazardClass': {'lng': '2.1', 'tanker': '3'}.get(arche)},
+                            'initialLocation': {'type': 'compartment', 'vesselId': vid, 'compartmentId': cid}, 'sourceType': 'synthetic-cargo'})
+            comps.append({'compartmentId': cid, 'kind': kind, 'index': k + 1, 'label': f'{kind.title()} {k + 1}', 'capacity': cap, 'unit': unit,
+                          'fillFraction': fill, 'cargoUnitIds': [lot['cargoUnitId']]})
+            lot_ids.append(lot['cargoUnitId'])
+        plans.append({'stowagePlanId': f'STW-{vid}', 'vesselId': vid, 'voyageId': voy['voyageId'], 'archetype': arche, 'asOfUtc': iso(window_start),
+                      'grid': None, 'slots': [], 'compartments': comps, 'sourceType': 'synthetic-stowage'})
+        add_shipments(lot_ids, voy['originPortId'], voy['destinationPortId'], vid, voy['voyageId'], lambda u: commodity, 'in_transit')
+
+    used_yard = {u['initialLocation'].get('yardSlotId') for u in units} | {e['to'].get('yardSlotId') for e in events}
+    return {'cargoUnits.json': units, 'stowagePlans.json': plans, 'shipments.json': shipments, 'transferEvents.json': events,
+            'yardSlots.json': [dict(y, occupiedInWindow=y['yardSlotId'] in used_yard) for y in yard]}
+
+
+COMPACT = {'positions.json', 'flagshipTracks.json', 'cargoUnits.json', 'stowagePlans.json', 'shipments.json', 'transferEvents.json', 'yardSlots.json'}
 
 
 def main():
@@ -988,6 +1214,7 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     datasets, ctx = gen(args.seed)
     v2 = gen_v2(datasets, ctx, args.seed)
+    v3 = gen_v3(datasets, ctx, v2, args.seed)
 
     def write(path, rows):
         if path.name in COMPACT:
@@ -1001,6 +1228,9 @@ def main():
     (out / 'v2').mkdir(exist_ok=True)
     for name, rows in v2.items():
         write(out / 'v2' / name, rows)
+    (out / 'v3').mkdir(exist_ok=True)
+    for name, rows in v3.items():
+        write(out / 'v3' / name, rows)
     manifest = {'dataset': 'PORTOS Synthetic Maritime Operations Demo', 'version': FIXTURE_VERSION, 'scenarioVersion': SCENARIO_VERSION, 'seed': args.seed,
                 'fixedScenarioTimeUtc': iso(ANCHOR), 'generatedAtUtc': iso(ANCHOR),
                 'replayRange': {'startUtc': iso(REPLAY_START), 'endUtc': iso(ANCHOR)},
@@ -1010,10 +1240,15 @@ def main():
                              'portId': 'PRT-SIN', 'destinationPortId': 'PRT-RTM', 'routeId': 'RTE-SIN-RTM', 'alternativeRouteId': 'RTE-SIN-RTM-CAPE',
                              'weatherHazardId': 'WX-0001', 'etaShiftHours': 18, 'dailyDelayCostUsd': 32000, 'expectedEstimatedExposureUsd': 24000},
                 'scenarios': ['SCENARIO_SINGAPORE_CONGESTION', 'SCENARIO_INDIAN_OCEAN_WEATHER', 'SCENARIO_ROTTERDAM_BERTH', 'SCENARIO_NORTH_SEA_TRANSIT', 'SCENARIO_GENERAL_DISRUPTION'],
-                'v2Module': {'path': 'v2/', 'files': sorted(v2.keys()), 'window': v2['scenario.json']['window'], 'flagshipVessels': len(ctx['flagship'])}}
+                'v2Module': {'path': 'v2/', 'files': sorted(v2.keys()), 'window': v2['scenario.json']['window'], 'flagshipVessels': len(ctx['flagship'])},
+                'v3Module': {'path': 'v3/', 'version': V3_CARGO_VERSION, 'files': sorted(v3.keys()),
+                             'counts': {name.replace('.json', ''): len(rows) for name, rows in v3.items()},
+                             'flagshipStowage': {'vesselId': 'VSL-0001', 'stowagePlanId': 'STW-VSL-0001', 'slotCount': 800, 'terminalId': 'TRM-SIN-W'},
+                             'disclosure': 'Simulated cargo, stowage and transfer plan. Not a real manifest, booking or terminal operating system record.'}}
     (out / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     print('Generated', len(datasets), 'datasets:', manifest['counts'])
     print('V2 module:', {k: len(v) if isinstance(v, list) else 'object' for k, v in v2.items()})
+    print('V3 module:', {k: len(v) for k, v in v3.items()})
 
 
 if __name__ == '__main__':

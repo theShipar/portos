@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { CARGO_KEYS, type CargoModule } from '@/core/cargoTypes';
 import { DATASET_KEYS, V2_KEYS, type RawDataset, type V2Module } from '@/core/types';
 import { buildCatalog, type Catalog } from '@/data/catalog';
 
@@ -19,4 +20,14 @@ export function loadRaw(): RawDataset {
 export function catalog(): Catalog {
   if (!cached) cached = buildCatalog(loadRaw());
   return cached;
+}
+
+let cargoCached: CargoModule | null = null;
+
+export function cargoModule(): CargoModule {
+  if (!cargoCached) {
+    const dir = resolve(__dirname, '../../sample-data/v3');
+    cargoCached = Object.fromEntries(CARGO_KEYS.map((k) => [k, JSON.parse(readFileSync(resolve(dir, `${k}.json`), 'utf-8'))])) as unknown as CargoModule;
+  }
+  return cargoCached;
 }

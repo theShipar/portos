@@ -61,5 +61,30 @@
       "maxUtc": "2026-11-12T12:00:00Z"
     },
     "flagshipVessels": 30
+  },
+  "v3Module": {
+    "path": "v3/",
+    "version": "3.0",
+    "files": [
+      "cargoUnits.json",
+      "shipments.json",
+      "stowagePlans.json",
+      "transferEvents.json",
+      "yardSlots.json"
+    ],
+    "counts": {
+      "cargoUnits": 1027,
+      "stowagePlans": 10,
+      "shipments": 382,
+      "transferEvents": 500,
+      "yardSlots": 960
+    },
+    "flagshipStowage": {
+      "vesselId": "VSL-0001",
+      "stowagePlanId": "STW-VSL-0001",
+      "slotCount": 800,
+      "terminalId": "TRM-SIN-W"
+    },
+    "disclosure": "Simulated cargo, stowage and transfer plan. Not a real manifest, booking or terminal operating system record."
   }
 }

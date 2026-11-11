@@ -793,3 +793,64 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
   - The dot band exists but is rare: the marker floor (7 px × the 0.72 ambient scale ≈ 5 px) keeps distant ships
     at icon size, as V2 chose for legibility.
   - Band swaps are instant, at a stable position, heading and size; there is no 120–220 ms crossfade (deviation).
+
+## D-045 Cargo fixtures, vessel workshop and the cargo sidebar (V3 Gate 5)
+
+- **Context:**
+  - V3 spec 04/04 and 05 ask for an inspection workflow: a 3D preview of the selected ship, an origin → destination
+    tracker, container or hold selection from fixtures, and the correct shipment for the picked slot.
+  - The kit's cargo examples use UN/LOCODEs and treat VSL-0047 as a container ship. In this dataset VSL-0047 is
+    an LNG carrier (the V2 follow demo), so the kit example cannot be adopted as is.
+- **Decision:**
+  - *Fixtures:* `sample-data/v3/` comes from `generate_demo_data.py` (`gen_v3`, seed + 3).
+    - 1,027 cargo units: 1,000 containers with ISO 6346 check digits, plus bulk, liquid and vehicle lots.
+    - 10 stowage plans, 382 shipments, 960 yard slots at TRM-SIN-W.
+    - 500 transfer events (discharge, load, gate-out) on 4 quay cranes.
+    - The flagship is VSL-0001: 800 slots (16 bays × 10 rows × 5 tiers) with 620 boxes on arrival (260 for
+      Singapore on deck, 360 Rotterdam through-cargo in the holds) and 200 exports waiting in the yard.
+    - Compartment plans: VSL-0047 has 4 LNG tanks, VSL-0003 7 bulk holds, VSL-0006 6 tanks, VSL-0002 6 Ro-Ro decks
+      and VSL-0016 4 general holds.
+  - *Event-sourced location:* each unit has an initial location plus sorted, non-overlapping transfer events.
+    During an event the unit is on the crane (or the truck for gate-out); afterwards it is at the event's `to`.
+    - `engines/cargo.ts` answers "where is unit X at time t" and "what is in slot S at time t". The engine is pure
+      and the index is built once.
+    - `validate_data.py` sweeps every event boundary and checks four things: single occupancy, no box over an empty
+      slot, exactly one location per unit at probe times, and crane exclusivity.
+  - *Slot coding:* ISO `BBRRTT`.
+    - Bays are numbered from the bow (02, 06, … 62), and two bays make one hold, so hold 1 is forward.
+    - Rows: odd numbers are starboard, even numbers are port, shown port-to-starboard as seen from aft.
+    - Tiers 02/04/06 are below the hatch and 82/84 above.
+  - *Delay exposure:* one formula, `max(0, h) / 24 × daily rate`, shared by `engines/exposure.ts` and the
+    validator (VYG-0001: 18 h → USD 24,000).
+  - *Workshop:* `spatial/scenes/VesselWorkshopScene.ts` is new code and not derived from the skill.
+    - It uses its own small on-demand WebGL renderer inside the inspector and reuses the library hull (LOD3)
+      without its procedural deck boxes.
+    - Containers: one instanced draw, coloured by discharge port with cool swatches so the orange selection
+      always stands out. Compartments are drawn as tank, hold or deck shells with a fill level.
+    - Cameras:
+      - Chase: 1.3 ship lengths astern.
+      - Above: plan view, bow to the right.
+      - Orbit: slow rotation.
+      - Deck: from the bridge.
+      - Free: OrbitControls; any drag switches to Free.
+    - Exploded view: lifts deck tiers and spreads bays, or lifts compartments. The hull ghosts to 22 % opacity.
+      Picking a hold dims the boxes in the other holds.
+  - *Sidebar order (`v3ShipPreview`):* identity (workshop and Follow), cruise progress (ATD/ETD → ETA with a
+    shift tone), cargo summary (boxes, TEU, slot use, mass, discharge ports, next crane moves), then the hold/bay
+    picker. The picker is a bay section grid with a hatch line, or compartment buttons, followed by the manifest
+    card.
+  - *URL state:* `cargo`, `hold`, `cam` and `explode` survive reload and sharing. A focus that is not in the
+    vessel's plan (for example a container slot on VSL-0047) is dropped with a warning notice.
+  - *Privacy:* a unit marked `restricted` shows "Restricted · cargo manager role" in place of the commodity,
+    shipper and consignee. All party names are synthetic ("Simulated Shipper NNN").
+  - *IDs:* `src/v3/idAdapter.ts` maps the kit's UN/LOCODEs to canonical port IDs for all 100 ports. It refuses a
+    kit container record for a vessel that is not a container ship.
+- **Consequences:**
+  - At 2026-11-09 10:00Z, VSL-0001 shows 620 boxes, 1,240 TEU and 78 % of 800 slots. A scrub past 15:00Z on
+    2026-11-10 empties the deck slots as the cranes discharge them.
+  - The workshop costs one extra WebGL context while a vessel is open, and it renders only on change or during
+    tweens.
+  - Cargo is lazy-loaded (`cargoLoader.ts`) when the flag is on; `?v3ShipPreview=0` or `?v3=0` restores the V2
+    overview with no cargo fetch.
+  - Not yet built: crane animation of the transfer events (Gate 7) and the shared clock (Gate 6). The sidebar
+    already reads the snapshot time, so both will drive it unchanged.

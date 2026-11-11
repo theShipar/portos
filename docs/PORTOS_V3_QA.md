@@ -14,7 +14,7 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 | 1 | Visual: map ≥ 75 % at 1440×900, Urbanist, token spacing, quiet glass | G1 | PASS (G1) |
 | 2 | Geographic: whole continent, no rectangular cutout, rotatable, country hover lifts top + sidewall, city/port drilldown | G2, G3 | PASS (G2 geometry; G3 lift, pins, presets, back) |
 | 3 | Vessel: type-differentiated near and far LOD, no popping, heading/status match, no wake when moored | G4 | PASS (G4; instant band swap with hysteresis, no crossfade — D-044) |
-| 4 | Inspection: 3D preview, origin → destination tracker, container/hold selection from fixture, correct shipment | G5 | pending |
+| 4 | Inspection: 3D preview, origin → destination tracker, container/hold selection from fixture, correct shipment | G5 | PASS (G5; own workshop renderer, illustrative bay spacing — D-045) |
 | 5 | Simulation: pause/play/scrub, 1×–100×, one clock for movement/ETA/cargo/berth/KPI | G6 | pending |
 | 6 | Ports: container and bulk twins distinct, cranes/berths/yard tied to operations | G7 | pending |
 | 7 | Analytics: charts filter/highlight the map; port call timeline and trade flows aggregate correctly | G8 | pending |
@@ -158,4 +158,61 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
     and vessel at both sizes (12 images).
 - **PARTIAL:** no 120–220 ms crossfade between bands; dots rare because of the 7 px marker floor; fixed caps
   instead of a device-quality tier (D-044, TECHNICAL_DEVIATIONS).
+- **Rollback:** `?v3ShipPreview=0` or revert the gate commit.
+
+## Gate 5 — Vessel inspection, cargo and the workshop
+
+- **Source paths:**
+  - Fixtures and validation: `scripts/generate_demo_data.py` (`gen_v3`, `iso6346_check`), `sample-data/v3/*.json`
+    and `scripts/validate_data.py` (`validate_v3`).
+  - Types, loading and store: `src/core/cargoTypes.ts`, `src/data/cargoLoader.ts`, `src/stores/cargo.ts`.
+  - Engine: `src/engines/cargo.ts`, which is pure (location and occupancy at a time, stowage lookup, holds, delay
+    exposure).
+  - Selectors and IDs: `src/selectors/vesselCargo.ts` and `src/v3/idAdapter.ts`.
+  - Scene: `src/spatial/scenes/VesselWorkshopScene.ts`, plus `shipHullProfile` and the bare hull in
+    `src/map/vessels3d/library.ts`.
+  - UI: `src/features/inspectors/{VesselWorkshop,CargoPanel}.vue`, `useVesselCargo.ts` and `VesselInspector.vue`.
+- **Acceptance (spec 04/04, 05):**
+  - Fixture integrity, all PASS (`validate_data.py`; `cargo.test.ts`):
+    - 1,000 containers with valid ISO 6346 check digits;
+    - an 800-slot plan for VSL-0001 with 620 boxes on arrival;
+    - compartment plans for LNG, bulk, tanker, Ro-Ro and general cargo;
+    - 500 transfer events with single occupancy, no box over an empty slot, one location per unit per instant,
+      and crane exclusivity.
+  - Delay exposure uses one formula in the engine and the validator (VYG-0001: 18 h → USD 24,000): PASS
+    (`cargo.test.ts`, `validate_data.py`).
+  - Sidebar order is identity (3D preview and Follow), then cruise progress (ATD/ETD → ETA), cargo summary and the
+    slot picker: PASS (`v3cargo.spec.ts`).
+  - Bay grid → slot → manifest card with the correct container number and shipment:
+    - the selection is mirrored in 3D and kept in the URL across a reload;
+    - the grid is a single tab stop with arrow-key navigation;
+    - PASS (`v3cargo.spec.ts`).
+  - Picking a box in the 3D preview opens the same manifest: PASS (`v3cargo.spec.ts`, via
+    `__portosWorkshop.project`).
+  - Camera rigs:
+    - Chase sits 1.3 ship lengths astern; Above, Orbit and Deck each work;
+    - any drag switches to Free and clears `cam`;
+    - PASS (`v3cargo.spec.ts`, `cargo.test.ts`).
+  - Hold filter and exploded view: the hull ghosts below 30 % opacity and the tween completes on the wall clock,
+    PASS (`v3cargo.spec.ts`).
+  - Restricted cargo hides the commodity, shipper and consignee: PASS (`v3cargo.spec.ts`).
+  - A time scrub to 15:10Z on 2026-11-10 empties the discharged slot and lowers the count of boxes on board:
+    PASS (`v3cargo.spec.ts`).
+  - VSL-0047 shows 4 LNG tanks. A container slot in its URL is refused with a notice: PASS (`v3cargo.spec.ts`).
+  - Kit records go through `idAdapter`. A kit container record on a non-container vessel is refused: PASS
+    (`cargo.test.ts`).
+  - `?v3ShipPreview=0` and `?v3=0` restore the V2 overview without loading cargo: PASS (`v3cargo.spec.ts`).
+  - Screenshots in `docs/qa/v3-g5/`, at both sizes (10 images):
+    - `desktop-vessel-cargo.png` (workshop and stowage summary)
+    - `desktop-vessel-manifest.png` (restricted manifest)
+    - `desktop-vessel-cargo-exploded.png` (hold 3 exploded)
+    - `desktop-vessel-chase.png`
+    - `desktop-vessel-lng-tanks.png`
+    - Phones still show the < 768 px notice until Gate 9.
+- **PARTIAL:**
+  - The workshop has its own WebGL context rather than the shared map renderer.
+  - Bay spacing is illustrative ("not to scale").
+  - Map Follow keeps the V2 rigs; the five camera modes live in the workshop.
+  - Transfer events are not yet animated on cranes (Gate 7).
+  - See D-045 and TECHNICAL_DEVIATIONS.
 - **Rollback:** `?v3ShipPreview=0` or revert the gate commit.

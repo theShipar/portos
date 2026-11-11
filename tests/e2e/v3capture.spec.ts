@@ -31,6 +31,14 @@ async function settle(page: Page, extraMs = 1500) {
   await page.waitForTimeout(extraMs);
 }
 
+async function workshopReady(page: Page) {
+  // Phones still get the < 768 px notice until Gate 9; capture whatever the shell shows there.
+  if ((page.viewportSize()?.width ?? 1440) < 768) return;
+  await expect(inspector(page)).toBeVisible();
+  await expect(page.getByTestId('vessel-workshop')).toHaveAttribute('data-ready', '1', { timeout: 20_000 });
+  await expect(page.getByTestId('cargo-summary')).toBeVisible({ timeout: 20_000 });
+}
+
 export const V3_SHOTS: { name: string; go: (page: Page) => Promise<void> }[] = [
   { name: 'earth', go: async (page) => { await open(page, '/ops/earth'); await settle(page, 2500); } },
   { name: 'region-sea', go: async (page) => { await open(page, '/ops/region/REG-SEA'); await settle(page); } },
@@ -41,6 +49,19 @@ export const V3_SHOTS: { name: string; go: (page: Page) => Promise<void> }[] = [
   { name: 'port-sin', go: async (page) => { await open(page, '/ops/port/PRT-SIN?time=2026-11-09T10:00:00Z'); await settle(page, 3000); } },
   { name: 'vessel-vsl0047', go: async (page) => { await open(page, '/ops/region/REG-SEA?vessel=VSL-0047'); await expect(inspector(page)).toBeVisible(); await settle(page); } },
   { name: 'vessel-vsl0001', go: async (page) => { await open(page, '/ops/port/PRT-SIN?vessel=VSL-0001&time=2026-11-09T10:00:00Z'); await settle(page, 3000); } },
+  { name: 'vessel-cargo', go: async (page) => { await open(page, '/ops/port/PRT-SIN?vessel=VSL-0001&cargo=180284&time=2026-11-09T10:00:00Z'); await workshopReady(page); await settle(page, 1200); } },
+  {
+    name: 'vessel-manifest',
+    go: async (page) => {
+      await open(page, '/ops/port/PRT-SIN?vessel=VSL-0001&cargo=420904&time=2026-11-09T10:00:00Z');
+      await workshopReady(page);
+      if ((page.viewportSize()?.width ?? 1440) >= 768) await page.getByTestId('cargo-detail').scrollIntoViewIfNeeded();
+      await settle(page, 800);
+    },
+  },
+  { name: 'vessel-cargo-exploded', go: async (page) => { await open(page, '/ops/port/PRT-SIN?vessel=VSL-0001&hold=3&cargo=181004&explode=1&time=2026-11-09T10:00:00Z'); await workshopReady(page); await settle(page, 1500); } },
+  { name: 'vessel-chase', go: async (page) => { await open(page, '/ops/region/REG-SEA?vessel=VSL-0001&cam=chase'); await workshopReady(page); await settle(page, 1200); } },
+  { name: 'vessel-lng-tanks', go: async (page) => { await open(page, '/ops/region/REG-SEA?vessel=VSL-0047&cargo=CMP-0047-T2&cam=orbit'); await workshopReady(page); await settle(page, 1200); } },
   { name: 'ships-icons', go: async (page) => { await page.goto('/qa/ships.html?lod=icon'); await expect(page.getByTestId('ship-qa')).toHaveAttribute('data-ready', '1'); } },
   {
     name: 'port-sin-close',

@@ -46,6 +46,8 @@ interface Ctx {
   shape: HullShape;
   parts: Part[];
   rand: () => number;
+  /** False for the cargo workshop: decorative container stacks are replaced by the real stowage. */
+  cargo: boolean;
   /** Segment count helper: cheap at LOD1, round at LOD2. */
   seg(lo: number, hi: number): number;
 }
@@ -129,7 +131,7 @@ function container(c: Ctx) {
   const bays = c.lod >= 2 ? 16 : 12;
   const s0 = 0.14;
   const s1 = 0.8;
-  for (let b = 0; b < bays; b++) {
+  for (let b = 0; c.cargo && b < bays; b++) {
     const sb = s0 + ((s1 - s0) * (b + 0.5)) / bays;
     if (Math.abs(sb - 0.2) < 0.045) continue;
     const z = zOf(sb);
@@ -454,9 +456,28 @@ export function shipDotGeometry(): THREE.BufferGeometry {
   return g;
 }
 
+/** Hull dimensions in the model frame (length 1) for laying out stowage slots and compartments on a model. */
+export interface HullProfile {
+  beam: number;
+  freeboard: number;
+  /** Half breadth at fraction `s` of length from the stern. */
+  halfBreadth(s: number): number;
+  deckY(s: number): number;
+  /** Model-frame z of fraction `s` (stern +0.5, bow −0.5). */
+  zOf(s: number): number;
+}
+
+export function shipHullProfile(key: ShipModelKey): HullProfile {
+  const p = SHIP_PRESETS[key];
+  const beam = 1 / p.lengthToBeam;
+  const shape = hullShape({ beam, freeboard: p.freeboard, bowStart: p.bowStart, sheer: key === 'tug' ? 0.7 : 0.4, transom: key === 'tug' ? 0.82 : 0.88 });
+  return { beam, freeboard: p.freeboard, halfBreadth: (s) => shape.halfBreadth(s), deckY: (s) => shape.deckY(s), zOf };
+}
+
 /** Merged, indexed geometry for a model at a LOD; cached and shared by every instance. LOD0 ignores `key`. */
-export function buildShipGeometry(key: ShipModelKey, lod: ShipLod): THREE.BufferGeometry {
-  const cacheKey = lod === 0 ? 'glyph' : `${key}:${lod}`;
+export function buildShipGeometry(key: ShipModelKey, lod: ShipLod, opts: { cargo?: boolean } = {}): THREE.BufferGeometry {
+  const cargo = opts.cargo !== false;
+  const cacheKey = lod === 0 ? 'glyph' : `${key}:${lod}${cargo ? '' : ':bare'}`;
   const hit = cache.get(cacheKey);
   if (hit) return hit;
   let parts: Part[];
@@ -471,6 +492,7 @@ export function buildShipGeometry(key: ShipModelKey, lod: ShipLod): THREE.Buffer
       shape,
       parts: [hull, deck],
       rand: seeded(key.length * 7919 + lod * 104729),
+      cargo,
       seg: (lo, hi) => (lod >= 2 ? hi : lo),
     };
     BUILDERS[key](c);

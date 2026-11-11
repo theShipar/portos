@@ -1062,3 +1062,78 @@ blockers. Status values: implemented / tested / blocked.
   - `npx playwright test` (full) → 106 passed, 30 skipped, 0 failed (5.6 min). Visual baselines unchanged.
 - **Gate:** P0 #3 PASS (with the crossfade deviation in D-044).
 - **Blockers:** none.
+
+## Phase V3-5 — Vessel inspection, cargo and the workshop
+
+- **Decisions:** D-045 covers:
+  - the event-sourced cargo fixtures and the ISO `BBRRTT` slot coding (two bays per hold, hold 1 forward);
+  - one delay-exposure formula;
+  - the workshop scene with its own renderer and five camera modes;
+  - the sidebar order and the URL cargo state;
+  - restricted manifests;
+  - the kit ID adapter.
+- **Implemented:**
+  - Fixtures (`generate_demo_data.py` `gen_v3`, seed + 3) write 1.1 MB into `sample-data/v3/` (5 files):
+    - 1,027 cargo units: 1,000 ISO 6346 containers, plus 11 bulk, 10 liquid and 6 vehicle lots;
+    - 10 stowage plans, 382 shipments and 960 yard slots;
+    - 500 transfer events: 260 discharges, 200 loads and 40 gate-outs.
+    - The manifest gains `v3Module`.
+  - `validate_data.py` `validate_v3` checks:
+    - schema, IDs and counts;
+    - archetype against vessel type;
+    - ISO check digits;
+    - event chains and crane exclusivity;
+    - a boundary sweep for single occupancy and support (no box over an empty slot);
+    - one location per unit;
+    - the VSL-0001 counts and crane windows;
+    - the delay formula.
+  - Engine: `engines/cargo.ts` (pure). `engines/exposure.ts` uses its `delayExposureUsd`.
+  - Data access: `cargoLoader.ts` (lazy), `stores/cargo.ts`, and `v3/idAdapter.ts` (UN/LOCODE ↔ canonical IDs
+    for 100 ports).
+  - Selectors: `selectors/vesselCargo.ts` (cruise progress, cargo summary, bay section, slot and compartment
+    detail, manifest with restricted fields, workshop cargo).
+  - Scene: `VesselWorkshopScene.ts` (instanced boxes, compartment shells, exploded view, hold dimming, five camera
+    rigs, picking, `stats()` / `project()`). `library.ts` adds `shipHullProfile` and a bare-hull option.
+  - Sidebar: `VesselWorkshop.vue`, `CargoPanel.vue` (the bay grid has roving focus) and `useVesselCargo.ts` (URL
+    keys `cargo`, `hold`, `cam`, `explode`). `VesselInspector.vue` gets the V3 overview order under
+    `v3ShipPreview`.
+- **Tested:**
+  - `python3 scripts/generate_demo_data.py && python3 scripts/validate_data.py` → fixture integrity PASS; "V3
+    module: 800-slot VSL-0001 stow, single-occupancy transfers, one location per unit per instant, delay exposure
+    formula — verified".
+    - First run: 1,080 containers, because the stack-height list did not cover 160 stacks; fixed to 1,000.
+    - The validator flagged tier 82 as "nothing underneath" for missing neighbour slots; it now checks only slots
+      that exist in the plan.
+  - `npx vitest run` → 399 passed (25 files). New file: `cargo.test.ts` (21 tests).
+  - `npm run build` → typecheck and build pass (built in 3.11 s). Earlier errors, both fixed:
+    - `StatusStyle` needed `icon`;
+    - the token lint caught 5 raw colours.
+  - `npx playwright test v3cargo --project=chromium` → 10 passed:
+    - sidebar order;
+    - bay grid → manifest, with the URL, reload and keyboard roving;
+    - camera rigs (chase `cameraBehind` 1.30);
+    - hold filter and explode;
+    - 3D pick;
+    - restricted manifest;
+    - time scrub (620 boxes at 14:59Z, slot 180284 empty at 15:10Z);
+    - LNG tanks and the refused slot;
+    - `?v3ShipPreview=0` and `?v3=0` rollback.
+    - The first time-scrub probe at 15:00:00Z read 616 boxes, because the four cranes' first lifts start at that
+      instant. The probe moved to 14:59Z.
+  - `npx playwright test` (full, first run) → 105 passed, 40 skipped, 6 failed:
+    - `05-vessel` visual baselines at 1440 and 1920: expected, the sidebar was redesigned. Re-baselined with
+      `--update-snapshots`.
+    - The explode tween stalled at 0.53 under load, because it stepped once per frame. It is now a wall-clock
+      tween.
+    - The keyboard walk no longer reached the header, because the 50 bay cells were tab stops. The grid now has
+      roving focus.
+    - The data-consistency test read the sidebar before the lazy cargo loaded. It now waits for the loaded state.
+    - Follow ×1 ratio 0.834: the known clock flake under load. It passed in the serial rerun.
+    - Serial rerun (`v3cargo resilience follow.spec --workers=1`) → 28 passed, 1 failed. The failure was the new
+      arrow-key assertion, which expected the wrong row neighbour; row 02's right neighbour is row 01. After the
+      fix, the bay-grid test passed.
+  - `npx playwright test` (full, after the fixes) → 116 passed, 40 skipped, 0 failed (6.2 min).
+  - `V3CAPTURE=g5 V3SHOTS=vessel-cargo,vessel-cargo-exploded,vessel-chase,vessel-lng-tanks,vessel-manifest npx
+    playwright test v3capture --project=chromium` → 10 passed; images in `docs/qa/v3-g5/`.
+- **Gate:** P0 #4 PASS (own workshop renderer and illustrative bay spacing, both in D-045).
+- **Blockers:** none. Phones still see the < 768 px notice (Gate 9).

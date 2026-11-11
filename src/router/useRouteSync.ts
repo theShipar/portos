@@ -220,6 +220,18 @@ export function useNavigation() {
       delete query.case;
       return router.push(opsRoute(sceneRefForScope(view.scope), { kind: 'voyage', id: voyageId }, query));
     },
+    /**
+     * Vessel cargo inspection state (`cargo` slot or compartment, `hold`, workshop `cam` and `explode`). Replaces
+     * history; selecting another entity starts from a fresh query, so the keys never leak to another vessel.
+     */
+    setCargoState(patch: { cargo?: string | null; hold?: number | null; cam?: string | null; explode?: boolean }) {
+      return replaceQuery((q) => {
+        if (patch.cargo !== undefined) patch.cargo ? (q.cargo = patch.cargo) : delete q.cargo;
+        if (patch.hold !== undefined) patch.hold ? (q.hold = String(patch.hold)) : delete q.hold;
+        if (patch.cam !== undefined) patch.cam ? (q.cam = patch.cam) : delete q.cam;
+        if (patch.explode !== undefined) patch.explode ? (q.explode = '1') : delete q.explode;
+      });
+    },
     setViewMode(mode: ViewMode) {
       if (!supportsViewMode(view.scope, mode) || mode === view.viewMode) return;
       return replaceQuery((q) => {

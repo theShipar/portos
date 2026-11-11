@@ -178,6 +178,257 @@ def validate_v2(folder: Path, by, vessel_samples, manifest):
     return errors
 
 
+V3_FILES = {'cargoUnits': 'cargoUnitId', 'stowagePlans': 'stowagePlanId', 'shipments': 'shipmentId', 'transferEvents': 'transferEventId', 'yardSlots': 'yardSlotId'}
+ARCHETYPE_OF = {'Container ship': 'container', 'LNG carrier': 'lng', 'Oil tanker': 'tanker', 'Bulk carrier': 'bulk', 'RoRo': 'roro', 'General cargo': 'general'}
+LOCATION_TYPES = {'vessel_slot', 'compartment', 'yard_slot', 'truck', 'gate', 'unknown'}
+TRANSFER_KINDS = {'load': ('yard_slot', 'vessel_slot'), 'discharge': ('vessel_slot', 'yard_slot'), 'gate_out': ('yard_slot', 'gate')}
+
+
+def iso6346_ok(no):
+    if not isinstance(no, str) or len(no) != 11 or not no[:4].isalpha() or not no[4:].isdigit():
+        return False
+    letters = {c: v for c, v in zip('ABCDEFGHIJKLMNOPQRSTUVWXYZ', [10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38])}
+    total = sum((letters[ch] if ch.isalpha() else int(ch)) * (2 ** i) for i, ch in enumerate(no[:10]))
+    return total % 11 % 10 == int(no[10])
+
+
+def delay_exposure_usd(eta_shift_hours, daily_rate_usd):
+    """Spec formula: max(0, etaShiftHours) / 24 x dailyDelayRateUsd (mirrors src/engines/cargo.ts)."""
+    return max(0.0, eta_shift_hours) / 24 * daily_rate_usd
+
+
+def location_at(unit, evs, t):
+    """Every location the unit could be in at t (mirrors containerLocationAt); a valid timeline yields exactly one."""
+    out = []
+    if not evs or t < parse(evs[0]['startUtc']):
+        out.append(unit['initialLocation'])
+    for k, e in enumerate(evs):
+        s, en = parse(e['startUtc']), parse(e['endUtc'])
+        nxt = parse(evs[k + 1]['startUtc']) if k + 1 < len(evs) else None
+        if s <= t < en:
+            out.append({'type': 'truck' if e['via'] == 'truck' else 'crane', 'craneId': e.get('craneId'), 'transferEventId': e['transferEventId']})
+        if en <= t and (nxt is None or t < nxt):
+            out.append(e['to'])
+    return out
+
+
+def loc_key(loc):
+    if loc['type'] == 'vessel_slot':
+        return ('vessel_slot', loc['vesselId'], loc['slotId'])
+    if loc['type'] == 'yard_slot':
+        return ('yard_slot', loc['yardSlotId'])
+    if loc['type'] == 'compartment':
+        return ('compartment', loc['vesselId'], loc['compartmentId'])
+    return None
+
+
+def validate_v3(folder: Path, by, manifest, window):
+    errors, data, idx = [], {}, {}
+    for name, fld in V3_FILES.items():
+        try:
+            rows = json.loads((folder / f'{name}.json').read_text('utf-8'))
+            if not isinstance(rows, list):
+                raise ValueError('must be a list')
+        except Exception as e:
+            errors.append(f'v3/{name}: {e}')
+            rows = []
+        ids = [r.get(fld) for r in rows]
+        if any(not isinstance(i, str) for i in ids) or len(ids) != len(set(ids)):
+            errors.append(f'v3/{name}: missing or duplicate {fld}')
+        if (manifest.get('v3Module') or {}).get('counts', {}).get(name) != len(rows):
+            errors.append(f'v3/{name}: count mismatch in manifest.v3Module')
+        data[name], idx[name] = rows, {r.get(fld): r for r in rows}
+    if errors:
+        return errors
+    units, plans, ships, evs, yard = (data[n] for n in V3_FILES)
+    containers = [u for u in units if u['kind'] == 'container']
+    if not 900 <= len(containers) <= 1100:
+        errors.append(f'v3/cargoUnits: expected ~1,000 containers, got {len(containers)}')
+
+    plan_of = {}
+    for p in plans:
+        v = by['vessels'].get(p['vesselId'])
+        if not v:
+            errors.append(f'v3/stowagePlans {p["stowagePlanId"]}: unknown vessel')
+            continue
+        if p['voyageId'] != v['currentVoyageId']:
+            errors.append(f'v3/stowagePlans {p["stowagePlanId"]}: voyage is not the vessel current voyage')
+        if p['archetype'] != ARCHETYPE_OF.get(v['vesselType']):
+            errors.append(f'v3/stowagePlans {p["stowagePlanId"]}: archetype {p["archetype"]} does not match {v["vesselType"]}')
+        if p['archetype'] == 'container':
+            sids = [s['slotId'] for s in p['slots']]
+            if not sids or len(sids) != len(set(sids)) or p['compartments'] or p['grid']['slotCount'] != len(sids):
+                errors.append(f'v3/stowagePlans {p["stowagePlanId"]}: container plan needs unique slots, a matching grid count and no compartments')
+            for s in p['slots']:
+                if s['slotId'] != f'{s["bay"]:02d}{s["row"]:02d}{s["tier"]:02d}' or s['deck'] != ('above' if s['tier'] >= 80 else 'below'):
+                    errors.append(f'v3/stowagePlans {p["stowagePlanId"]}: slot {s["slotId"]} is not bay-row-tier coded')
+                    break
+        elif p['slots'] or not p['compartments']:
+            errors.append(f'v3/stowagePlans {p["stowagePlanId"]}: {p["archetype"]} plans use compartments, never container slots')
+        plan_of[p['vesselId']] = p
+    flagship = plan_of.get('VSL-0001')
+    if not flagship or len(flagship['slots']) != 800:
+        errors.append('v3/stowagePlans: VSL-0001 needs the 800-slot flagship stowage plan')
+    if (plan_of.get('VSL-0047') or {}).get('archetype') != 'lng':
+        errors.append('v3/stowagePlans: VSL-0047 must carry LNG tanks, not containers')
+
+    slot_sets = {vid: {s['slotId']: s for s in p['slots']} for vid, p in plan_of.items()}
+    comp_sets = {vid: {c['compartmentId']: c for c in p['compartments']} for vid, p in plan_of.items()}
+    yard_ids = idx['yardSlots']
+    for u in units:
+        uid = u['cargoUnitId']
+        if u['vesselId'] not in plan_of:
+            errors.append(f'v3/cargoUnits {uid}: vessel has no stowage plan')
+            continue
+        for k in ('originPortId', 'destinationPortId'):
+            if u[k] not in by['ports']:
+                errors.append(f'v3/cargoUnits {uid}: unknown {k} {u[k]}')
+        sh = idx['shipments'].get(u['shipmentId'])
+        if not sh or uid not in sh['cargoUnitIds']:
+            errors.append(f'v3/cargoUnits {uid}: shipment link broken')
+        loc = u['initialLocation']
+        if loc['type'] not in LOCATION_TYPES:
+            errors.append(f'v3/cargoUnits {uid}: unknown location type {loc["type"]}')
+        if u['kind'] == 'container':
+            if plan_of[u['vesselId']]['archetype'] != 'container':
+                errors.append(f'v3/cargoUnits {uid}: container on a non-container vessel')
+            if not iso6346_ok(u['containerNo']):
+                errors.append(f'v3/cargoUnits {uid}: containerNo fails the ISO 6346 check digit')
+            if loc['type'] == 'vessel_slot' and loc['slotId'] not in slot_sets.get(loc['vesselId'], {}):
+                errors.append(f'v3/cargoUnits {uid}: slot {loc["slotId"]} not in stowage plan')
+            if loc['type'] == 'yard_slot' and loc['yardSlotId'] not in yard_ids:
+                errors.append(f'v3/cargoUnits {uid}: unknown yard slot')
+        elif loc['type'] != 'compartment' or loc['compartmentId'] not in comp_sets.get(u['vesselId'], {}):
+            errors.append(f'v3/cargoUnits {uid}: lot must sit in a declared compartment')
+    for s in ships:
+        if any(c not in idx['cargoUnits'] for c in s['cargoUnitIds']) or not s['cargoUnitIds']:
+            errors.append(f'v3/shipments {s["shipmentId"]}: unknown or empty cargo units')
+        if s['voyageId'] not in by['voyages'] or s['vesselId'] not in by['vessels']:
+            errors.append(f'v3/shipments {s["shipmentId"]}: unknown vessel/voyage')
+
+    # ---- transfer timeline: chains, crane exclusivity, single occupancy, gravity, exactly-one location ----
+    w_min, w_max = window
+    per_unit = defaultdict(list)
+    for e in evs:
+        try:
+            s, en = parse(e['startUtc']), parse(e['endUtc'])
+        except Exception:
+            errors.append(f'v3/transferEvents {e["transferEventId"]}: bad timestamps')
+            continue
+        if not (w_min <= s < en <= w_max):
+            errors.append(f'v3/transferEvents {e["transferEventId"]}: must lie inside the scenario window with start < end')
+        exp = TRANSFER_KINDS.get(e['kind'])
+        if not exp or (e['from']['type'], e['to']['type']) != exp:
+            errors.append(f'v3/transferEvents {e["transferEventId"]}: {e["kind"]} must move {exp}')
+        if e['cargoUnitId'] not in idx['cargoUnits'] or e['terminalId'] not in by['terminals']:
+            errors.append(f'v3/transferEvents {e["transferEventId"]}: unknown unit or terminal')
+            continue
+        per_unit[e['cargoUnitId']].append(e)
+    for uid, lst in per_unit.items():
+        lst.sort(key=lambda e: e['startUtc'])
+        cur = idx['cargoUnits'][uid]['initialLocation']
+        for k, e in enumerate(lst):
+            if e['from'] != cur:
+                errors.append(f'v3/transferEvents {e["transferEventId"]}: from does not match the unit location before the move')
+            if k and parse(lst[k - 1]['endUtc']) > parse(e['startUtc']):
+                errors.append(f'v3/transferEvents {e["transferEventId"]}: overlaps the previous move of {uid}')
+            cur = e['to']
+    by_crane = defaultdict(list)
+    for e in evs:
+        if e.get('craneId'):
+            by_crane[e['craneId']].append((parse(e['startUtc']), parse(e['endUtc']), e['transferEventId']))
+    for crane, lst in by_crane.items():
+        lst.sort()
+        for a, b in zip(lst, lst[1:]):
+            if b[0] < a[1]:
+                errors.append(f'v3/transferEvents: crane {crane} handles {a[2]} and {b[2]} at once')
+
+    occ = {}
+    for u in units:
+        k = loc_key(u['initialLocation'])
+        if k:
+            if k in occ:
+                errors.append(f'v3: {k} doubly occupied at the window start')
+            occ[k] = u['cargoUnitId']
+
+    def neighbour(k, delta):
+        if k[0] == 'vessel_slot':
+            s = slot_sets[k[1]].get(k[2])
+            sid = f'{s["bay"]:02d}{s["row"]:02d}{s["tier"] + 2 * delta:02d}'
+            return ('vessel_slot', k[1], sid) if sid in slot_sets[k[1]] else None
+        if k[0] == 'yard_slot':
+            t = int(k[1][-1]) + delta
+            return ('yard_slot', k[1][:-1] + str(t)) if 1 <= t <= 2 else None
+        return None
+
+    actions = sorted([(parse(e['endUtc']), 0, e) for e in evs] + [(parse(e['startUtc']), 1, e) for e in evs], key=lambda a: (a[0], a[1], a[2]['transferEventId']))
+    in_transfer = set()
+    for at, phase, e in actions:
+        uid = e['cargoUnitId']
+        if phase == 1:
+            k = loc_key(e['from'])
+            if occ.get(k) != uid:
+                errors.append(f'v3/transferEvents {e["transferEventId"]}: {uid} is not at {k} when the move starts')
+            above = neighbour(k, 1)
+            if above and above in occ:
+                errors.append(f'v3/transferEvents {e["transferEventId"]}: lifts {k} from under {above}')
+            occ.pop(k, None)
+            in_transfer.add(uid)
+        else:
+            in_transfer.discard(uid)
+            k = loc_key(e['to'])
+            if k is None:
+                continue
+            if k in occ:
+                errors.append(f'v3/transferEvents {e["transferEventId"]}: {k} already holds {occ[k]}')
+            below = neighbour(k, -1)
+            if below and below not in occ:
+                errors.append(f'v3/transferEvents {e["transferEventId"]}: places {k} with nothing underneath')
+            occ[k] = uid
+    for p in plans:
+        if p['archetype'] != 'container':
+            continue
+        for s in p['slots']:
+            k = ('vessel_slot', p['vesselId'], s['slotId'])
+            nb = neighbour(k, -1)
+            if k in occ and nb and nb not in occ:
+                errors.append(f'v3/stowagePlans {p["stowagePlanId"]}: floating container at {s["slotId"]} at the window end')
+                break
+
+    probe = sorted({w_min, w_max - timedelta(seconds=1)} | {parse(e['startUtc']) + (parse(e['endUtc']) - parse(e['startUtc'])) / 2 for e in evs}
+                   | {parse(e['endUtc']) for e in evs})
+    moved = [u for u in units if u['cargoUnitId'] in per_unit]
+    for t in probe[::max(1, len(probe) // 60)]:
+        for u in moved:
+            n = len(location_at(u, per_unit[u['cargoUnitId']], t))
+            if n != 1:
+                errors.append(f'v3: containerLocationAt({u["cargoUnitId"]}, {t.isoformat()}) resolved {n} locations')
+                break
+
+    flag_dis = [e for e in evs if e['kind'] == 'discharge' and e['from'].get('vesselId') == 'VSL-0001']
+    arrivals = sum(1 for u in containers if u['vesselId'] == 'VSL-0001' and u['initialLocation']['type'] == 'vessel_slot')
+    if arrivals < 500 or len(flag_dis) < 200:
+        errors.append(f'v3: VSL-0001 needs a full arrival stow and a discharge plan (got {arrivals} on board, {len(flag_dis)} discharges)')
+    berth_est = parse('2026-11-10T14:00:00Z')
+    dep_est = parse(by['voyages']['VYG-0001']['estimatedDepartureUtc'])
+    if any(not (berth_est <= parse(e['startUtc']) and parse(e['endUtc']) <= dep_est) for e in evs if e.get('craneId')):
+        errors.append('v3: VSL-0001 crane moves must fall between the berth estimate and the estimated departure')
+
+    for vo in by['voyages'].values():
+        if vo.get('dailyDelayCostUsd') is None or not vo.get('estimatedArrivalUtc') or not vo.get('plannedArrivalUtc'):
+            continue
+        shift = (parse(vo['estimatedArrivalUtc']) - parse(vo['plannedArrivalUtc'])).total_seconds() / 3600
+        expo = delay_exposure_usd(shift, vo['dailyDelayCostUsd'])
+        if expo < 0 or (shift <= 0 and expo != 0):
+            errors.append(f'v3: delay exposure formula broken for {vo["voyageId"]}')
+    v1 = by['voyages'].get('VYG-0001') or {}
+    shift1 = (parse(v1['estimatedArrivalUtc']) - parse(v1['plannedArrivalUtc'])).total_seconds() / 3600 if v1 else 0
+    if shift1 != 18 or delay_exposure_usd(shift1, v1.get('dailyDelayCostUsd', 0)) != 24000 \
+            or manifest.get('scenario', {}).get('expectedEstimatedExposureUsd') != 24000:
+        errors.append(f'v3: VYG-0001 delay exposure must be max(0, 18 h)/24 x 32,000 = 24,000 (got shift {shift1})')
+    return errors
+
+
 def run(folder: Path):
     errors = []
     datasets = {}
@@ -498,6 +749,12 @@ def run(folder: Path):
         errors.append('event ID uniqueness failed')
 
     errors += validate_v2(folder / 'v2', by, vessel_samples, manifest)
+    w = (manifest.get('v2Module') or {}).get('window') or {}
+    try:
+        window = (parse(w['minUtc']), parse(w['maxUtc']))
+        errors += validate_v3(folder / 'v3', by, manifest, window)
+    except KeyError:
+        errors.append('manifest.v2Module.window missing; cannot validate the v3 module')
 
     print('PORTOS fixture integrity:', 'PASS' if not errors else 'FAIL')
     for n, rows in datasets.items():
@@ -510,6 +767,7 @@ def run(folder: Path):
         return 1
     print('Scenario: MV Pacific Horizon +18h, USD 24,000 modeled delay exposure — verified')
     print('V2 module: VSL-0001 holds at anchor, PCL-0001 34 h queue / 26 h remaining, VSL-0047 follow demo keyframes — verified')
+    print('V3 module: 800-slot VSL-0001 stow, single-occupancy transfers, one location per unit per instant, delay exposure formula — verified')
     return 0
 
 

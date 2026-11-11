@@ -189,11 +189,14 @@ test.describe('Data consistency', () => {
 
   test('the same timestamp always reproduces the same vessel state', async ({ page }) => {
     await open(page, '/vessel/VSL-0001?t=2026-11-09T06:30:00Z');
+    // The V3 cargo module loads lazily; compare settled sidebars.
+    await expect(page.getByTestId('cargo-loading')).toHaveCount(0);
     const a = await inspector(page).innerText();
     await page.goto('/vessel/VSL-0001?t=2026-11-09T09:00:00Z');
     await expect(page.getByTestId('simulated-stamp')).toContainText('09:00');
     await page.goto('/vessel/VSL-0001?t=2026-11-09T06:30:00Z');
     await expect(page.getByTestId('simulated-stamp')).toContainText('06:30');
+    await expect(page.getByTestId('cargo-loading')).toHaveCount(0);
     const b = await inspector(page).innerText();
     expect(b).toBe(a);
   });
