@@ -5,8 +5,13 @@ import { HOUR, MINUTE } from './time';
  * chooses how fast it moves (never a vessel's speed). Real frame time comes in as a clamped delta.
  */
 
-export const PLAYBACK_RATES = [1, 5, 10, 25, 50, 100] as const;
+/** V3 kit `simulationSpeedPresets`: simulated seconds per wall-clock second. */
+export const PLAYBACK_RATES = [0.25, 1, 2, 5, 10, 25, 50, 100] as const;
 export type PlaybackRate = (typeof PLAYBACK_RATES)[number];
+
+export function rateLabel(r: PlaybackRate): string {
+  return `×${r}`;
+}
 
 export type ClockMode = 'playing' | 'paused' | 'scrubbing';
 
@@ -73,6 +78,40 @@ export function advance(s: ClockState, realDeltaMs: number): AdvanceResult {
   if (s.mode !== 'playing') return { state: s, ended: false, wrapped: false };
   const dt = Math.max(0, Math.min(MAX_FRAME_DELTA_MS, realDeltaMs));
   const next = s.scenarioNowUTC + dt * s.playbackRate;
+  if (next < s.rangeEndUTC) return { state: { ...s, scenarioNowUTC: next }, ended: false, wrapped: false };
+  if (s.loop) return { state: { ...s, scenarioNowUTC: s.rangeStartUTC }, ended: false, wrapped: true };
+  return { state: { ...s, scenarioNowUTC: s.rangeEndUTC, mode: 'paused' }, ended: true, wrapped: false };
+}
+
+/**
+ * Playback anchor (V3 spec 07/01): scenario time is `simMs + (wall − wallMs) × rate`, recomputed from the anchor
+ * every frame, so frame rate and frame count never change where the clock lands. Re-anchored on play, rate change,
+ * seek and loop.
+ */
+export interface PlaybackAnchor {
+  simMs: number;
+  wallMs: number;
+  rate: PlaybackRate;
+}
+
+export function anchorAt(simMs: number, wallMs: number, rate: PlaybackRate): PlaybackAnchor {
+  return { simMs, wallMs, rate };
+}
+
+export function simAt(a: PlaybackAnchor, wallMs: number): number {
+  return a.simMs + Math.max(0, wallMs - a.wallMs) * a.rate;
+}
+
+/** A frame gap longer than `MAX_FRAME_DELTA_MS` (stalled or throttled tab) counts as that much; the anchor slides. */
+export function absorbStall(a: PlaybackAnchor, lastWallMs: number, wallMs: number): PlaybackAnchor {
+  const gap = wallMs - lastWallMs;
+  return gap > MAX_FRAME_DELTA_MS ? { ...a, wallMs: a.wallMs + (gap - MAX_FRAME_DELTA_MS) } : a;
+}
+
+/** Playback at wall time `wallMs` from an anchor: same contract as `advance`, without accumulating deltas. */
+export function advanceTo(s: ClockState, a: PlaybackAnchor, wallMs: number): AdvanceResult {
+  if (s.mode !== 'playing') return { state: s, ended: false, wrapped: false };
+  const next = simAt(a, wallMs);
   if (next < s.rangeEndUTC) return { state: { ...s, scenarioNowUTC: next }, ended: false, wrapped: false };
   if (s.loop) return { state: { ...s, scenarioNowUTC: s.rangeStartUTC }, ended: false, wrapped: true };
   return { state: { ...s, scenarioNowUTC: s.rangeEndUTC, mode: 'paused' }, ended: true, wrapped: false };

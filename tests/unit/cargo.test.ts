@@ -31,17 +31,31 @@ const c = catalog();
 const mod = cargoModule();
 const idx = buildCargoIndex(mod);
 const T0 = Date.parse('2026-11-05T12:00:00Z');
-const BERTH = Date.parse('2026-11-10T14:00:00Z');
-const AFTER_CRANES = Date.parse('2026-11-11T04:00:00Z');
+/** VSL-0255 works at BRH-SIN-W-3 from 11:50Z on 9 Nov (after its BERTH_OCCUPIED event); the last crane move ends before 17:00Z. */
+const BEFORE_CRANES = Date.parse('2026-11-09T11:40:00Z');
+const AFTER_CRANES = Date.parse('2026-11-09T17:00:00Z');
 const kit = (name: string) => JSON.parse(readFileSync(resolve(__dirname, `../../PORTOS_V3_Design_Engineering_Upgrade/examples/${name}`), 'utf-8'));
 
 describe('V3 Gate 5 · cargo fixtures', () => {
-  it('holds ~1,000 containers and the 800-slot VSL-0001 flagship stow', () => {
+  it('holds ~1,000 containers and two 800-slot stows: VSL-0255 (crane unload) and VSL-0001 (at anchor)', () => {
     expect(mod.cargoUnits.filter((u) => u.kind === 'container')).toHaveLength(1000);
-    const plan = idx.plans.get('VSL-0001')!;
-    expect(plan.archetype).toBe('container');
-    expect(plan.slots).toHaveLength(800);
-    expect(plan.grid).toMatchObject({ slotCount: 800, tiersBelow: [2, 4, 6], tiersAbove: [82, 84] });
+    for (const vid of ['VSL-0255', 'VSL-0001']) {
+      const plan = idx.plans.get(vid)!;
+      expect(plan.archetype).toBe('container');
+      expect(plan.slots).toHaveLength(800);
+      expect(plan.grid).toMatchObject({ slotCount: 800, tiersBelow: [2, 4, 6], tiersAbove: [82, 84] });
+    }
+    expect(idx.plans.get('VSL-0255')!.voyageId).toBeNull();
+  });
+
+  it('every crane move is at BRH-SIN-W-3 while VSL-0255 is alongside; nothing is lifted on or off VSL-0001', () => {
+    const cranes = mod.transferEvents.filter((e) => e.craneId);
+    expect(cranes.length).toBe(380);
+    expect(new Set(cranes.map((e) => e.berthId))).toEqual(new Set(['BRH-SIN-W-3']));
+    expect(cranes.every((e) => Date.parse(e.startUtc) >= Date.parse('2026-11-09T11:50:00Z') && Date.parse(e.endUtc) <= Date.parse('2026-11-09T17:00:00Z'))).toBe(true);
+    const touches = (vid: string) => mod.transferEvents.filter((e) => [e.from, e.to].some((l) => 'vesselId' in l && l.vesselId === vid));
+    expect(touches('VSL-0001')).toHaveLength(0);
+    expect(touches('VSL-0255')).toHaveLength(380);
   });
 
   it('keeps archetypes type-correct: VSL-0047 carries LNG tanks, never container slots', () => {
@@ -58,7 +72,7 @@ describe('V3 Gate 5 · cargo fixtures', () => {
 
 describe('V3 Gate 5 · cargo engine', () => {
   it('containerLocationAt resolves exactly one location for every unit at every probe time', () => {
-    const probes = [T0, BERTH, ...mod.transferEvents.slice(0, 80).flatMap((e) => [Date.parse(e.startUtc), (Date.parse(e.startUtc) + Date.parse(e.endUtc)) / 2, Date.parse(e.endUtc)]), AFTER_CRANES];
+    const probes = [T0, BEFORE_CRANES, ...mod.transferEvents.slice(0, 80).flatMap((e) => [Date.parse(e.startUtc), (Date.parse(e.startUtc) + Date.parse(e.endUtc)) / 2, Date.parse(e.endUtc)]), AFTER_CRANES];
     for (const t of probes) for (const u of mod.cargoUnits) expect(containerLocationAt(idx, u.cargoUnitId, t)?.type).toBeTruthy();
   });
 
@@ -66,7 +80,7 @@ describe('V3 Gate 5 · cargo engine', () => {
     const ev = mod.transferEvents.find((e) => e.kind === 'discharge')!;
     const s = Date.parse(ev.startUtc);
     const e = Date.parse(ev.endUtc);
-    expect(containerLocationAt(idx, ev.cargoUnitId, s - 1)).toMatchObject({ type: 'vessel_slot', vesselId: 'VSL-0001' });
+    expect(containerLocationAt(idx, ev.cargoUnitId, s - 1)).toMatchObject({ type: 'vessel_slot', vesselId: 'VSL-0255' });
     const mid = containerLocationAt(idx, ev.cargoUnitId, (s + e) / 2)!;
     expect(mid.type).toBe('crane');
     expect(mid.type === 'crane' && mid.progress).toBeCloseTo(0.5, 5);
@@ -79,13 +93,14 @@ describe('V3 Gate 5 · cargo engine', () => {
     expect(containerLocationAt(idx, ev.cargoUnitId, Date.parse(ev.endUtc))).toMatchObject({ type: 'gate', portId: 'PRT-SIN' });
   });
 
-  it('occupies 620 slots on arrival and 560 after discharge (260 off) and loading (200 on), with no floating boxes', () => {
-    expect(slotOccupancyAt(idx, 'VSL-0001', T0).size).toBe(620);
-    expect(slotOccupancyAt(idx, 'VSL-0001', BERTH).size).toBe(620);
-    expect(slotOccupancyAt(idx, 'VSL-0001', AFTER_CRANES).size).toBe(560);
-    const slots = idx.slots.get('VSL-0001')!;
-    for (const t of [T0, Date.parse('2026-11-10T17:00:00Z'), AFTER_CRANES]) {
-      const occ = slotOccupancyAt(idx, 'VSL-0001', t);
+  it('VSL-0255 holds 520 boxes on arrival and 420 after discharge (240 off) and loading (140 on), with no floating boxes', () => {
+    expect(slotOccupancyAt(idx, 'VSL-0255', T0).size).toBe(520);
+    expect(slotOccupancyAt(idx, 'VSL-0255', BEFORE_CRANES).size).toBe(520);
+    expect(slotOccupancyAt(idx, 'VSL-0255', AFTER_CRANES).size).toBe(420);
+    for (const t of [T0, c.anchorMs, c.windowMaxMs - 1]) expect(slotOccupancyAt(idx, 'VSL-0001', t).size).toBe(200);
+    const slots = idx.slots.get('VSL-0255')!;
+    for (const t of [T0, Date.parse('2026-11-09T13:30:00Z'), AFTER_CRANES]) {
+      const occ = slotOccupancyAt(idx, 'VSL-0255', t);
       for (const id of occ.keys()) {
         const s = slots.get(id)!;
         const under = slots.get(slotIdOf(s.bay, s.row, s.tier - 2));
@@ -117,10 +132,11 @@ describe('V3 Gate 5 · cargo engine', () => {
   });
 
   it('lists the next crane moves of a vessel in time order', () => {
-    const next = upcomingTransfers(idx, 'VSL-0001', BERTH, 3);
+    const next = upcomingTransfers(idx, 'VSL-0255', BEFORE_CRANES, 3);
     expect(next).toHaveLength(3);
     expect(next.map((e) => e.startUtc)).toEqual([...next.map((e) => e.startUtc)].sort());
-    expect(upcomingTransfers(idx, 'VSL-0047', BERTH)).toHaveLength(0);
+    expect(upcomingTransfers(idx, 'VSL-0047', BEFORE_CRANES)).toHaveLength(0);
+    expect(upcomingTransfers(idx, 'VSL-0001', T0)).toHaveLength(0);
   });
 });
 
@@ -138,16 +154,23 @@ describe('V3 Gate 5 · vessel cargo selectors', () => {
     expect(p47.originCaption).toMatch(/^ATD /);
   });
 
-  it('container summary: 620 boxes, 1,240 TEU, Singapore discharge first', () => {
-    const s = selectCargoSummary(c, idx, 'VSL-0001', c.anchorMs)!;
+  it('container summary: VSL-0255 520 boxes before the cranes, Singapore discharge first; VSL-0001 static with no crane plan', () => {
+    const s = selectCargoSummary(c, idx, 'VSL-0255', BEFORE_CRANES)!;
     expect(s.kind).toBe('slots');
-    expect(s.headline.find((h) => h.label === 'On board')?.value).toBe('620 boxes');
-    expect(s.headline.find((h) => h.label === 'TEU')?.value).toBe('1,240');
-    expect(s.destinations.map((d) => [d.name, d.count])).toEqual([
-      ['Singapore', 260],
-      ['Rotterdam', 360],
+    expect(s.headline.find((h) => h.label === 'On board')?.value).toBe('520 boxes');
+    expect(s.headline.find((h) => h.label === 'TEU')?.value).toBe('1,040');
+    expect(s.destinations[0]).toMatchObject({ name: 'Singapore', count: 240 });
+    expect(s.destinations.reduce((n, d) => n + d.count, 0)).toBe(520);
+    expect(s.craneText).toMatch(/380 crane moves planned/);
+    expect(s.nextMoves).toHaveLength(3);
+    const s1 = selectCargoSummary(c, idx, 'VSL-0001', c.anchorMs)!;
+    expect(s1.headline.find((h) => h.label === 'On board')?.value).toBe('200 boxes');
+    expect(s1.destinations.map((d) => [d.name, d.count])).toEqual([
+      ['Singapore', 80],
+      ['Rotterdam', 120],
     ]);
-    expect(s.craneText).toMatch(/460 crane moves planned/);
+    expect(s1.nextMoves).toHaveLength(0);
+    expect(s1.craneText).toMatch(/no berth confirmed/);
   });
 
   it('LNG summary lists four tanks with fill and volume, no slots', () => {
@@ -179,16 +202,16 @@ describe('V3 Gate 5 · vessel cargo selectors', () => {
 
     const ev = mod.transferEvents.find((e) => e.kind === 'discharge')!;
     const from = (ev.from as { slotId: string }).slotId;
-    const before = selectSlotDetail(c, idx, 'VSL-0001', from, Date.parse(ev.startUtc) - 60_000)!;
+    const before = selectSlotDetail(c, idx, 'VSL-0255', from, Date.parse(ev.startUtc) - 60_000)!;
     expect(before.manifest?.cargoUnitId).toBe(ev.cargoUnitId);
-    expect(before.manifest?.nextText).toMatch(/^Discharge .*QC-SIN-W-\d \(EST\)$/);
-    expect(selectSlotDetail(c, idx, 'VSL-0001', from, Date.parse(ev.endUtc) + 1)!.manifest).toBeNull();
+    expect(before.manifest?.nextText).toMatch(/^Discharge .*QC-SIN-W3-\d \(EST\)$/);
+    expect(selectSlotDetail(c, idx, 'VSL-0255', from, Date.parse(ev.endUtc) + 1)!.manifest).toBeNull();
   });
 
   it('workshop cargo marks filled slots with discharge-port swatches and maps slots to holds', () => {
-    const w = selectWorkshopCargo(c, idx, 'VSL-0001', c.anchorMs)!;
-    expect(w.filled.size).toBe(620);
-    expect(new Set([...w.filled.values()].map((x) => x.swatch))).toEqual(new Set([0, 1]));
+    const w = selectWorkshopCargo(c, idx, 'VSL-0255', BEFORE_CRANES)!;
+    expect(w.filled.size).toBe(520);
+    expect(new Set([...w.filled.values()].map((x) => x.swatch))).toEqual(new Set([0, 1, 2, 3]));
     expect(w.holdOfSlot('020182')).toBe(1);
   });
 });

@@ -266,9 +266,9 @@ def validate_v3(folder: Path, by, manifest, window):
         elif p['slots'] or not p['compartments']:
             errors.append(f'v3/stowagePlans {p["stowagePlanId"]}: {p["archetype"]} plans use compartments, never container slots')
         plan_of[p['vesselId']] = p
-    flagship = plan_of.get('VSL-0001')
-    if not flagship or len(flagship['slots']) != 800:
-        errors.append('v3/stowagePlans: VSL-0001 needs the 800-slot flagship stowage plan')
+    for vid in ('VSL-0255', 'VSL-0001'):
+        if not plan_of.get(vid) or len(plan_of[vid]['slots']) != 800:
+            errors.append(f'v3/stowagePlans: {vid} needs an 800-slot stowage plan')
     if (plan_of.get('VSL-0047') or {}).get('archetype') != 'lng':
         errors.append('v3/stowagePlans: VSL-0047 must carry LNG tanks, not containers')
 
@@ -303,7 +303,9 @@ def validate_v3(folder: Path, by, manifest, window):
     for s in ships:
         if any(c not in idx['cargoUnits'] for c in s['cargoUnitIds']) or not s['cargoUnitIds']:
             errors.append(f'v3/shipments {s["shipmentId"]}: unknown or empty cargo units')
-        if s['voyageId'] not in by['voyages'] or s['vesselId'] not in by['vessels']:
+        vessel = by['vessels'].get(s['vesselId'])
+        # A null voyage is only valid for a vessel between voyages (alongside with no current voyage).
+        if not vessel or (s['voyageId'] not in by['voyages'] if s['voyageId'] is not None else vessel.get('currentVoyageId') is not None):
             errors.append(f'v3/shipments {s["shipmentId"]}: unknown vessel/voyage')
 
     # ---- transfer timeline: chains, crane exclusivity, single occupancy, gravity, exactly-one location ----
@@ -405,14 +407,31 @@ def validate_v3(folder: Path, by, manifest, window):
                 errors.append(f'v3: containerLocationAt({u["cargoUnitId"]}, {t.isoformat()}) resolved {n} locations')
                 break
 
-    flag_dis = [e for e in evs if e['kind'] == 'discharge' and e['from'].get('vesselId') == 'VSL-0001']
-    arrivals = sum(1 for u in containers if u['vesselId'] == 'VSL-0001' and u['initialLocation']['type'] == 'vessel_slot')
+    # Crane unload flagship (kit scenario 4): VSL-0255, alongside BRH-SIN-W-3 through the anchor.
+    flag_dis = [e for e in evs if e['kind'] == 'discharge' and e['from'].get('vesselId') == 'VSL-0255']
+    arrivals = sum(1 for u in containers if u['vesselId'] == 'VSL-0255' and u['initialLocation']['type'] == 'vessel_slot')
     if arrivals < 500 or len(flag_dis) < 200:
-        errors.append(f'v3: VSL-0001 needs a full arrival stow and a discharge plan (got {arrivals} on board, {len(flag_dis)} discharges)')
-    berth_est = parse('2026-11-10T14:00:00Z')
-    dep_est = parse(by['voyages']['VYG-0001']['estimatedDepartureUtc'])
-    if any(not (berth_est <= parse(e['startUtc']) and parse(e['endUtc']) <= dep_est) for e in evs if e.get('craneId')):
-        errors.append('v3: VSL-0001 crane moves must fall between the berth estimate and the estimated departure')
+        errors.append(f'v3: VSL-0255 needs a full arrival stow and a discharge plan (got {arrivals} on board, {len(flag_dis)} discharges)')
+    bookings = json.loads((folder.parent / 'v2' / 'berthSchedule.json').read_text(encoding='utf-8'))
+    bk = next((b for b in bookings if b['vesselId'] == 'VSL-0255' and b['status'] == 'at_berth'), None)
+    mile = lambda b, ev, cls: next((parse(m['atUtc']) for m in b['milestones'] if m['eventType'] == ev and m['classifier'] == cls), None)
+    if not bk or bk['berthId'] != 'BRH-SIN-W-3' or not mile(bk, 'ARRIVAL', 'ACT') or not mile(bk, 'DEPARTURE', 'PLN'):
+        errors.append('v3: VSL-0255 must be alongside BRH-SIN-W-3 (actual arrival, planned departure) for the crane plan')
+    else:
+        arr, dep = mile(bk, 'ARRIVAL', 'ACT'), mile(bk, 'DEPARTURE', 'PLN')
+        # The base timeline is canonical: no lift before the vessel's BERTH_OCCUPIED event, or the berth queue still
+        # counts it as waiting while cargo moves.
+        occupied = [parse(e['occurredAtUtc']) for e in by['events'].values()
+                    if e['type'] == 'BERTH_OCCUPIED' and e['payload'].get('vesselId') == 'VSL-0255']
+        arr = max([arr, *occupied])
+        for e in evs:
+            if e.get('craneId') and (e.get('berthId') != bk['berthId'] or not (arr <= parse(e['startUtc']) and parse(e['endUtc']) <= dep)):
+                errors.append(f'v3: crane move {e["transferEventId"]} must be at BRH-SIN-W-3 between its actual arrival and planned departure')
+                break
+    # Anchored exception (kit scenario 3): VSL-0001 has no berth, so nothing is lifted on or off it.
+    touched = [e['transferEventId'] for e in evs if 'VSL-0001' in (e['from'].get('vesselId'), e['to'].get('vesselId'))]
+    if touched:
+        errors.append(f'v3: VSL-0001 waits at anchor with no berth; transfers {touched[:3]} must not touch it')
 
     for vo in by['voyages'].values():
         if vo.get('dailyDelayCostUsd') is None or not vo.get('estimatedArrivalUtc') or not vo.get('plannedArrivalUtc'):
@@ -767,7 +786,7 @@ def run(folder: Path):
         return 1
     print('Scenario: MV Pacific Horizon +18h, USD 24,000 modeled delay exposure — verified')
     print('V2 module: VSL-0001 holds at anchor, PCL-0001 34 h queue / 26 h remaining, VSL-0047 follow demo keyframes — verified')
-    print('V3 module: 800-slot VSL-0001 stow, single-occupancy transfers, one location per unit per instant, delay exposure formula — verified')
+    print('V3 module: VSL-0255 800-slot crane unload at BRH-SIN-W-3, VSL-0001 static stow at anchor, single-occupancy transfers, one location per unit per instant, delay exposure formula — verified')
     return 0
 
 

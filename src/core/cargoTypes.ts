@@ -60,7 +60,8 @@ export interface Compartment {
 export interface StowagePlan {
   stowagePlanId: string;
   vesselId: string;
-  voyageId: string;
+  /** Null while the vessel is alongside between voyages. */
+  voyageId: string | null;
   archetype: CargoArchetype;
   asOfUtc: IsoUtc;
   grid: { bays: number[]; rows: number[]; tiersBelow: number[]; tiersAbove: number[]; slotCount: number } | null;
@@ -78,7 +79,7 @@ export interface Shipment {
   originPortId: string;
   destinationPortId: string;
   vesselId: string;
-  voyageId: string;
+  voyageId: string | null;
   cargoUnitIds: string[];
   declaredValueUsd: number;
   status: 'booked' | 'in_transit' | 'discharged';
@@ -93,6 +94,8 @@ export interface TransferEvent {
   kind: TransferKind;
   portId: string;
   terminalId: string;
+  /** Berth the quay crane works at; null for gate moves. */
+  berthId: string | null;
   craneId: string | null;
   via: 'quay_crane' | 'truck';
   from: StoredLocation;

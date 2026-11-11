@@ -2,7 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { formatDuration, formatLocal, formatUtc } from '@/core/format';
 import { HOUR } from '@/core/time';
-import { LOOP_RANGES, PLAYBACK_RATES, isPlaybackRate } from '@/core/scenarioClock';
+import { LOOP_RANGES, PLAYBACK_RATES, isPlaybackRate, rateLabel } from '@/core/scenarioClock';
 import { useNavigation } from '@/router/useRouteSync';
 import { CATEGORY_LABEL, compareWithNow, currentMarker, densityBins, railBookmarks, railMarkers, stepMarker, type RailMarker } from '@/selectors/replay';
 import { useCatalogStore } from '@/stores/catalog';
@@ -207,7 +207,7 @@ function saveNote() {
       </template>
       <label :for="ids.rate" class="sr-only">Playback rate</label>
       <select :id="ids.rate" class="control rail__rate num" :value="clock.rate" data-testid="replay-rate" @change="onRate">
-        <option v-for="r in PLAYBACK_RATES" :key="r" :value="r">Simulation ×{{ r }}</option>
+        <option v-for="r in PLAYBACK_RATES" :key="r" :value="r">Simulation {{ rateLabel(r) }}</option>
       </select>
       <button type="button" class="icon-btn" aria-label="Previous event" :disabled="!markers.length" data-testid="replay-prev" @click="stepEvent(-1)">
         <Icon name="chevron-left" :size="16" />
@@ -284,7 +284,7 @@ function saveNote() {
 
       <div class="rail__time" aria-live="polite">
         <span class="rail__mode" :class="{ 'rail__mode--hist': historical, 'rail__mode--sim': clock.phase === 'simulation' }" data-testid="replay-phase">{{ phaseText }}</span>
-        <strong class="mono" data-testid="replay-time">{{ formatUtc(clock.timeMs) }}</strong>
+        <strong class="mono" data-testid="replay-time" :data-time-ms="clock.timeMs">{{ formatUtc(clock.timeMs) }}</strong>
         <span v-if="expanded && localText" class="rail__sub mono">{{ localText }}</span>
       </div>
       <div class="rail__actions">

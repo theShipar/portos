@@ -704,12 +704,13 @@ function followFrame(now: number) {
     return;
   }
   const marker = markerById.value.get(f.vesselId);
-  const s = getVesselAtTime(c, f.vesselId, clock.frameTimeMs());
+  const frameMs = clock.frameTimeAt(now);
+  const s = getVesselAtTime(c, f.vesselId, frameMs);
   const moving = (s.state === 'interpolated' || s.state === 'modelled') && s.navStatus === 'underway';
   const point = marker?.berthHeadingDeg != null ? marker.point : (s.point ?? marker?.point ?? null);
   if (!point) return;
   if (moving && s.point) {
-    overlay.value?.setLivePose(f.vesselId, s.point, s.cogDeg);
+    overlay.value?.setLivePose(f.vesselId, s.point, s.cogDeg, frameMs);
     liveVesselId = f.vesselId;
   } else if (liveVesselId) {
     eachOverlay((ov) => ov.setLivePose(null));
@@ -1113,6 +1114,11 @@ function exposeTestAdapter(sc: EarthScene) {
       const pose = surface.value?.getPose();
       const aim = pose ? surface.value?.project(pose.lat, pose.lon) : null;
       return { follow: f ? { ...f } : null, hold: view.followHold, edge: followEdge.value, centre: aim && r ? { x: r.left + aim.x, y: r.top + aim.y } : null, ship: ship && r ? { x: r.left + ship.x, y: r.top + ship.y, visible: ship.visible } : null };
+    },
+    positionAt: (id: string, t: number) => {
+      const c = catalog.catalog;
+      const s = c ? getVesselAtTime(c, id, t) : null;
+      return s?.point ? { lat: s.point.lat, lon: s.point.lon, state: s.state } : null;
     },
     vesselPose: (id: string) => {
       const m = markers.value.find((v) => v.vesselId === id);

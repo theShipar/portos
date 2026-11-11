@@ -1,12 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { HOUR, MINUTE, parseUtc } from '@/core/time';
-import { advance, MAX_FRAME_DELTA_MS, rangeAround, stepTarget, type ClockState } from '@/core/scenarioClock';
+import { absorbStall, advance, advanceTo, anchorAt, MAX_FRAME_DELTA_MS, PLAYBACK_RATES, rangeAround, simAt, stepTarget, type ClockState } from '@/core/scenarioClock';
+import kitTokens from '../../PORTOS_V3_Design_Engineering_Upgrade/assets/design-tokens.json';
 import { angleDelta, behindAzimuth, followAlpha, FOLLOW_TAU_MS } from '@/core/follow';
-import { getVesselAtTime, trackRunsUntil } from '@/engines/tracks';
+import { getVesselAtTime, trackChunks, trackRunsUntil, TRACK_CHUNK_MS, vesselAtTime } from '@/engines/tracks';
+import { buildCargoIndex, slotOccupancyAt } from '@/engines/cargo';
 import { deriveWorldSnapshot, eventCountAt, eventsBetween, type WorldSnapshot } from '@/engines/world';
 import { useClockStore } from '@/stores/clock';
-import { catalog } from './fixtures';
+import { cargoModule, catalog } from './fixtures';
 
 const c = catalog();
 const NOW = c.anchorMs;
@@ -122,6 +124,64 @@ describe('clock store (one rAF loop, 10 Hz commits)', () => {
     const held = clock.timeMs;
     runFrames(500);
     expect(clock.timeMs).toBe(held);
+  });
+
+  it('lands on the same scenario time at 20, 60 or 144 Hz and with jittered frames (anchor arithmetic)', () => {
+    for (const frameMs of [50, 1000 / 60, 1000 / 144, 37]) {
+      setActivePinia(createPinia());
+      frames = [];
+      wall = 1000;
+      const clock = useClockStore();
+      clock.configure({ anchorMs: NOW, minMs: c.windowMinMs, maxMs: c.windowMaxMs, dataVersion: 'test' });
+      clock.play(100);
+      runFrames(3000, frameMs);
+      // Simulated time is exactly wall time elapsed × 100, however many frames it took.
+      expect(clock.frameTimeMs() - NOW, `${frameMs} ms frames`).toBeCloseTo((wall - 1000) * 100, 3);
+      clock.pause();
+    }
+  });
+
+  it('a rate change mid-play keeps the clock in place and only changes the speed', () => {
+    const clock = useClockStore();
+    clock.configure({ anchorMs: NOW, minMs: c.windowMinMs, maxMs: c.windowMaxMs, dataVersion: 'test' });
+    clock.play(10);
+    runFrames(1000);
+    const mid = clock.frameTimeMs();
+    expect(mid - NOW).toBeCloseTo(10_000, 0);
+    clock.setRate(100);
+    expect(clock.frameTimeMs()).toBe(mid);
+    runFrames(1000);
+    expect(clock.frameTimeMs() - mid).toBeCloseTo(100_000, 0);
+    clock.setRate(0.25);
+    const slow = clock.frameTimeMs();
+    runFrames(4000);
+    expect(clock.frameTimeMs() - slow).toBeCloseTo(1000, 0);
+    clock.pause();
+  });
+
+  it('render loops read the clock at their own frame timestamp, so callback order cannot make them lag', () => {
+    const clock = useClockStore();
+    clock.configure({ anchorMs: NOW, minMs: c.windowMinMs, maxMs: c.windowMaxMs, dataVersion: 'test' });
+    expect(clock.frameTimeAt(wall + 500)).toBe(NOW);
+    clock.play(100);
+    runFrames(1000);
+    const f = clock.frameTimeMs();
+    expect(clock.frameTimeAt(wall + 16)).toBeCloseTo(f + 1600, 3);
+    expect(clock.frameTimeAt(wall - 16)).toBe(f);
+    clock.pause();
+    expect(clock.frameTimeAt(wall + 1000)).toBe(clock.timeMs);
+  });
+
+  it('a seek while playing re-anchors there instead of snapping back', () => {
+    const clock = useClockStore();
+    clock.configure({ anchorMs: NOW, minMs: c.windowMinMs, maxMs: c.windowMaxMs, dataVersion: 'test' });
+    clock.play(100);
+    runFrames(500);
+    const target = NOW - 6 * HOUR;
+    clock.seekMs(target);
+    runFrames(1000);
+    expect(clock.frameTimeMs() - target).toBeCloseTo(100_000, 0);
+    clock.pause();
   });
 
   it('runs a single loop: play twice does not double the rate', () => {
@@ -259,5 +319,78 @@ describe('follow camera math', () => {
   it('wraps angle differences the short way', () => {
     expect(angleDelta(0.1, 2 * Math.PI - 0.1)).toBeCloseTo(-0.2, 9);
     expect(angleDelta(-3, 3)).toBeCloseTo(6 - 2 * Math.PI, 9);
+  });
+});
+
+describe('V3 Gate 6: one deterministic clock', () => {
+  it('speed presets are the kit simulationSpeedPresets (0.25× … 100×)', () => {
+    expect([...PLAYBACK_RATES]).toEqual(kitTokens.simulationSpeedPresets);
+  });
+
+  it('anchor arithmetic: 100× is 100 simulated seconds per wall second, whatever the frame count', () => {
+    const a = anchorAt(NOW, 5000, 100);
+    expect(simAt(a, 6000) - NOW).toBe(100_000);
+    expect(simAt(a, 4000)).toBe(NOW);
+    const s = state({ playbackRate: 100 });
+    let few = s;
+    for (const w of [5200, 5900, 6000]) few = advanceTo(few, a, w).state;
+    let many = s;
+    for (let w = 5000; w <= 6000; w += 1) many = advanceTo(many, a, w).state;
+    expect(few.scenarioNowUTC).toBe(many.scenarioNowUTC);
+    expect(few.scenarioNowUTC - NOW).toBe(100_000);
+  });
+
+  it('a stalled frame counts as at most one capped frame', () => {
+    const a = anchorAt(NOW, 0, 10);
+    const slid = absorbStall(a, 1000, 61_000);
+    expect(simAt(slid, 61_000) - NOW).toBe((1000 + MAX_FRAME_DELTA_MS) * 10);
+    expect(absorbStall(a, 1000, 1016)).toBe(a);
+  });
+
+  it('chunked track lookup returns exactly what a full binary search would, for every vessel', () => {
+    let checked = 0;
+    for (const [id, track] of c.tracks) {
+      if (!track.length) continue;
+      const ch = trackChunks(track);
+      expect(ch.first.length).toBe(Math.floor((track[track.length - 1]!.t - track[0]!.t) / TRACK_CHUNK_MS) + 1);
+      const t0 = track[0]!.t - HOUR;
+      const t1 = track[track.length - 1]!.t + HOUR;
+      for (let k = 0; k < 12; k++) {
+        const t = Math.round(t0 + ((t1 - t0) * (k * 7919 % 101)) / 100);
+        const ref = vesselAtTime([...track], id, t);
+        expect(vesselAtTime(track, id, t)).toEqual(ref);
+        checked++;
+      }
+      for (const p of track.slice(0, 4)) expect(vesselAtTime(track, id, p.t).sourceTimeMs).toBe(p.t);
+    }
+    expect(checked).toBeGreaterThan(5000);
+  });
+
+  it('VSL-0047 at 100× for one simulated day: same positions at every hour whatever path the clock took', () => {
+    const t0 = c.anchorMs - 12 * HOUR;
+    const direct = Array.from({ length: 25 }, (_, h) => getVesselAtTime(c, 'VSL-0047', t0 + h * HOUR).point);
+    // Played: 864 s of wall time at 100× in uneven frames, sampling when each hour is crossed.
+    const a = anchorAt(t0, 0, 100);
+    const played: (typeof direct)[number][] = [];
+    let next = 0;
+    for (let w = 0; w <= 864_000 && next < 25; w += 13 + (w % 7)) {
+      const t = simAt(a, w);
+      while (next < 25 && t >= t0 + next * HOUR) {
+        played.push(getVesselAtTime(c, 'VSL-0047', t0 + next * HOUR).point);
+        next++;
+      }
+    }
+    expect(played).toEqual(direct);
+    expect(direct.filter(Boolean).length).toBeGreaterThan(20);
+  });
+
+  it('seeking backwards replays cargo custody exactly (crane moves undone, then redone)', () => {
+    const idx = buildCargoIndex(cargoModule());
+    const before = at('2026-11-09T11:40:00Z');
+    const later = at('2026-11-09T13:00:00Z');
+    const snap = (t: number) => [...slotOccupancyAt(idx, 'VSL-0255', t).entries()].sort().join('|');
+    const a = snap(before);
+    expect(snap(later)).not.toBe(a);
+    expect(snap(before)).toBe(a);
   });
 });

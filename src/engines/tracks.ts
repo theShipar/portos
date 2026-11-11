@@ -20,10 +20,42 @@ export interface VesselAtTime {
   state: TrackState;
 }
 
+/** Track chunk width: per-vessel samples are indexed by scenario hour so a lookup searches one window, not the track. */
+export const TRACK_CHUNK_MS = 3_600_000;
+
+interface TrackChunks {
+  t0: number;
+  /** `first[k]`: index of the last sample at or before `t0 + k × TRACK_CHUNK_MS`. */
+  first: Int32Array;
+}
+
+const chunkCache = new WeakMap<TrackPoint[], TrackChunks>();
+
+/** Chunk index of one vessel's track, built once per track array (tracks are immutable after load). */
+export function trackChunks(track: TrackPoint[]): TrackChunks {
+  let c = chunkCache.get(track);
+  if (c) return c;
+  const t0 = track[0]!.t;
+  const n = Math.floor((track[track.length - 1]!.t - t0) / TRACK_CHUNK_MS) + 1;
+  const first = new Int32Array(n);
+  let i = 0;
+  for (let k = 0; k < n; k++) {
+    const edge = t0 + k * TRACK_CHUNK_MS;
+    while (i + 1 < track.length && track[i + 1]!.t <= edge) i++;
+    first[k] = i;
+  }
+  c = { t0, first };
+  chunkCache.set(track, c);
+  return c;
+}
+
 function lowerIndex(track: TrackPoint[], t: number): number {
-  let lo = 0;
-  let hi = track.length - 1;
   if (t < track[0].t) return -1;
+  const ch = trackChunks(track);
+  const k = Math.floor((t - ch.t0) / TRACK_CHUNK_MS);
+  if (k >= ch.first.length) return track.length - 1;
+  let lo = ch.first[k]!;
+  let hi = k + 1 < ch.first.length ? ch.first[k + 1]! : track.length - 1;
   while (lo < hi) {
     const mid = (lo + hi + 1) >> 1;
     if (track[mid].t <= t) lo = mid;

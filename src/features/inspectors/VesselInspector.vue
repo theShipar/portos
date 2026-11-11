@@ -172,7 +172,7 @@ function openPort(portId: string) {
         />
         <span class="cruise__meta num">{{ cruise.progressText }} · {{ cruise.remainingText }}</span>
       </div>
-      <p v-else class="progress__none">No assigned voyage · Simulated tracking only</p>
+      <p v-else class="progress__none" data-testid="route-progress" data-basis="none">No assigned voyage · Simulated tracking only</p>
 
       <p v-if="cargoStatus === 'loading' || cargoStatus === 'idle'" class="empty" data-testid="cargo-loading">Loading simulated cargo…</p>
       <p v-else-if="cargoStatus === 'error'" class="empty" data-testid="cargo-error">Simulated cargo module unavailable; vessel data is unaffected.</p>
@@ -218,7 +218,7 @@ function openPort(portId: string) {
           </li>
         </ul>
       </div>
-      <div>
+      <div data-testid="vessel-position" :data-time-ms="snap.snapshot?.timeMs" :data-lat="model.point?.lat" :data-lon="model.point?.lon">
         <h3 class="section-title">Position <span class="section-note">{{ model.positionLabel }}</span></h3>
         <FieldList :fields="model.position" />
       </div>
@@ -292,7 +292,7 @@ function openPort(portId: string) {
         </ul>
       </div>
 
-      <div>
+      <div data-testid="vessel-position" :data-time-ms="snap.snapshot?.timeMs" :data-lat="model.point?.lat" :data-lon="model.point?.lon">
         <h3 class="section-title">Position <span class="section-note">{{ model.positionLabel }}</span></h3>
         <FieldList :fields="model.position" />
       </div>

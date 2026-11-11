@@ -854,3 +854,48 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
     overview with no cargo fetch.
   - Not yet built: crane animation of the transfer events (Gate 7) and the shared clock (Gate 6). The sidebar
     already reads the snapshot time, so both will drive it unchanged.
+
+## D-046 One anchored scenario clock and the VSL-0255 crane unload (V3 Gate 6)
+
+- **Context:**
+  - V3 spec 07/01 asks for one clock that moves ships, cranes, cargo, charts and the timeline together. 100× must
+    mean 100 simulated seconds per wall second, never 100 frames. Seeking back must replay crane and cargo state
+    exactly.
+  - The V2 store summed clamped frame deltas. The sum drifted with frame rate, and a rate change could move the
+    clock by a frame.
+  - Gate 5 put the crane unload on VSL-0001, but the base fixture keeps VSL-0001 at anchor with no berth (kit
+    scenario 3). A ship that is still waiting for a berth cannot be unloaded by quay cranes.
+- **Decision:**
+  - *Clock arithmetic:* `scenarioClock.ts` adds a playback anchor `{ simMs, wallMs, rate }`. Scenario time is
+    `simMs + (wall − wallMs) × rate`, recomputed from the anchor every frame, so the frame count never changes where
+    the clock lands.
+    - The anchor is reset on play, rate change, seek and loop wrap.
+    - A stalled frame (hidden tab) counts as at most one capped frame. The anchor slides by the rest of the gap.
+    - `stores/clock.ts` exposes `frameTimeAt(wall)`, so a render loop reads the clock at its own rAF timestamp and
+      never lags it by a callback.
+  - *Speed presets:* the kit's `simulationSpeedPresets`, 0.25, 1, 2, 5, 10, 25, 50 and 100×. The menu reads
+    "Simulation ×N".
+  - *One instant on every surface:* the map, the inspector (`vessel-position` with `data-time-ms`) and the
+    timeline (`replay-time`) all read the committed clock time (10 Hz while playing). The followed ship alone is
+    drawn at its frame time between commits, at the track engine's position for that time (`setLivePose(…, atMs)`).
+    `vesselPose().drawn` reports the time each drawn position is for, so tests compare like with like.
+  - *Track chunks:* `engines/tracks.ts` indexes each vessel's samples by scenario hour (`TRACK_CHUNK_MS`), so a
+    lookup searches one window instead of the whole track. Results equal a full binary search for every vessel
+    (unit test).
+  - *Crane unload on VSL-0255:* the 800-slot crane unload moves to VSL-0255 at BRH-SIN-W-3 (V2 booking
+    `at_berth`, planned departure 17:00Z on 9 Nov).
+    - The base events put VSL-0255 on the berth at 11:35Z (`BERTH_OCCUPIED`), so the four cranes start at 11:50Z
+      and finish by 16:37Z: 240 discharges and 140 loads, 380 moves in total.
+    - VSL-0001 keeps a static 200-box stow, and its summary says "No crane moves in the simulated window: no berth
+      confirmed".
+    - `validate_data.py` refuses any lift before the vessel's `BERTH_OCCUPIED` event or after its planned
+      departure, and any transfer that touches VSL-0001.
+  - *Cargo module 3.1:* `voyageId` may be null for a vessel alongside between voyages. Transfer events carry
+    `berthId`.
+- **Consequences:**
+  - At 2026-11-09 11:40Z VSL-0255 shows 520 boxes. At 100× from 11:48Z the four cranes discharge, the workshop and
+    the summary agree on the count, and stepping back before 11:50Z restores 520.
+  - VSL-0255 leaves the Singapore berth queue at its anchorage exit (10:45Z), before any box moves.
+  - A reload never resumes playback.
+  - Before Gate 6 the playback rates were 1 to 100×. The URL and the storage keep the rate as a number, and 0.25
+    and 2 are new valid values.

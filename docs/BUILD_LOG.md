@@ -1137,3 +1137,39 @@ blockers. Status values: implemented / tested / blocked.
     playwright test v3capture --project=chromium` → 10 passed; images in `docs/qa/v3-g5/`.
 - **Gate:** P0 #4 PASS (own workshop renderer and illustrative bay spacing, both in D-045).
 - **Blockers:** none. Phones still see the < 768 px notice (Gate 9).
+
+## Phase V3-6 — One clock at up to 100×
+
+- **Changed:**
+  - `core/scenarioClock.ts`: playback anchor `{ simMs, wallMs, rate }`, `simAt`, `absorbStall`, `advanceTo`, the
+    kit speed presets (0.25 … 100×) and `rateLabel`.
+  - `stores/clock.ts`: re-anchors on play, rate change, seek, tick and wrap; `frameTimeAt(wall)` for render loops.
+  - `engines/tracks.ts`: hourly track chunks (`TRACK_CHUNK_MS`) cached per sample array.
+  - `MaritimeOverlay.ts` and `PortosEarthView.vue`: the followed ship is drawn at its frame time
+    (`setLivePose(…, atMs)`), `vesselPose().drawn` reports the time of each drawn position, and the adapter gains
+    `positionAt`.
+  - Sidebar and timeline: `vessel-position` and `replay-time` carry `data-time-ms`; the inspector shows "No
+    assigned voyage · Simulated tracking only" for a vessel between voyages; the cargo panel always shows the crane
+    line.
+  - Fixtures (cargo module 3.1): the 800-slot crane unload moves from VSL-0001 to VSL-0255 at BRH-SIN-W-3. The four
+    cranes QC-SIN-W3-1..4 start at 11:50Z, after `BERTH_OCCUPIED` at 11:35Z, and make 380 moves. VSL-0001 keeps a
+    static 200-box stow. Transfer events carry `berthId`; `voyageId` may be null.
+  - `validate_data.py`: crane moves only inside the berth window (after `BERTH_OCCUPIED`, before the planned
+    departure); no transfers for VSL-0001.
+- **Tested:**
+  - `python3 scripts/generate_demo_data.py && python3 scripts/validate_data.py` → PASS; "V3 module: VSL-0255
+    800-slot crane unload at BRH-SIN-W-3, VSL-0001 static stow at anchor, single-occupancy transfers, one location
+    per unit per instant, delay exposure formula — verified".
+    - The first version started the cranes at 08:30Z while the berth queue still listed VSL-0255 as waiting. The
+      validator now checks `BERTH_OCCUPIED`, and the cranes start at 11:50Z.
+  - `npx vitest run` → 410 passed (25 files).
+  - `npm run build` → typecheck and build pass (334 modules, built in 2.81 s).
+  - `npx playwright test v3clock v3cargo --project=chromium` → 17 passed; with `follow`, `journey` and `v3capture`
+    → 33 passed after the 11:50Z time shift.
+  - `npx playwright test` (full, first run) → 117 passed, 44 skipped, 1 failed: "380 crane moves planned" was
+    hidden behind `v-else-if` when the vessel also had notes. The crane line now always shows.
+  - `npx playwright test` (full, after the fix) → 123 passed, 44 skipped, 0 failed (6.0 min).
+  - `V3CAPTURE=g6 V3SHOTS=clock-100x-follow,clock-100x-cargo,region-sea,vessel-cargo npx playwright test v3capture
+    --project=chromium` → 8 images in `docs/qa/v3-g6/`.
+- **Gate:** P0 #5 PASS (D-046).
+- **Blockers:** none.

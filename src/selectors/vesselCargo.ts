@@ -187,7 +187,7 @@ export function selectCargoSummary(c: Catalog, idx: CargoIndex, vesselId: string
   if (totals.hazardous) notes.push(`${totals.hazardous} dangerous goods`);
   if (totals.restricted) notes.push(`${totals.restricted} restricted manifest${totals.restricted === 1 ? '' : 's'}`);
   const crane = craneWindow(idx, vesselId);
-  const craneText = crane ? `${formatCount(crane.moves)} crane moves planned ${formatUtc(crane.start)} – ${formatUtc(crane.end)} (EST)` : null;
+  const craneText = crane ? `${formatCount(crane.moves)} crane moves planned ${formatUtc(crane.start)} – ${formatUtc(crane.end)} (EST)` : 'No crane moves in the simulated window: no berth confirmed';
   return {
     archetype: 'container',
     title: ARCHETYPE_LABEL.container,

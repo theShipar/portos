@@ -75,7 +75,7 @@ function onGridKey(e: KeyboardEvent, li: number, ci: number) {
         <li v-for="m in summary.nextMoves" :key="m.id"><span class="mono">{{ m.timeText }}</span> {{ m.text }}</li>
       </ul>
     </div>
-    <p v-else-if="summary.craneText" class="cargo__notes">{{ summary.craneText }}</p>
+    <p v-if="summary.craneText" class="cargo__notes" data-testid="cargo-crane-plan">{{ summary.craneText }}</p>
   </section>
 
   <section class="cargo" data-testid="cargo-picker">

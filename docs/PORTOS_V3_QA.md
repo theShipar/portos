@@ -15,7 +15,7 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 | 2 | Geographic: whole continent, no rectangular cutout, rotatable, country hover lifts top + sidewall, city/port drilldown | G2, G3 | PASS (G2 geometry; G3 lift, pins, presets, back) |
 | 3 | Vessel: type-differentiated near and far LOD, no popping, heading/status match, no wake when moored | G4 | PASS (G4; instant band swap with hysteresis, no crossfade — D-044) |
 | 4 | Inspection: 3D preview, origin → destination tracker, container/hold selection from fixture, correct shipment | G5 | PASS (G5; own workshop renderer, illustrative bay spacing — D-045) |
-| 5 | Simulation: pause/play/scrub, 1×–100×, one clock for movement/ETA/cargo/berth/KPI | G6 | pending |
+| 5 | Simulation: pause/play/scrub, 1×–100×, one clock for movement/ETA/cargo/berth/KPI | G6 | PASS (G6; anchored clock, committed 10 Hz time on every surface, the followed ship at frame time — D-046) |
 | 6 | Ports: container and bulk twins distinct, cranes/berths/yard tied to operations | G7 | pending |
 | 7 | Analytics: charts filter/highlight the map; port call timeline and trade flows aggregate correctly | G8 | pending |
 | 8 | Usability: P0 actions at 1440×900 and 390×844, 2D fallback, no overlaps, accessible alternatives | G9 | pending |
@@ -216,3 +216,35 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
   - Transfer events are not yet animated on cranes (Gate 7).
   - See D-045 and TECHNICAL_DEVIATIONS.
 - **Rollback:** `?v3ShipPreview=0` or revert the gate commit.
+
+## Gate 6 — One clock at up to 100×
+
+- **Source paths:**
+  - Clock: `src/core/scenarioClock.ts` (playback anchor, `simAt`, `absorbStall`, `advanceTo`, kit speed presets,
+    `rateLabel`) and `src/stores/clock.ts` (`frameTimeAt`, re-anchoring on play, rate, seek and wrap).
+  - Track lookup: `src/engines/tracks.ts` (`trackChunks`, hourly chunk index).
+  - Map: `src/map/earth/MaritimeOverlay.ts` (`setLivePose(…, atMs)`, `vesselPose().drawn`) and
+    `src/map/PortosEarthView.vue` (follow frame at `frameTimeAt`, adapter `positionAt`).
+  - Sidebar and timeline: `src/features/inspectors/{VesselInspector,CargoPanel}.vue`,
+    `src/selectors/vesselCargo.ts` and `src/features/replay/ReplayTimeline.vue`.
+  - Fixtures: `scripts/generate_demo_data.py` (`gen_v3`, cargo module 3.1) and `scripts/validate_data.py`.
+- **Acceptance (spec 07/01, 07/02):**
+  - Speed menu offers 0.25, 1, 2, 5, 10, 25, 50 and 100×: PASS (`v3clock.spec.ts`).
+  - VSL-0047 at 100×: the map, the inspector (`vessel-position`) and the timeline (`replay-time`) show the same
+    instant, and the drawn position equals the track engine at that instant: PASS (`v3clock.spec.ts`).
+  - Pause, step away and step back reproduce the same map pose and sidebar: PASS (`v3clock.spec.ts`).
+  - Following at 100×: the live pose is the engine position at its own frame time: PASS (`v3clock.spec.ts`).
+  - Cargo on the same clock: VSL-0255 at 100× from 11:48Z discharges after 11:50Z, the workshop and the summary
+    agree, and stepping back before 11:50Z restores 520 boxes: PASS (`v3clock.spec.ts`).
+  - A reload never resumes playback: PASS (`v3clock.spec.ts`).
+  - Anchor arithmetic, stall absorption, rate change without a jump and chunked lookup equal to a full search for
+    every vessel: PASS (`clock.test.ts`).
+  - Crane moves never start before `BERTH_OCCUPIED` or end after the planned departure; VSL-0001 has no transfers:
+    PASS (`validate_data.py`, `cargo.test.ts`).
+  - Screenshots in `docs/qa/v3-g6/`, at both sizes (8 images): `clock-100x-follow`, `clock-100x-cargo`,
+    `region-sea` and `vessel-cargo`.
+- **PARTIAL:**
+  - Surfaces other than the followed ship update at the 10 Hz commit, not every frame (D-046).
+  - Phones still show the < 768 px notice until Gate 9.
+- **Rollback:** revert the gate commit. The clock has no flag: the anchored clock produces the same times as the
+  V2 sum at a steady frame rate.

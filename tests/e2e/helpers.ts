@@ -59,7 +59,9 @@ export interface PortosAdapter {
     sogKn: number | null;
     cogDeg: number | null;
     vesselType: string;
+    drawn?: { lat: number; lon: number; atMs: number };
   } | null;
+  positionAt(id: string, t: number): { lat: number; lon: number; state: string } | null;
 }
 
 declare global {

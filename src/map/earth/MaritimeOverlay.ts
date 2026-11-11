@@ -82,6 +82,8 @@ export interface VesselPose {
   /** V3 band (dot … inspection) and the projected hull length in CSS px that chose it. */
   band?: LodBand;
   px?: number;
+  /** Where the ship is drawn and the scenario time that position is for (the frame time while followed). */
+  drawn?: { lat: number; lon: number; atMs: number };
 }
 
 /**
@@ -134,7 +136,7 @@ export class MaritimeOverlay {
   private focus: MapFocus = { vesselIds: [], routeIds: [], hazardIds: [], portIds: [], voyageId: null, point: null };
   private clustered: ReadonlySet<string> = new Set();
   /** Per-frame pose of the followed vessel (between 10 Hz clock commits) and the instance slots it occupies. */
-  private live: { id: string; point: GeoPoint; cogDeg: number | null } | null = null;
+  private live: { id: string; point: GeoPoint; cogDeg: number | null; atMs: number } | null = null;
   private liveSlots: { b: InstanceBuffers; mesh: THREE.Mesh; k: number; ring: boolean }[] = [];
   private hoverId: string | null = null;
   private hoverPortId: string | null = null;
@@ -917,7 +919,7 @@ export class MaritimeOverlay {
    * Per-frame position of one vessel (the followed one) between clock commits, from the same track engine at the
    * frame's scenario time. Only its own instance slots are rewritten; `null` returns it to the committed marker.
    */
-  setLivePose(id: string | null, point?: GeoPoint, cogDeg: number | null = null) {
+  setLivePose(id: string | null, point?: GeoPoint, cogDeg: number | null = null, atMs = this.sceneTimeMs) {
     if (!id || !point) {
       if (this.live) {
         this.live = null;
@@ -926,7 +928,7 @@ export class MaritimeOverlay {
       return;
     }
     const retarget = this.live?.id !== id;
-    this.live = { id, point, cogDeg };
+    this.live = { id, point, cogDeg, atMs };
     if (retarget || !this.liveSlots.length) {
       this.writeVessels();
       return;
@@ -957,7 +959,11 @@ export class MaritimeOverlay {
 
   /** How a drawn vessel is rendered: model, motion state, displayed heading, wake length and LOD tier. */
   vesselPose(id: string): VesselPose | null {
-    return this.poses.get(id) ?? null;
+    const pose = this.poses.get(id);
+    const m = this.markerById.get(id);
+    if (!pose || !m) return pose ?? null;
+    const p = this.pointOf(m);
+    return { ...pose, drawn: { lat: p.lat, lon: p.lon, atMs: this.live?.id === id ? this.live.atMs : this.sceneTimeMs } };
   }
 
   stats() {

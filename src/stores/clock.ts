@@ -2,7 +2,10 @@ import { defineStore } from 'pinia';
 import { computed, ref, shallowRef } from 'vue';
 import { parseUtc, toIsoUtc } from '@/core/time';
 import {
-  advance,
+  absorbStall,
+  advanceTo,
+  anchorAt,
+  simAt,
   clampToWindow,
   rangeAround,
   rangeHours,
@@ -10,6 +13,7 @@ import {
   type ClockMode,
   type ClockState,
   type LoopRangeKey,
+  type PlaybackAnchor,
   type PlaybackRate,
 } from '@/core/scenarioClock';
 
@@ -45,6 +49,7 @@ export const useClockStore = defineStore('clock', () => {
   let raf = 0;
   let lastWall = 0;
   let lastCommit = 0;
+  let anchor: PlaybackAnchor = anchorAt(DEFAULT_ANCHOR, 0, 10);
 
   const playing = computed(() => mode.value === 'playing');
   const phase = computed<ClockPhase>(() => (timeMs.value < anchorMs.value ? 'history' : timeMs.value > anchorMs.value ? 'simulation' : 'now'));
@@ -91,6 +96,10 @@ export const useClockStore = defineStore('clock', () => {
     timeMs.value = t;
     frameMs = t;
     lastSpan.value = null;
+    if (mode.value === 'playing') {
+      lastWall = performance.now();
+      anchor = anchorAt(t, lastWall, rate.value);
+    }
   }
 
   /** Accepts a UTC ISO string; invalid input is ignored and returns false. */
@@ -110,6 +119,15 @@ export const useClockStore = defineStore('clock', () => {
     return frameMs;
   }
 
+  /**
+   * Scenario time at a given rAF / `performance.now()` timestamp, from the playback anchor. Render loops pass their
+   * own frame timestamp so they never lag the clock by a frame, whichever callback runs first.
+   */
+  function frameTimeAt(wall: number) {
+    if (mode.value !== 'playing') return frameMs;
+    return Math.min(rangeEndMs.value, Math.max(frameMs, simAt(absorbStall(anchor, lastWall, wall), wall)));
+  }
+
   function commit(t: number) {
     const from = timeMs.value;
     const to = whole(t);
@@ -120,7 +138,8 @@ export const useClockStore = defineStore('clock', () => {
 
   function tick(wall: number) {
     if (mode.value !== 'playing') return;
-    const r = advance(state(), wall - lastWall);
+    anchor = absorbStall(anchor, lastWall, wall);
+    const r = advanceTo(state(), anchor, wall);
     lastWall = wall;
     frameMs = r.state.scenarioNowUTC;
     if (r.ended) {
@@ -130,6 +149,7 @@ export const useClockStore = defineStore('clock', () => {
       return;
     }
     if (r.wrapped) {
+      anchor = anchorAt(frameMs, wall, rate.value);
       timeMs.value = whole(frameMs);
       lastSpan.value = null;
       lastCommit = wall;
@@ -146,13 +166,14 @@ export const useClockStore = defineStore('clock', () => {
   }
 
   function play(r?: PlaybackRate) {
-    if (r) rate.value = r;
+    if (r) setRate(r);
     if (timeMs.value >= rangeEndMs.value) seekMs(rangeStartMs.value);
     if (mode.value === 'playing') return;
     mode.value = 'playing';
     frameMs = timeMs.value;
     lastWall = performance.now();
     lastCommit = lastWall;
+    anchor = anchorAt(frameMs, lastWall, rate.value);
     stopLoop();
     raf = requestAnimationFrame(tick);
   }
@@ -170,7 +191,14 @@ export const useClockStore = defineStore('clock', () => {
     else play();
   }
 
+  /** While playing, re-anchors at the current frame so the clock keeps its place and only the speed changes. */
   function setRate(r: PlaybackRate) {
+    if (mode.value === 'playing') {
+      const now = performance.now();
+      frameMs = advanceTo(state(), absorbStall(anchor, lastWall, now), now).state.scenarioNowUTC;
+      lastWall = now;
+      anchor = anchorAt(frameMs, now, r);
+    }
     rate.value = r;
   }
 
@@ -242,6 +270,7 @@ export const useClockStore = defineStore('clock', () => {
     seekMs,
     nowUtc,
     frameTimeMs,
+    frameTimeAt,
     play,
     pause,
     toggle,
