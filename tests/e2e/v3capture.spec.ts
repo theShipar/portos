@@ -34,6 +34,8 @@ async function settle(page: Page, extraMs = 1500) {
 export const V3_SHOTS: { name: string; go: (page: Page) => Promise<void> }[] = [
   { name: 'earth', go: async (page) => { await open(page, '/ops/earth'); await settle(page, 2500); } },
   { name: 'region-sea', go: async (page) => { await open(page, '/ops/region/REG-SEA'); await settle(page); } },
+  { name: 'region-sea-focus', go: async (page) => { await open(page, '/ops/region/REG-SEA'); await settle(page); await page.getByTestId('country-pin-VNM').focus(); await page.waitForTimeout(600); } },
+  { name: 'region-sea-iso', go: async (page) => { await open(page, '/ops/region/REG-SEA'); await settle(page); await page.getByTestId('view-preset-iso').click({ force: true }); await settle(page, 900); } },
   { name: 'region-neu', go: async (page) => { await open(page, '/ops/region/REG-NEU'); await settle(page); } },
   { name: 'country-nld', go: async (page) => { await open(page, '/ops/country/CNT-NLD'); await settle(page); } },
   { name: 'port-sin', go: async (page) => { await open(page, '/ops/port/PRT-SIN?time=2026-11-09T10:00:00Z'); await settle(page, 3000); } },

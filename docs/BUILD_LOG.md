@@ -977,3 +977,46 @@ blockers. Status values: implemented / tested / blocked.
   Gate 3.
 - **Blockers:** none.
 
+
+## Phase V3-3 — Country, city and port geographic UX
+
+- **Decisions:** D-043 (lift by `scale.y` 16 % / 260 ms, per-feature rim, hit discs, country pins, Fit / Iso /
+  Top presets, preset memory on back).
+- **Implemented:**
+  - `Region3DScene` (under `v3RegionExtrusion`):
+    - a raised feature scales on Y about the ground, eased out over 260 ms, so the top and walls stay joined;
+    - the per-feature rim goes from 0.32 / 0.55 to 0.95 when raised;
+    - the selected feature stays raised in region scope; `deactivate()` clears the hover;
+    - features under 2.5 % of the span get an invisible pick disc, baked into ground coordinates;
+    - `featureLabelPoint()` (largest-ring centroid with a widest-interior-run fallback for concave rings);
+    - `applyViewPreset('iso' | 'top')`; `liftProgress()`.
+  - `PortosEarthView`:
+    - country pins in region scope (hover / focus raise, click / Enter open, crowded pins fade but stay
+      focusable);
+    - focusing a port label raises its country;
+    - the Fit / Iso / Top `SegmentedControl` in the planar HUD; a user orbit clears it; back restores it when
+      the cached camera matches;
+    - adapter `lift()`.
+- **Bug found while testing:** the first hit disc used object position and rotation. Raycasts that run before a
+  render see an identity `matrixWorld`, and the disc also sat mirrored on Z (ground rings store −z). The disc is
+  now baked into the geometry with `toGround`, like the tops.
+- **Tested:**
+  - `npm run typecheck` → exit 0. `python3 scripts/validate_data.py` → exit 0. `npm run build` → built in 2.92 s.
+  - `npx vitest run` → 374 passed (24 files). `region3d.test.ts` now covers V3 lift timing and size, the
+    region selection staying raised, hover cleared on deactivate, the Singapore hit disc and the Vietnam label
+    anchor.
+  - `npx playwright test v3countryux --project=chromium` → 5 passed (pin focus / hover lift, Enter opens
+    CNT-VNM, no sticky hover after back, port-label emphasis, Iso 50° / Top 4° / Fit, back restores
+    orientation and preset).
+  - `V3CAPTURE=g3 V3SHOTS=earth,region-sea,region-sea-focus,region-sea-iso,region-neu,country-nld npx playwright
+    test v3capture --project=chromium` → 12 passed; images in `docs/qa/v3-g3/`.
+  - `npx playwright test` (full, before the preset memory) → 93 passed, 1 failed, 26 skipped:
+    - `resilience` "1280 × 800 keeps the region journey working" timed out in `flightDone` (15 s). A serial
+      `--repeat-each=3` rerun → 3 passed. Unloaded, the Earth → SEA flight takes 5.9 s on the test renderer
+      (focus 2,128 ms against 1,040 planned), so four parallel browsers push it past 15 s. Same clock-under-load
+      issue owned by Gate 6.
+  - After the preset memory: `npx playwright test acceptance journeys handoff v3geometry visual drilldown
+    --project=chromium --workers=2` → 29 passed; `npx playwright test journey routes gate layout
+    --project=chromium --workers=2` → 25 passed. Visual baselines unchanged (all 16 passed).
+- **Gate:** P0 #2 PASS (geometry from Gate 2; lift, keyboard parity, pins, presets and back orientation here).
+- **Blockers:** none.

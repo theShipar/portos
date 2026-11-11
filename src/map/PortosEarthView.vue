@@ -42,7 +42,8 @@ import { InputRouter } from '@/spatial/InputRouter';
 import { OverlayProjectionAdapter } from '@/spatial/OverlayProjectionAdapter';
 import { CITIES } from '@/spatial/registry';
 import { EARTH_SCENE_KEY, EarthGlobeScene } from '@/spatial/scenes/EarthGlobeScene';
-import { planarSceneKey, planarToGlobeDistance, portSceneKey, Region3DScene, sceneKindForLevel, type PlanarLevel } from '@/spatial/scenes/Region3DScene';
+import { planarSceneKey, planarToGlobeDistance, portSceneKey, Region3DScene, sceneKindForLevel, type PlanarLevel, type ViewPresetId } from '@/spatial/scenes/Region3DScene';
+import SegmentedControl, { type SegmentOption } from '@/components/ui/SegmentedControl.vue';
 import { PortTwinLayer } from '@/spatial/scenes/portTwin/PortTwinLayer';
 import { BERTH_STATUS_LABEL, buildPortTwin, TWIN_CAPTION, type PortTwinModel } from '@/selectors/portTwin';
 import { SpatialDirector } from '@/spatial/SpatialDirector';
@@ -203,6 +204,63 @@ const scopeCities = computed(() => {
   const parentId = s.level === 'region' ? activeRegionId.value : s.countryId;
   return CITIES.map((ct) => reg.get(ct.id)).filter((e): e is NonNullable<typeof e> => !!e && e.parentId === parentId);
 });
+
+/** V3 country pins in a region: every port country with its own extruded scene. Focus or hover raises the country. */
+const scopeCountryPins = computed(() => {
+  const reg = catalog.registry;
+  const s = view.scope;
+  if (!reg || !flags.v3RegionExtrusion || s.level !== 'region') return [];
+  return [...reg.countryRows.values()]
+    .filter((r) => r.regionIds.includes(s.regionId) && reg.get(r.countryId)?.type === 'country')
+    .map((r) => ({ countryId: r.countryId, iso3: r.iso3, name: r.name }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+});
+const countryPinEls = new Map<string, HTMLElement>();
+const portIso3 = computed(() => {
+  const out = new Map<string, string>();
+  for (const r of catalog.registry?.countryRows.values() ?? []) for (const p of r.portIds) out.set(p, r.iso3);
+  return out;
+});
+
+/** Keyboard focus and pointer hover on a pin give the country the same raised emphasis (spec 23 C.02). */
+function emphasizeCountry(iso3: string | null) {
+  const sc = surface.value;
+  if (sc instanceof Region3DScene && sc.active && view.scope.level !== 'earth') sc.setHoverHighlight(iso3 ? [iso3] : null);
+}
+
+function openCountry(countryId: string) {
+  const c = catalog.catalog;
+  const reg = catalog.registry;
+  if (!c || !reg || director?.busy) return;
+  const scope = scopeFromSceneRef(c, reg, { level: 'country', id: countryId });
+  if (!scope) return;
+  tooltip.value = null;
+  nav.openScope(scope);
+}
+
+const viewPreset = ref<ViewPresetId | null>('fit');
+const VIEW_PRESET_OPTIONS: SegmentOption<ViewPresetId>[] = [
+  { id: 'fit', label: 'Fit', title: 'Frame the whole scope', testid: 'view-preset-fit' },
+  { id: 'iso', label: 'Iso', title: 'Isometric view (50° tilt)', testid: 'view-preset-iso' },
+  { id: 'top', label: 'Top', title: 'Top-down view', testid: 'view-preset-top' },
+];
+/** Back to a scope restores its preset only if the cached camera came back with the same orientation. */
+const presetMemory = new Map<string, { id: ViewPresetId; orbit: { polarDeg: number; azimuthDeg: number } }>();
+let pendingPreset: { id: ViewPresetId; orbit: { polarDeg: number; azimuthDeg: number }; focusId: string } | null = null;
+function settlePendingPreset(sc: Region3DScene) {
+  if (!pendingPreset || sc.flying || director?.busy || sc.key.split(':')[1] !== pendingPreset.focusId) return;
+  const o = sc.orbitState();
+  const same = Math.abs(o.polarDeg - pendingPreset.orbit.polarDeg) < 1 && Math.abs(o.azimuthDeg - pendingPreset.orbit.azimuthDeg) < 1;
+  if (same) viewPreset.value = pendingPreset.id;
+  pendingPreset = null;
+}
+function setViewPreset(id: ViewPresetId) {
+  const sc = surface.value;
+  if (!(sc instanceof Region3DScene)) return;
+  viewPreset.value = id;
+  if (id === 'fit') void sc.flyTo(presetFor(view.scope, sc));
+  else void sc.applyViewPreset(id);
+}
 
 function openCity(cityId: string) {
   const c = catalog.catalog;
@@ -696,6 +754,25 @@ function onFrame(_now: number, dirty: boolean) {
   for (const r of regions.value) place(labelEls.get(r.regionId), sc, r.center.lat, r.center.lon, atEarth, 0, atEarth ? taken : undefined);
   for (const ct of scopeCities.value) place(cityLabelEls.get(ct.id), sc, ct.center.lat, ct.center.lon, true, 0, taken, -22);
   for (const p of scopePorts.value) place(portLabelEls.get(p.portId), sc, p.point.lat, p.point.lon, true, 9, taken);
+  if (sc instanceof Region3DScene) settlePendingPreset(sc);
+  if (sc instanceof Region3DScene)
+    for (const cp of scopeCountryPins.value) {
+      const pt = sc.featureLabelPoint(cp.iso3);
+      const el = countryPinEls.get(cp.iso3);
+      if (!el) continue;
+      if (!pt) {
+        el.style.visibility = 'hidden';
+        continue;
+      }
+      // Crowded pins fade rather than hide: hidden buttons could not take keyboard focus.
+      place(el, sc, pt.lat, pt.lon, true, 0);
+      const g = geoProject(sc, pt.lat, pt.lon);
+      const w = labelWidth(el) / 2;
+      const r = { x0: g.x - w, x1: g.x + w, y0: g.y - 9, y1: g.y + 9 };
+      const crowded = taken.some((t) => r.x0 < t.x1 && r.x1 > t.x0 && r.y0 < t.y1 && r.y1 > t.y0);
+      el.classList.toggle('country-pin--crowded', crowded);
+      if (!crowded) taken.push(r);
+    }
   for (const b of twinBerths.value) place(berthLabelEls.get(b.berthId), sc, b.center.lat, b.center.lon, true, 0, b.berthId === view.berthId ? undefined : taken, 14);
   for (const a of twinAnchorages.value) place(anchorageLabelEls.get(a.anchorageId), sc, a.labelPoint.lat, a.labelPoint.lon, true, 0, taken);
   for (const cl of clusters.value.clusters) placeBadge(clusterEls.get(cl.id), sc, cl.center.lat, cl.center.lon, taken);
@@ -906,6 +983,7 @@ function bindSurface(surf: MapSurface, ov: MaritimeOverlay) {
       whenActive(() => {
         tooltip.value = null;
         stackMenu.value = null;
+        viewPreset.value = null;
       }),
     ),
     surf.onFrame(whenActive(followFrame)),
@@ -986,6 +1064,7 @@ function exposeTestAdapter(sc: EarthScene) {
       if (!(s instanceof Region3DScene) || !s.geoDoc) return null;
       return { id: s.geoDoc.id, clip: s.geoDoc.clip, focusBounds: s.geoDoc.focusBounds, features: s.geoDoc.features.length, ...s.contextStats() };
     },
+    lift: (iso3: string) => (surface.value instanceof Region3DScene ? { progress: surface.value.liftProgress(iso3), fraction: surface.value.liftFraction(iso3) } : null),
     vesselScreen: (id: string) => {
       const s = overlay.value?.vesselScreen(id);
       const r = host.value?.getBoundingClientRect();
@@ -1190,6 +1269,17 @@ onMounted(() => {
   init();
 });
 watch(() => [scopeKey(view.scope), view.selection?.id] as const, hidePeek);
+watch(
+  () => scopeKey(view.scope),
+  (next, prev) => {
+    const sc = surface.value;
+    if (prev && viewPreset.value && viewPreset.value !== 'fit' && sc instanceof Region3DScene) presetMemory.set(prev, { id: viewPreset.value, orbit: sc.orbitState() });
+    else if (prev) presetMemory.delete(prev);
+    viewPreset.value = 'fit';
+    const saved = presetMemory.get(next);
+    pendingPreset = saved ? { ...saved, focusId: next.split(':')[1] ?? '' } : null;
+  },
+);
 
 onBeforeUnmount(() => {
   window.clearTimeout(peekTimer);
@@ -1239,8 +1329,26 @@ defineExpose({ resetCamera, scene, surface, overlay });
         :aria-label="`Focus port ${p.name}`"
         :data-testid="`port-label-${p.portId}`"
         @click="openPort(p.portId)"
+        @focus="emphasizeCountry(portIso3.get(p.portId) ?? null)"
+        @blur="emphasizeCountry(null)"
       >
         {{ p.name }}
+      </button>
+      <button
+        v-for="cp in scopeCountryPins"
+        :key="cp.iso3"
+        :ref="refSetter(countryPinEls, cp.iso3)"
+        type="button"
+        class="country-pin"
+        :aria-label="`Open country ${cp.name}`"
+        :data-testid="`country-pin-${cp.iso3}`"
+        @click="openCountry(cp.countryId)"
+        @focus="emphasizeCountry(cp.iso3)"
+        @blur="emphasizeCountry(null)"
+        @mouseenter="emphasizeCountry(cp.iso3)"
+        @mouseleave="emphasizeCountry(null)"
+      >
+        {{ cp.name }}
       </button>
       <button
         v-for="ct in scopeCities"
@@ -1308,6 +1416,16 @@ defineExpose({ resetCamera, scene, surface, overlay });
           <span ref="scaleTextEl" class="planar-hud__label mono" />
         </span>
       </div>
+      <SegmentedControl
+        v-if="flags.v3RegionExtrusion"
+        class="planar-hud__views"
+        :options="VIEW_PRESET_OPTIONS"
+        :model-value="viewPreset"
+        label="Camera view"
+        size="sm"
+        data-testid="view-presets"
+        @update:model-value="setViewPreset"
+      />
     </div>
     <div
       v-if="stackMenu"
@@ -1430,6 +1548,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
 }
 .region-label,
 .port-label,
+.country-pin,
 .city-label,
 .berth-label,
 .anchorage-label,
@@ -1463,6 +1582,32 @@ defineExpose({ resetCamera, scene, surface, overlay });
   padding: 4px 10px;
   border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
   pointer-events: none;
+}
+.country-pin {
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-chip);
+  background: transparent;
+  color: color-mix(in srgb, var(--color-ink-on-dark) 62%, transparent);
+  font-size: var(--text-11);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px color-mix(in srgb, var(--map-scrim) 90%, transparent);
+  cursor: pointer;
+  transition:
+    color var(--motion-hover) ease,
+    opacity var(--motion-hover) ease;
+}
+.country-pin:hover,
+.country-pin:focus-visible {
+  border-color: color-mix(in srgb, var(--map-line) 45%, transparent);
+  background: color-mix(in srgb, var(--map-scrim) 80%, transparent);
+  color: var(--color-ink-on-dark);
+  opacity: 1;
+}
+.country-pin--crowded {
+  opacity: 0.28;
 }
 .city-label {
   padding: 2px 8px;
@@ -1619,6 +1764,9 @@ defineExpose({ resetCamera, scene, surface, overlay });
   border-radius: var(--radius-chip);
   background: color-mix(in srgb, var(--map-scrim) 72%, transparent);
   color: color-mix(in srgb, var(--color-ink-on-dark) 86%, transparent);
+}
+.planar-hud__views {
+  pointer-events: auto;
 }
 .planar-hud__north {
   display: grid;

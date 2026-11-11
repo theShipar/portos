@@ -12,7 +12,7 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 | # | P0 requirement | Gate | Status |
 |---|---|---|---|
 | 1 | Visual: map ≥ 75 % at 1440×900, Urbanist, token spacing, quiet glass | G1 | PASS (G1) |
-| 2 | Geographic: whole continent, no rectangular cutout, rotatable, country hover lifts top + sidewall, city/port drilldown | G2, G3 | PARTIAL (G2: whole geometry, ghosts, fit; hover/pins in G3) |
+| 2 | Geographic: whole continent, no rectangular cutout, rotatable, country hover lifts top + sidewall, city/port drilldown | G2, G3 | PASS (G2 geometry; G3 lift, pins, presets, back) |
 | 3 | Vessel: type-differentiated near and far LOD, no popping, heading/status match, no wake when moored | G4 | pending |
 | 4 | Inspection: 3D preview, origin → destination tracker, container/hold selection from fixture, correct shipment | G5 | pending |
 | 5 | Simulation: pause/play/scrub, 1×–100×, one clock for movement/ETA/cargo/berth/KPI | G6 | pending |
@@ -92,3 +92,38 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 - **Rollback:** `?v3RegionExtrusion=0` (scene behaviour) or revert the gate commit (also restores the clipped
   geometry files).
 
+## Gate 3 — Country, city and port geographic UX
+
+- **Source paths:** `src/spatial/scenes/Region3DScene.ts` (V3 lift by `scale.y`, per-feature rim, hit discs,
+  `featureLabelPoint`, `applyViewPreset`, `liftProgress`, hover cleared on `deactivate`),
+  `src/map/PortosEarthView.vue` (country pins, port-label focus emphasis, Fit / Iso / Top control, preset memory
+  on back, adapter `lift()`), `tests/e2e/helpers.ts`, `tests/e2e/v3capture.spec.ts` (`region-sea-focus`,
+  `region-sea-iso`).
+- **Acceptance (spec 23, 24, 25):**
+  - Hover lifts top + sidewalls by 16 % of the extrusion (spec 12–20 %) over 260 ms (spec 220–320), eased, with
+    no top/wall gap because the group scales about the ground: PASS (`region3d.test.ts`: partial at 112 ms,
+    complete by 272 ms, back to 0 on leave).
+  - Rim strength rises on hover (0.32 / 0.55 → 0.95): PASS (code; visible in `desktop-region-sea-focus.png`).
+  - Keyboard focus gives the same raised emphasis as hover: PASS (`v3countryux.spec.ts`: pin focus → VNM lift 1,
+    blur → 0; pointer hover on the THA pin → 1, leave → 0).
+  - Selected country keeps its lift in region scope; hover cleared on deactivate: PASS (`region3d.test.ts`).
+  - No sticky hover after drilldown and back: PASS (`v3countryux.spec.ts`: Enter on the VNM pin opens
+    `/ops/country/CNT-VNM`; back leaves VNM flat).
+  - Small countries get an enlarged invisible hit area: PASS (`region3d.test.ts`: Singapore picks at its centre
+    and 6 px off it in REG-SEA; the visible polygon is unchanged).
+  - Country pins are anchored inside concave countries: PASS (`region3d.test.ts`: the Vietnam anchor picks VNM).
+  - Port label focus raises its country without opening the port: PASS (`v3countryux.spec.ts`, PRT-HCM → VNM).
+  - Isometric and top presets; Fit restores the scope framing: PASS (`v3countryux.spec.ts`: polar 50° at azimuth
+    35°, 4°, then the fit polar).
+  - Back returns the same orientation and preset (spec 24 C.02): PASS (`v3countryux.spec.ts`).
+  - Earth → region → country → city → port forward and back without refresh: PASS (`acceptance.spec.ts`,
+    `journey.spec.ts`, unchanged and green).
+  - Screenshots: `docs/qa/v3-g3/desktop-region-sea-focus.png` (Vietnam raised, rim lit, pin focused),
+    `desktop-region-sea-iso.png` (isometric preset with extruded walls), plus region, country and Earth at both
+    sizes (12 images).
+- **PARTIAL:** the phone map is still covered by the "needs 768 px" note, so the touch form of pins and presets
+  is Gate 9. Pins cover drillable countries only (D-043).
+- **Known deviations:** lift by scale, pins for drillable countries only, Top preset below 20° (D-043,
+  TECHNICAL_DEVIATIONS).
+- **Rollback:** `?v3RegionExtrusion=0` (V2 translate lift, no pins, no presets, no hit discs) or revert the gate
+  commit.

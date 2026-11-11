@@ -723,3 +723,41 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
     shrank, because neighbours are now coarse ghosts.
   - The flag rolls back scene behaviour (sea size, graticule extent, ghosts, fit). The geometry files are shared,
     so `v3RegionExtrusion=0` shows whole focus land without ghosts, not the V2 clipped plate.
+
+## D-043 Country lift, country pins and camera presets (V3 Gate 3)
+
+- **Context:**
+  - V3 spec 23 asks for a hover that lifts the whole country (top and sidewalls) by 12–20 % of the extrusion over
+    220–320 ms, with no gap between top and walls, the same emphasis on keyboard focus, a selected country that
+    stays raised, no sticky hover after drilldown, and enlarged hit areas for small countries.
+  - V2 moved the whole feature group up by at most 2 % of the frame with an exponential ease. The walls were
+    translated rather than stretched, so the lifted plate floated on its own shadow.
+  - Spec 24 and 25 ask for city/port navigation that returns to the same orientation, and isometric camera
+    presets.
+- **Decision:**
+  - *Lift:* under `v3RegionExtrusion`, a raised feature scales its group on Y about the ground:
+    `scale.y = 1 + 0.16·v`. The top rises 16 % of the extrusion and the walls stretch with it, so they stay
+    attached. `v` eases out (cubic) over 260 ms (`LIFT_MS`), up and down. Reduced motion jumps straight to the
+    target. The V2 translate path stays for `?v3RegionExtrusion=0`.
+  - *Rim:* every feature has its own rim material. Its opacity goes from 0.55 (focus coast) or 0.32 (border)
+    idle to 0.95 when raised.
+  - *Raised:* hovered or keyboard-emphasised features, plus the selected feature in region scope. Port scenes
+    never lift. `deactivate()` clears the hover and settles the lift, so a scene left by drilldown comes back
+    flat.
+  - *Small countries:* a feature smaller than 2.5 % of the span gets an invisible disc pick target, 1.5 % of
+    the span in radius, baked into ground coordinates like the tops. Singapore picks reliably at region scale;
+    the visible polygon is unchanged.
+  - *Country pins:* region scope shows a pin for every port country that has its own scene
+    (`country-pin-ISO3`, "Open country …"). The pin sits at the centroid of the country's largest ring, or, for
+    concave rings like Vietnam, at the middle of the widest interior run on that latitude. Hover or focus raises
+    the country; click or Enter opens it. Crowded pins fade to 0.28 instead of hiding, so they stay in the tab
+    order. Focusing a port label raises its country without opening the port.
+  - *Camera presets:* the planar HUD has a Fit / Iso / Top segmented control. Iso is 50° from vertical at a 35°
+    azimuth and Top is 4°, both at the current target and distance. Fit flies to the scope preset. Any user
+    orbit clears the selection.
+  - *Back:* leaving a scope with Iso or Top remembers it. When the scene cache brings that scope back with the
+    same orientation (within 1°), the control shows the preset again; otherwise it shows Fit.
+- **Consequences:**
+  - The lift reads clearly at region scale and stays inside the V2 hover budget: 16 % of the 1.2 % extrusion
+    fraction is 0.19 % of the span (V2 allowed 0.6 %).
+  - Pins only cover drillable countries. Context countries are ghosts and have no pin (D-042).

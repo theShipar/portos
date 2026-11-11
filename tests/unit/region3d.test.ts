@@ -7,7 +7,7 @@ import { parseGeoDoc } from '@/spatial/geoData';
 import { InputRouter } from '@/spatial/InputRouter';
 import { OverlayProjectionAdapter } from '@/spatial/OverlayProjectionAdapter';
 import { CITIES } from '@/spatial/registry';
-import { EXTRUDE_FRACTION, FIT_GROW, GHOST_LINE_OPACITY, globeToPlanarDistance, HOVER_LIFT_FRACTION, planarSceneKey, planarToGlobeDistance, Region3DScene, type Region3DOptions } from '@/spatial/scenes/Region3DScene';
+import { EXTRUDE_FRACTION, FIT_GROW, GHOST_LINE_OPACITY, globeToPlanarDistance, HOVER_LIFT_FRACTION, LIFT_MS, V3_HOVER_LIFT_FRACTION, planarSceneKey, planarToGlobeDistance, Region3DScene, type Region3DOptions } from '@/spatial/scenes/Region3DScene';
 
 const W = 1200;
 const H = 800;
@@ -168,20 +168,65 @@ describe('Region3DScene', () => {
     scene.dispose();
   });
 
-  it('lifts a hovered feature by at most 2 % of the frame and settles back', async () => {
+  it('V3: lifts the hovered feature top and walls by 16 % of the extrusion over 260 ms, without a gap', async () => {
     const { scene } = makeScene(sinEntry);
     await scene.preload(new AbortController().signal);
     scene.activate();
     scene.setReducedMotion(false);
     scene.setHoverHighlight(['SGP']);
     let now = 0;
-    for (let i = 0; i < 120; i++) scene.updateFrame({ nowMs: (now += 16), dtMs: 16 });
+    const step = (ms: number) => {
+      for (let t = 0; t < ms; t += 16) scene.updateFrame({ nowMs: (now += 16), dtMs: 16 });
+    };
+    step(112);
+    const mid = scene.liftProgress('SGP');
+    expect(mid).toBeGreaterThan(0.4);
+    expect(mid).toBeLessThan(1);
+    step(160);
+    expect(scene.liftProgress('SGP')).toBe(1);
     const lift = scene.liftFraction('SGP');
-    expect(lift).toBeCloseTo(HOVER_LIFT_FRACTION, 4);
-    expect(lift).toBeLessThanOrEqual(0.02);
+    expect(lift).toBeCloseTo(V3_HOVER_LIFT_FRACTION, 9);
+    expect(V3_HOVER_LIFT_FRACTION / EXTRUDE_FRACTION).toBeGreaterThanOrEqual(0.12);
+    expect(V3_HOVER_LIFT_FRACTION / EXTRUDE_FRACTION).toBeLessThanOrEqual(0.2);
+    expect(LIFT_MS).toBeGreaterThanOrEqual(220);
+    expect(LIFT_MS).toBeLessThanOrEqual(320);
+    expect(lift).toBeLessThanOrEqual(HOVER_LIFT_FRACTION);
     scene.setHoverHighlight(null);
-    for (let i = 0; i < 120; i++) scene.updateFrame({ nowMs: (now += 16), dtMs: 16 });
-    expect(scene.liftFraction('SGP')).toBeCloseTo(0, 6);
+    step(320);
+    expect(scene.liftFraction('SGP')).toBeCloseTo(0, 9);
+    scene.dispose();
+  });
+
+  it('V3: keeps a region selection raised, clears hover on deactivate, and enlarges tiny hit targets', async () => {
+    const bounds = { west: 92, south: -11, east: 128, north: 22 };
+    const { scene } = makeScene({ id: 'REG-SEA', type: 'region', label: 'Southeast Asia', bbox: bounds, geometryPath: '/geo/region/REG-SEA.json' });
+    await scene.preload(new AbortController().signal);
+    scene.activate();
+    scene.setReducedMotion(false);
+    let now = 0;
+    const settle = () => {
+      for (let i = 0; i < 30; i++) scene.updateFrame({ nowMs: (now += 16), dtMs: 16 });
+    };
+    scene.selectFeature('VNM');
+    scene.setHoverHighlight(['THA']);
+    settle();
+    expect(scene.liftProgress('VNM')).toBe(1);
+    expect(scene.liftProgress('THA')).toBe(1);
+    scene.deactivate();
+    expect(scene.liftProgress('THA')).toBe(0);
+    expect(scene.liftProgress('VNM')).toBe(1);
+
+    // Singapore is a few pixels wide at region scale: its invisible hit disc still picks it.
+    scene.activate();
+    expect(await scene.flyTo(scene.fitPreset('REG-SEA', 'region', scene.fitBounds(bounds)))).toBe(true);
+    const s = scene.project(1.35, 103.82);
+    const hits = [0, 6, -6].map((d) => scene.pick(s.x + d, s.y + d)?.country?.iso3);
+    expect(hits.filter((h) => h === 'SGP').length).toBeGreaterThanOrEqual(2);
+
+    // Concave Vietnam: the label anchor lies inside the country.
+    const vn = scene.featureLabelPoint('VNM')!;
+    const at = scene.project(vn.lat, vn.lon);
+    expect(scene.pick(at.x, at.y)?.country?.iso3).toBe('VNM');
     scene.dispose();
   });
 

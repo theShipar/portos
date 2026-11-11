@@ -53,6 +53,23 @@ const TILT: Record<PlanarLevel, number> = { region: 0.58, country: 0.66, city: 0
 const MAX_POLAR = 1.15;
 /** V3 whole-geometry extrusion: a scope's framing may grow towards its focus land by this fraction of its span per side. */
 export const FIT_GROW = 0.25;
+/** V3 hover elevation (spec 23): top and side walls rise by this fraction of the extrusion, eased over LIFT_MS. */
+export const HOVER_LIFT_EXTRUSION = 0.16;
+export const LIFT_MS = 260;
+/** Fraction of the frame span a hovered feature's top rises under V3 (test and QA figure). */
+export const V3_HOVER_LIFT_FRACTION = HOVER_LIFT_EXTRUSION * EXTRUDE_FRACTION;
+/** Features smaller than this fraction of the span get an invisible, larger hit disc (narrow coastal states). */
+export const SMALL_FEATURE_FRACTION = 0.025;
+const RIM_IDLE = { coast: 0.55, border: 0.32 };
+const RIM_HOVER = 0.95;
+/** Isometric camera presets: tilt from vertical and azimuth in degrees (spec 25: 30–55° oblique). */
+export const VIEW_PRESETS = {
+  fit: null,
+  iso: { polarDeg: 50, azimuthDeg: 35 },
+  top: { polarDeg: 4, azimuthDeg: 0 },
+} as const;
+export type ViewPresetId = keyof typeof VIEW_PRESETS;
+const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 /** Ghost (context) land: flat fill and outline opacities, within the spec's 0.08–0.22 for lines. */
 export const GHOST_FILL_OPACITY = 0.34;
 export const GHOST_LINE_OPACITY = 0.2;
@@ -86,6 +103,10 @@ interface FeatureParts {
   rings: GroundRing[];
   contour: THREE.Object3D | null;
   country: Country;
+  rim: THREE.LineBasicMaterial;
+  rimIdle: number;
+  /** Lift tween (0 = rest, 1 = raised): from, to, progress, current. */
+  lift: { from: number; to: number; t: number; v: number };
 }
 
 export interface Region3DOptions {
@@ -177,6 +198,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
   private readonly layers = new Set<PlanarSceneLayer>();
   private readonly wholeGeometry = flags.v3RegionExtrusion;
   private contextGroup: THREE.Group | null = null;
+  private readonly labelPoints = new Map<string, { lat: number; lon: number } | null>();
 
   constructor(opts: Region3DOptions) {
     this.opts = opts;
@@ -276,6 +298,12 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.cancelFlight();
     this.activeValue = false;
     this.controls.enabled = false;
+    // No sticky hover after a drilldown or back (spec 23 B.04): the cached scene comes back at rest.
+    if (this.hoverIso3 !== null) {
+      this.hoverIso3 = null;
+      this.applyTones();
+      this.animateLift(0);
+    }
   }
 
   dispose(): void {
@@ -359,8 +387,6 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.scene.add(hemi, sun);
     this.scene.fog = new THREE.Fog(T.ocean, this.span * 2, this.span * 6);
 
-    const borderMat = new THREE.LineBasicMaterial({ color: T.border, transparent: true, opacity: 0.32, depthWrite: false });
-    const coastMat = new THREE.LineBasicMaterial({ color: T.coast, transparent: true, opacity: 0.55, depthWrite: false });
     for (const feature of doc.features) {
       const group = new THREE.Group();
       group.userData.iso3 = feature.iso3;
@@ -384,10 +410,13 @@ export class Region3DScene implements SpatialScene, MapSurface {
       }
       if (!allRings.length) continue;
       group.add(createSideWalls(allRings, this.topY, 0, wall));
-      group.add(boundarySegments(allRings, this.portId ? this.topY + 0.4 * UNITS_PER_METRE : this.topY * 1.002, feature.focus ? coastMat : borderMat));
+      const rimIdle = feature.focus ? RIM_IDLE.coast : RIM_IDLE.border;
+      const rim = new THREE.LineBasicMaterial({ color: feature.focus ? T.coast : T.border, transparent: true, opacity: rimIdle, depthWrite: false });
+      group.add(boundarySegments(allRings, this.portId ? this.topY + 0.4 * UNITS_PER_METRE : this.topY * 1.002, rim));
+      if (this.wholeGeometry && !this.portId) this.addHitDisc(group, allRings, feature.iso3);
       this.land.add(group);
       const country: Country = { iso3: feature.iso3, name: feature.name, polygons: feature.polygons, bbox: ringsBbox(feature.polygons) };
-      this.features.push({ doc: feature, group, top: tops, wall, rings: allRings, contour: null, country });
+      this.features.push({ doc: feature, group, top: tops, wall, rings: allRings, contour: null, country, rim, rimIdle, lift: { from: 0, to: 0, t: 1, v: 0 } });
       if (feature.focus) this.scopeIso3.add(feature.iso3);
     }
 
@@ -526,6 +555,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
         f.contour = null;
       }
     }
+    if (this.wholeGeometry) this.applyTones();
     this.invalidate();
   }
 
@@ -539,12 +569,42 @@ export class Region3DScene implements SpatialScene, MapSurface {
       const color = hovered ? T.landHover : this.scopeIso3.has(f.doc.iso3) ? T.landScope : T.land;
       for (const t of f.top) t.material.color.copy(color);
       (f.wall.uniforms.topColor.value as THREE.Color).copy(hovered ? T.border : T.wallTop);
-      f.group.userData.targetLift = hovered && !this.portId ? this.span * HOVER_LIFT_FRACTION : 0;
+      if (this.wholeGeometry) {
+        f.rim.opacity = hovered ? RIM_HOVER : f.rimIdle;
+        // A committed selection in a region keeps its lift while the camera moves (spec 23 B.03).
+        const raised = !this.portId && (hovered || (this.level === 'region' && f.doc.iso3 === this.selectedIso3));
+        const to = raised ? 1 : 0;
+        if (to !== f.lift.to) f.lift = { from: f.lift.v, to, t: 0, v: f.lift.v };
+      } else f.group.userData.targetLift = hovered && !this.portId ? this.span * HOVER_LIFT_FRACTION : 0;
     }
     this.invalidate();
   }
 
+  /** Invisible, larger pick target over a feature too small to hit reliably (it lifts with the feature). */
+  private addHitDisc(group: THREE.Group, rings: GroundRing[], iso3: string) {
+    let x0 = Infinity;
+    let x1 = -Infinity;
+    let z0 = Infinity;
+    let z1 = -Infinity;
+    for (const r of rings)
+      for (const p of r) {
+        x0 = Math.min(x0, p.x);
+        x1 = Math.max(x1, p.x);
+        z0 = Math.min(z0, p.y);
+        z1 = Math.max(z1, p.y);
+      }
+    if (Math.max(x1 - x0, z1 - z0) >= this.span * SMALL_FEATURE_FRACTION) return;
+    // Baked like the tops: raycasts may run before the first render updates matrixWorld.
+    const circle = new THREE.CircleGeometry(this.span * SMALL_FEATURE_FRACTION * 0.6, 20).translate((x0 + x1) / 2, (z0 + z1) / 2, 0);
+    const disc = new THREE.Mesh(toGround(circle, this.topY * 1.01), new THREE.MeshBasicMaterial({ visible: false }));
+    disc.userData.iso3 = iso3;
+    disc.userData.hitDisc = true;
+    group.add(disc);
+    this.topMeshes.push(disc);
+  }
+
   private animateLift(dtMs: number): boolean {
+    if (this.wholeGeometry) return this.animateLiftV3(dtMs);
     let moving = false;
     const k = this.reducedMotion ? 1 : 1 - Math.exp(-dtMs / 70);
     for (const f of this.features) {
@@ -563,10 +623,62 @@ export class Region3DScene implements SpatialScene, MapSurface {
     return moving;
   }
 
-  /** Current hover lift of a feature as a fraction of the frame span (spec: ≤ 2 %). */
+  /**
+   * V3: the whole feature group (tops, side walls, rim, contour) scales up from the sea level, so the top rises by
+   * HOVER_LIFT_EXTRUSION of the extrusion and the walls stretch with it: no gap between top and wall.
+   */
+  private animateLiftV3(dtMs: number): boolean {
+    let moving = false;
+    for (const f of this.features) {
+      const l = f.lift;
+      if (l.t >= 1 && l.v === l.to) continue;
+      l.t = this.reducedMotion || !dtMs ? 1 : Math.min(1, l.t + dtMs / LIFT_MS);
+      l.v = l.from + (l.to - l.from) * easeOutCubic(l.t);
+      f.group.scale.y = 1 + HOVER_LIFT_EXTRUSION * l.v;
+      moving = true;
+    }
+    return moving;
+  }
+
+  /** Current hover lift of a feature's top as a fraction of the frame span (spec: ≤ 2 %). */
   liftFraction(iso3: string): number {
     const f = this.features.find((x) => x.doc.iso3 === iso3);
-    return f ? f.group.position.y / this.span : 0;
+    if (!f) return 0;
+    return this.wholeGeometry ? ((f.group.scale.y - 1) * this.topY) / this.span : f.group.position.y / this.span;
+  }
+
+  /** Lift progress of a feature, 0 (rest) to 1 (raised), for QA. */
+  liftProgress(iso3: string): number {
+    return this.features.find((x) => x.doc.iso3 === iso3)?.lift.v ?? 0;
+  }
+
+  /** Label anchor for a feature: area-weighted centroid of its largest outer ring, or null before the build. */
+  featureLabelPoint(iso3: string): { lat: number; lon: number } | null {
+    const cached = this.labelPoints.get(iso3);
+    if (cached !== undefined) return cached;
+    const f = this.features.find((x) => x.doc.iso3 === iso3);
+    if (!f || !this.proj) return null;
+    let best: [number, number][] | null = null;
+    let bestArea = 0;
+    for (const poly of f.doc.polygons) {
+      const a = Math.abs(ringArea(poly[0]));
+      if (a > bestArea) {
+        bestArea = a;
+        best = poly[0];
+      }
+    }
+    const c = best ? ringCentroid(best) : null;
+    const pt = c ? { lon: normalizeLon(c[0]), lat: c[1] } : null;
+    this.labelPoints.set(iso3, pt);
+    return pt;
+  }
+
+  /** Camera preset on the current target and distance: isometric (50° tilt, 35° azimuth) or near top-down. */
+  applyViewPreset(id: Exclude<ViewPresetId, 'fit'>): Promise<boolean> {
+    const p = VIEW_PRESETS[id];
+    const o = this.orbit();
+    const goal: Orbit = { target: o.target, distance: o.distance, polar: Math.min(MAX_POLAR, p.polarDeg * DEG), azimuth: p.azimuthDeg * DEG };
+    return this.flyToOrbit(goal, this.reducedMotion ? 0 : 0.6);
   }
 
   // ---- camera ---------------------------------------------------------------------------------------------------
@@ -669,6 +781,13 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.controls.maxDistance = Math.max(Math.min(this.span * 1.6, globeToPlanarDistance(preset.maxDistance)), goal.distance);
     const travel = from.target.distanceTo(goal.target) / Math.max(goal.distance, from.distance);
     const duration = opts.duration ?? (this.reducedMotion ? 0 : Math.min(1.2, 0.7 + travel * 0.25 + Math.abs(Math.log(goal.distance / from.distance)) * 0.15));
+    return this.flyToOrbit(goal, duration);
+  }
+
+  /** Tweens the orbit to a goal (log-distance, shortest azimuth); resolves false when cancelled. */
+  private flyToOrbit(goal: Orbit, duration: number): Promise<boolean> {
+    this.cancelFlight();
+    const from = this.orbit();
     let dAz = goal.azimuth - from.azimuth;
     if (dAz > Math.PI) dAz -= 2 * Math.PI;
     if (dAz < -Math.PI) dAz += 2 * Math.PI;
@@ -1084,6 +1203,56 @@ function growLonLat(b: Bounds, k: number): Bounds {
   const gx = Math.min(30, (b.east - b.west) * k);
   const gy = Math.min(30, (b.north - b.south) * k);
   return { west: b.west - gx, east: b.east + gx, south: Math.max(-80, b.south - gy), north: Math.min(80, b.north + gy) };
+}
+
+function ringArea(ring: [number, number][]): number {
+  let a = 0;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) a += ring[j][0] * ring[i][1] - ring[i][0] * ring[j][1];
+  return a / 2;
+}
+
+/** Area-weighted centroid of a lon/lat ring (planar; fine for label anchors inside one scope). */
+function ringCentroid(ring: [number, number][]): [number, number] | null {
+  const a = ringArea(ring);
+  if (Math.abs(a) < 1e-12) return null;
+  let cx = 0;
+  let cy = 0;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const f = ring[j][0] * ring[i][1] - ring[i][0] * ring[j][1];
+    cx += (ring[j][0] + ring[i][0]) * f;
+    cy += (ring[j][1] + ring[i][1]) * f;
+  }
+  const c: [number, number] = [cx / (6 * a), cy / (6 * a)];
+  return pointInRing(c, ring) ? c : widestSpanMidpoint(ring, c[1]);
+}
+
+function pointInRing(p: [number, number], ring: [number, number][]): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if (yi > p[1] !== yj > p[1] && p[0] < ((xj - xi) * (p[1] - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+
+/** Concave rings (Vietnam, Chile): the middle of the widest interior run along the centroid's latitude. */
+function widestSpanMidpoint(ring: [number, number][], y: number): [number, number] | null {
+  const xs: number[] = [];
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    if (yi > y !== yj > y) xs.push(xi + ((y - yi) * (xj - xi)) / (yj - yi));
+  }
+  xs.sort((a, b) => a - b);
+  let best: [number, number] | null = null;
+  let width = 0;
+  for (let k = 0; k + 1 < xs.length; k += 2)
+    if (xs[k + 1] - xs[k] > width) {
+      width = xs[k + 1] - xs[k];
+      best = [(xs[k] + xs[k + 1]) / 2, y];
+    }
+  return best;
 }
 
 function ringsBbox(polys: [number, number][][][]): Bounds {
