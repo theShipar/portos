@@ -9,7 +9,7 @@ listed as not run) or `NOT RUN`.
 
 | Field | Value |
 |---|---|
-| Commit | `__COMMIT__` (Phase 9, on top of `0ed82b0`) |
+| Commit | `4ead6f3` (Phase 9, on top of `0ed82b0`) |
 | Date | 2026-11-11 |
 | Tester | agent (Playwright, automated); no manual pass was performed |
 | Environment (functional) | Playwright 1.x Chromium 158.0.8127.18 headless, ANGLE SwiftShader (CPU WebGL), macOS 27.2 (Darwin), Apple M4 Pro; production build `vite build --mode e2e` served by `vite preview` |
