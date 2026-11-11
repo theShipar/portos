@@ -89,8 +89,10 @@ export function focusDurationMs(from: CameraPose, to: { lat: number; lon: number
 }
 
 export const DIVE_MS = 620;
-export const HANDOFF_MS = 520;
-export const SETTLE_MS = 440;
+export const HANDOFF_MS = 580;
+export const SETTLE_MS = 520;
+/** V3 motion spec: the visible handoff (reveal plus settle) of an Earth/region/country dive lasts 850–1400 ms. */
+export const V3_HANDOFF_TOTAL = { min: 850, max: 1400 } as const;
 
 function presetFromPose(pose: CameraPose, limits: CameraPreset): CameraPreset {
   return { id: 'restore', scope: limits.scope, center: { lat: pose.lat, lon: pose.lon }, distance: pose.distance, minDistance: limits.minDistance, maxDistance: limits.maxDistance };

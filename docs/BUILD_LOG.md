@@ -931,3 +931,49 @@ blockers. Status values: implemented / tested / blocked.
 - **Gate:** P0 #1 (visual system) PASS. Next gate unblocked.
 - **Blockers:** none.
 
+## Phase V3-2 — Region extrusion without the rectangle
+
+- **Decisions:** D-042 (whole focus geometry, ghost context, wide-frame city clip, geometry-based fit, handoff
+  1,100 ms).
+- **Implemented:**
+  - `scripts/build_geo.py`:
+    - region and country focus polygons are kept whole (holes and islands);
+    - regions focus every port country;
+    - non-focus land becomes `context` rings from 50m, simplified more with distance from the scope;
+    - city land is clipped to bbox ± 200 % of the span;
+    - each file records `focusBounds` and `clip`;
+    - provenance text updated.
+  - `public/geo/**` regenerated: 62 files, 2,148 KiB (V2 was 2.2 MB).
+    - A first pass that kept 10m context for small countries came to 5,017 KiB (`CNT-KOR` alone was 336 KiB of
+      whole China and Russia). That led to the 50m-only context and the distance-scaled tolerance.
+  - `Region3DScene`:
+    - batched ghost fill (0.34) and outline (0.2), outside the pick list;
+    - `fitBounds()` grows the scope bounds towards `focusBounds` by at most 25 % per side;
+    - the pan clamp covers that fit;
+    - the sea plane is 14 spans wide and the graticule runs up to 30° past the frame (both fade into fog);
+    - `contextStats()` for QA.
+  - `PortosEarthView`: region and country presets use `fitBounds`; the adapter gains `geometry()`.
+  - `EarthGeographyBridge`: handoff 580 ms and settle 520 ms (total 1,100; `V3_HANDOFF_TOTAL` 850–1,400).
+- **Tested:**
+  - `python3 scripts/build_geo.py geo` → "62 geometry files -> public/geo (2148 KiB)".
+  - `python3 scripts/validate_data.py` → exit 0. `npm run typecheck` → exit 0.
+  - `npx vitest run` → 373 passed (24 files). New: `geoV3.test.ts` (no frame cuts, holes, focus/context split,
+    port countries extruded, focus extent, city wide clip, handoff total) and the REG-SEA ghost/fit/pick case in
+    `region3d.test.ts`.
+  - `npx playwright test v3geometry --project=chromium` → 5 passed (REG-SEA, REG-NEU, CNT-NLD geometry; ghost not
+    pickable; Earth → SEA handoff 1,100 ms).
+  - `npx playwright test visual --project=chromium` → 4 failed (02-selected-cluster and 03-region at both sizes,
+    the region scenes). Those 4 were updated with `-g "02-selected-cluster|03-region" --update-snapshots=all` →
+    4 passed. The other 12 were unchanged.
+  - `V3CAPTURE=g2 npx playwright test v3capture --project=chromium` → 16 passed; images in `docs/qa/v3-g2/`.
+  - `npx playwright test` (full) → 87 passed, 3 failed, 22 skipped, 5 did not run:
+    - `acceptance` M03: after three orbit drags, the Ho Chi Minh City port label (newly in mid-view with the
+      whole-plate framing) rotated under the fixed drag point, and the fourth press opened the port. The test now
+      picks a bare-canvas start point before each drag. `npx playwright test acceptance.spec.ts
+      --project=chromium --workers=1` → 8 passed.
+    - `follow` ×10 ratio and `resilience` reduced motion: wall-clock checks under four parallel browsers. A
+      serial rerun → 2 passed. Same clock-under-load issue as Gate 0, owned by Gate 6.
+- **Gate:** P0 #2 geometry half PASS (no rectangle, whole plates, ghosts, fit). Hover lift and pins follow in
+  Gate 3.
+- **Blockers:** none.
+

@@ -66,13 +66,28 @@ test.describe('Spec 19 acceptance rows (Phase 9)', () => {
 
     const canvas = page.getByTestId('map-workspace').locator('canvas').first();
     const box = (await canvas.boundingBox())!;
-    const centre = { x: box.x + box.width * 0.45, y: box.y + box.height * 0.5 };
+    // Each drag starts on bare canvas near the middle: DOM port labels rotate with the view and would take the press
+    // as a click (opening the port) instead of an orbit.
+    const bare = () =>
+      page.evaluate(
+        ({ x, y, w, h }) => {
+          for (let r = 0; r < 12; r++)
+            for (const [dx, dy] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, -1], [1, -1], [-1, 1]]) {
+              const p = { x: x + w * 0.45 + dx * r * 24, y: y + h * 0.5 + dy * r * 24 };
+              const hit = [p, { x: p.x + 24, y: p.y }, { x: p.x, y: p.y - 24 }].every((q) => document.elementFromPoint(q.x, q.y)?.tagName === 'CANVAS');
+              if (hit) return p;
+            }
+          return { x: x + w * 0.45, y: y + h * 0.5 };
+        },
+        { x: box.x, y: box.y, w: box.width, h: box.height },
+      );
+    const centre = await bare();
 
     // OrbitControls rotates 2π per canvas height; damping on a slow renderer lands short, so drag in steps to 45°.
     const azimuthChange = (o: { azimuthDeg: number }) => Math.abs(((o.azimuthDeg - o0.azimuthDeg + 540) % 360) - 180);
     let o1 = o0;
     for (let i = 0; i < 6 && azimuthChange(o1) < 40; i++) {
-      await drag(page, centre, box.height / 48, 0);
+      await drag(page, await bare(), box.height / 48, 0);
       o1 = await settled(page);
     }
     expect(azimuthChange(o1), 'azimuth change').toBeGreaterThanOrEqual(40);
@@ -81,7 +96,7 @@ test.describe('Spec 19 acceptance rows (Phase 9)', () => {
     // Dragging up lowers the camera towards the horizon so the extruded side walls show.
     let o2 = o1;
     for (let i = 0; i < 4 && o2.polarDeg - o1.polarDeg < 8; i++) {
-      await drag(page, centre, 0, -box.height / 72);
+      await drag(page, await bare(), 0, -box.height / 72);
       o2 = await settled(page);
     }
     expect(o2.polarDeg - o1.polarDeg, 'tilt change').toBeGreaterThanOrEqual(8);

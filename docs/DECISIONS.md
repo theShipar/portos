@@ -691,3 +691,35 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
 - **Consequences:**
   - The 16 pixel baselines in `tests/visual/` were regenerated on purpose for the V3 theme.
   - Selection orange is reserved for selection and primary actions; toggles use the teal `--toggle-on-*` pair.
+
+## D-042 Whole-geometry extrusion and ghost context (V3 Gate 2)
+
+- **Context:**
+  - V2 clipped every geometry file to the padded scope frame (Sutherland-Hodgman). Regions therefore showed a
+    rectangular plate of land with straight cut edges, which V3 P0 #2 forbids ("whole continent, no rectangular
+    cutout").
+  - Regions list member countries, but some ports belong to countries outside that list (for example France in
+    North Europe or Spain in the Mediterranean).
+- **Decision:**
+  - *Region and country files:* every polygon of a focus country whose bbox touches the frame is kept whole, holes
+    and islands included. `doc.frame` still bounds the camera target but never cuts geometry (`clip: "none"`).
+  - *Focus set:* a region focuses its listed countries plus every country with a port in it.
+  - *Ghost context:* other land within 60 % of the span (max 12°) past the bbox is written as `context` outer
+    rings from Natural Earth 50m, simplified 2.5× the focus tolerance near the scope and coarser with distance.
+    `Region3DScene` draws it as one batched flat fill (opacity 0.34) and one batched outline (opacity 0.2) just
+    above the sea. Neither is in the pick list.
+  - *City files:* all land is still clipped, but to the bbox ± 200 % of the span (`clip: "wide-frame"`). The cut
+    lies far past the camera clamp and inside the fog. Whole Italy or the Netherlands at 10m city tolerance would
+    cost tens of thousands of vertices for land the camera cannot reach.
+  - *Camera fit:* `doc.focusBounds` records the focus extent. `Region3DScene.fitBounds` grows a scope's bounds
+    towards it by at most 25 % of the span per side, so a plate is framed whole without shrinking ports. The pan
+    clamp covers the frame plus that fit.
+  - *Sea:* under `v3RegionExtrusion`, the sea plane is 14 spans wide and the graticule runs up to 30° past the
+    frame. Both fade into fog, so no rectangle edge shows at maximum zoom-out.
+  - *Handoff:* reveal 580 ms plus settle 520 ms = 1,100 ms, inside the V3 850–1,400 ms band and inside the V2
+    phase budgets.
+- **Consequences:**
+  - The geometry stays at 2.2 MB over 62 files, the same as V2. The region files grew and the country files
+    shrank, because neighbours are now coarse ghosts.
+  - The flag rolls back scene behaviour (sea size, graticule extent, ghosts, fit). The geometry files are shared,
+    so `v3RegionExtrusion=0` shows whole focus land without ghosts, not the V2 clipped plate.

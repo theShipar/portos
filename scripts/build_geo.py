@@ -7,8 +7,10 @@ Natural Earth derived, public domain) and the port fixture. Bounding boxes cover
 plus every polygon within 2 degrees of one of its ports, so overseas islands (Alaska, Hawaii, Reunion) never stretch
 a camera preset across the antimeridian.
 
-Step `geo` (Phase 2): clips and simplifies Natural Earth admin-0 polygons (public domain; 50m for regions and large
-countries, 10m for small countries and cities, so Singapore keeps its real coastline) into one file per registry
+Step `geo` (Phase 2, V3 Gate 2): selects and simplifies Natural Earth admin-0 polygons (public domain; 50m for
+regions and large countries, 10m for small countries and cities, so Singapore keeps its real coastline). Region and
+country focus land is kept as whole multipolygons (never cut to a rectangle) with neighbours as ghost `context`
+rings; city land is clipped only to a wide frame beyond camera reach. One file per registry
 entry under `public/geo/<type>/<id>.json`, plus `public/geo/index.json` and `public/geo/PROVENANCE.md`. Downloads are
 cached in `.cache/natural-earth/` (git-ignored); the SHA-256 of every source file is recorded in the provenance.
 
@@ -150,6 +152,16 @@ LEVEL = {
     'city': {'pad': 0.35, 'detail': 2600, 'decimals': 5},
 }
 SMALL_COUNTRY_DEG = 12.0
+# Context (ghost) land reaches this fraction of the span past the bbox (at most CONTEXT_PAD_MAX_DEG), always from the
+# 50m dataset, simplified CONTEXT_COARSEN x coarser at the bbox and coarser still with distance from it
+# (+CONTEXT_FALLOFF x per span, capped at CONTEXT_TOL_CAP x).
+CONTEXT_PAD = 0.6
+CONTEXT_PAD_MAX_DEG = 12.0
+CONTEXT_COARSEN = 2.5
+CONTEXT_FALLOFF = 4.0
+CONTEXT_TOL_CAP = 24.0
+# City scenes clip land to the bbox padded by this fraction of the span on each side (beyond camera reach and fog).
+CITY_CLIP = 2.0
 
 
 def ne_path(res: str) -> Path:
@@ -216,8 +228,8 @@ def clip_ring(ring: list[list[float]], w: float, s: float, e: float, n: float) -
     return pts
 
 
-def simplify(pts: list[list[float]], tol: float) -> list[list[float]]:
-    """Douglas-Peucker on an open ring (iterative)."""
+def simplify(pts: list[list[float]], tol: float, tol_at=None) -> list[list[float]]:
+    """Douglas-Peucker on an open ring (iterative). `tol_at(x, y)` scales the tolerance by position (context land)."""
     if len(pts) < 5:
         return pts
     keep = [False] * len(pts)
@@ -241,7 +253,8 @@ def simplify(pts: list[list[float]], tol: float) -> list[list[float]]:
                 d = abs(dy * px - dx * py + bx * ay - by * ax) / math.sqrt(len2)
             if d > best:
                 best, idx = d, i
-        if idx >= 0 and best > tol:
+        limit = tol if tol_at is None else tol_at((ax + bx) / 2, (ay + by) / 2)
+        if idx >= 0 and best > limit:
             keep[idx] = True
             stack.append((a, idx))
             stack.append((idx, b))
@@ -263,7 +276,27 @@ def shift_ring(ring: list[list[float]], shift: bool) -> list[list[float]]:
     return [[p[0] + 360, p[1]] for p in ring]
 
 
-def build_entry(entry: dict, features: list[dict]) -> dict:
+def clean_ring(ring: list[list[float]], tol: float, min_area: float, dec: int, tol_at=None) -> list[list[float]] | None:
+    pts = ring[:-1] if len(ring) > 1 and ring[0] == ring[-1] else ring[:]
+    simple = simplify(pts, tol, tol_at)
+    if len(simple) < 3 or open_area(simple) < min_area:
+        return None
+    out = []
+    for x, y in simple:
+        p = [round(x, dec), round(y, dec)]
+        if not out or out[-1] != p:
+            out.append(p)
+    return out if len(out) >= 3 else None
+
+
+def build_entry(entry: dict, features: list[dict], context_features: list[dict]) -> dict:
+    """
+    Region and country files keep every focus polygon whole (holes and islands included, never cut by the frame):
+    the extruded plate is the real coastline and border. Non-focus land touching the context frame becomes `context`
+    outer rings (50m, coarser with distance), drawn as non-pickable ghost outlines. City files clip all land to a
+    wide frame (CITY_CLIP x the span on each side), far past the camera clamp and the fog, so no cut edge is ever on
+    screen.
+    """
     cfg = LEVEL[entry['type']]
     w, s, e, n = entry['bbox']
     if e < w:
@@ -272,38 +305,82 @@ def build_entry(entry: dict, features: list[dict]) -> dict:
     pad = cfg['pad']
     fw, fe = w - span_x * pad, e + span_x * pad
     fs, fn = max(-85.0, s - span_y * pad), min(85.0, n + span_y * pad)
-    shift = fe > 180
-    tol = max(span_x, span_y) / cfg['detail']
+    city = entry['type'] == 'city'
+    if city:
+        gx, gy = span_x * CITY_CLIP, span_y * CITY_CLIP
+    else:
+        gx, gy = min(span_x * CONTEXT_PAD, CONTEXT_PAD_MAX_DEG), min(span_y * CONTEXT_PAD, CONTEXT_PAD_MAX_DEG)
+    cw, ce = w - gx, e + gx
+    cs, cn = max(-85.0, s - gy), min(85.0, n + gy)
+    shift = ce > 180
+    span = max(span_x, span_y)
+    tol = span / cfg['detail']
     min_area = tol * tol * 6
+    ctx_tol = tol * CONTEXT_COARSEN
+
+    def ctx_tol_at(x: float, y: float) -> float:
+        d = math.hypot(max(w - x, 0.0, x - e), max(s - y, 0.0, y - n))
+        return ctx_tol * min(CONTEXT_TOL_CAP, 1 + CONTEXT_FALLOFF * d / span)
+
     dec = cfg['decimals']
     out_features = []
-    for f in features:
+    context = []
+    sources = [(f, True) for f in features] if city else [(f, True) for f in features if f['iso3'] in entry['focus']] + [(f, False) for f in context_features if f['iso3'] not in entry['focus']]
+    for f, _ in sources:
+        focus = f['iso3'] in entry['focus']
         polys_out = []
+        ctx_rings = []
         for poly, bb in zip(f['polys'], f['bboxes']):
             bw, bs, be, bn = bb
             if shift and be < 0:
                 bw, be = bw + 360, be + 360
-            if be < fw or bw > fe or bn < fs or bs > fn:
-                continue
-            rings = []
-            for k, ring in enumerate(poly):
-                clipped = clip_ring(shift_ring(ring, shift), fw, fs, fe, fn)
-                if len(clipped) < 3:
-                    if k == 0:
-                        break
+            if city:
+                if be < cw or bw > ce or bn < cs or bs > cn:
                     continue
-                simple = simplify(clipped, tol)
-                if len(simple) < 3 or open_area(simple) < min_area:
-                    if k == 0:
-                        break
+                rings = []
+                for k, ring in enumerate(poly):
+                    clipped = clip_ring(shift_ring(ring, shift), cw, cs, ce, cn)
+                    r = clean_ring(clipped, tol, min_area, dec) if len(clipped) >= 3 else None
+                    if r is None:
+                        if k == 0:
+                            break
+                        continue
+                    rings.append(r)
+                if rings:
+                    polys_out.append(rings)
+            elif focus:
+                if be < fw or bw > fe or bn < fs or bs > fn:
                     continue
-                rings.append([[round(x, dec), round(y, dec)] for x, y in simple])
-            if rings:
-                polys_out.append(rings)
+                rings = []
+                for k, ring in enumerate(poly):
+                    r = clean_ring(shift_ring(ring, shift), tol, min_area, dec)
+                    if r is None:
+                        if k == 0:
+                            break
+                        continue
+                    rings.append(r)
+                if rings:
+                    polys_out.append(rings)
+            else:
+                if be < cw or bw > ce or bn < cs or bs > cn:
+                    continue
+                r = clean_ring(shift_ring(poly[0], shift), ctx_tol, ctx_tol * ctx_tol * 6, dec, ctx_tol_at)
+                if r is not None:
+                    ctx_rings.append(r)
         if polys_out:
-            out_features.append({'iso3': f['iso3'], 'name': f['name'], 'focus': f['iso3'] in entry['focus'], 'polygons': polys_out})
+            out_features.append({'iso3': f['iso3'], 'name': f['name'], 'focus': focus, 'polygons': polys_out})
+        if ctx_rings:
+            context.append({'iso3': f['iso3'], 'name': f['name'], 'rings': ctx_rings})
     out_features.sort(key=lambda f: (not f['focus'], f['iso3']))
-    return {
+    context.sort(key=lambda c: c['iso3'])
+    pts = [p for f in out_features if f['focus'] for poly in f['polygons'] for p in poly[0]]
+    focus_bounds = None
+    if pts:
+        focus_bounds = {
+            'west': min(p[0] for p in pts), 'south': min(p[1] for p in pts),
+            'east': max(p[0] for p in pts), 'north': max(p[1] for p in pts),
+        }
+    doc = {
         'id': entry['id'],
         'type': entry['type'],
         'label': entry['label'],
@@ -312,8 +389,13 @@ def build_entry(entry: dict, features: list[dict]) -> dict:
         'origin': {'lon': round((w + e) / 2, 5), 'lat': round((s + n) / 2, 5)},
         'illustrativeBounds': entry['id'] in ILLUSTRATIVE,
         'dataset': entry['dataset'],
+        'clip': 'wide-frame' if city else 'none',
+        'focusBounds': focus_bounds,
         'features': out_features,
     }
+    if context:
+        doc['context'] = context
+    return doc
 
 
 def build_geo() -> int:
@@ -322,7 +404,9 @@ def build_geo() -> int:
     entries = []
     for r in regions:
         b = r['bounds']
-        entries.append({'id': r['regionId'], 'type': 'region', 'label': r['name'], 'bbox': (b['west'], b['south'], b['east'], b['north']), 'focus': set(r['countryIso3']), 'dataset': '50m'})
+        # Every country with a port in the region is extruded, so no port stands on ghost land.
+        focus = set(r['countryIso3']) | {c['iso3'] for c in countries if r['regionId'] in c['regionIds']}
+        entries.append({'id': r['regionId'], 'type': 'region', 'label': r['name'], 'bbox': (b['west'], b['south'], b['east'], b['north']), 'focus': focus, 'dataset': '50m'})
     for c in countries:
         if c['countryId'] == 'CNT-SGP':
             continue
@@ -335,7 +419,7 @@ def build_geo() -> int:
     sources = {res: load_ne(res) for res in ('50m', '10m')}
     index = []
     for entry in entries:
-        doc = build_entry(entry, sources[entry['dataset']])
+        doc = build_entry(entry, sources[entry['dataset']], sources['50m'])
         if not any(f['focus'] for f in doc['features']) and entry['type'] != 'region':
             print(f"{entry['id']}: focus country {sorted(entry['focus'])} has no geometry in the frame", file=sys.stderr)
         path = OUT_GEO / entry['type'] / f"{entry['id']}.json"
@@ -344,7 +428,9 @@ def build_geo() -> int:
         path.write_text(text + '\n')
         rings = sum(len(p) for f in doc['features'] for p in f['polygons'])
         verts = sum(len(r) for f in doc['features'] for p in f['polygons'] for r in p)
-        index.append({'id': entry['id'], 'type': entry['type'], 'path': f"/geo/{entry['type']}/{entry['id']}.json", 'dataset': f"ne_{entry['dataset']}_admin_0_countries", 'features': len(doc['features']), 'rings': rings, 'vertices': verts, 'bytes': len(text) + 1, 'sha1': hashlib.sha1(text.encode()).hexdigest()[:12]})
+        ctx = doc.get('context', [])
+        ctx_verts = sum(len(r) for c in ctx for r in c['rings'])
+        index.append({'id': entry['id'], 'type': entry['type'], 'path': f"/geo/{entry['type']}/{entry['id']}.json", 'dataset': f"ne_{entry['dataset']}_admin_0_countries", 'features': len(doc['features']), 'rings': rings, 'vertices': verts, 'contextFeatures': len(ctx), 'contextVertices': ctx_verts, 'bytes': len(text) + 1, 'sha1': hashlib.sha1(text.encode()).hexdigest()[:12]})
     (OUT_GEO / 'index.json').write_text(json.dumps({'source': 'scripts/build_geo.py geo', 'entries': index}, indent=1) + '\n')
     hashes = {res: sha256(ne_path(res)) for res in ('50m', '10m')}
     total = sum(e['bytes'] for e in index)
@@ -366,9 +452,17 @@ def build_geo() -> int:
         '',
         '- One file per registry entry: 11 operational regions (50m), port-bearing countries (10m when the bbox span is',
         f'  under {SMALL_COUNTRY_DEG:.0f} degrees, else 50m) and the flagship cities CTY-SIN, CTY-RTM, CTY-GOA (10m).',
-        '- Frame = entry bbox padded per level (region 8 %, country 30 %, city 35 % of the span on each side); polygons',
-        '  are clipped to the frame (Sutherland-Hodgman) and simplified with Douglas-Peucker at span / 900 (region),',
-        '  span / 1400 (country) and span / 2600 (city); rings smaller than 6 tolerance squared are dropped.',
+        '- Frame = entry bbox padded per level (region 8 %, country 30 %, city 35 % of the span on each side). It bounds',
+        '  the camera target; it never cuts geometry in region and country files (V3, D-042).',
+        '- Region and country files: every polygon of a focus country whose bbox touches the frame is kept whole, holes',
+        '  and islands included, simplified with Douglas-Peucker at span / 900 (region) or span / 1400 (country). A region',
+        "  focuses its listed countries plus every country with a port in it. Other land within",
+        f'  {CONTEXT_PAD:.0%} of the span (at most {CONTEXT_PAD_MAX_DEG:.0f} degrees) past the bbox is written as `context` outer rings from',
+        f'  the 50m dataset at {CONTEXT_COARSEN} x the tolerance near the bbox, growing by {CONTEXT_FALLOFF:.0f} x per span of distance (cap',
+        f'  {CONTEXT_TOL_CAP:.0f} x): ghost outlines, never picked. `focusBounds` is the lon/lat extent of the focus geometry (camera fit).',
+        f'- City files: all land is clipped (Sutherland-Hodgman) to the bbox padded by {CITY_CLIP:.0%} of the span on each',
+        '  side, far beyond the camera clamp and the fog, and simplified at span / 2600 (`clip: "wide-frame"`).',
+        '- Rings smaller than 6 tolerance squared are dropped.',
         '- Frames crossing the antimeridian (REG-OCE) use longitudes in 0..360 for the whole file.',
         '- Country codes are Natural Earth `ADM0_A3` (France FRA and Norway NOR, whose ISO codes are -99 there).',
         '- REG-MED and REG-WAF are illustrative operational bounds, never borders (`illustrativeBounds: true`).',
@@ -376,11 +470,11 @@ def build_geo() -> int:
         '',
         f"## Output ({len(index)} files, {total / 1024:.0f} KiB)",
         '',
-        '| Entry | Type | Dataset | Features | Vertices | KiB |',
-        '| --- | --- | --- | ---: | ---: | ---: |',
+        '| Entry | Type | Dataset | Features | Vertices | Context features | Context vertices | KiB |',
+        '| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |',
     ]
     for e in index:
-        lines.append(f"| {e['id']} | {e['type']} | {e['dataset']} | {e['features']} | {e['vertices']} | {e['bytes'] / 1024:.1f} |")
+        lines.append(f"| {e['id']} | {e['type']} | {e['dataset']} | {e['features']} | {e['vertices']} | {e['contextFeatures']} | {e['contextVertices']} | {e['bytes'] / 1024:.1f} |")
     (OUT_GEO / 'PROVENANCE.md').write_text('\n'.join(lines) + '\n')
     print(f'{len(index)} geometry files -> {OUT_GEO.relative_to(ROOT)} ({total / 1024:.0f} KiB)')
     return 0

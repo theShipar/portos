@@ -7,6 +7,8 @@ import gsap from 'gsap';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import type { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
+import { flags } from '@/core/flags';
 import type { Bounds, EntityRef } from '@/core/types';
 import { EARTH_RADIUS, type CameraPose, type CameraPreset } from '@/map/earth/camera';
 import type { Country } from '@/map/earth/worldGeo';
@@ -49,6 +51,11 @@ const DEG = Math.PI / 180;
 /** Default camera tilt from vertical per level: wider frames look flatter, cities more oblique. */
 const TILT: Record<PlanarLevel, number> = { region: 0.58, country: 0.66, city: 0.78 };
 const MAX_POLAR = 1.15;
+/** V3 whole-geometry extrusion: a scope's framing may grow towards its focus land by this fraction of its span per side. */
+export const FIT_GROW = 0.25;
+/** Ghost (context) land: flat fill and outline opacities, within the spec's 0.08–0.22 for lines. */
+export const GHOST_FILL_OPACITY = 0.34;
+export const GHOST_LINE_OPACITY = 0.2;
 
 export const sceneKindForLevel = (level: PlanarLevel): SceneKind => (level === 'region' ? 'region3d' : level === 'country' ? 'country3d' : 'city3d');
 export const planarSceneKey = (level: PlanarLevel, id: string) => `${sceneKindForLevel(level)}:${id}`;
@@ -168,6 +175,8 @@ export class Region3DScene implements SpatialScene, MapSurface {
   private preloadPromise: Promise<void> | null = null;
   private readonly tilt: number;
   private readonly layers = new Set<PlanarSceneLayer>();
+  private readonly wholeGeometry = flags.v3RegionExtrusion;
+  private contextGroup: THREE.Group | null = null;
 
   constructor(opts: Region3DOptions) {
     this.opts = opts;
@@ -328,16 +337,21 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.frameBounds = { west: Math.min(...xs), east: Math.max(...xs), north: Math.min(...zs), south: Math.max(...zs) };
     this.topY = this.portId ? PORT_LAND_M * UNITS_PER_METRE : this.span * EXTRUDE_FRACTION;
     const tile = this.span / 7;
+    if (this.wholeGeometry && this.level !== 'city') this.frameBounds = this.unionWorldBounds(this.frameBounds, this.fitBounds(doc.bbox), proj);
 
-    const ocean = new THREE.Mesh(new THREE.PlaneGeometry(this.span * 6, this.span * 6), new THREE.MeshBasicMaterial({ color: T.ocean, fog: true }));
+    // V3: the sea and graticule run well past the frame and fade into fog, so no rectangle edge is ever visible.
+    const seaScale = this.wholeGeometry ? 14 : 6;
+    const ocean = new THREE.Mesh(new THREE.PlaneGeometry(this.span * seaScale, this.span * seaScale), new THREE.MeshBasicMaterial({ color: T.ocean, fog: true }));
     ocean.rotation.x = -Math.PI / 2;
-    ocean.position.y = this.portId ? -1.5 * UNITS_PER_METRE : -this.topY * 0.02;
+    ocean.position.set(this.wholeGeometry ? (this.frameBounds.west + this.frameBounds.east) / 2 : 0, this.portId ? -1.5 * UNITS_PER_METRE : -this.topY * 0.02, this.wholeGeometry ? (this.frameBounds.north + this.frameBounds.south) / 2 : 0);
     ocean.renderOrder = 0;
     this.scene.add(ocean);
 
     const step = this.level === 'region' ? 5 : this.level === 'country' ? (this.span > 1500 ? 5 : 1) : 0.05;
     const gridMat = new THREE.LineBasicMaterial({ color: T.oceanGrid, transparent: true, opacity: 0.55, depthWrite: false, fog: true });
-    this.scene.add(graticule(f, step, proj, this.portId ? -1.2 * UNITS_PER_METRE : -this.topY * 0.01, gridMat));
+    const gridFrame = this.wholeGeometry ? growLonLat(f, 1) : f;
+    this.scene.add(graticule(gridFrame, step, proj, this.portId ? -1.2 * UNITS_PER_METRE : -this.topY * 0.01, gridMat));
+    if (this.wholeGeometry && !this.portId) this.buildContext(doc, proj);
 
     const hemi = new THREE.HemisphereLight(0xcfe3ea, 0x0b1e28, 1.15);
     const sun = new THREE.DirectionalLight(0xffffff, 1.35);
@@ -387,6 +401,93 @@ export class Region3DScene implements SpatialScene, MapSurface {
     this.applyOrbit({ target: new THREE.Vector3(origin.x, 0, origin.z), distance: this.span * 0.9, polar: this.tilt, azimuth: 0 });
     this.controls.minDistance = this.span * 0.01;
     this.controls.maxDistance = this.span * 1.6;
+  }
+
+  /**
+   * Neighbouring land as ghost context: one batched flat fill just above the sea and one batched outline, both
+   * outside `topMeshes`, so they never take a hover, click or drill-down.
+   */
+  private buildContext(doc: GeoDoc, proj: GeoProjection) {
+    if (!doc.context.length) return;
+    const fills: THREE.BufferGeometry[] = [];
+    const rings: GroundRing[] = [];
+    for (const c of doc.context)
+      for (const r of c.rings) {
+        const ring = projectRing(r, proj);
+        if (ring.length < 3) continue;
+        rings.push(ring);
+        fills.push(toGround(new THREE.ShapeGeometry(makeShape([ring])), this.topY * 0.04));
+      }
+    if (!rings.length) return;
+    const group = new THREE.Group();
+    group.name = 'context-ghost';
+    const merged = mergeGeometries(fills, false);
+    for (const g of fills) g.dispose();
+    if (merged) {
+      const fill = new THREE.Mesh(merged, new THREE.MeshBasicMaterial({ color: T.land, transparent: true, opacity: GHOST_FILL_OPACITY, depthWrite: false, fog: true }));
+      fill.renderOrder = 1;
+      fill.name = 'context-fill';
+      group.add(fill);
+    }
+    const lineMat = new THREE.LineBasicMaterial({ color: T.ghost, transparent: true, opacity: GHOST_LINE_OPACITY, depthWrite: false, fog: true });
+    const outline = boundarySegments(rings, this.topY * 0.06, lineMat);
+    outline.name = 'context-outline';
+    outline.renderOrder = 2;
+    group.add(outline);
+    this.contextGroup = group;
+    this.scene.add(group);
+  }
+
+  /**
+   * Lon/lat framing of a scope: its bounds grown towards the whole focus geometry, at most FIT_GROW of the span on
+   * each side, so a plate whose coastline runs past the operational box is framed whole without shrinking the ports.
+   */
+  fitBounds(bounds: Bounds): Bounds {
+    const g = this.doc?.focusBounds;
+    if (!this.wholeGeometry || !g || this.level === 'city') return bounds;
+    const west = bounds.west;
+    let east = bounds.east < bounds.west ? bounds.east + 360 : bounds.east;
+    // Antimeridian files keep longitudes in 0..360; align the request with them.
+    const shift = g.east > 180 && east < g.west ? 360 : 0;
+    const w = west + shift;
+    east += shift;
+    const sx = east - w;
+    const sy = bounds.north - bounds.south;
+    return {
+      west: Math.max(Math.min(w, g.west), w - sx * FIT_GROW),
+      east: Math.min(Math.max(east, g.east), east + sx * FIT_GROW),
+      south: Math.max(Math.min(bounds.south, g.south), bounds.south - sy * FIT_GROW),
+      north: Math.min(Math.max(bounds.north, g.north), bounds.north + sy * FIT_GROW),
+    };
+  }
+
+  private unionWorldBounds(world: Bounds, geo: Bounds, proj: GeoProjection): Bounds {
+    const midLon = (geo.west + geo.east) / 2;
+    const midLat = (geo.south + geo.north) / 2;
+    const pts = [
+      proj.lonLatToWorld(geo.west, geo.south),
+      proj.lonLatToWorld(geo.east, geo.south),
+      proj.lonLatToWorld(geo.west, geo.north),
+      proj.lonLatToWorld(geo.east, geo.north),
+      proj.lonLatToWorld(midLon, geo.north),
+      proj.lonLatToWorld(midLon, geo.south),
+      proj.lonLatToWorld(geo.west, midLat),
+      proj.lonLatToWorld(geo.east, midLat),
+    ];
+    return {
+      west: Math.min(world.west, ...pts.map((p) => p.x)),
+      east: Math.max(world.east, ...pts.map((p) => p.x)),
+      north: Math.min(world.north, ...pts.map((p) => p.z)),
+      south: Math.max(world.south, ...pts.map((p) => p.z)),
+    };
+  }
+
+  /** Ghost context for QA: number of context rings and whether any of it is pickable (it never is). */
+  contextStats(): { rings: number; pickable: boolean; lineOpacity: number } {
+    const outline = this.contextGroup?.getObjectByName('context-outline') as THREE.LineSegments | undefined;
+    const rings = this.doc?.context.reduce((n, c) => n + c.rings.length, 0) ?? 0;
+    const pickable = !!this.contextGroup && this.topMeshes.some((m) => this.contextGroup!.children.includes(m));
+    return { rings: outline ? rings : 0, pickable, lineOpacity: outline ? (outline.material as THREE.LineBasicMaterial).opacity : 0 };
   }
 
   // ---- highlight ----------------------------------------------------------------------------------------------
@@ -976,6 +1077,13 @@ export class Region3DScene implements SpatialScene, MapSurface {
     });
     return { geometries, textures: 2, features: this.features.length };
   }
+}
+
+/** Lon/lat bounds grown by `k` times their span on each side, at most 30° (latitudes clamped to ±80). */
+function growLonLat(b: Bounds, k: number): Bounds {
+  const gx = Math.min(30, (b.east - b.west) * k);
+  const gy = Math.min(30, (b.north - b.south) * k);
+  return { west: b.west - gx, east: b.east + gx, south: Math.max(-80, b.south - gy), north: Math.min(80, b.north + gy) };
 }
 
 function ringsBbox(polys: [number, number][][][]): Bounds {

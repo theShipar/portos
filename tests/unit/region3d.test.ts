@@ -7,7 +7,7 @@ import { parseGeoDoc } from '@/spatial/geoData';
 import { InputRouter } from '@/spatial/InputRouter';
 import { OverlayProjectionAdapter } from '@/spatial/OverlayProjectionAdapter';
 import { CITIES } from '@/spatial/registry';
-import { EXTRUDE_FRACTION, globeToPlanarDistance, HOVER_LIFT_FRACTION, planarSceneKey, planarToGlobeDistance, Region3DScene, type Region3DOptions } from '@/spatial/scenes/Region3DScene';
+import { EXTRUDE_FRACTION, FIT_GROW, GHOST_LINE_OPACITY, globeToPlanarDistance, HOVER_LIFT_FRACTION, planarSceneKey, planarToGlobeDistance, Region3DScene, type Region3DOptions } from '@/spatial/scenes/Region3DScene';
 
 const W = 1200;
 const H = 800;
@@ -211,6 +211,35 @@ describe('Region3DScene', () => {
     scene.dispose();
     expect(disposed).toHaveBeenCalledTimes(1);
     router.dispose();
+  });
+
+  it('draws REG-SEA neighbours as non-pickable ghost context and frames the whole plate', async () => {
+    const bounds = { west: 92, south: -11, east: 128, north: 22 };
+    const { scene } = makeScene({ id: 'REG-SEA', type: 'region', label: 'Southeast Asia', bbox: bounds, geometryPath: '/geo/region/REG-SEA.json' });
+    await scene.preload(new AbortController().signal);
+    scene.activate();
+    const ctx = scene.contextStats();
+    expect(ctx.rings).toBeGreaterThan(5);
+    expect(ctx.pickable).toBe(false);
+    expect(ctx.lineOpacity).toBeGreaterThanOrEqual(0.08);
+    expect(ctx.lineOpacity).toBeLessThanOrEqual(0.22);
+    expect(GHOST_LINE_OPACITY).toBe(ctx.lineOpacity);
+
+    // Fit grows towards the whole focus land (Myanmar north, Papua east) but never more than FIT_GROW per side.
+    const fit = scene.fitBounds(bounds);
+    expect(fit.north).toBeGreaterThan(bounds.north);
+    expect(fit.east).toBeGreaterThan(bounds.east);
+    expect(fit.north - bounds.north).toBeLessThanOrEqual((bounds.north - bounds.south) * FIT_GROW + 1e-9);
+    expect(fit.east - bounds.east).toBeLessThanOrEqual((bounds.east - bounds.west) * FIT_GROW + 1e-9);
+
+    // Southern China is ghost context in this region: hovering it picks no country.
+    expect(await scene.flyTo(scene.fitPreset('REG-SEA', 'region', fit))).toBe(true);
+    const s = scene.project(24.5, 108);
+    if (s.visible) expect(scene.pick(s.x, s.y)?.country ?? null).toBeNull();
+    // Sumatra (focus) picks as Indonesia.
+    const sum = scene.project(0.5, 101.5);
+    expect(scene.pick(sum.x, sum.y)?.country?.iso3).toBe('IDN');
+    scene.dispose();
   });
 
   it('frames REG-MED as illustrative operational bounds', async () => {

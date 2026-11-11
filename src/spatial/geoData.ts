@@ -12,22 +12,35 @@ export interface GeoFeatureDoc {
   polygons: GeoRing[][];
 }
 
+/** Neighbouring land drawn as non-pickable ghost outlines (outer rings only, coarser than the focus land). */
+export interface GeoContextDoc {
+  iso3: string;
+  name: string;
+  rings: GeoRing[];
+}
+
 /** One `public/geo/<type>/<id>.json` file written by `scripts/build_geo.py geo`. */
 export interface GeoDoc {
   id: string;
   type: 'region' | 'country' | 'city';
   label: string;
   bbox: Bounds;
-  /** Clip frame (bbox plus padding). Longitudes may exceed 180 for frames that cross the antimeridian. */
+  /** Camera frame (bbox plus padding). Longitudes may exceed 180 for frames that cross the antimeridian. */
   frame: Bounds;
   origin: GeoPoint;
   illustrativeBounds: boolean;
   dataset: string;
+  /** `none`: focus polygons are whole; `wide-frame`: land is clipped far beyond camera reach (cities). */
+  clip: 'none' | 'wide-frame';
+  /** Lon/lat extent of the focus geometry, or null when the frame holds no focus land. */
+  focusBounds: Bounds | null;
   features: GeoFeatureDoc[];
+  context: GeoContextDoc[];
 }
 
 const isNum = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v);
 const isBounds = (b: unknown): b is Bounds => !!b && typeof b === 'object' && ['west', 'south', 'east', 'north'].every((k) => isNum((b as Record<string, unknown>)[k]));
+const isRing = (ring: unknown): boolean => Array.isArray(ring) && ring.length >= 3 && ring.every((p) => Array.isArray(p) && isNum(p[0]) && isNum(p[1]));
 
 /** Validates the shape of a geometry file; throws with the entry and the first problem found. */
 export function parseGeoDoc(raw: unknown, path = 'geometry'): GeoDoc {
@@ -43,9 +56,22 @@ export function parseGeoDoc(raw: unknown, path = 'geometry'): GeoDoc {
   if (!Array.isArray(d.features)) fail('missing features');
   for (const f of d.features!) {
     if (typeof f.iso3 !== 'string' || !Array.isArray(f.polygons)) fail(`bad feature ${String(f.iso3)}`);
-    for (const poly of f.polygons) for (const ring of poly) if (!Array.isArray(ring) || ring.length < 3 || !ring.every((p) => isNum(p[0]) && isNum(p[1]))) fail(`bad ring in ${f.iso3}`);
+    for (const poly of f.polygons) for (const ring of poly) if (!isRing(ring)) fail(`bad ring in ${f.iso3}`);
   }
-  return { ...(d as GeoDoc), illustrativeBounds: !!d.illustrativeBounds, label: d.label ?? d.id! };
+  if (d.context !== undefined && !Array.isArray(d.context)) fail('bad context');
+  for (const c of d.context ?? []) {
+    if (typeof c.iso3 !== 'string' || !Array.isArray(c.rings)) fail(`bad context feature ${String(c.iso3)}`);
+    for (const ring of c.rings) if (!isRing(ring)) fail(`bad context ring in ${c.iso3}`);
+  }
+  if (d.focusBounds != null && !isBounds(d.focusBounds)) fail('bad focusBounds');
+  return {
+    ...(d as GeoDoc),
+    illustrativeBounds: !!d.illustrativeBounds,
+    label: d.label ?? d.id!,
+    clip: d.clip === 'wide-frame' ? 'wide-frame' : 'none',
+    focusBounds: d.focusBounds ?? null,
+    context: d.context ?? [],
+  };
 }
 
 const cache = new Map<string, Promise<GeoDoc>>();

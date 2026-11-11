@@ -219,7 +219,7 @@ function presetFor(s: Scope, surf: MapSurface): CameraPreset {
   const planar = surf instanceof Region3DScene ? surf : null;
   if (s.level === 'region') {
     const r = c.byId.region.get(s.regionId)!;
-    return planar ? planar.fitPreset(r.regionId, 'region', r.bounds) : regionPreset(r.regionId, r.bounds, r.cameraPreset.distance, surf.viewAspect);
+    return planar ? planar.fitPreset(r.regionId, 'region', planar.entryId === r.regionId ? planar.fitBounds(r.bounds) : r.bounds) : regionPreset(r.regionId, r.bounds, r.cameraPreset.distance, surf.viewAspect);
   }
   if (s.level === 'port') {
     const p = c.byId.port.get(s.portId)!;
@@ -230,7 +230,7 @@ function presetFor(s: Scope, surf: MapSurface): CameraPreset {
   }
   if (s.level === 'country' || s.level === 'city') {
     const e = catalog.registry?.get(scopeFocusId(s));
-    if (e) return planar ? planar.fitPreset(e.id, s.level, e.bbox) : boundsPreset(e.id, s.level, e.bbox, surf.viewAspect);
+    if (e) return planar ? planar.fitPreset(e.id, s.level, planar.entryId === e.id ? planar.fitBounds(e.bbox) : e.bbox) : boundsPreset(e.id, s.level, e.bbox, surf.viewAspect);
   }
   return EARTH_PRESET;
 }
@@ -981,6 +981,11 @@ function exposeTestAdapter(sc: EarthScene) {
     surfaceKind: () => surface.value?.surfaceKind ?? null,
     compass: () => (surface.value instanceof Region3DScene ? surface.value.compass() : null),
     orbit: () => (surface.value instanceof Region3DScene ? surface.value.orbitState() : null),
+    geometry: () => {
+      const s = surface.value;
+      if (!(s instanceof Region3DScene) || !s.geoDoc) return null;
+      return { id: s.geoDoc.id, clip: s.geoDoc.clip, focusBounds: s.geoDoc.focusBounds, features: s.geoDoc.features.length, ...s.contextStats() };
+    },
     vesselScreen: (id: string) => {
       const s = overlay.value?.vesselScreen(id);
       const r = host.value?.getBoundingClientRect();

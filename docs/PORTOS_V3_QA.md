@@ -12,7 +12,7 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 | # | P0 requirement | Gate | Status |
 |---|---|---|---|
 | 1 | Visual: map ≥ 75 % at 1440×900, Urbanist, token spacing, quiet glass | G1 | PASS (G1) |
-| 2 | Geographic: whole continent, no rectangular cutout, rotatable, country hover lifts top + sidewall, city/port drilldown | G2, G3 | pending |
+| 2 | Geographic: whole continent, no rectangular cutout, rotatable, country hover lifts top + sidewall, city/port drilldown | G2, G3 | PARTIAL (G2: whole geometry, ghosts, fit; hover/pins in G3) |
 | 3 | Vessel: type-differentiated near and far LOD, no popping, heading/status match, no wake when moored | G4 | pending |
 | 4 | Inspection: 3D preview, origin → destination tracker, container/hold selection from fixture, correct shipment | G5 | pending |
 | 5 | Simulation: pause/play/scrub, 1×–100×, one clock for movement/ETA/cargo/berth/KPI | G6 | pending |
@@ -63,4 +63,32 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 - **Known deviations:** `tokens.v3.json` added beside `tokens.json` / `tokens.v2.json`; derived colour roles
   (D-041, TECHNICAL_DEVIATIONS).
 - **Rollback:** `?v3=0` or `VITE_V3_GLASS=0`; or revert the gate commit.
+
+## Gate 2 — Region extrusion without the rectangle
+
+- **Source paths:** `scripts/build_geo.py` (`build_entry`: whole focus polygons, `context`, `focusBounds`, wide-frame
+  city clip, distance-scaled context simplification), `public/geo/**` (regenerated), `src/spatial/geoData.ts`
+  (`GeoContextDoc`, `clip`, `focusBounds`), `src/spatial/scenes/Region3DScene.ts` (ghost context, `fitBounds`,
+  sea/graticule extent, pan clamp), `src/map/PortosEarthView.vue` (fit presets, adapter `geometry()`),
+  `src/spatial/EarthGeographyBridge.ts` (handoff 580 + settle 520 ms).
+- **Acceptance:**
+  - No region or country ring has an edge along the frame rectangle (62 files): PASS (`geoV3.test.ts`).
+  - Holes and islands preserved (Lesotho in South Africa; more than 20 Indonesian islands): PASS (`geoV3.test.ts`).
+  - Only focus land is extruded; neighbours are ghost context; every port country is extruded in its
+    region: PASS (`geoV3.test.ts`).
+  - Ghost context is non-pickable, line opacity 0.2 (spec 0.08–0.22): PASS (`region3d.test.ts`,
+    `v3geometry.spec.ts` for REG-SEA, REG-NEU, CNT-NLD; a hover on Sweden in REG-NEU picks nothing, Germany picks
+    DEU).
+  - Camera fit from geometry (`focusBounds`, ≤ 25 % growth per side): PASS (`region3d.test.ts`).
+  - Handoff reveal + settle 1,100 ms (850–1,400): PASS (`geoV3.test.ts`, `v3geometry.spec.ts`, `handoff.spec.ts`
+    per-phase budgets).
+  - Screenshots: `docs/qa/v3-g2/desktop-region-sea.png`, `desktop-region-neu.png` (whole Myanmar, Indonesia,
+    Philippines, France, Norway; no cut edge), `desktop-country-nld.png` (isolated plate, ghost neighbours).
+- **PARTIAL:** hover lift of top + sidewalls, keyboard emphasis and pins are Gate 3. Phone still shows the
+  768 px note (Gate 9). Weather hazard zones are drawn as their fixture rectangles (data polygons, not geometry
+  cuts); Gate 8 revisits hazard styling.
+- **Known deviations:** city files clipped to a wide frame; no 20° tilt floor; director state names kept
+  (D-042, TECHNICAL_DEVIATIONS).
+- **Rollback:** `?v3RegionExtrusion=0` (scene behaviour) or revert the gate commit (also restores the clipped
+  geometry files).
 
