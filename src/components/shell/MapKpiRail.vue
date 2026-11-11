@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import { formatCount, formatPercent, formatUsd } from '@/core/format';
+import { formatCount } from '@/core/format';
 import type { Kpi, KpiKey } from '@/engines/kpis';
 import { buildDrillRows } from '@/selectors/kpiDrill';
+import { DEFAULT_RAIL_KEYS, kpiRailCells, kpiValueText as value } from '@/selectors/kpiRail';
 import { useNavigation } from '@/router/useRouteSync';
 import { useCatalogStore } from '@/stores/catalog';
 import { useSnapshotStore } from '@/stores/snapshot';
@@ -11,7 +12,7 @@ import Icon from '@/components/ui/Icon.vue';
 import ProvenanceDetails from '@/components/ui/ProvenanceDetails.vue';
 
 const props = withDefaults(defineProps<{ kpis: Kpi[]; keys?: KpiKey[] }>(), {
-  keys: () => ['trackedVessels', 'delayedVoyages', 'atRiskVoyages', 'exposureUsd'],
+  keys: () => DEFAULT_RAIL_KEYS,
 });
 
 const catalog = useCatalogStore();
@@ -19,20 +20,14 @@ const snap = useSnapshotStore();
 const view = useViewStore();
 const nav = useNavigation();
 
-const shown = computed(() => props.keys.map((k) => props.kpis.find((x) => x.key === k)).filter((k): k is Kpi => !!k));
-const more = computed(() => props.kpis.filter((k) => !props.keys.includes(k.key)));
+const cells = computed(() => kpiRailCells(props.kpis, props.keys));
+const more = computed(() => props.kpis.filter((k) => !cells.value.some((c) => c.key === k.key)));
 const openKey = ref<KpiKey | 'more' | null>(null);
 const openKpi = computed(() => (openKey.value && openKey.value !== 'more' ? props.kpis.find((k) => k.key === openKey.value) ?? null : null));
 const drill = computed(() => (openKpi.value && catalog.catalog && snap.snapshot ? buildDrillRows(catalog.catalog, snap.snapshot, openKpi.value) : null));
 const wrap = ref<HTMLElement | null>(null);
 const panel = ref<HTMLElement | null>(null);
 let opener: HTMLElement | null = null;
-
-function value(k: Kpi) {
-  if (k.unit === 'usd') return formatUsd(k.value, { compact: true });
-  if (k.unit === 'fraction') return formatPercent(k.value);
-  return formatCount(k.value);
-}
 
 async function toggle(key: KpiKey | 'more', e?: Event) {
   if (openKey.value === key) return close();
@@ -64,27 +59,36 @@ function toggleDrill(k: Kpi) {
 
 <template>
   <div ref="wrap" class="kpi-wrap">
-    <ul class="kpis" :aria-label="`Key indicators at the simulation time · ${kpis[0]?.cohort ?? ''}`">
-      <li v-for="k in shown" :key="k.key">
+    <ul class="kpis" :aria-label="`Key indicators at the simulation time · ${kpis[0]?.cohort ?? ''} · Simulated`" data-testid="map-kpi-rail">
+      <li v-for="k in cells" :key="k.key">
         <button
           type="button"
           class="kpi"
           :class="{ 'kpi--open': openKey === k.key, 'kpi--drill': view.kpiDrill === k.key }"
           :aria-expanded="openKey === k.key"
-          :aria-label="`${k.label}: ${value(k)}. Show definition, source and members`"
+          :aria-label="k.ariaLabel"
           :data-testid="`kpi-${k.key}`"
-          @click="toggle(k.key, $event)"
+          @click="toggle(k.key as KpiKey, $event)"
         >
           <span class="kpi__label">{{ k.label }}<Icon v-if="view.kpiDrill === k.key" name="map" :size="11" /></span>
-          <span class="kpi__value num">
-            {{ value(k) }}<span v-if="k.denominator !== undefined && k.unit === 'count'" class="kpi__den">/ {{ formatCount(k.denominator) }}</span>
+          <span class="kpi__line">
+            <span class="kpi__value num">{{ k.valueText }}</span>
+            <span v-if="k.contextText" class="kpi__den">{{ k.contextText }}</span>
           </span>
         </button>
       </li>
-      <li v-if="more.length">
-        <button type="button" class="kpi kpi--more" :class="{ 'kpi--open': openKey === 'more' }" :aria-expanded="openKey === 'more'" data-testid="kpi-more" @click="toggle('more', $event)">
-          <span class="kpi__label">Metrics</span>
-          <span class="kpi__more-count">+{{ more.length }}</span>
+      <li v-if="more.length" class="kpis__more">
+        <button
+          type="button"
+          class="kpi-more"
+          :class="{ 'kpi--open': openKey === 'more' }"
+          :aria-expanded="openKey === 'more'"
+          :aria-label="`More metrics (${more.length})`"
+          :title="`More metrics (${more.length})`"
+          data-testid="kpi-more"
+          @click="toggle('more', $event)"
+        >
+          <Icon name="more" :size="16" />
         </button>
       </li>
     </ul>
@@ -188,9 +192,9 @@ function toggleDrill(k: Kpi) {
 }
 .kpi {
   display: grid;
-  gap: 2px;
-  padding: 8px 14px;
-  min-width: 96px;
+  gap: 1px;
+  padding: 7px 14px 8px;
+  min-width: 92px;
   height: 100%;
   border: 0;
   background: transparent;
@@ -198,6 +202,7 @@ function toggleDrill(k: Kpi) {
   color: inherit;
   font: inherit;
   cursor: pointer;
+  transition: background var(--motion-hover) var(--ease-standard);
 }
 .kpi:hover {
   background: var(--color-panel-secondary);
@@ -208,9 +213,6 @@ function toggleDrill(k: Kpi) {
 .kpi--drill {
   box-shadow: inset 0 -2px 0 var(--color-accent);
 }
-.kpi--more {
-  min-width: 72px;
-}
 .kpi__label {
   display: inline-flex;
   align-items: center;
@@ -220,22 +222,36 @@ function toggleDrill(k: Kpi) {
   font-weight: 500;
   color: var(--color-ink-muted);
 }
+.kpi__line {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  white-space: nowrap;
+}
 .kpi__value {
-  font-size: var(--text-18);
-  line-height: 24px;
+  font-size: var(--text-20);
+  line-height: 26px;
   font-weight: 600;
 }
 .kpi__den {
-  margin-left: 3px;
-  font-size: var(--text-12);
+  font-size: var(--text-11);
   font-weight: 400;
   color: var(--color-ink-muted);
 }
-.kpi__more-count {
-  font-size: var(--text-14);
-  line-height: 24px;
-  font-weight: 600;
+.kpis__more {
+  display: grid;
+}
+.kpi-more {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  border: 0;
+  background: transparent;
   color: var(--color-ink-secondary);
+  cursor: pointer;
+}
+.kpi-more:hover {
+  background: var(--color-panel-secondary);
 }
 .drill-chip {
   display: inline-flex;

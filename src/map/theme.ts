@@ -55,7 +55,7 @@ const lift = (hex: string, amount: number) => new Color(hex).lerp(new Color('#ff
 
 /**
  * Marker colours on the dark ocean. Status hues come from tokens.json, lifted toward white so they reach ≥3:1 against
- * #061A28 (DECISIONS D-009). Shape cues (incident ring, stale dimming, cluster badge) back up every colour.
+ * #071A27 (DECISIONS D-009). Shape cues (incident ring, stale dimming, cluster badge) back up every colour.
  */
 export const markerColors = {
   incident: lift(tokens.status.critical, 0.34),

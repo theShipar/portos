@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { inspectorInsetPx } from '@/styles/layout';
 // SPDX-License-Identifier: GPL-3.0-or-later
 // 作者全平台ID：宋夏天Dazzle；公众号：送你整个夏天
 import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
@@ -12,6 +13,7 @@ import type { Bounds, Region } from '@/core/types';
 import { getVesselAtTime, trackRunsUntil } from '@/engines/tracks';
 import { FOLLOW_FRAME_LENGTHS } from '@/core/follow';
 import FollowBar from '@/features/follow/FollowBar.vue';
+import EntityPeek from './EntityPeek.vue';
 import { portScope, scopeFromSceneRef } from '@/router/opsLocation';
 import { useNavigation } from '@/router/useRouteSync';
 import {
@@ -19,7 +21,6 @@ import {
   buildPortMarkers,
   buildRouteLines,
   clusterVessels,
-  describeVesselMarker,
   focusForSelection,
   trafficDensity,
   TONE_LABEL,
@@ -85,6 +86,29 @@ const compassEl = ref<HTMLElement | null>(null);
 const scaleBarEl = ref<HTMLElement | null>(null);
 const scaleTextEl = ref<HTMLElement | null>(null);
 const tooltip = ref<{ x: number; y: number; title: string; lines: string[] } | null>(null);
+/** The caption, north arrow and scale bar sit above the berth schedule (which already clears the replay rail). */
+const hudStyle = computed(() => (view.bottomInsetPx > 0 ? { bottom: `${view.bottomInsetPx + 8}px` } : undefined));
+/** Hovered vessel's on-map peek; it lingers briefly so the pointer can reach its Follow/Inspect buttons. */
+const peek = ref<{ vesselId: string; x: number; y: number; more: number } | null>(null);
+const PEEK_GRACE_MS = 260;
+let peekTimer = 0;
+function showPeek(vesselId: string, x: number, y: number, more: number) {
+  window.clearTimeout(peekTimer);
+  tooltip.value = null;
+  if (peek.value?.vesselId === vesselId) return;
+  peek.value = { vesselId, x, y, more };
+}
+function holdPeek() {
+  window.clearTimeout(peekTimer);
+}
+function hidePeekSoon() {
+  window.clearTimeout(peekTimer);
+  if (peek.value) peekTimer = window.setTimeout(() => (peek.value = null), PEEK_GRACE_MS);
+}
+function hidePeek() {
+  window.clearTimeout(peekTimer);
+  peek.value = null;
+}
 const labelEls = new Map<string, HTMLElement>();
 const portLabelEls = new Map<string, HTMLElement>();
 const activeTwin = computed(() => {
@@ -323,17 +347,13 @@ function onHover(hit: SurfacePointerHit | null, e: PointerEvent) {
   const { x, y } = localXY(e, sc);
   const mapHit = hit && ov ? ov.hitTest(x, y) : null;
   ov?.setHover(mapHit?.kind === 'vessel' ? mapHit.id : null, mapHit?.kind === 'port' ? mapHit.id : null);
+  if (mapHit?.kind !== 'vessel') hidePeekSoon();
   if (mapHit) {
     sc.setHoverHighlight(null);
     canvas.style.cursor = 'pointer';
     if (mapHit.kind === 'vessel') {
       const m = ov!.marker(mapHit.id);
-      if (m) {
-        const d = describeVesselMarker(m);
-        const more = (mapHit.stacked ?? 1) - 1;
-        const lines = more > 0 ? [...d.lines, `+${more} more vessel${more === 1 ? '' : 's'} here · zoom in or search to pick another`] : d.lines;
-        setTooltip(mapHit.screenX, mapHit.screenY, d.title, lines);
-      }
+      if (m) showPeek(mapHit.id, mapHit.screenX, mapHit.screenY, (mapHit.stacked ?? 1) - 1);
     } else if (mapHit.kind === 'port') {
       const p = ports.value.find((pm) => pm.portId === mapHit.id);
       if (p) {
@@ -454,6 +474,7 @@ function onClick(hit: SurfacePointerHit | null, e: PointerEvent) {
   const reg = registry.value;
   if (!sc || !reg) return;
   stackMenu.value = null;
+  hidePeek();
   const { x, y } = localXY(e, sc);
   const mapHit = hit && overlay.value ? overlay.value.hitTest(x, y) : null;
   if (mapHit) {
@@ -1003,7 +1024,7 @@ function exposeTestAdapter(sc: EarthScene) {
 }
 
 function inspectorInset() {
-  return 408 + 24;
+  return inspectorInsetPx(window.innerWidth);
 }
 
 function focusOverlay(ov: MaritimeOverlay) {
@@ -1142,7 +1163,10 @@ onMounted(() => {
   window.addEventListener('keydown', onKeydown);
   init();
 });
+watch(() => [scopeKey(view.scope), view.selection?.id] as const, hidePeek);
+
 onBeforeUnmount(() => {
+  window.clearTimeout(peekTimer);
   document.removeEventListener('visibilitychange', onVisibility);
   window.removeEventListener('keydown', onKeydown);
   dispose();
@@ -1157,7 +1181,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
     <canvas ref="stageFrame" class="handoff-frame" aria-hidden="true" data-testid="handoff-frame" />
     <div ref="stageVeil" class="handoff-veil" aria-hidden="true" />
     <div v-if="preparingLabel" class="earth__preparing" role="status" data-testid="scene-preparing">Preparing {{ preparingLabel }}…</div>
-    <div v-if="state === 'ready'" v-show="active" class="earth__labels" :class="{ 'earth__labels--hidden': labelsHidden }">
+    <div v-if="state === 'ready'" v-show="active" class="earth__labels" data-map-content :class="{ 'earth__labels--hidden': labelsHidden }">
       <button
         v-for="cl in clusters.clusters"
         :key="cl.id"
@@ -1238,7 +1262,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
       </button>
     </div>
     <FollowBar v-if="state === 'ready'" v-show="active" :edge="followEdge" />
-    <div v-if="state === 'ready' && planarInfo" v-show="active" class="planar-hud" data-testid="planar-hud">
+    <div v-if="state === 'ready' && planarInfo" v-show="active" class="planar-hud" :style="hudStyle" data-testid="planar-hud">
       <span v-if="planarInfo.illustrative" class="planar-hud__chip" data-testid="illustrative-bounds">Illustrative operational bounds · not a border</span>
       <span v-if="planarInfo.twinCaption" class="planar-hud__chip" data-testid="twin-caption">{{ planarInfo.twinCaption }}</span>
       <div class="planar-hud__row">
@@ -1275,6 +1299,19 @@ defineExpose({ resetCamera, scene, surface, overlay });
       </button>
       <span v-if="stackMenu.more" class="stack-menu__more">+{{ stackMenu.more }} more · zoom in or use search</span>
     </div>
+    <EntityPeek
+      v-if="peek"
+      :key="peek.vesselId"
+      :vessel-id="peek.vesselId"
+      :x="peek.x"
+      :y="peek.y"
+      :more="peek.more"
+      :view-w="surface?.viewport.width ?? 1200"
+      :view-h="surface?.viewport.height ?? 800"
+      @enter="holdPeek"
+      @leave="hidePeekSoon"
+      @done="hidePeek"
+    />
     <div v-if="tooltip" class="earth__tooltip" :style="{ transform: `translate(${tooltip.x}px, ${tooltip.y}px)` }" role="tooltip" data-testid="map-tooltip">
       <strong>{{ tooltip.title }}</strong>
       <span v-for="(l, i) in tooltip.lines" :key="i">{{ l }}</span>
@@ -1358,7 +1395,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
   padding: 3px 8px;
   border: 1px solid rgba(207, 225, 234, 0.25);
   border-radius: var(--radius-chip);
-  background: rgba(6, 26, 40, 0.72);
+  background: rgba(7, 26, 39, 0.72);
   color: var(--color-ink-on-dark);
   font-size: var(--text-11);
   font-weight: 500;
@@ -1367,7 +1404,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
   transition: background var(--motion-hover), border-color var(--motion-hover);
 }
 .region-label:hover {
-  background: rgba(6, 26, 40, 0.92);
+  background: rgba(7, 26, 39, 0.92);
   border-color: rgba(233, 103, 34, 0.7);
 }
 .region-label--active {
@@ -1381,7 +1418,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
   padding: 2px 8px;
   border: 1px solid rgba(207, 225, 234, 0.35);
   border-radius: var(--radius-chip);
-  background: rgba(6, 26, 40, 0.8);
+  background: rgba(7, 26, 39, 0.8);
   color: var(--color-ink-on-dark);
   font-size: var(--text-11);
   font-weight: 600;
@@ -1390,7 +1427,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
 .city-label:hover,
 .city-label:focus-visible {
   border-color: rgba(233, 103, 34, 0.7);
-  background: rgba(6, 26, 40, 0.95);
+  background: rgba(7, 26, 39, 0.95);
 }
 .berth-label {
   display: inline-flex;
@@ -1400,7 +1437,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
   border: 1px solid rgba(207, 225, 234, 0.28);
   border-left: 3px solid #a6a9b4;
   border-radius: var(--radius-chip);
-  background: rgba(6, 26, 40, 0.78);
+  background: rgba(7, 26, 39, 0.78);
   color: rgba(247, 250, 252, 0.92);
   font-size: var(--text-11);
   font-weight: 600;
@@ -1435,7 +1472,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
 .berth-label:focus-visible,
 .berth-label--active {
   border-color: rgba(230, 106, 45, 0.85);
-  background: rgba(6, 26, 40, 0.96);
+  background: rgba(7, 26, 39, 0.96);
 }
 .berth-label--active {
   z-index: 2;
@@ -1444,7 +1481,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
 .anchorage-label {
   padding: 1px 6px;
   border-radius: var(--radius-chip);
-  background: rgba(6, 26, 40, 0.5);
+  background: rgba(7, 26, 39, 0.5);
   color: rgba(207, 225, 234, 0.8);
   font-size: var(--text-11);
   font-style: italic;
@@ -1454,14 +1491,14 @@ defineExpose({ resetCamera, scene, surface, overlay });
   padding: 1px 5px;
   border: 0;
   border-radius: var(--radius-chip);
-  background: rgba(6, 26, 40, 0.55);
+  background: rgba(7, 26, 39, 0.55);
   color: rgba(247, 250, 252, 0.88);
   font-size: var(--text-11);
   line-height: 15px;
 }
 .port-label:hover,
 .port-label:focus-visible {
-  background: rgba(6, 26, 40, 0.9);
+  background: rgba(7, 26, 39, 0.9);
   color: #fff;
 }
 .port-label--active {
@@ -1476,12 +1513,12 @@ defineExpose({ resetCamera, scene, surface, overlay });
   padding: 0 6px;
   border-radius: 13px;
   border: 2px solid rgba(211, 221, 227, 0.85);
-  background: rgba(6, 26, 40, 0.86);
+  background: rgba(7, 26, 39, 0.86);
   color: var(--color-ink-on-dark);
   font-family: var(--font-data);
   font-size: var(--text-11);
   font-weight: 600;
-  box-shadow: 0 0 0 3px rgba(6, 26, 40, 0.35);
+  box-shadow: 0 0 0 3px rgba(7, 26, 39, 0.35);
 }
 .cluster:hover {
   background: rgba(16, 40, 55, 0.96);
@@ -1508,7 +1545,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
 .planar-hud {
   position: absolute;
   left: var(--map-control-gap);
-  bottom: 36px;
+  bottom: calc(36px + var(--rail-lift, 0px));
   z-index: 15;
   display: grid;
   justify-items: start;

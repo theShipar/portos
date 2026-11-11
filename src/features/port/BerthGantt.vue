@@ -14,12 +14,20 @@ const snap = useSnapshotStore();
 const view = useViewStore();
 const nav = useNavigation();
 
-const expanded = ref(true);
+/** Folded by default so the port scene keeps most of the workspace (V2 spec 13). */
+const expanded = ref(false);
 /** An open inspector takes priority: the schedule folds to its header until the inspector closes (or on request). */
 const yieldToInspector = ref(false);
 const docked = computed(() => view.inspectorOpen && !view.sheetLayout);
 watch(docked, (v) => (yieldToInspector.value = v), { immediate: true });
 const open = computed(() => expanded.value && !yieldToInspector.value);
+/** Focusing a berth (scene, 2D map or card) unfolds the schedule so its row is visible. */
+watch(
+  () => view.berthId,
+  (id) => {
+    if (id) expanded.value = true;
+  },
+);
 
 function toggle() {
   if (yieldToInspector.value) {
@@ -64,6 +72,7 @@ function pickBar(berthId: string, vesselId: string) {
         <span class="gantt__title">Berth schedule</span>
       </button>
       <span class="gantt__sim">Simulated</span>
+      <span v-if="!open" class="gantt__summary num" data-testid="gantt-summary">{{ gantt.summaryText }}</span>
       <span v-if="gantt.conflictCount" class="gantt__conflicts" data-testid="gantt-conflict-count">
         {{ gantt.conflictCount }} overlap{{ gantt.conflictCount === 1 ? '' : 's' }} · not yet validated
       </span>
@@ -197,6 +206,9 @@ function pickBar(berthId: string, vesselId: string) {
 .gantt__title {
   font-size: var(--text-12);
   font-weight: 600;
+}
+.gantt__summary {
+  color: var(--color-ink-secondary);
 }
 .gantt__sim {
   padding: 1px 6px;

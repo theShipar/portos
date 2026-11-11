@@ -10,7 +10,7 @@ export interface MapIcon {
 }
 
 const PR = 2;
-const OUTLINE = '#061a28';
+const OUTLINE = '#071a27';
 
 function canvas(size: number) {
   const c = document.createElement('canvas');

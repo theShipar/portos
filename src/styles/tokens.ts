@@ -1,19 +1,30 @@
-import raw from './tokens.json';
+import kit from './tokens.json';
+import v2 from './tokens.v2.json';
 import { STAGE_LABEL } from '@/core/caseStage';
 import type { BerthStatus, CaseStage, Confidence, NavStatus, Severity } from '@/core/types';
 
-export const tokens = raw;
+/**
+ * Colour roles for TypeScript consumers (Three scenes, MapLibre styles), from the V2 palette (D-038). The shape
+ * follows the kit tokens.json so callers did not change; `disclosure` still comes from the kit.
+ */
+export const tokens = {
+  brand: { accent: v2.accent.focus, accentHover: v2.accent.focusHover, accentSubtle: v2.accent.focusSubtle },
+  surface: { app: v2.surface.app, panel: v2.surface.panel, panelSecondary: v2.surface.muted, border: v2.line.default, mapOcean: v2.map.ocean, mapLand: v2.map.land },
+  ink: { primary: v2.text.primary, secondary: v2.text.secondary, muted: v2.text.muted, onDark: v2.text.onDark },
+  status: { healthy: v2.state.success, warning: v2.state.warning, critical: v2.state.critical, unknown: v2.state.unknown, selected: v2.accent.focus },
+  data: v2.data,
+  disclosure: kit.disclosure,
+} as const;
 
-/** Spec-only roles kept alongside tokens.json (DECISIONS D-002). */
 export const mapColors = {
-  ocean: raw.surface.mapOcean,
-  oceanMid: '#102837',
-  land: raw.surface.mapLand,
-  landOutline: '#4D6974',
-  routeBase: '#82B8C9',
-  routeSelected: '#FF905B',
-  accent: raw.brand.accent,
-  info: '#2E658B',
+  ocean: v2.map.ocean,
+  oceanMid: v2.map.oceanMid,
+  land: v2.map.land,
+  landOutline: v2.map.landOutline,
+  routeBase: v2.map.routeBase,
+  routeSelected: v2.accent.focus,
+  accent: v2.accent.focus,
+  info: v2.state.info,
 } as const;
 
 export type StatusTone = 'healthy' | 'warning' | 'critical' | 'unknown' | 'info' | 'selected' | 'neutral';
@@ -26,13 +37,13 @@ export interface StatusStyle {
 }
 
 export const toneColor: Record<StatusTone, string> = {
-  healthy: raw.status.healthy,
-  warning: raw.status.warning,
-  critical: raw.status.critical,
-  unknown: raw.status.unknown,
-  info: '#2E658B',
-  selected: raw.status.selected,
-  neutral: raw.ink.secondary,
+  healthy: tokens.status.healthy,
+  warning: tokens.status.warning,
+  critical: tokens.status.critical,
+  unknown: tokens.status.unknown,
+  info: v2.state.info,
+  selected: tokens.status.selected,
+  neutral: tokens.ink.secondary,
 };
 
 const NAV: Record<NavStatus, StatusStyle> = {

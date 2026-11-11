@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { auditRows } from '@/selectors/activity';
 import { selectPortCallValue } from '@/selectors/portCall';
 import { buildVesselInspector } from '@/selectors/vessel';
+import { actionableEvents, routeProgress, vesselPriorities, type Priority } from '@/selectors/vesselBrief';
 import { useNavigation } from '@/router/useRouteSync';
 import { useCatalogStore } from '@/stores/catalog';
 import { useClockStore } from '@/stores/clock';
@@ -14,6 +15,7 @@ import TaskPanel from '@/features/workflow/TaskPanel.vue';
 import InspectorDrawer from '@/components/shell/InspectorDrawer.vue';
 import FieldList from '@/components/ui/FieldList.vue';
 import Icon from '@/components/ui/Icon.vue';
+import ShipSilhouette from '@/components/ui/ShipSilhouette.vue';
 import StatusChip from '@/components/ui/StatusChip.vue';
 import PortCallCard from './PortCallCard.vue';
 import VoyageImpactCard from './VoyageImpactCard.vue';
@@ -29,6 +31,19 @@ const nav = useNavigation();
 
 const model = computed(() => (catalog.catalog && snap.snapshot ? buildVesselInspector(catalog.catalog, snap.snapshot, props.vesselId) : null));
 const portCall = computed(() => (catalog.catalog && snap.snapshot ? selectPortCallValue(catalog.catalog, snap.snapshot, props.vesselId) : null));
+const progress = computed(() => (catalog.catalog && snap.snapshot ? routeProgress(catalog.catalog, snap.snapshot, props.vesselId) : null));
+const priorities = computed(() => (model.value ? vesselPriorities(model.value, portCall.value) : []));
+const recent = computed(() => (catalog.catalog && model.value ? actionableEvents(catalog.catalog, model.value) : []));
+const silhouetteTone = computed(() => (model.value?.activeIncident ? 'critical' : model.value?.positionStale ? 'unknown' : model.value?.impact?.shiftTone === 'warning' || model.value?.impact?.shiftTone === 'critical' ? 'warning' : 'ok'));
+function runPriority(p: Priority) {
+  if (!p.action) return;
+  if ('target' in p.action) nav.openEntity(p.action.target);
+  else nav.openCompare(p.action.compareVoyageId);
+}
+function jumpTo(ms: number) {
+  clock.pause();
+  clock.seekMs(ms);
+}
 const tabs: { id: InspectorTab; label: string }[] = [
   { id: 'overview', label: 'Overview' },
   { id: 'voyage', label: 'Voyage' },
@@ -84,8 +99,40 @@ function openPort(portId: string) {
     </template>
 
     <section v-if="view.inspectorTab === 'overview'" class="stack">
+      <div class="preview" data-testid="vessel-preview">
+        <ShipSilhouette :vessel-type="model.vesselType" :tone="silhouetteTone" />
+        <div v-if="progress" class="progress" data-testid="route-progress" :data-basis="progress.basis">
+          <div class="progress__ends">
+            <span>{{ progress.originName }}</span>
+            <span class="progress__pct num">{{ progress.progressText }}</span>
+            <span>{{ progress.destinationName }}</span>
+          </div>
+          <div class="progress__bar" role="progressbar" :aria-valuenow="progress.progressPct" aria-valuemin="0" aria-valuemax="100" :aria-label="`Route progress ${progress.progressText}`" :title="progress.basisText">
+            <span class="progress__fill" :style="{ width: progress.progressText }" />
+          </div>
+          <div class="progress__meta">
+            <span class="num">{{ progress.remainingText }}</span>
+            <span class="mono">{{ progress.etaText }}</span>
+          </div>
+        </div>
+        <p v-else class="progress__none">No assigned voyage · Simulated tracking only</p>
+      </div>
+
+      <div data-testid="vessel-priorities">
+        <h3 class="section-title">Priorities <span class="section-note">Simulated</span></h3>
+        <ol v-if="priorities.length" class="priorities">
+          <li v-for="p in priorities" :key="p.key" class="priority" :class="`priority--${p.tone}`" :data-testid="`priority-${p.key}`">
+            <div class="priority__text">
+              <strong>{{ p.label }}</strong>
+              <span>{{ p.detail }}</span>
+            </div>
+            <button v-if="p.action" type="button" class="btn btn--sm" @click="runPriority(p)">{{ p.action.label }}</button>
+          </li>
+        </ol>
+        <p v-else class="empty">No open case, ETA slip or port wait for this vessel at the selected time.</p>
+      </div>
+
       <VoyageImpactCard v-if="model.impact" :impact="model.impact" />
-      <div v-else class="empty">No assigned voyage. Identity and tracking remain available below.</div>
       <PortCallCard v-if="portCall" :value="portCall" />
       <div class="links">
         <button
@@ -102,14 +149,27 @@ function openPort(portId: string) {
         </button>
       </div>
 
+      <div v-if="recent.length" data-testid="vessel-recent-events">
+        <h3 class="section-title">Latest events <span class="section-note">jump to replay that moment</span></h3>
+        <ul class="recent">
+          <li v-for="e in recent" :key="e.eventId">
+            <span class="mono recent__time">{{ e.timeText }}</span>
+            <span class="recent__label">{{ e.label }}</span>
+            <button type="button" class="icon-btn" :aria-label="`Go to ${e.timeText}`" title="Set the simulation clock to this event" :data-testid="`event-jump-${e.eventId}`" @click="jumpTo(e.ms)">
+              <Icon name="clock" :size="14" />
+            </button>
+          </li>
+        </ul>
+      </div>
+
       <div>
         <h3 class="section-title">Position <span class="section-note">{{ model.positionLabel }}</span></h3>
         <FieldList :fields="model.position" />
       </div>
-      <div>
-        <h3 class="section-title">Identity</h3>
+      <details class="specs" data-testid="vessel-specs">
+        <summary>Specifications <span class="section-note">{{ model.vesselType }}</span></summary>
         <FieldList :fields="model.identity" />
-      </div>
+      </details>
     </section>
 
     <section v-else-if="view.inspectorTab === 'voyage'" class="stack">
@@ -289,6 +349,122 @@ function openPort(portId: string) {
   border-radius: var(--radius-input);
   font-size: var(--text-12);
   color: var(--color-ink-secondary);
+}
+.preview {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius-input);
+  background: var(--color-panel-secondary);
+}
+.progress {
+  display: grid;
+  gap: 4px;
+  font-size: var(--text-12);
+}
+.progress__ends,
+.progress__meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.progress__meta {
+  font-size: var(--text-11);
+  color: var(--color-ink-secondary);
+}
+.progress__pct {
+  font-weight: 600;
+}
+.progress__bar {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+.progress__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--color-data-observed);
+}
+.progress__none {
+  margin: 0;
+  font-size: var(--text-12);
+  color: var(--color-ink-secondary);
+}
+.priorities {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.priority {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-left: 3px solid var(--color-unknown);
+  border-radius: var(--radius-input);
+  background: var(--color-panel-secondary);
+}
+.priority--critical {
+  border-left-color: var(--color-critical);
+  background: var(--color-critical-subtle);
+}
+.priority--warning {
+  border-left-color: var(--color-warning);
+  background: var(--color-warning-subtle);
+}
+.priority--info {
+  border-left-color: var(--color-info);
+  background: var(--color-info-subtle);
+}
+.priority__text {
+  flex: 1;
+  display: grid;
+  min-width: 0;
+  font-size: var(--text-12);
+  line-height: 16px;
+}
+.priority__text span {
+  color: var(--color-ink-secondary);
+}
+.recent {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.recent li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-12);
+}
+.recent__time {
+  font-size: var(--text-11);
+  color: var(--color-ink-muted);
+}
+.recent__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.specs summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  cursor: pointer;
+  font-size: var(--text-14);
+  font-weight: 600;
+}
+.specs[open] summary {
+  margin-bottom: 4px;
 }
 .drawer-missing {
   position: absolute;

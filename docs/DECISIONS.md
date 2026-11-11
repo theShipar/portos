@@ -10,6 +10,8 @@ technique source: Earth sphere + day/night/normal/specular shader approach, atmo
 `LineSegments` coastlines, two-phase render handoff, GSAP camera flights. See `TECHNICAL_DEVIATIONS.md`.
 
 ## D-002 Palette source of truth: `assets/tokens.json`
+*Colours superseded by D-038 (V2 palette, `src/styles/tokens.v2.json`); `src/styles/tokens.json` stays as the kit
+copy for provenance.*
 `tokens.json` + `START_HERE.md` win over `instructions/02-design-system/02_color_and_semantic_tokens.md`.
 
 | Role | Used | Overridden spec value |
@@ -25,6 +27,7 @@ Spec-only roles absent from tokens are kept: information `#2E658B`, route base `
 land outline `#4D6974`, ocean mid `#102837`.
 
 ## D-003 Layout geometry
+*Inspector width and replay heights superseded by D-038 (`min(400px, 34vw)`, replay 60 / 116 px).*
 Header 64px; right inspector 408px (expandable to 420px, min remaining map 680px); replay rail 60px;
 radius 6px inputs / 10px panels / 4px dense chips; 8px spacing unit. (Specs variously said 56px header, 344–420px
 inspector, 52–64px rail, 8/12px radius.)
@@ -541,3 +544,60 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
 - **Consequences:** the Phase 7 gate reads straight from the selector: VSL-0001 / PCL-0001 in queue since 04:00,
   at anchorage since 09:15, estimated berth 2026-11-10 14:00 UTC unconfirmed, 34 h in queue with 26 h remaining,
   destination ETA +18 h and $32,000/day × 18/24 = $24,000, sources PCL-0001, EVT-0004, EVT-0002, EVT-0008.
+
+## D-038 V2 palette, map-first layout and premium UI components
+
+- **Context:** spec 13 replaces the V1 palette (D-002) with a calmer light-chrome / deep-ocean system, asks for the
+  map to keep at least 80% of the workspace at 1440×900 with the inspector closed, and lists the components that
+  carry the experience: incident ribbon (≤ 3 cases), map KPI rail (≤ 4 values), on-map entity peek, vessel and port
+  inspectors, layer palette, replay timeline (54–66 px collapsed, 90–130 px expanded) and decision compare. V1 had a
+  148 px replay rail, a five-case queue, six KPI tiles, an always-open berth schedule and a port queue shelf that
+  covered the bottom-left HUD.
+- **Decision:**
+  - *Palette:* `src/styles/tokens.v2.json` holds the spec 13 values verbatim (surface, text, line, map, accent, state
+    and data roles plus layout numbers). `tokens.css` and `tokens.ts` read from it; `tokens.json` remains the kit copy
+    and is not edited. `--color-focus`, `--color-text-muted` and the observed / planned / uncertain data roles are
+    now defined. Every text role passes WCAG AA on its surface; route and data roles pass 3:1 on the ocean
+    (`contrast.test.ts`). The critical chip fill is `#FDF1F0` so critical text clears AA.
+  - *Layout:* inspector `min(400px, 34vw)` from one helper (`styles/layout.ts`) used by both map surfaces; replay
+    60 px collapsed / 116 px expanded (`--replay-collapsed-h`, `--replay-expanded-h`).
+  - *Components:*
+    - `IncidentRibbon` (was `IncidentQueue`) shows the top 3 cases, heading "N actionable cases · scope", the empty
+      chip "No actionable cases in this scope", and "Show all" opens the filterable tray.
+    - `MapKpiRail` (was `KpiRow`) shows 4 values with context ("33 tracked · 50 in scope", "of N voyages",
+      "modelled"); the rest sit behind an icon-only "More metrics". The port rail has 4 cells: queue, arrivals 24 h,
+      median wait, congestion.
+    - `EntityPeek` replaces the plain vessel tooltip. It is a two-line popover anchored to the hovered vessel (name
+      and one or two deltas) with Follow and Inspect, stays open 260 ms so the pointer can reach it, and flips at
+      the viewport edges.
+    - `VesselInspector` overview leads with a schematic ship silhouette (same categories as the 3D library), route
+      progress (projected position, else fixture progress, else "not yet departed"), at most 3 priorities (case,
+      ETA / exposure, port call, route weather) with actions, the latest 3 events with a jump-to-time action, and
+      collapsed specifications.
+    - `PortInspector` (was `BerthCard`) adds the port's anchored and queue counts and a one-berth 24 h mini-Gantt
+      with actual, planned and forecast on separate lanes (the ETA-versus-actual visual) plus requested marks and
+      overlaps.
+    - `LayerPalette` (was `LayerMenu`) has five group toggles (Traffic, Ports, Weather, Risk, Plans) that are
+      disabled with a reason when nothing in the group applies at the scope, plus a details panel with per-layer
+      switches, a tiny legend and "Simulated · as of" time.
+    - `ReplayTimeline` (was `ReplayRail`):
+      - Collapsed (60 px): play, "Simulation ×N", event steps, a mini track with markers and bookmarks, the last
+        event, phase, UTC and Now.
+      - Expanded (116 px): adds 5-minute steps, the event histogram, ticks, ranges, loop, follow, note and the
+        compare-with-Now table.
+      - Bookmarks are the user's local notes and decision actions placed at the simulation time they were taken.
+    - `DecisionCompare` sits at the top of the comparison panel: the original plan and up to two feasible proposals
+      side by side, delta bars against the baseline, shared assumptions and the fixed footnote "Simulated outcomes,
+      not confirmed."
+  - *Port scope density:*
+    - The queue shelf shows a compact header and the top 3 rows, and reserves map inset only when its tray is open.
+    - The berth schedule starts folded with a "N berths · M occupied" summary and unfolds when a berth is focused.
+    - The planar HUD (caption, north arrow, scale) sits above the schedule's reported inset, so nothing covers it.
+- **Consequences:**
+  - Measured map share at 1440×900 with the inspector closed: Earth 85.7%, region 84.9%, Singapore port 83.5%
+    (union of opaque chrome, 8 px grid, `layout.spec.ts`).
+  - E2E tests that read ranges, loop or compare first expand the timeline; port tests unfold the schedule with
+    `openGantt`.
+  - All Phase 8 rules are pure selectors (`kpiRail`, `queue`, `vesselBrief`, `decisionCompare`,
+    `berthMiniGantt`, `railBookmarks`, `groupState`), so templates only render.
+

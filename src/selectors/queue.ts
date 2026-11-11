@@ -5,8 +5,15 @@ import type { Snapshot } from '@/engines/snapshot';
 import { statusStyle, type StatusStyle } from '@/styles/tokens';
 import type { WorkflowState } from '@/workflows/types';
 
-/** Rows shown before "Show all" (spec 07-screens/05: top five by explainable priority). */
-export const QUEUE_TOP_N = 5;
+/** Cases visible in the collapsed ribbon before "Show all" (V2 spec 13: at most three). */
+export const QUEUE_TOP_N = 3;
+
+export const NO_CASES_TEXT = 'No actionable cases in this scope';
+
+/** Ribbon headline: `47 actionable cases`, or the empty-scope copy. */
+export function queueHeadline(count: number): string {
+  return count === 0 ? NO_CASES_TEXT : `${count} actionable ${count === 1 ? 'case' : 'cases'}`;
+}
 
 export interface QueueRow {
   caseId: string;

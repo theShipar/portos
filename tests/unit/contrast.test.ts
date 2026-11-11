@@ -51,6 +51,11 @@ describe('text contrast (WCAG AA)', () => {
   it('on-map text and routes stay legible against the ocean', () => {
     expect(contrast(token('color-ink-on-dark'), token('color-map-ocean'))).toBeGreaterThanOrEqual(7);
     expect(contrast(token('color-route-base'), token('color-map-ocean'))).toBeGreaterThanOrEqual(3);
+    expect(contrast(token('color-route-selected'), token('color-map-ocean'))).toBeGreaterThanOrEqual(3);
+  });
+
+  it.each(['color-data-observed', 'color-data-planned', 'color-data-uncertain'])('data role %s reads as a graphic (3:1) on the ocean', (fg) => {
+    expect(contrast(token(fg), token('color-map-ocean'))).toBeGreaterThanOrEqual(3);
   });
 
   it('raw kit hues that fail for small text are not used as text colours', () => {

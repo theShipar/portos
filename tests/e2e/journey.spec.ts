@@ -160,6 +160,7 @@ test.describe('Core Singapore journey', () => {
     await expect(page.getByTestId('replay-current')).toContainText('INC-0001 opened');
     await expect(page.getByTestId('replay-time')).toContainText('10:59');
     await expect(page).toHaveURL(/time=2026-11-09T10%3A59|time=2026-11-09T10:59/);
+    await rail.getByTestId('replay-expand').click();
     const cmp = page.getByTestId('replay-compare');
     await expect(cmp).toContainText('+18.0 h');
     await expect(cmp).toContainText('$24,000');

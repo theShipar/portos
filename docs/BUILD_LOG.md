@@ -757,3 +757,50 @@ blockers. Status values: implemented / tested / blocked.
     `transition-triage`.
   - Evidence: `docs/qa/v2-phase7/port-call-vsl0001.png`, `decision-branch.png`.
 - **Blockers:** none.
+
+## Phase V2-8 — V2 palette, map-first layout and premium UI components
+
+- **Decisions:** D-038 (V2 palette from `tokens.v2.json`, inspector `min(400px, 34vw)`, replay 60 / 116 px,
+  ribbon / rail / peek / inspectors / layer palette / replay timeline / decision compare, port-scope density).
+  D-002 colours and D-003 inspector / rail sizes marked superseded. TECHNICAL_DEVIATIONS gains the folded berth
+  schedule, the two-state replay timeline, the kit `tokens.json` kept as provenance and the two-line peek.
+- **Implemented:**
+  - Tokens: `src/styles/tokens.v2.json`; `tokens.css` and `tokens.ts` rebuilt from it (the kit `tokens.json` is
+    untouched); `src/styles/layout.ts` (`inspectorWidthPx`, `inspectorInsetPx`) used by both map surfaces; ocean
+    `#071A27` everywhere the old `#061A28` was hard-coded.
+  - Components:
+    - `features/workflow/IncidentRibbon.vue` and `components/shell/MapKpiRail.vue` (both renamed with `git mv`);
+      the 4-cell `PortKpiRow`.
+    - `map/EntityPeek.vue`; `map/LayerPalette.vue` (renamed) with `LAYER_GROUPS` / `groupState` in
+      `core/layers.ts`.
+    - `features/replay/ReplayTimeline.vue` (renamed) with `railBookmarks`.
+    - Vessel overview: `components/ui/ShipSilhouette.vue` and `selectors/vesselBrief.ts`.
+    - `features/port/PortInspector.vue` (renamed from `BerthCard`) with `berthMiniGantt`.
+    - `features/compare/DecisionCompare.vue` with `selectors/decisionCompare.ts`.
+  - Port scope:
+    - The compact queue shelf shows the top 3 rows, with a tray for the rest.
+    - The berth schedule is folded with a summary and unfolds on berth focus.
+    - The planar HUD lifts above the schedule's reported inset, fixing the bottom-left overlap.
+  - Icons: chevron-up, more, bookmark, weather, risk, plan, compare.
+- **Tested:**
+  - `npx vue-tsc --noEmit` → exit 0.
+  - `npx vitest run` → exit 0, 328 tests in 22 files. New `v2ui.test.ts` (11): layer groups cover every layer once
+    and respect scope; rail ≤ 4 with "tracked · N in scope"; ribbon 3 and the empty copy; VSL-0001 priorities ≤ 3
+    with INC-0001 first, route progress in 0–1, actionable events seekable, peek "ETA +18.0 h"; decision compare
+    2–3 columns, original first, "simulated" proposals, the not-confirmed footnote, bounded signed delta bars;
+    W-4 mini-Gantt lanes; bookmarks only notes and decisions in range. `shell.test.ts` checks every V2 hex and
+    the spec 13 values; `contrast.test.ts` adds route-selected and data roles on the ocean.
+  - `npm run build` → exit 0.
+  - `npx playwright test tests/e2e/visual.spec.ts --update-snapshots=all` → 16 baselines regenerated (plain
+    `--update-snapshots` kept the comparison baseline because the change was inside the 2% tolerance).
+  - `npx playwright test` (full) → exit 0, 75 passed, 6 skipped (opt-in perf/capture), 3.7 min.
+    - New `layout.spec.ts` (7): map share with the inspector closed at 1440×900 is Earth 85.7%, region 84.9% and
+      Singapore port 83.5%.
+    - It also checks the ribbon (≤ 3) and rail (≤ 4) caps and replay heights (60 px collapsed, 116 px expanded,
+      "Simulation ×N" and UTC always visible).
+    - It checks that the queue, KPI rail, HUD, schedule, replay rail and legend never overlap at port scope with
+      replay open, and that layer groups toggle with no dead controls.
+    - `follow.spec.ts` and `journey.spec.ts` expand the timeline before using ranges, loop and compare;
+      `port3d.spec.ts` unfolds the schedule with `openGantt`.
+  - Evidence: before `docs/screenshots/v2-p8pre-*.png`, after `docs/screenshots/v2-p8-*.png` (`CAPTURE=p8`).
+- **Blockers:** none.

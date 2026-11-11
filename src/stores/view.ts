@@ -37,6 +37,8 @@ export const useViewStore = defineStore('view', () => {
   const inspectorExpanded = ref(false);
   const viewMode = ref<ViewMode>('3d');
   const queueShelfOpen = ref(true);
+  /** Port queue tray showing every waiting call (filters, arrivals); collapsed it lists the three longest waits. */
+  const queueTrayOpen = ref(false);
   const incidentQueueOpen = ref(true);
   /** KPI whose members filter the map; mirrored from the `kpi` URL query. */
   const kpiDrill = ref<KpiKey | null>(null);
@@ -44,6 +46,8 @@ export const useViewStore = defineStore('view', () => {
   const comparing = ref(false);
   /** Replay rail visible (also shown whenever the clock is in replay). */
   const replayOpen = ref(false);
+  /** Replay timeline height state: collapsed 60 px strip or expanded 116 px with histogram and ranges. */
+  const replayExpanded = ref(false);
   /** Below the tablet breakpoint the inspector is a bottom sheet (matches the CSS media query). */
   const sheetQuery = typeof matchMedia !== 'undefined' ? matchMedia('(max-width: 1024px)') : null;
   const sheetLayout = ref(sheetQuery?.matches ?? false);
@@ -158,10 +162,12 @@ export const useViewStore = defineStore('view', () => {
     sheetLayout,
     viewMode,
     queueShelfOpen,
+    queueTrayOpen,
     incidentQueueOpen,
     kpiDrill,
     comparing,
     replayOpen,
+    replayExpanded,
     follow,
     followHold,
     startFollow,

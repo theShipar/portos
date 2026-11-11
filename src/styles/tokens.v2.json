@@ -1,0 +1,59 @@
+{
+  "$comment": "PORTOS V2 palette (master plan spec 13). Supersedes the kit tokens.json colours; see docs/DECISIONS.md D-038. Text roles are AA-safe variants of the spec hues.",
+  "surface": {
+    "app": "#F6F6F3",
+    "panel": "#FFFFFF",
+    "muted": "#F0F1EF"
+  },
+  "text": {
+    "primary": "#13191E",
+    "secondary": "#52606A",
+    "muted": "#5F6A73",
+    "onDark": "#F7FAFC"
+  },
+  "line": {
+    "default": "#DCE2E4",
+    "strong": "#C5CDD1"
+  },
+  "map": {
+    "ocean": "#071A27",
+    "oceanMid": "#10283A",
+    "land": "#243A42",
+    "landOutline": "#4D6974",
+    "routeBase": "#82B8C9"
+  },
+  "accent": {
+    "focus": "#E66A2D",
+    "focusHover": "#C9561F",
+    "focusSubtle": "#FDF0E8",
+    "focusInk": "#B4501C"
+  },
+  "state": {
+    "critical": "#C63B3B",
+    "criticalSubtle": "#FDF1F0",
+    "warning": "#B67B17",
+    "warningInk": "#8C5E0E",
+    "warningSubtle": "#FBF3E3",
+    "success": "#147A66",
+    "successSubtle": "#E6F3EF",
+    "info": "#2B6283",
+    "infoSubtle": "#E8F0F6",
+    "unknown": "#6E7881",
+    "unknownInk": "#5E6873",
+    "unknownSubtle": "#EEF0F2"
+  },
+  "data": {
+    "observed": "#5AADB7",
+    "planned": "#7F8B94",
+    "uncertain": "#A6A9B4"
+  },
+  "layout": {
+    "headerPx": 64,
+    "inspector": "min(400px, 34vw)",
+    "inspectorMaxPx": 400,
+    "inspectorVw": 34,
+    "replayCollapsedPx": 60,
+    "replayExpandedPx": 116,
+    "closedMapShareTarget": 0.8
+  }
+}

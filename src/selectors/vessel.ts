@@ -38,6 +38,7 @@ export interface EventRow {
 export interface VesselInspectorModel {
   vesselId: string;
   name: string;
+  vesselType: string;
   subtitle: string;
   fleet: 'own' | 'ambient';
   navStyle: StatusStyle;
@@ -169,6 +170,7 @@ export function buildVesselInspector(c: Catalog, snap: Snapshot, vesselId: strin
   return {
     vesselId,
     name: v.name,
+    vesselType: v.vesselType,
     subtitle: `${v.vesselType} · ${v.vesselId}`,
     fleet: v.fleet,
     navStyle: statusStyle('nav', pos?.navStatus ?? 'unknown'),

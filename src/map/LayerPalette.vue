@@ -1,15 +1,32 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import { LAYERS, type LayerConfig, type LayerId, type ScopeLevel } from '@/core/layers';
+import { formatUtc } from '@/core/format';
+import { groupState, LAYER_GROUPS, LAYERS, type LayerConfig, type LayerGroupId, type LayerId, type ScopeLevel } from '@/core/layers';
 import { PORT_WAIT_THRESHOLDS } from '@/selectors/mapLayers';
+import { useClockStore } from '@/stores/clock';
 import { useViewStore } from '@/stores/view';
-import Icon from '@/components/ui/Icon.vue';
+import Icon, { type IconName } from '@/components/ui/Icon.vue';
 import { cssHex, markerColors as MC } from './theme';
 
 type Swatch = { label: string; color: string; shape: 'arrow' | 'ring' | 'diamond' | 'line' | 'dotted' | 'dashed' | 'fill' | 'hatch' };
 
 const view = useViewStore();
+const clock = useClockStore();
 const open = ref(false);
+
+const GROUP_ICON: Record<LayerGroupId, IconName> = { traffic: 'ship', ports: 'port', weather: 'weather', risk: 'risk', plans: 'plan' };
+const groups = computed(() =>
+  LAYER_GROUPS.map((g) => {
+    const st = groupState(g, view.scope.level, view.layers);
+    const layers = st.available.map((id) => LAYERS.find((l) => l.id === id)!);
+    return { ...g, ...st, layers, icon: GROUP_ICON[g.id] };
+  }),
+);
+const asOf = computed(() => formatUtc(clock.timeMs));
+
+function toggleGroup(g: { available: LayerId[]; on: boolean }) {
+  for (const id of g.available) view.toggleLayer(id, !g.on);
+}
 const root = ref<HTMLElement | null>(null);
 const toggleBtn = ref<HTMLButtonElement | null>(null);
 
@@ -45,9 +62,8 @@ const LEGEND: Partial<Record<LayerId, Swatch[]>> = {
   traffic: [{ label: 'Vessels per 2° cell (darker = more)', color: cssHex(MC.density), shape: 'fill' }],
 };
 
-const ordered = computed(() => [...LAYERS].sort((a, b) => b.renderOrder - a.renderOrder));
-const available = computed(() => ordered.value.filter((l) => l.scopes.includes(view.scope.level)));
-const unavailable = computed(() => ordered.value.filter((l) => !l.scopes.includes(view.scope.level)));
+const unavailable = computed(() => LAYERS.filter((l) => !l.scopes.includes(view.scope.level)));
+const available = computed(() => LAYERS.filter((l) => l.scopes.includes(view.scope.level)));
 const activeCount = computed(() => available.value.filter((l) => view.layers[l.id]).length);
 const selectionOnly = computed(() => {
   const s = view.selection;
@@ -81,43 +97,62 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
 </script>
 
 <template>
-  <div ref="root" class="layer-menu" @keydown="onKey">
-    <button
-      ref="toggleBtn"
-      type="button"
-      class="map-tool"
-      :class="{ 'map-tool--on': open }"
-      :aria-expanded="open"
-      aria-controls="layer-panel"
-      :aria-label="`Map layers (${activeCount} on)`"
-      title="Map layers"
-      data-testid="layer-toggle"
-      @click="open = !open"
-    >
-      <Icon name="layers" :size="16" />
-    </button>
+  <div ref="root" class="layer-palette" @keydown="onKey">
+    <div class="palette" role="group" aria-label="Layer groups" data-testid="layer-palette">
+      <button
+        v-for="g in groups"
+        :key="g.id"
+        type="button"
+        class="palette__btn"
+        :aria-pressed="g.on"
+        :disabled="!g.available.length"
+        :aria-label="g.available.length ? `${g.label} layers ${g.on ? 'on' : 'off'}` : `${g.label} layers not available at ${SCOPE_NAME[view.scope.level]} scope`"
+        :title="g.available.length ? `${g.label}: ${g.layers.map((l) => l.label).join(', ')}` : `Not available at ${SCOPE_NAME[view.scope.level]} scope`"
+        :data-testid="`layer-group-${g.id}`"
+        @click="toggleGroup(g)"
+      >
+        <Icon :name="g.icon" :size="16" />
+      </button>
+      <button
+        ref="toggleBtn"
+        type="button"
+        class="palette__btn palette__btn--details"
+        :class="{ 'palette__btn--open': open }"
+        :aria-expanded="open"
+        aria-controls="layer-panel"
+        :aria-label="`Layer details and legend (${activeCount} on)`"
+        title="Layer details and legend"
+        data-testid="layer-toggle"
+        @click="open = !open"
+      >
+        <Icon name="layers" :size="16" />
+      </button>
+    </div>
     <section v-if="open" id="layer-panel" class="panel layer-panel" role="dialog" aria-label="Map layers" data-testid="layer-panel">
       <header class="layer-panel__head">
         <h2>Layers</h2>
-        <span class="micro-label">{{ SCOPE_NAME[view.scope.level] }} scope</span>
+        <span class="micro-label">{{ SCOPE_NAME[view.scope.level] }} · Simulated · as of {{ asOf }}</span>
       </header>
-      <ul class="layer-list">
-        <li v-for="l in available" :key="l.id" class="layer">
-          <label class="layer__row">
-            <input type="checkbox" role="switch" class="switch" :checked="view.layers[l.id]" :data-testid="`layer-${l.id}`" @change="view.toggleLayer(l.id, ($event.target as HTMLInputElement).checked)" />
-            <span class="layer__label">{{ l.label }}</span>
-            <span class="layer__quality" :class="`layer__quality--${l.quality.toLowerCase()}`">{{ l.quality }}</span>
-          </label>
-          <p class="layer__meta">{{ l.legend }} · <span class="mono">{{ l.source }}</span></p>
-          <ul v-if="view.layers[l.id] && LEGEND[l.id]" class="legend">
-            <li v-for="s in LEGEND[l.id]" :key="s.label">
-              <span class="swatch" :class="`swatch--${s.shape}`" :style="{ '--sw': s.color }" aria-hidden="true" />
-              {{ s.label }}
-            </li>
-          </ul>
-          <p v-else-if="l.id === 'anchorage' || l.id === 'berths'" class="layer__meta">Drawn in the 2D port view.</p>
-        </li>
-      </ul>
+      <div v-for="g in groups" v-show="g.layers.length" :key="g.id" class="layer-group" :data-testid="`layer-panel-group-${g.id}`">
+        <h3 class="layer-group__title"><Icon :name="g.icon" :size="13" /> {{ g.label }}</h3>
+        <ul class="layer-list">
+          <li v-for="l in g.layers" :key="l.id" class="layer">
+            <label class="layer__row">
+              <input type="checkbox" role="switch" class="switch" :checked="view.layers[l.id]" :data-testid="`layer-${l.id}`" @change="view.toggleLayer(l.id, ($event.target as HTMLInputElement).checked)" />
+              <span class="layer__label">{{ l.label }}</span>
+              <span class="layer__quality" :class="`layer__quality--${l.quality.toLowerCase()}`">{{ l.quality }}</span>
+            </label>
+            <p class="layer__meta">{{ l.legend }} · <span class="mono">{{ l.source }}</span></p>
+            <ul v-if="view.layers[l.id] && LEGEND[l.id]" class="legend">
+              <li v-for="s in LEGEND[l.id]" :key="s.label">
+                <span class="swatch" :class="`swatch--${s.shape}`" :style="{ '--sw': s.color }" aria-hidden="true" />
+                {{ s.label }}
+              </li>
+            </ul>
+            <p v-else-if="l.id === 'anchorage' || l.id === 'berths'" class="layer__meta">Drawn in the port scene and the 2D port view.</p>
+          </li>
+        </ul>
+      </div>
       <p v-if="selectionOnly" class="layer-note">The selected vessel stays visible (selection-only) while its layer is off.</p>
       <div v-if="unavailable.length" class="layer-unavailable">
         <span class="micro-label">Not available at this scope</span>
@@ -132,12 +167,63 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
 </template>
 
 <style scoped>
-.layer-menu {
+.layer-palette {
   position: relative;
 }
-.map-tool--on {
-  color: var(--color-accent-ink) !important;
-  border-color: var(--color-accent) !important;
+.palette {
+  display: grid;
+  padding: 2px;
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--shadow-panel);
+}
+.palette__btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--radius-input);
+  background: transparent;
+  color: var(--color-ink-muted);
+  cursor: pointer;
+  transition: background var(--motion-hover) var(--ease-standard), color var(--motion-hover) var(--ease-standard);
+}
+.palette__btn:hover:not(:disabled) {
+  background: var(--color-panel-secondary);
+}
+.palette__btn[aria-pressed='true'] {
+  color: var(--color-accent-ink);
+  background: var(--color-accent-subtle);
+}
+.palette__btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+.palette__btn--details {
+  border-top: 1px solid var(--color-border);
+  border-radius: 0 0 var(--radius-input) var(--radius-input);
+  color: var(--color-ink-secondary);
+}
+.palette__btn--open {
+  color: var(--color-accent-ink);
+}
+.layer-group + .layer-group {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+.layer-group__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 6px;
+  font-size: var(--text-11);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--color-ink-secondary);
 }
 .layer-panel {
   position: absolute;
@@ -215,7 +301,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
   width: 18px;
   height: 12px;
   border-radius: 2px;
-  background: #061a28;
+  background: #071a27;
   position: relative;
 }
 .swatch::after {
@@ -257,10 +343,10 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
   border-top-style: dashed;
 }
 .swatch--fill {
-  background: color-mix(in srgb, var(--sw) 55%, #061a28);
+  background: color-mix(in srgb, var(--sw) 55%, #071a27);
 }
 .swatch--hatch {
-  background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--sw) 60%, #061a28) 0 3px, color-mix(in srgb, var(--sw) 85%, #fff) 3px 4px);
+  background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--sw) 60%, #071a27) 0 3px, color-mix(in srgb, var(--sw) 85%, #fff) 3px 4px);
 }
 .layer-note {
   margin: 10px 0 0;

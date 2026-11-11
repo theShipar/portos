@@ -59,6 +59,8 @@ export interface GanttView {
   ticks: { key: string; leftPct: number; label: string; day: boolean }[];
   rows: GanttRowView[];
   conflictCount: number;
+  /** One-line occupancy for the folded schedule, e.g. `10 berths · 8 occupied`. */
+  summaryText: string;
   note: string;
 }
 
@@ -130,6 +132,7 @@ export function berthGanttView(c: Catalog, twin: PortTwinModel, nowMs: number, h
     ticks,
     rows,
     conflictCount: rows.reduce((n, r) => n + r.conflicts.length, 0),
+    summaryText: `${rows.length} berths · ${rows.filter((r) => r.status === 'occupied').length} occupied`,
     note: CONSTRAINTS_NOTE,
   };
 }
@@ -171,5 +174,36 @@ export function berthCardView(c: Catalog, twin: PortTwinModel, berthId: string):
       text: `${x.basis === 'planned' ? 'Planned overlap' : 'Forecast overrun'} · ${name(x.vesselIds[0])} / ${name(x.vesselIds[1])} · ${span(x.startMs, x.endMs)}`,
     })),
     note: CONSTRAINTS_NOTE,
+  };
+}
+
+export interface MiniGanttLane {
+  kind: BarKind;
+  label: string;
+  bars: GanttBarView[];
+}
+
+export interface MiniGanttView {
+  berthId: string;
+  lanes: MiniGanttLane[];
+  requested: GanttMarkView[];
+  conflicts: GanttConflictView[];
+  nowPct: number;
+  ticks: GanttView['ticks'];
+}
+
+/** One berth's 24 h schedule with actual, planned and forecast on separate lanes (the inspector's ETA vs actual visual). */
+export function berthMiniGantt(c: Catalog, twin: PortTwinModel, nowMs: number, berthId: string): MiniGanttView | null {
+  const g = berthGanttView(c, twin, nowMs, 24);
+  const row = g.rows.find((r) => r.berthId === berthId);
+  if (!row) return null;
+  const kinds: BarKind[] = ['actual', 'planned', 'forecast'];
+  return {
+    berthId,
+    lanes: kinds.map((kind) => ({ kind, label: BAR_KIND_LABEL[kind], bars: row.bars.filter((b) => b.kind === kind) })),
+    requested: row.requested,
+    conflicts: row.conflicts,
+    nowPct: g.nowPct,
+    ticks: g.ticks,
   };
 }

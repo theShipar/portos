@@ -35,6 +35,11 @@ PORTOS reuses techniques, not the one-to-one template (decision D-001). Code der
 | Service chain with towage and mooring times (spec 12) | V2 (D-037): the chain lists towage and mooring as "Not in dataset" | The synthetic DCSA milestones cover pilot boarding and berth only; inventing service times would read as data |
 | Case stages stored in the fixture (spec 12) | V2 (D-037): fixture incidents keep the V1 status vocabulary, mapped to V2 stages at read time | Keeps fixture compatibility and the 50 recorded incidents untouched; the mapping is one table with tests |
 
+| Berth schedule always visible in port scope (spec 07) | V2 (D-038): the schedule starts folded to a one-line summary and unfolds when a berth is focused or on request | Spec 13's ≥ 80% map share at 1440×900 cannot hold with a 10-row Gantt open; the summary keeps occupancy and overlaps visible |
+| Replay timeline shows every control at once (spec 09) | V2 (D-038): ranges, loop, 5-minute steps, follow, note and the compare table live in the expanded (116 px) state; collapsed (60 px) keeps play, speed, UTC, events and Now | Spec 13's 54–66 px collapsed height leaves room for one control row |
+| Single palette file (`tokens.json`) | V2 (D-038): `tokens.v2.json` is the source; `tokens.json` stays the unedited kit copy | Keeps provenance of the kit palette while the V2 values drive CSS and TS |
+| On-map hover tooltip with full vessel facts | V2 (D-038): `EntityPeek` shows two lines (name, one or two deltas) with Follow / Inspect; the inspector carries the rest | Spec 13 limits the peek to two lines and asks for quick actions |
+
 Kept from the skill: `world.earth-render.json` render cache for the globe (raw `world.json` not in the first-paint
 bundle), Earth day/normal/specular/lights textures, batched `THREE.LineSegments` outlines, single active render loop
 per scene, neutral black starfield backdrop, GSAP for camera orchestration.

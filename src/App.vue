@@ -9,17 +9,17 @@ import { useSnapshotStore } from '@/stores/snapshot';
 import { useViewStore } from '@/stores/view';
 import { useWorkflowStore } from '@/stores/workflow';
 import AppHeader from '@/components/shell/AppHeader.vue';
-import KpiRow from '@/components/shell/KpiRow.vue';
+import MapKpiRail from '@/components/shell/MapKpiRail.vue';
 import NoticeStack from '@/components/shell/NoticeStack.vue';
 import PortKpiRow from '@/components/shell/PortKpiRow.vue';
-import BerthCard from '@/features/port/BerthCard.vue';
+import PortInspector from '@/features/port/PortInspector.vue';
 import BerthGantt from '@/features/port/BerthGantt.vue';
 import PortQueueShelf from '@/features/port/PortQueueShelf.vue';
-import IncidentQueue from '@/features/workflow/IncidentQueue.vue';
+import IncidentRibbon from '@/features/workflow/IncidentRibbon.vue';
 import ScopeBreadcrumb from '@/components/shell/ScopeBreadcrumb.vue';
 import EntityInspector from '@/features/inspectors/EntityInspector.vue';
 import MapWorkspace from '@/map/MapWorkspace.vue';
-import ReplayRail from '@/features/replay/ReplayRail.vue';
+import ReplayTimeline from '@/features/replay/ReplayTimeline.vue';
 
 const catalog = useCatalogStore();
 const clock = useClockStore();
@@ -34,7 +34,7 @@ const crumbs = ref<InstanceType<typeof ScopeBreadcrumb> | null>(null);
 const railOpen = computed(() => catalog.status === 'ready' && (view.replayOpen || clock.phase !== 'now'));
 /** Port-scope panels avoid the queue shelf (left) and the inspector (right). */
 const workspaceVars = computed(() => ({
-  '--shelf-w': snap.portView ? (view.queueShelfOpen ? '340px' : '220px') : '0px',
+  '--shelf-w': snap.portView && view.queueShelfOpen && view.queueTrayOpen ? '340px' : '0px',
   '--card-right': view.inspectorOpen && !view.sheetLayout ? 'calc(var(--inspector-w) + var(--map-control-gap))' : '0px',
   '--gantt-right': view.inspectorOpen && !view.sheetLayout ? 'calc(var(--inspector-w) + 96px)' : '84px',
 }));
@@ -77,20 +77,20 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
   <div class="shell">
     <a class="skip-link" href="#global-search">Skip to search</a>
     <AppHeader ref="header" />
-    <main class="workspace" :class="{ 'workspace--rail': railOpen, 'workspace--inspector': view.inspectorOpen }" :style="workspaceVars" aria-label="Operations map workspace">
+    <main class="workspace" :class="{ 'workspace--rail': railOpen, 'workspace--rail-expanded': railOpen && view.replayExpanded, 'workspace--inspector': view.inspectorOpen }" :style="workspaceVars" aria-label="Operations map workspace">
       <p class="narrow-note" role="note">The map needs a window at least 768 px wide. Cases, search and the inspector still work here.</p>
       <MapWorkspace v-if="catalog.status === 'ready'" />
       <div v-if="catalog.status === 'ready'" class="overlay overlay--tl">
         <ScopeBreadcrumb ref="crumbs" />
         <PortKpiRow v-if="snap.portView" :vm="snap.portView" />
-        <KpiRow v-else :kpis="snap.kpis" />
+        <MapKpiRail v-else :kpis="snap.kpis" />
         <PortQueueShelf v-if="snap.portView" />
-        <IncidentQueue v-else />
+        <IncidentRibbon v-else />
       </div>
       <BerthGantt v-if="catalog.status === 'ready' && snap.portTwin" />
-      <BerthCard v-if="catalog.status === 'ready' && snap.portTwin && view.berthId && view.viewMode === '3d'" />
+      <PortInspector v-if="catalog.status === 'ready' && snap.portTwin && view.berthId && view.viewMode === '3d'" />
       <EntityInspector v-if="catalog.status === 'ready'" />
-      <ReplayRail v-if="railOpen" />
+      <ReplayTimeline v-if="railOpen" />
       <div v-if="catalog.status === 'loading' || catalog.status === 'idle'" class="state" role="status">
         <div class="state__spinner" aria-hidden="true" />
         <span>Loading simulated dataset…</span>
@@ -116,7 +116,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
   height: 100%;
 }
 .workspace {
-  --rail-h: 148px;
+  --rail-h: var(--replay-collapsed-h);
   --rail-lift: 0px;
   --drawer-bottom: var(--map-control-gap);
   --sheet-h: 46%;
@@ -124,6 +124,9 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
   position: relative;
   overflow: hidden;
   background: var(--color-map-ocean);
+}
+.workspace--rail-expanded {
+  --rail-h: var(--replay-expanded-h);
 }
 .workspace--rail {
   --rail-lift: calc(var(--rail-h) + 8px);
@@ -151,8 +154,8 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
   display: none;
 }
 @media (max-width: 1100px) {
-  .workspace {
-    --rail-h: 290px;
+  .workspace--rail-expanded {
+    --rail-h: 250px;
   }
 }
 @media (max-width: 1024px) {

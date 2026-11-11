@@ -4,7 +4,7 @@ import { formatDuration, formatLocal, formatUtc } from '@/core/format';
 import { HOUR } from '@/core/time';
 import { LOOP_RANGES, PLAYBACK_RATES, isPlaybackRate } from '@/core/scenarioClock';
 import { useNavigation } from '@/router/useRouteSync';
-import { CATEGORY_LABEL, compareWithNow, currentMarker, densityBins, railMarkers, stepMarker, type RailMarker } from '@/selectors/replay';
+import { CATEGORY_LABEL, compareWithNow, currentMarker, densityBins, railBookmarks, railMarkers, stepMarker, type RailMarker } from '@/selectors/replay';
 import { useCatalogStore } from '@/stores/catalog';
 import { useClockStore } from '@/stores/clock';
 import { useSnapshotStore } from '@/stores/snapshot';
@@ -31,6 +31,16 @@ const span = computed(() => Math.max(1, clock.rangeEndMs - clock.rangeStartMs));
 const markers = computed<RailMarker[]>(() => (catalog.catalog ? railMarkers(catalog.catalog, view.selection, view.scope.level === 'port' ? view.scope.portId : null, clock.rangeStartMs, clock.rangeEndMs) : []));
 const bins = computed(() => (catalog.catalog ? densityBins(catalog.catalog, clock.rangeStartMs, clock.rangeEndMs, Math.max(30, Math.round(span.value / HOUR / 48) * 60)) : []));
 const current = computed(() => currentMarker(markers.value, clock.timeMs));
+const bookmarks = computed(() => railBookmarks(wf.state.audit, clock.rangeStartMs, clock.rangeEndMs));
+const expanded = computed(() => view.replayExpanded);
+function toggleExpanded() {
+  view.replayExpanded = !view.replayExpanded;
+  if (!view.replayExpanded) noting.value = false;
+}
+function jumpBookmark(ms: number) {
+  clock.pause();
+  clock.seekMs(ms);
+}
 const contextText = computed(() => {
   const sel = view.selection;
   if (sel) return `Events for ${sel.id} and linked records`;
@@ -159,6 +169,7 @@ const noteError = ref<string | null>(null);
 const noteInput = ref<HTMLTextAreaElement | null>(null);
 function startNote() {
   clock.pause();
+  view.replayExpanded = true;
   noting.value = true;
   noteText.value = '';
   noteError.value = null;
@@ -175,17 +186,25 @@ function saveNote() {
 </script>
 
 <template>
-  <section class="rail" :class="{ 'rail--historical': away }" aria-label="Replay timeline" data-testid="replay-rail">
+  <section
+    class="rail"
+    :class="{ 'rail--historical': away, 'rail--expanded': expanded, 'rail--side': expanded && (noting || away) }"
+    aria-label="Replay timeline"
+    data-testid="replay-rail"
+    :data-expanded="expanded"
+  >
     <div class="rail__bar">
       <button type="button" class="icon-btn rail__play" :aria-label="clock.playing ? 'Pause' : 'Play'" :aria-pressed="clock.playing" data-testid="replay-play" @click="togglePlay">
         <Icon :name="clock.playing ? 'pause' : 'play'" :size="16" />
       </button>
-      <button type="button" class="icon-btn" aria-label="Back 5 minutes" title="Back 5 min (Shift: 1 h on the timeline)" data-testid="replay-step-back" @click="clock.step(-1)">
-        <Icon name="step-back" :size="15" />
-      </button>
-      <button type="button" class="icon-btn" aria-label="Forward 5 minutes" title="Forward 5 min (Shift: 1 h on the timeline)" data-testid="replay-step-forward" @click="clock.step(1)">
-        <Icon name="step-forward" :size="15" />
-      </button>
+      <template v-if="expanded">
+        <button type="button" class="icon-btn" aria-label="Back 5 minutes" title="Back 5 min (Shift: 1 h on the timeline)" data-testid="replay-step-back" @click="clock.step(-1)">
+          <Icon name="step-back" :size="15" />
+        </button>
+        <button type="button" class="icon-btn" aria-label="Forward 5 minutes" title="Forward 5 min (Shift: 1 h on the timeline)" data-testid="replay-step-forward" @click="clock.step(1)">
+          <Icon name="step-forward" :size="15" />
+        </button>
+      </template>
       <label :for="ids.rate" class="sr-only">Playback rate</label>
       <select :id="ids.rate" class="control rail__rate num" :value="clock.rate" data-testid="replay-rate" @change="onRate">
         <option v-for="r in PLAYBACK_RATES" :key="r" :value="r">Simulation ×{{ r }}</option>
@@ -196,40 +215,11 @@ function saveNote() {
       <button type="button" class="icon-btn" aria-label="Next event" :disabled="!markers.length" data-testid="replay-next" @click="stepEvent(1)">
         <Icon name="chevron-right" :size="16" />
       </button>
-      <div class="rail__time" aria-live="polite">
-        <span class="rail__mode" :class="{ 'rail__mode--hist': historical, 'rail__mode--sim': clock.phase === 'simulation' }" data-testid="replay-phase">{{ phaseText }}</span>
-        <strong class="mono" data-testid="replay-time">{{ formatUtc(clock.timeMs) }}</strong>
-        <span v-if="localText" class="rail__sub mono">{{ localText }}</span>
-        <span class="rail__sub">{{ offsetText }}</span>
-      </div>
-      <div class="rail__actions">
-        <button
-          type="button"
-          class="btn btn--sm"
-          :class="{ 'btn--active': following }"
-          :disabled="!followVesselId"
-          :aria-pressed="following"
-          :title="followVesselId ? undefined : 'Select a vessel to follow it.'"
-          data-testid="replay-follow"
-          @click="toggleFollow"
-        >
-          <Icon name="crosshair" :size="14" /> Follow selected vessel
-        </button>
-        <button type="button" class="btn btn--sm" :disabled="!historical" :title="historical ? undefined : 'Move back in time to note a historical moment.'" aria-label="Add a note about this historical moment" data-testid="replay-note" @click="startNote">Add note</button>
-        <button type="button" class="btn btn--sm btn--primary" :disabled="!away" data-testid="replay-now" @click="clock.reset()">
-          <Icon name="reset" :size="14" /> Return to Now
-        </button>
-        <button type="button" class="icon-btn" aria-label="Close replay and return to Now" data-testid="replay-close" @click="nav.closeReplay()">
-          <Icon name="close" :size="16" />
-        </button>
-      </div>
-    </div>
 
-    <div class="rail__body">
-      <div class="track">
+      <div class="track" :class="{ 'track--mini': !expanded }">
         <div v-if="simStyle" class="track__sim" :style="simStyle" title="Simulated time after Now: scenario keyframes; vessels without them hold their last report" aria-hidden="true" />
-        <div class="track__density" aria-hidden="true">
-          <span v-for="b in bins" :key="b.startMs" class="track__bin" :style="{ left: `${b.at * 100}%`, width: `${b.width * 100}%`, height: `${4 + b.level * 22}px` }" />
+        <div v-if="expanded" class="track__density" aria-hidden="true" data-testid="replay-histogram">
+          <span v-for="b in bins" :key="b.startMs" class="track__bin" :style="{ left: `${b.at * 100}%`, width: `${b.width * 100}%`, height: `${3 + b.level * 15}px` }" />
         </div>
         <div class="track__markers">
           <button
@@ -244,6 +234,19 @@ function saveNote() {
             :data-testid="`replay-marker-${m.eventId}`"
             @click="jump(m)"
           />
+          <button
+            v-for="b in bookmarks"
+            :key="b.auditId"
+            type="button"
+            class="bookmark"
+            :style="{ left: `${b.at * 100}%` }"
+            :title="`Saved: ${b.label}`"
+            :aria-label="`Jump to saved moment: ${b.label}`"
+            :data-testid="`replay-bookmark-${b.auditId}`"
+            @click="jumpBookmark(b.ms)"
+          >
+            <Icon name="bookmark" :size="11" />
+          </button>
         </div>
         <span v-if="anchorInRange" class="track__anchor" :style="{ left: pct(clock.anchorMs) }" aria-hidden="true"><span>Now</span></span>
         <div class="track__fill" :style="{ width: progressPct }" aria-hidden="true" />
@@ -267,19 +270,70 @@ function saveNote() {
           @change="onScrubCommit"
           @keydown="onScrubKey"
         />
-        <div class="track__ticks" aria-hidden="true">
+        <div v-if="expanded" class="track__ticks" aria-hidden="true">
           <span v-for="t in ticks" :key="t.at" :style="{ left: `${t.at * 100}%` }">{{ t.label }}</span>
         </div>
+        <p v-else class="rail__event rail__event--mini" data-testid="replay-current">
+          <template v-if="current">
+            <span class="dot" :class="`dot--${current.category}`" aria-hidden="true" />
+            <span class="mono">{{ current.timeText }}</span> · {{ current.label }}
+          </template>
+          <template v-else>No recorded event before {{ formatUtc(clock.timeMs, { date: false }) }}</template>
+        </p>
       </div>
-      <div class="rail__meta">
-        <p :id="ids.help" class="rail__help">{{ contextText }} · {{ markerCount }}. Arrow keys step 5 min; Shift+Arrow steps 1 h.</p>
-        <div class="seg seg--sm" role="group" aria-label="Playback range">
-          <button v-for="r in LOOP_RANGES" :key="r.key" type="button" class="seg__btn" :aria-pressed="clock.rangeKey === r.key" :data-testid="`replay-range-${r.key}`" @click="clock.setRange(r.key)">{{ r.label }}</button>
-        </div>
-        <button type="button" class="btn btn--sm rail__loop" :class="{ 'btn--active': clock.loop }" :aria-pressed="clock.loop" title="Off: playback pauses at the end of the range" data-testid="replay-loop" @click="clock.setLoop(!clock.loop)">
-          <Icon name="loop" :size="13" /> Loop
+
+      <div class="rail__time" aria-live="polite">
+        <span class="rail__mode" :class="{ 'rail__mode--hist': historical, 'rail__mode--sim': clock.phase === 'simulation' }" data-testid="replay-phase">{{ phaseText }}</span>
+        <strong class="mono" data-testid="replay-time">{{ formatUtc(clock.timeMs) }}</strong>
+        <span v-if="expanded && localText" class="rail__sub mono">{{ localText }}</span>
+      </div>
+      <div class="rail__actions">
+        <template v-if="expanded">
+          <button
+            type="button"
+            class="btn btn--sm"
+            :class="{ 'btn--active': following }"
+            :disabled="!followVesselId"
+            :aria-pressed="following"
+            :title="followVesselId ? undefined : 'Select a vessel to follow it.'"
+            data-testid="replay-follow"
+            @click="toggleFollow"
+          >
+            <Icon name="crosshair" :size="14" /> Follow
+          </button>
+          <button type="button" class="btn btn--sm" :disabled="!historical" :title="historical ? undefined : 'Move back in time to note a historical moment.'" aria-label="Add a note about this historical moment" data-testid="replay-note" @click="startNote">
+            <Icon name="bookmark" :size="13" /> Note
+          </button>
+        </template>
+        <button type="button" class="btn btn--sm btn--primary" :disabled="!away" data-testid="replay-now" @click="clock.reset()">
+          <Icon name="reset" :size="14" /> Now
+        </button>
+        <button
+          type="button"
+          class="icon-btn"
+          :aria-expanded="expanded"
+          :aria-label="expanded ? 'Collapse replay timeline' : 'Expand replay timeline: ranges, loop, histogram and comparison'"
+          :title="expanded ? 'Collapse' : 'Expand: ranges, loop, histogram, compare with Now'"
+          data-testid="replay-expand"
+          @click="toggleExpanded"
+        >
+          <Icon :name="expanded ? 'chevron-down' : 'chevron-up'" :size="16" />
+        </button>
+        <button type="button" class="icon-btn" aria-label="Close replay and return to Now" data-testid="replay-close" @click="nav.closeReplay()">
+          <Icon name="close" :size="16" />
         </button>
       </div>
+    </div>
+
+    <p :id="ids.help" class="sr-only">{{ contextText }} · {{ markerCount }}. {{ offsetText }}. Arrow keys step 5 min; Shift+Arrow steps 1 h.</p>
+
+    <div v-if="expanded" class="rail__meta">
+      <div class="seg seg--sm" role="group" aria-label="Playback range">
+        <button v-for="r in LOOP_RANGES" :key="r.key" type="button" class="seg__btn" :aria-pressed="clock.rangeKey === r.key" :data-testid="`replay-range-${r.key}`" @click="clock.setRange(r.key)">{{ r.label }}</button>
+      </div>
+      <button type="button" class="btn btn--sm rail__loop" :class="{ 'btn--active': clock.loop }" :aria-pressed="clock.loop" title="Off: playback pauses at the end of the range" data-testid="replay-loop" @click="clock.setLoop(!clock.loop)">
+        <Icon name="loop" :size="13" /> Loop
+      </button>
       <p class="rail__event" data-testid="replay-current">
         <span class="rail__event-text">
           <template v-if="current">
@@ -288,25 +342,26 @@ function saveNote() {
           </template>
           <template v-else>No recorded event for this context before {{ formatUtc(clock.timeMs, { date: false }) }}.</template>
         </span>
-        <span class="rail__passed" :data-count="passed" data-testid="replay-passed">{{ passed }} {{ passed === 1 ? 'event' : 'events' }} passed this run</span>
       </p>
+      <span class="rail__sub rail__offset">{{ offsetText }}</span>
+      <span class="rail__passed" :data-count="passed" data-testid="replay-passed">{{ passed }} {{ passed === 1 ? 'event' : 'events' }} passed</span>
     </div>
 
-    <aside v-if="noting" class="rail__side" aria-label="Note this moment">
+    <aside v-if="expanded && noting" class="rail__side" aria-label="Note this moment">
       <form class="form" @submit.prevent="saveNote" @keydown.esc.stop.prevent="noting = false">
         <label :for="ids.note" class="field">
           Note about {{ formatUtc(clock.timeMs) }}<template v-if="view.selection"> · {{ view.selection.id }}</template>
-          <textarea :id="ids.note" ref="noteInput" v-model="noteText" class="control" rows="2" data-testid="replay-note-input" />
+          <textarea :id="ids.note" ref="noteInput" v-model="noteText" class="control" rows="1" data-testid="replay-note-input" />
         </label>
         <p v-if="noteError" class="form-error" role="alert">{{ noteError }}</p>
-        <p class="form-hint">Saved to the local audit log at your current time, referencing this historical instant. No case changes.</p>
         <div class="form-row">
           <button type="submit" class="btn btn--sm btn--primary" data-testid="replay-note-save">Save note</button>
           <button type="button" class="btn btn--sm" @click="noting = false">Cancel</button>
+          <span class="form-hint">Local audit log · no case changes</span>
         </div>
       </form>
     </aside>
-    <aside v-else-if="away" class="rail__side" aria-label="Compared with Now" data-testid="replay-compare">
+    <aside v-else-if="expanded && away" class="rail__side" aria-label="Compared with Now" data-testid="replay-compare">
       <table class="cmp">
         <thead>
           <tr>
@@ -335,15 +390,25 @@ function saveNote() {
   bottom: 36px;
   z-index: 35;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-rows: auto auto;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: center;
   column-gap: 16px;
+  row-gap: 4px;
   height: var(--rail-h);
-  padding: 8px 12px;
+  padding: 6px 10px;
+  overflow: hidden;
   background: var(--color-panel);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
+  transition: height var(--motion-panel) var(--ease-standard);
+}
+.rail--expanded {
+  grid-template-rows: auto auto;
+  align-content: start;
+}
+.rail--side {
+  grid-template-columns: minmax(0, 1fr) 340px;
 }
 .rail--historical {
   border-color: var(--color-info);
@@ -352,8 +417,12 @@ function saveNote() {
   grid-column: 1;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
+}
+.rail--expanded .rail__bar {
+  flex-wrap: wrap;
+  row-gap: 4px;
 }
 .rail__bar > .icon-btn,
 .seg {
@@ -388,14 +457,18 @@ function saveNote() {
 }
 .rail__time {
   display: flex;
-  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: none;
+  gap: 1px;
+  white-space: nowrap;
+  font-size: var(--text-12);
+  line-height: 16px;
+}
+.rail--expanded .rail__time {
+  flex-direction: row;
   align-items: baseline;
   gap: 8px;
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  margin-left: 4px;
-  font-size: var(--text-12);
 }
 .rail__time strong {
   font-size: var(--text-13);
@@ -407,11 +480,15 @@ function saveNote() {
   color: var(--color-ink-secondary);
   font-size: var(--text-11);
   font-weight: 600;
-  line-height: 18px;
+  line-height: 16px;
 }
 .rail__mode--hist {
   background: var(--color-info-subtle);
   color: var(--color-info);
+}
+.rail__mode--sim {
+  background: var(--color-warning-subtle);
+  color: var(--color-warning-ink);
 }
 .rail__sub {
   color: var(--color-ink-muted);
@@ -419,25 +496,28 @@ function saveNote() {
 .rail__actions {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-left: auto;
+  gap: 4px;
   flex: none;
-}
-.rail__body {
-  grid-column: 1;
-  display: grid;
-  gap: 2px;
-  min-width: 0;
 }
 .track {
   position: relative;
-  height: 54px;
-  margin: 2px 6px 0;
+  flex: 1 1 200px;
+  min-width: 160px;
+  height: 46px;
+  margin: 0 6px;
+}
+.track--mini {
+  height: 44px;
+}
+.rail--expanded .track {
+  order: 10;
+  flex-basis: 100%;
+  height: 40px;
+  margin: 0 6px;
 }
 .track__density {
   position: absolute;
-  inset: 0 0 23px;
-  display: block;
+  inset: 0 0 20px;
 }
 .track__bin {
   position: absolute;
@@ -449,22 +529,25 @@ function saveNote() {
 .track__fill {
   position: absolute;
   left: 0;
-  bottom: 21px;
+  bottom: 19px;
   height: 3px;
   border-radius: 2px;
   background: var(--color-accent);
   pointer-events: none;
 }
+.track--mini .track__fill {
+  bottom: 21px;
+}
 .track__markers {
   position: absolute;
-  inset: 0 0 23px;
+  inset: 0 0 22px;
   pointer-events: none;
 }
 .mark {
   position: absolute;
-  top: 0;
+  bottom: 2px;
   width: 8px;
-  height: 14px;
+  height: 12px;
   margin-left: -4px;
   padding: 0;
   border: 1px solid var(--color-panel);
@@ -501,17 +584,36 @@ function saveNote() {
 .dot--position {
   background: var(--color-ink-muted);
 }
+.bookmark {
+  position: absolute;
+  top: -2px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: #fff;
+  cursor: pointer;
+  pointer-events: auto;
+}
 .track__input {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 12px;
+  bottom: 11px;
   width: 100%;
   height: 20px;
   margin: 0;
   background: transparent;
   appearance: none;
   cursor: pointer;
+}
+.track--mini .track__input {
+  bottom: 13px;
 }
 .track__input::-webkit-slider-runnable-track {
   height: 3px;
@@ -543,9 +645,10 @@ function saveNote() {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -2px;
+  bottom: -1px;
   height: 12px;
   font-size: var(--text-11);
+  line-height: 12px;
   color: var(--color-ink-muted);
 }
 .track__ticks span {
@@ -559,20 +662,30 @@ function saveNote() {
 .track__ticks span:last-child {
   transform: translateX(-100%);
 }
-.rail__help,
 .rail__event {
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: var(--text-11);
-  line-height: 15px;
-  color: var(--color-ink-muted);
-}
-.rail__event {
   font-size: var(--text-12);
   line-height: 16px;
   color: var(--color-ink);
+}
+.rail__event--mini {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  font-size: var(--text-11);
+  line-height: 13px;
+  color: var(--color-ink-secondary);
+}
+.rail__event-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .dot {
   display: inline-block;
@@ -582,12 +695,37 @@ function saveNote() {
   border-radius: 2px;
   vertical-align: 0;
 }
+.rail__meta {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: var(--text-11);
+}
+.rail__offset {
+  flex: none;
+}
+.rail__passed {
+  flex: none;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+.seg--sm .seg__btn {
+  height: 22px;
+  min-width: 34px;
+  font-size: var(--text-11);
+}
+.rail__loop {
+  height: 22px;
+  padding: 0 8px;
+  font-size: var(--text-11);
+}
 .rail__side {
   grid-column: 2;
   grid-row: 1 / span 2;
-  width: 360px;
   min-height: 0;
-  padding-left: 16px;
+  padding-left: 14px;
   border-left: 1px solid var(--color-border);
   overflow-y: auto;
 }
@@ -596,11 +734,11 @@ function saveNote() {
   table-layout: fixed;
   border-collapse: collapse;
   font-size: var(--text-12);
-  line-height: 16px;
+  line-height: 15px;
 }
 .cmp th,
 .cmp td {
-  padding: 2px 4px;
+  padding: 1px 4px;
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
@@ -623,10 +761,10 @@ function saveNote() {
   font-weight: 600;
 }
 .rail__side .form {
-  gap: 6px;
+  gap: 4px;
 }
 .rail__side textarea {
-  min-height: 44px;
+  min-height: 30px;
   resize: none;
 }
 .rail__rate {
@@ -637,58 +775,18 @@ function saveNote() {
   font-size: var(--text-12);
   font-weight: 600;
 }
-.rail__mode--sim {
-  background: var(--color-warning-subtle);
-  color: var(--color-warning-ink);
-}
-.rail__meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-}
-.rail__meta .rail__help {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.seg--sm .seg__btn {
-  height: 22px;
-  min-width: 34px;
-  font-size: var(--text-11);
-}
-.rail__loop {
-  height: 22px;
-  padding: 0 8px;
-  font-size: var(--text-11);
-}
-.rail__event {
-  display: flex;
-  gap: 12px;
-}
-.rail__event-text {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.rail__passed {
-  flex: none;
-  color: var(--color-ink-muted);
-  font-size: var(--text-11);
-  font-variant-numeric: tabular-nums;
-}
 .track__sim {
   position: absolute;
   top: 0;
-  bottom: 21px;
+  bottom: 19px;
   background: repeating-linear-gradient(135deg, transparent 0 5px, rgba(127, 139, 148, 0.12) 5px 7px);
   border-left: 1px dashed var(--color-border);
   pointer-events: none;
 }
 .track__anchor {
   position: absolute;
-  top: -2px;
-  bottom: 18px;
+  top: 0;
+  bottom: 17px;
   width: 0;
   border-left: 2px solid var(--color-ink);
   pointer-events: none;
@@ -703,25 +801,22 @@ function saveNote() {
   color: var(--color-ink);
 }
 @media (max-width: 1100px) {
-  .rail {
+  .rail--side {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto minmax(0, 1fr);
-    row-gap: 6px;
-  }
-  .rail__bar {
-    flex-wrap: wrap;
-    row-gap: 6px;
   }
   .rail__side {
     grid-column: 1;
-    grid-row: 3;
-    width: auto;
-    padding: 6px 0 0;
+    grid-row: auto;
+    padding: 4px 0 0;
     border-left: 0;
     border-top: 1px solid var(--color-border);
   }
+  .rail:not(.rail--expanded) .rail__bar > .icon-btn:not(.rail__play) {
+    display: none;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
+  .rail,
   .track__fill {
     transition: none;
   }

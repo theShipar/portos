@@ -100,3 +100,10 @@ export async function search(page: Page, query: string) {
 export async function expectHeading(page: Page, text: string | RegExp) {
   await expect(inspector(page).getByRole('heading', { level: 2 })).toHaveText(text);
 }
+
+/** The berth schedule starts folded (V2 spec 13); unfold it when a test reads its rows. */
+export async function openGantt(page: Page) {
+  const toggle = page.getByTestId('gantt-toggle');
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
+  await expect(page.locator('.gantt__rows')).toBeVisible();
+}

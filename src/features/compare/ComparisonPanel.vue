@@ -17,6 +17,8 @@ import type { BranchStatus, ScenarioInputs } from '@/workflows/types';
 import { statusStyle, type StatusStyle } from '@/styles/tokens';
 import InspectorDrawer from '@/components/shell/InspectorDrawer.vue';
 import StatusChip from '@/components/ui/StatusChip.vue';
+import { decisionCompareView } from '@/selectors/decisionCompare';
+import DecisionCompare from './DecisionCompare.vue';
 
 const props = defineProps<{ voyageId: string }>();
 const catalog = useCatalogStore();
@@ -53,6 +55,7 @@ const inputs = computed<ScenarioInputs>(() => ({
 const inputError = computed(() => validateScenarioInputs(inputs.value));
 const cmp = computed(() => (catalog.catalog && snap.snapshot && !inputError.value ? compareScenarios(catalog.catalog, snap.snapshot, props.voyageId, inputs.value) : null));
 
+const decision = computed(() => (cmp.value ? decisionCompareView(cmp.value) : null));
 const canPropose = computed(() => permissionCheck(session.user, PERMISSION.propose, 'propose scenario plans'));
 const canAccept = computed(() => permissionCheck(session.user, PERMISSION.accept, 'approve options for simulation'));
 const assignees = computed(() => (catalog.catalog?.users ?? []).filter((u) => u.role !== 'viewer'));
@@ -155,6 +158,8 @@ function backToCase() {
         <span><i class="ln ln--proposed" />Proposed (candidate)</span>
         <span><i class="ln ln--recorded" />Recorded track</span>
       </div>
+
+      <DecisionCompare v-if="decision" :view="decision" />
 
       <ol v-if="cmp" class="options">
         <li v-for="o in cmp.options" :key="o.optionId" class="opt" :class="{ 'opt--disabled': !o.feasible }" :data-testid="`option-${o.optionId}`">

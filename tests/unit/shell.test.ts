@@ -6,6 +6,8 @@ import { getSnapshotAt } from '@/engines/snapshot';
 import { decodeScope, routeForEntity } from '@/router/navigation';
 import { buildVesselInspector } from '@/selectors/vessel';
 import tokens from '@/styles/tokens.json';
+import v2 from '@/styles/tokens.v2.json';
+import { inspectorWidthPx } from '@/styles/layout';
 import kitTokens from '../../PORTOS_Codex_Master_Kit/assets/tokens.json';
 import { catalog } from './fixtures';
 
@@ -16,13 +18,24 @@ describe('design tokens', () => {
   it('app copy equals the kit source of truth', () => {
     expect(tokens).toEqual(kitTokens);
   });
-  it('tokens.css carries every colour and layout value from tokens.json', () => {
-    const colours = [...Object.values(tokens.brand), ...Object.values(tokens.surface), ...Object.values(tokens.ink), ...Object.values(tokens.status)];
+  it('tokens.css carries every colour of the V2 palette (spec 13) and its layout values', () => {
+    const hexes = (o: object): string[] => Object.values(o).flatMap((v) => (typeof v === 'string' ? (v.startsWith('#') ? [v] : []) : hexes(v as object)));
+    const colours = hexes({ surface: v2.surface, text: v2.text, line: v2.line, map: v2.map, accent: v2.accent, state: v2.state, data: v2.data });
+    expect(colours.length).toBeGreaterThan(20);
     for (const hex of colours) expect(css).toContain(hex.toLowerCase());
-    expect(css).toContain(`--shell-header-h: ${tokens.layout.headerPx}px`);
-    expect(css).toContain(`--inspector-w: ${tokens.layout.rightInspectorPx}px`);
-    expect(css).toContain(`--replay-rail-h: ${tokens.layout.bottomReplayPx}px`);
+    expect(css).toContain(`--shell-header-h: ${v2.layout.headerPx}px`);
+    expect(css).toContain(`--inspector-w: ${v2.layout.inspector}`);
+    expect(css).toContain(`--replay-collapsed-h: ${v2.layout.replayCollapsedPx}px`);
+    expect(css).toContain(`--replay-expanded-h: ${v2.layout.replayExpandedPx}px`);
     expect(css).toContain(`--radius-panel: ${tokens.radiusPx.panel}px`);
+  });
+  it('spec 13 core palette values are used verbatim', () => {
+    const spec = ['#F6F6F3', '#FFFFFF', '#F0F1EF', '#13191E', '#52606A', '#DCE2E4', '#071A27', '#243A42', '#E66A2D', '#C63B3B', '#B67B17', '#147A66', '#5AADB7', '#7F8B94', '#A6A9B4'];
+    for (const hex of spec) expect(css).toContain(hex.toLowerCase());
+  });
+  it('inspector width follows min(400px, 34vw)', () => {
+    expect(inspectorWidthPx(1440)).toBe(400);
+    expect(inspectorWidthPx(1100)).toBe(374);
   });
 });
 

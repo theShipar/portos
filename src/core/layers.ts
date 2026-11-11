@@ -46,3 +46,26 @@ export function decodeLayers(text: string | null | undefined): Record<LayerId, b
   if (!known.length && text.trim() !== '') return null;
   return Object.fromEntries(LAYERS.map((l) => [l.id, ids.has(l.id)])) as Record<LayerId, boolean>;
 }
+
+export type LayerGroupId = 'traffic' | 'ports' | 'weather' | 'risk' | 'plans';
+
+export interface LayerGroup {
+  id: LayerGroupId;
+  label: string;
+  layers: LayerId[];
+}
+
+/** Layer palette groups (V2 spec 13): Traffic / Ports / Weather / Risk / Plans. Every layer belongs to one group. */
+export const LAYER_GROUPS: LayerGroup[] = [
+  { id: 'traffic', label: 'Traffic', layers: ['fleet', 'ambient', 'traffic'] },
+  { id: 'ports', label: 'Ports', layers: ['ports', 'anchorage', 'berths'] },
+  { id: 'weather', label: 'Weather', layers: ['weather'] },
+  { id: 'risk', label: 'Risk', layers: ['incidents'] },
+  { id: 'plans', label: 'Plans', layers: ['routes'] },
+];
+
+/** Group state at a scope: `on` when any available layer is on; `available` false when none applies here. */
+export function groupState(group: LayerGroup, level: ScopeLevel, state: Record<LayerId, boolean>): { available: LayerId[]; on: boolean } {
+  const available = group.layers.filter((id) => LAYERS.find((l) => l.id === id)!.scopes.includes(level));
+  return { available, on: available.some((id) => state[id]) };
+}

@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
-import { flightDone, globeReady, inspector, open } from './helpers';
+import { flightDone, globeReady, inspector, open, openGantt } from './helpers';
 
 const evidenceDir = process.env.PORTOS_EVIDENCE ? 'docs/qa/v2-phase5' : null;
 
@@ -91,6 +91,8 @@ test.describe('Port twin (spec 07)', () => {
     await twinReady(page, 'PRT-SIN');
     const gantt = page.getByTestId('berth-gantt');
     await expect(gantt).toBeVisible();
+    await expect(gantt.getByTestId('gantt-summary')).toHaveText(/\d+ berths · \d+ occupied/);
+    await openGantt(page);
     await expect(gantt).toContainText('Simulated');
     for (const kind of ['actual', 'planned', 'forecast']) expect(await gantt.locator(`[data-testid="gantt-bar"][data-kind="${kind}"]`).count(), kind).toBeGreaterThan(0);
     await expect(gantt.getByTestId('gantt-conflict')).toHaveCount(2);
@@ -115,6 +117,7 @@ test.describe('Port twin (spec 07)', () => {
     await open(page, '/ops/port/PRT-SIN?time=2026-11-09T10:00:00Z');
     await globeReady(page);
     await twinReady(page, 'PRT-SIN');
+    await openGantt(page);
     await page.getByTestId('gantt-row-BRH-SIN-C-1').getByRole('button').first().click();
     await expect(page.getByTestId('berth-card-title')).toHaveText('Central Berth 1');
     await page.getByRole('button', { name: /^2D/ }).click();

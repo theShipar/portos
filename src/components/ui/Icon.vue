@@ -36,7 +36,14 @@ export type IconName =
   | 'crosshair'
   | 'loop'
   | 'step-back'
-  | 'step-forward';
+  | 'step-forward'
+  | 'chevron-up'
+  | 'more'
+  | 'bookmark'
+  | 'weather'
+  | 'risk'
+  | 'plan'
+  | 'compare';
 
 const props = withDefaults(defineProps<{ name: IconName; size?: number; label?: string }>(), { size: 16, label: undefined });
 
@@ -76,6 +83,13 @@ const PATHS: Record<IconName, string> = {
   loop: 'M17 2l3 3-3 3M4 11V9a4 4 0 0 1 4-4h12M7 22l-3-3 3-3m13-3v2a4 4 0 0 1-4 4H4',
   'step-back': 'M6 5v14M18 5 9 12l9 7V5Z',
   'step-forward': 'M18 5v14M6 5l9 7-9 7V5Z',
+  'chevron-up': 'm6 15 6-6 6 6',
+  more: 'M5 12h.01M12 12h.01M19 12h.01',
+  bookmark: 'M6 3h12v18l-6-4-6 4V3Z',
+  weather: 'M7 18a4 4 0 0 1-.6-8A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9H7Zm1 3 1-2m4 2 1-2',
+  risk: 'M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3Zm0 6v4m0 3v.5',
+  plan: 'M4 19c3-6 6-2 8-7s5-6 8-7M4 19h.01M20 5h.01M8 5h4m-2-2v4',
+  compare: 'M8 4v16M16 4v16M4 8h4m8 0h4M4 16h4m8 0h4',
 };
 
 const d = computed(() => PATHS[props.name]);
@@ -96,6 +110,6 @@ const d = computed(() => PATHS[props.name]);
     :aria-hidden="label ? undefined : 'true'"
     focusable="false"
   >
-    <path :d="d" :fill="name === 'dot' || name === 'play' ? 'currentColor' : 'none'" />
+    <path :d="d" :fill="name === 'dot' || name === 'play' ? 'currentColor' : 'none'" :stroke-width="name === 'more' ? 3 : undefined" />
   </svg>
 </template>

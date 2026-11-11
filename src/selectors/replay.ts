@@ -292,3 +292,24 @@ export function compareWithNow(c: Catalog, then: Snapshot, now: Snapshot, sel: E
   }
   return rows;
 }
+
+export const BOOKMARK_ACTIONS = new Set(['history.note', 'branch.propose', 'branch.approve', 'incident.transition', 'incident.escalate']);
+
+export interface RailBookmark {
+  auditId: string;
+  ms: number;
+  /** Position along the rail, 0–1. */
+  at: number;
+  label: string;
+}
+
+/** Saved moments on the replay rail: the user's local notes and decisions, placed at the simulation time they were taken. */
+export function railBookmarks(audit: readonly { auditId: string; actionType: string; simulatedContextTimeUtc: string; summary: string }[], startMs: number, endMs: number): RailBookmark[] {
+  const span = Math.max(1, endMs - startMs);
+  return audit
+    .filter((a) => BOOKMARK_ACTIONS.has(a.actionType))
+    .map((a) => ({ auditId: a.auditId, ms: Date.parse(a.simulatedContextTimeUtc), label: a.summary }))
+    .filter((b) => Number.isFinite(b.ms) && b.ms >= startMs && b.ms <= endMs)
+    .sort((a, b) => a.ms - b.ms)
+    .map((b) => ({ ...b, at: (b.ms - startMs) / span }));
+}

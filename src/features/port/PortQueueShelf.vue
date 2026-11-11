@@ -14,7 +14,9 @@ const nav = useNavigation();
 const filter = ref<QueueFilter>('all');
 
 const vm = computed(() => snap.portView);
-const rows = computed(() => (vm.value ? filterQueue(vm.value.queue, filter.value) : []));
+const PEEK_ROWS = 3;
+const allRows = computed(() => (vm.value ? filterQueue(vm.value.queue, filter.value) : []));
+const rows = computed(() => (view.queueTrayOpen ? allRows.value : allRows.value.slice(0, PEEK_ROWS)));
 const selectedVesselId = computed(() => (view.selection?.kind === 'vessel' ? view.selection.id : null));
 
 const filters = computed<{ id: QueueFilter; label: string; count: number }[]>(() => {
@@ -55,14 +57,14 @@ watch(
 </script>
 
 <template>
-  <section v-if="vm" class="shelf" :class="{ 'shelf--closed': !view.queueShelfOpen }" aria-label="Port queue" data-testid="port-queue">
+  <section v-if="vm" class="shelf" :class="{ 'shelf--closed': !view.queueShelfOpen, 'shelf--tray': view.queueTrayOpen }" aria-label="Port queue" data-testid="port-queue">
     <header class="shelf__head">
-      <div>
-        <p class="shelf__kicker">Berth queue</p>
-        <h2 class="shelf__title">{{ vm.port.name }}</h2>
-      </div>
-      <button v-if="view.queueShelfOpen" type="button" class="btn btn--sm shelf__replay" data-testid="open-replay" @click="nav.openReplay()">
-        <Icon name="clock" :size="14" /> Replay
+      <h2 class="shelf__title">
+        Berth queue <span class="num">{{ vm.queue.length }}</span>
+        <span class="shelf__scope">· {{ vm.port.name }}</span>
+      </h2>
+      <button v-if="view.queueShelfOpen" type="button" class="shelf__icon" aria-label="Replay this port" title="Replay" data-testid="open-replay" @click="nav.openReplay()">
+        <Icon name="clock" :size="14" />
       </button>
       <button
         type="button"
@@ -72,13 +74,13 @@ watch(
         data-testid="queue-toggle"
         @click="view.queueShelfOpen = !view.queueShelfOpen"
       >
-        <Icon :name="view.queueShelfOpen ? 'chevron-left' : 'chevron-right'" :size="16" />
+        <Icon :name="view.queueShelfOpen ? 'chevron-up' : 'chevron-down'" :size="14" />
       </button>
     </header>
     <template v-if="view.queueShelfOpen">
+      <template v-if="view.queueTrayOpen">
       <p class="shelf__time num">
-        {{ formatUtc(vm.asOfUtc) }}<br />
-        <span>{{ formatLocal(vm.asOfUtc, vm.localTimeZone) }} ({{ vm.localTimeZone }})</span>
+        {{ formatUtc(vm.asOfUtc) }} · <span>{{ formatLocal(vm.asOfUtc, vm.localTimeZone) }} ({{ vm.localTimeZone }})</span>
       </p>
       <div class="shelf__filters" role="group" aria-label="Filter queue">
         <button
@@ -97,6 +99,7 @@ watch(
         <span class="num" data-testid="queue-count">{{ rows.length }} of {{ vm.queue.length }} in queue</span>
         <span>Sorted by elapsed wait — not berth priority</span>
       </p>
+      </template>
       <ol ref="listEl" class="shelf__list" aria-label="Vessels in berth queue">
         <li v-for="r in rows" :key="r.portCallId">
           <button
@@ -120,8 +123,13 @@ watch(
             </span>
           </button>
         </li>
-        <li v-if="!rows.length" class="shelf__empty">No vessels match this filter.</li>
+        <li v-if="!rows.length" class="shelf__empty">{{ vm.queue.length ? 'No vessels match this filter.' : 'No managed vessels waiting here at the selected time.' }}</li>
       </ol>
+      <button v-if="!view.queueTrayOpen && allRows.length > rows.length" type="button" class="linkish shelf__more" data-testid="queue-more" @click="view.queueTrayOpen = true">
+        Show all {{ allRows.length }} waiting
+      </button>
+      <button v-else-if="view.queueTrayOpen" type="button" class="linkish shelf__more" data-testid="queue-less" @click="view.queueTrayOpen = false">Show the three longest waits</button>
+      <template v-if="view.queueTrayOpen">
       <details class="shelf__arrivals">
         <summary>
           Arrivals next 24 h <span class="num">{{ vm.arrivals.length }}</span>
@@ -139,6 +147,7 @@ watch(
         <template v-else>Median uses {{ vm.kpis.waitSampleSize }} of {{ vm.queue.length }} known waits.</template>
         Synthetic port events.
       </p>
+      </template>
     </template>
   </section>
 </template>
@@ -146,52 +155,62 @@ watch(
 <style scoped>
 .shelf {
   display: grid;
-  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto auto;
-  gap: 8px;
+  grid-template-rows: auto;
+  align-content: start;
+  gap: 6px;
   width: 340px;
   min-height: 0;
   max-height: 100%;
-  padding: 12px;
+  padding: 8px 10px;
   background: var(--color-panel);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
   pointer-events: auto;
 }
+.shelf--tray {
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto auto auto;
+  max-height: min(100%, 560px);
+}
 .shelf--closed {
-  grid-template-rows: auto;
-  width: 220px;
+  width: auto;
 }
 .shelf__head {
   display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 8px;
-}
-.shelf__kicker {
-  margin: 0;
-  font-size: var(--text-11);
-  font-weight: 500;
-  color: var(--color-ink-muted);
+  align-items: center;
+  gap: 4px;
 }
 .shelf__title {
+  flex: 1;
   margin: 0;
-  font-size: var(--text-14);
+  font-size: var(--text-13);
   line-height: 20px;
+  font-weight: 600;
+  white-space: nowrap;
 }
-.shelf__replay {
-  margin-left: auto;
+.shelf__scope {
+  font-weight: 400;
+  color: var(--color-ink-muted);
 }
+.shelf__icon,
 .shelf__toggle {
   display: grid;
   place-items: center;
   width: 28px;
   height: 28px;
-  border: 1px solid var(--color-border);
+  border: 1px solid transparent;
   border-radius: var(--radius-input);
-  background: var(--color-panel);
+  background: transparent;
   color: var(--color-ink-secondary);
   cursor: pointer;
+}
+.shelf__icon:hover,
+.shelf__toggle:hover {
+  background: var(--color-panel-secondary);
+}
+.shelf__more {
+  justify-self: start;
+  font-size: var(--text-12);
 }
 .shelf__time {
   margin: 0;

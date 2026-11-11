@@ -80,6 +80,10 @@ test.describe('Scenario clock and follow camera (specs 09–10)', () => {
     await open(page, '/ops/region/REG-SEA?panel=replay');
     await regionReady(page);
     const rail = page.getByTestId('replay-rail');
+    // Collapsed (60 px) keeps play, speed and UTC; ranges, loop and stepping live in the expanded timeline.
+    await expect(rail.getByTestId('replay-range-24h')).toHaveCount(0);
+    await rail.getByTestId('replay-expand').click();
+    await expect(rail).toHaveAttribute('data-expanded', 'true');
     await expect(rail.getByTestId('replay-range-24h')).toHaveAttribute('aria-pressed', 'true');
     await expect(rail.getByTestId('replay-loop')).toHaveAttribute('aria-pressed', 'false');
 

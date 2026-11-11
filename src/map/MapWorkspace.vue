@@ -2,11 +2,12 @@
 import { computed, defineAsyncComponent, ref, shallowRef, watch } from 'vue';
 import { scopeKey } from '@/core/scope';
 import { TONE_LABEL, type MarkerTone } from '@/selectors/mapLayers';
+import { inspectorInsetPx } from '@/styles/layout';
 import { useViewStore } from '@/stores/view';
 import { EARTH_RADIUS } from './earth/camera';
 import type { EarthScene } from './earth/EarthScene';
 import { degreesPerPx } from './earth/lod';
-import LayerMenu from './LayerMenu.vue';
+import LayerPalette from './LayerPalette.vue';
 import PortosEarthView from './PortosEarthView.vue';
 import { basemapConfig } from './port2d/basemapStyle';
 import { cssHex, markerColors } from './theme';
@@ -24,8 +25,8 @@ const basemap = basemapConfig();
 
 const SHELF_W = 340;
 const show2d = computed(() => view.viewMode === '2d' && view.scope.level !== 'earth');
-const insetLeft = computed(() => (view.scope.level === 'port' ? (view.queueShelfOpen ? SHELF_W + 16 : 0) : 0));
-const insetRight = computed(() => (view.inspectorOpen && !view.sheetLayout ? 408 + 24 : 0));
+const insetLeft = computed(() => (view.scope.level === 'port' && view.queueShelfOpen && view.queueTrayOpen ? SHELF_W + 16 : 0));
+const insetRight = computed(() => (view.inspectorOpen && !view.sheetLayout ? inspectorInsetPx(window.innerWidth) : 0));
 const initialView = ref<MapView2D | null>(null);
 /** Ports already framed once in 2D; the first visit fits the port layout instead of copying the globe zoom. */
 const framedPorts = new Set<string>();
@@ -86,12 +87,12 @@ defineExpose({ earth, earthView, map2d });
     </Transition>
     <div class="map-tools" role="toolbar" aria-label="Map tools">
       <ViewModeSwitch />
-      <LayerMenu />
+      <LayerPalette />
       <button type="button" class="map-tool" title="Reset view for this scope" aria-label="Reset view for this scope" @click="reset">
         <Icon name="reset" :size="16" />
       </button>
     </div>
-    <ul class="map-legend" aria-label="Vessel marker legend">
+    <ul class="map-legend" aria-label="Vessel marker legend" data-testid="map-legend">
       <li v-for="l in legend" :key="l.tone">
         <span class="map-legend__glyph" :style="{ background: l.color }" aria-hidden="true" />
         {{ l.label }}
@@ -152,7 +153,7 @@ defineExpose({ earth, earthView, map2d });
   padding: 4px 10px;
   list-style: none;
   border-radius: var(--radius-chip);
-  background: rgba(6, 26, 40, 0.72);
+  background: rgba(7, 26, 39, 0.72);
   color: rgba(247, 250, 252, 0.86);
   font-size: var(--text-11);
   line-height: 16px;
@@ -175,7 +176,7 @@ defineExpose({ earth, earthView, map2d });
   margin: 0;
   padding: 2px 8px;
   border-radius: var(--radius-chip);
-  background: rgba(6, 26, 40, 0.6);
+  background: rgba(7, 26, 39, 0.6);
   color: rgba(247, 250, 252, 0.7);
   font-size: var(--text-11);
   line-height: 16px;
