@@ -82,7 +82,9 @@ function follow() {
   padding: 8px 10px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   box-shadow: var(--shadow-panel);
   font-size: var(--text-12);
   line-height: 16px;
@@ -146,6 +148,6 @@ function follow() {
 .peek__btn--primary {
   border-color: var(--color-accent-fill);
   background: var(--color-accent-fill);
-  color: #fff;
+  color: var(--color-on-accent);
 }
 </style>

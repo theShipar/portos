@@ -8,6 +8,7 @@ import { buildVesselInspector } from '@/selectors/vessel';
 import tokens from '@/styles/tokens.json';
 import v2 from '@/styles/tokens.v2.json';
 import { inspectorWidthPx } from '@/styles/layout';
+import { V3 } from '@/styles/tokens';
 import kitTokens from '../../PORTOS_Codex_Master_Kit/assets/tokens.json';
 import { catalog } from './fixtures';
 
@@ -33,9 +34,14 @@ describe('design tokens', () => {
     const spec = ['#F6F6F3', '#FFFFFF', '#F0F1EF', '#13191E', '#52606A', '#DCE2E4', '#071A27', '#243A42', '#E66A2D', '#C63B3B', '#B67B17', '#147A66', '#5AADB7', '#7F8B94', '#A6A9B4'];
     for (const hex of spec) expect(css).toContain(hex.toLowerCase());
   });
-  it('inspector width follows min(400px, 34vw)', () => {
-    expect(inspectorWidthPx(1440)).toBe(400);
-    expect(inspectorWidthPx(1100)).toBe(374);
+  it('inspector width follows the active theme (V3 clamp(360px, 29vw, 464px), V2 min(400px, 34vw))', () => {
+    if (V3) {
+      expect(inspectorWidthPx(1440)).toBe(418);
+      expect(inspectorWidthPx(1100)).toBe(360);
+    } else {
+      expect(inspectorWidthPx(1440)).toBe(400);
+      expect(inspectorWidthPx(1100)).toBe(374);
+    }
   });
 });
 

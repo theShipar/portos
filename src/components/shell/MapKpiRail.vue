@@ -181,7 +181,9 @@ function toggleDrill(k: Kpi) {
   list-style: none;
   margin: 0;
   padding: 0;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -261,7 +263,7 @@ function toggleDrill(k: Kpi) {
   padding: 0 4px 0 10px;
   border-radius: var(--radius-chip);
   background: var(--color-accent-fill);
-  color: #fff;
+  color: var(--color-on-accent);
   font-size: var(--text-12);
   font-weight: 500;
   box-shadow: var(--shadow-panel);
@@ -290,7 +292,9 @@ function toggleDrill(k: Kpi) {
   display: grid;
   gap: 10px;
   padding: 12px 14px 14px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);

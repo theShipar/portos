@@ -95,7 +95,9 @@ const chip = computed(() => (card.value ? statusStyle('berth', card.value.status
   gap: 8px;
   width: 300px;
   padding: 12px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -162,8 +164,8 @@ const chip = computed(() => (card.value ? statusStyle('berth', card.value.status
 .berth-card__conflicts {
   padding: 8px;
   border-radius: var(--radius-input);
-  background: rgba(212, 154, 46, 0.12);
-  border: 1px solid rgba(182, 123, 23, 0.45);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 45%, transparent);
 }
 .berth-card__flag {
   margin: 0 0 4px;
@@ -234,7 +236,7 @@ const chip = computed(() => (card.value ? statusStyle('berth', card.value.status
   position: absolute;
   top: 0;
   bottom: 0;
-  background: rgba(198, 59, 59, 0.22);
+  background: color-mix(in srgb, var(--color-critical) 22%, transparent);
 }
 .mini__now {
   position: absolute;

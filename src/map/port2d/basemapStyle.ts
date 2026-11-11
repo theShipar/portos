@@ -1,5 +1,5 @@
 import type { StyleSpecification } from 'maplibre-gl';
-import { mapColors } from '@/styles/tokens';
+import { mapColors, V3 } from '@/styles/tokens';
 
 /**
  * Port 2D basemap configuration (decision D-011).
@@ -36,16 +36,16 @@ export function basemapConfig(overrides: { styleUrl?: string; tilesUrl?: string 
 /** Basemap colours: token map roles; port/industrial surfaces a lighter neutral so terminals read without towers. */
 export const BASEMAP_COLORS = {
   water: mapColors.ocean,
-  waterOutline: '#16384a',
+  waterOutline: V3 ? '#17343B' : '#16384a',
   land: mapColors.land,
-  landcover: '#21404d',
-  portSurface: '#33505c',
-  pier: '#3a5764',
-  building: '#2b4855',
-  roadMinor: '#2c4854',
-  roadMajor: '#3a5966',
+  landcover: V3 ? '#2B3B34' : '#21404d',
+  portSurface: V3 ? '#3A4B45' : '#33505c',
+  pier: V3 ? '#45574F' : '#3a5764',
+  building: V3 ? '#33433D' : '#2b4855',
+  roadMinor: V3 ? '#34443E' : '#2c4854',
+  roadMajor: V3 ? '#44574F' : '#3a5966',
   boundary: mapColors.landOutline,
-  label: '#9fb3bd',
+  label: V3 ? '#A7B9B8' : '#9fb3bd',
   labelHalo: mapColors.ocean,
 } as const;
 

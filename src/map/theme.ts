@@ -1,25 +1,29 @@
 import { Color } from 'three';
-import { mapColors, tokens } from '@/styles/tokens';
+import { mapColors, tokens, V3 } from '@/styles/tokens';
+import v3 from '@/styles/tokens.v3.json';
+
+const m3 = v3.map;
+const pick = (v2Hex: string, v3Hex: string) => new Color(V3 ? v3Hex : v2Hex);
 
 /**
  * portosMapTheme — the single colour entry for Three scenes (replaces the skill's mapTheme.ts green HUD roles).
- * Derived from tokens.json; see DECISIONS D-001/D-002.
+ * V3 (D-041): graphite/teal ocean, softened olive land; V2 (D-038) otherwise.
  */
 export const portosMapTheme = {
-  space: new Color('#03080d'),
+  space: pick('#03080d', m3.space),
   ocean: new Color(mapColors.ocean),
   oceanMid: new Color(mapColors.oceanMid),
-  oceanHighlight: new Color('#7fa7bd'),
+  oceanHighlight: pick('#7fa7bd', '#7FA9AE'),
   land: new Color(mapColors.land),
-  landLight: new Color('#30505e'),
+  landLight: pick('#30505e', m3.landScope),
   landOutline: new Color(mapColors.landOutline),
-  grid: new Color('#5d7f8f'),
-  atmosphere: new Color('#6f9fbf'),
-  outerAtmosphere: new Color('#3d6a88'),
-  regionFill: new Color('#4e7486'),
-  regionOutline: new Color('#cfe1ea'),
-  regionHover: new Color('#9fc1d1'),
-  cityLight: new Color('#d9b48a'),
+  grid: pick('#5d7f8f', '#4F6E70'),
+  atmosphere: pick('#6f9fbf', m3.atmosphere),
+  outerAtmosphere: pick('#3d6a88', '#3B6268'),
+  regionFill: pick('#4e7486', '#4D6A5F'),
+  regionOutline: pick('#cfe1ea', '#D5E4DF'),
+  regionHover: pick('#9fc1d1', '#A6C3BA'),
+  cityLight: pick('#d9b48a', '#D9B48A'),
   accent: new Color(tokens.brand.accent),
   routeBase: new Color(mapColors.routeBase),
   routeSelected: new Color(mapColors.routeSelected),
@@ -32,26 +36,28 @@ export const portosMapTheme = {
 } as const;
 
 /**
- * Extruded geography (region / country / city scenes), V2 palette: ocean #071A27, land #243A42, focus #E66A2D,
- * observed #5AADB7. Context countries stay dark; in-scope land is one step lighter; only the selected feature gets a
- * lit contour.
+ * Extruded geography (region / country / city scenes). Context countries stay dark; in-scope land is one step
+ * lighter; only the selected feature gets a lit contour. V3: olive land on a teal ocean, ghost neighbours as
+ * wireframe; V2: ocean #071A27, land #243A42, focus #E66A2D.
  */
 export const planarTheme = {
-  ocean: new Color('#071A27'),
-  oceanGrid: new Color('#1B3442'),
-  land: new Color('#243A42'),
-  landScope: new Color('#2F4A54'),
-  landHover: new Color('#3A5A66'),
-  wallTop: new Color('#3A5560'),
-  wallMid: new Color('#1B3038'),
-  wallBottom: new Color('#0B1E28'),
-  border: new Color('#5AADB7'),
-  coast: new Color('#8FB7C2'),
-  contour: new Color('#E66A2D'),
-  frame: new Color('#A6A9B4'),
+  ocean: pick('#071A27', m3.ocean),
+  oceanGrid: pick('#1B3442', m3.oceanGrid),
+  land: pick('#243A42', m3.land),
+  landScope: pick('#2F4A54', m3.landScope),
+  landHover: pick('#3A5A66', m3.landHover),
+  wallTop: pick('#3A5560', m3.wallTop),
+  wallMid: pick('#1B3038', m3.wallMid),
+  wallBottom: pick('#0B1E28', m3.wallBottom),
+  border: pick('#5AADB7', m3.border),
+  coast: pick('#8FB7C2', m3.coast),
+  contour: pick('#E66A2D', v3.colors.selection),
+  frame: pick('#A6A9B4', '#A6A9B4'),
+  ghost: pick('#4D6974', m3.ghost),
 } as const;
 
-const lift = (hex: string, amount: number) => new Color(hex).lerp(new Color('#ffffff'), amount);
+/** V3 status hues are already light enough for the dark ocean, so they are lifted far less. */
+const lift = (hex: string, amount: number) => new Color(hex).lerp(new Color('#ffffff'), V3 ? amount * 0.25 : amount);
 
 /**
  * Marker colours on the dark ocean. Status hues come from tokens.json, lifted toward white so they reach ≥3:1 against
@@ -61,8 +67,8 @@ export const markerColors = {
   incident: lift(tokens.status.critical, 0.34),
   atRisk: lift(tokens.status.warning, 0.22),
   delayed: lift(tokens.status.warning, 0.55),
-  onPlan: new Color('#d3dde3'),
-  ambient: new Color('#7d93a1'),
+  onPlan: pick('#d3dde3', '#D5E2DD'),
+  ambient: pick('#7d93a1', '#7F9693'),
   stale: lift(tokens.status.unknown, 0.1),
   selected: new Color(tokens.status.selected),
   route: new Color(mapColors.routeBase),

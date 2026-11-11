@@ -143,7 +143,9 @@ function toggle(id: string) {
   min-height: 0;
   max-height: 100%;
   padding: 8px 10px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -341,7 +343,9 @@ function toggle(id: string) {
   padding: 0 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   color: var(--color-ink-secondary);
   font-size: var(--text-12);
   box-shadow: var(--shadow-panel);

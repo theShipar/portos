@@ -1362,7 +1362,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
   inset: 0;
 }
 .earth__host {
-  background: #03080d;
+  background: var(--color-space);
 }
 .earth__labels {
   position: absolute;
@@ -1388,7 +1388,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
   will-change: transform, opacity;
 }
 .handoff-veil {
-  background: radial-gradient(ellipse at 50% 50%, rgba(196, 226, 232, 0.5) 0%, rgba(90, 173, 183, 0.42) 22%, rgba(27, 52, 66, 0.86) 56%, #071a27 82%);
+  background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--map-line) 50%, transparent) 0%, color-mix(in srgb, var(--color-data-observed) 42%, transparent) 22%, color-mix(in srgb, var(--map-scrim) 86%, transparent) 56%, var(--color-map-ocean) 82%);
 }
 .earth__preparing {
   position: absolute;
@@ -1398,8 +1398,8 @@ defineExpose({ resetCamera, scene, surface, overlay });
   transform: translateX(-50%);
   padding: 3px 10px;
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.82);
-  color: rgba(247, 250, 252, 0.9);
+  background: color-mix(in srgb, var(--map-scrim) 82%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 90%, transparent);
   font-size: var(--text-11);
   line-height: 16px;
   pointer-events: none;
@@ -1416,10 +1416,12 @@ defineExpose({ resetCamera, scene, surface, overlay });
   padding: 6px 8px 6px 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   color: var(--color-ink);
   font-size: var(--text-12);
-  box-shadow: 0 4px 16px rgba(7, 26, 39, 0.24);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--map-scrim) 24%, transparent);
 }
 .region-label,
 .port-label,
@@ -1436,9 +1438,9 @@ defineExpose({ resetCamera, scene, surface, overlay });
 }
 .region-label {
   padding: 3px 8px;
-  border: 1px solid rgba(207, 225, 234, 0.25);
+  border: 1px solid color-mix(in srgb, var(--map-line) 25%, transparent);
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.72);
+  background: color-mix(in srgb, var(--map-scrim) 72%, transparent);
   color: var(--color-ink-on-dark);
   font-size: var(--text-11);
   font-weight: 500;
@@ -1447,21 +1449,21 @@ defineExpose({ resetCamera, scene, surface, overlay });
   transition: background var(--motion-hover), border-color var(--motion-hover);
 }
 .region-label:hover {
-  background: rgba(7, 26, 39, 0.92);
-  border-color: rgba(233, 103, 34, 0.7);
+  background: color-mix(in srgb, var(--map-scrim) 92%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 70%, transparent);
 }
 .region-label--active {
   font-size: var(--text-13);
   font-weight: 600;
   padding: 4px 10px;
-  border-color: rgba(233, 103, 34, 0.6);
+  border-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
   pointer-events: none;
 }
 .city-label {
   padding: 2px 8px;
-  border: 1px solid rgba(207, 225, 234, 0.35);
+  border: 1px solid color-mix(in srgb, var(--map-line) 35%, transparent);
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.8);
+  background: color-mix(in srgb, var(--map-scrim) 80%, transparent);
   color: var(--color-ink-on-dark);
   font-size: var(--text-11);
   font-weight: 600;
@@ -1469,35 +1471,35 @@ defineExpose({ resetCamera, scene, surface, overlay });
 }
 .city-label:hover,
 .city-label:focus-visible {
-  border-color: rgba(233, 103, 34, 0.7);
-  background: rgba(7, 26, 39, 0.95);
+  border-color: color-mix(in srgb, var(--color-accent) 70%, transparent);
+  background: color-mix(in srgb, var(--map-scrim) 95%, transparent);
 }
 .berth-label {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 1px 6px;
-  border: 1px solid rgba(207, 225, 234, 0.28);
-  border-left: 3px solid #a6a9b4;
+  border: 1px solid color-mix(in srgb, var(--map-line) 28%, transparent);
+  border-left: 3px solid var(--color-data-uncertain);
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.78);
-  color: rgba(247, 250, 252, 0.92);
+  background: color-mix(in srgb, var(--map-scrim) 78%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 92%, transparent);
   font-size: var(--text-11);
   font-weight: 600;
   line-height: 15px;
 }
 .berth-label--occupied {
-  border-left-color: #5aadb7;
+  border-left-color: var(--color-data-observed);
 }
 .berth-label--reserved {
-  border-left-color: #8c98a1;
+  border-left-color: var(--color-data-planned);
 }
 .berth-label--free {
-  border-left-color: #2e9c84;
+  border-left-color: var(--color-healthy);
 }
 .berth-label--unavailable {
-  border-left-color: #c63b3b;
-  color: rgba(247, 250, 252, 0.7);
+  border-left-color: var(--color-critical);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 70%, transparent);
 }
 .berth-label--conflict::after {
   content: '!';
@@ -1506,26 +1508,26 @@ defineExpose({ resetCamera, scene, surface, overlay });
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #d49a2e;
-  color: #13191e;
+  background: var(--color-warning);
+  color: var(--color-ink);
   font-size: 9px;
   font-weight: 700;
 }
 .berth-label:hover,
 .berth-label:focus-visible,
 .berth-label--active {
-  border-color: rgba(230, 106, 45, 0.85);
-  background: rgba(7, 26, 39, 0.96);
+  border-color: color-mix(in srgb, var(--color-accent) 85%, transparent);
+  background: color-mix(in srgb, var(--map-scrim) 96%, transparent);
 }
 .berth-label--active {
   z-index: 2;
-  box-shadow: 0 0 0 2px rgba(230, 106, 45, 0.35);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 .anchorage-label {
   padding: 1px 6px;
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.5);
-  color: rgba(207, 225, 234, 0.8);
+  background: color-mix(in srgb, var(--map-scrim) 50%, transparent);
+  color: color-mix(in srgb, var(--map-line) 80%, transparent);
   font-size: var(--text-11);
   font-style: italic;
   pointer-events: none;
@@ -1534,15 +1536,15 @@ defineExpose({ resetCamera, scene, surface, overlay });
   padding: 1px 5px;
   border: 0;
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.55);
-  color: rgba(247, 250, 252, 0.88);
+  background: color-mix(in srgb, var(--map-scrim) 55%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 88%, transparent);
   font-size: var(--text-11);
   line-height: 15px;
 }
 .port-label:hover,
 .port-label:focus-visible {
-  background: rgba(7, 26, 39, 0.9);
-  color: #fff;
+  background: color-mix(in srgb, var(--map-scrim) 90%, transparent);
+  color: var(--color-ink-on-dark);
 }
 .port-label--active {
   font-size: var(--text-12);
@@ -1555,29 +1557,29 @@ defineExpose({ resetCamera, scene, surface, overlay });
   height: 26px;
   padding: 0 6px;
   border-radius: 13px;
-  border: 2px solid rgba(211, 221, 227, 0.85);
-  background: rgba(7, 26, 39, 0.86);
+  border: 2px solid color-mix(in srgb, var(--map-line) 85%, transparent);
+  background: color-mix(in srgb, var(--map-scrim) 86%, transparent);
   color: var(--color-ink-on-dark);
   font-family: var(--font-data);
   font-size: var(--text-11);
   font-weight: 600;
-  box-shadow: 0 0 0 3px rgba(7, 26, 39, 0.35);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--map-scrim) 35%, transparent);
 }
 .cluster:hover {
-  background: rgba(16, 40, 55, 0.96);
+  background: color-mix(in srgb, var(--map-scrim) 96%, transparent);
 }
 .cluster--incident {
-  border-color: #d97a72;
+  border-color: var(--map-incident);
 }
 .cluster--atRisk {
-  border-color: #c98a4f;
+  border-color: var(--map-risk);
 }
 .cluster--delayed {
-  border-color: #dcb27f;
+  border-color: var(--map-delayed);
   border-style: dashed;
 }
 .cluster--ambient {
-  border-color: rgba(125, 147, 161, 0.9);
+  border-color: color-mix(in srgb, var(--color-unknown) 90%, transparent);
 }
 .cluster--stack {
   min-width: 22px;
@@ -1597,10 +1599,10 @@ defineExpose({ resetCamera, scene, surface, overlay });
 }
 .planar-hud__chip {
   padding: 2px 8px;
-  border: 1px dashed rgba(166, 169, 180, 0.7);
+  border: 1px dashed color-mix(in srgb, var(--color-data-uncertain) 70%, transparent);
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.78);
-  color: rgba(247, 250, 252, 0.86);
+  background: color-mix(in srgb, var(--map-scrim) 78%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 86%, transparent);
   font-size: var(--text-11);
   line-height: 16px;
 }
@@ -1610,13 +1612,13 @@ defineExpose({ resetCamera, scene, surface, overlay });
   gap: 10px;
   padding: 4px 8px;
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.72);
-  color: rgba(247, 250, 252, 0.86);
+  background: color-mix(in srgb, var(--map-scrim) 72%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 86%, transparent);
 }
 .planar-hud__north {
   display: grid;
   justify-items: center;
-  color: #e66a2d;
+  color: var(--map-accent);
 }
 .planar-hud__north svg {
   transform-origin: 50% 50%;
@@ -1625,7 +1627,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
   font-size: 10px;
   font-weight: 600;
   line-height: 10px;
-  color: rgba(247, 250, 252, 0.86);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 86%, transparent);
 }
 .planar-hud__scale {
   display: grid;
@@ -1636,7 +1638,7 @@ defineExpose({ resetCamera, scene, surface, overlay });
   display: block;
   height: 5px;
   min-width: 20px;
-  border: 1.5px solid rgba(247, 250, 252, 0.86);
+  border: 1.5px solid color-mix(in srgb, var(--color-ink-on-dark) 86%, transparent);
   border-top: 0;
 }
 .planar-hud__label {
@@ -1652,7 +1654,9 @@ defineExpose({ resetCamera, scene, surface, overlay });
   width: 264px;
   padding: var(--space-1);
   border-radius: var(--radius-input);
-  background: var(--color-panel);
+  background: var(--surface-popover);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-drawer);
 }
@@ -1733,7 +1737,9 @@ defineExpose({ resetCamera, scene, surface, overlay });
   max-width: 300px;
   padding: 6px 10px;
   border-radius: var(--radius-input);
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-panel);
   font-size: var(--text-12);

@@ -900,3 +900,34 @@ blockers. Status values: implemented / tested / blocked.
     - The clock drops simulated time when frames stall under load. Gate 6 (one clock at 100×) addresses this.
 - **Gate:** routes, renderer, schema and baseline screenshots recorded; flags in place. PASS.
 - **Blockers:** none.
+
+## Phase V3-1 — Design system and shell
+
+- **Decisions:** D-041 (V3 palette file, `data-theme` switch, glass tiers, Urbanist, on-accent text, token lint).
+- **Implemented:**
+  - `tokens.v3.json` and the `:root[data-theme='v3']` block: colours, Urbanist, type scale (12/14/22/28),
+    radii 6/8/12/16/20, glass tiers, header 64/56, inspector clamp, control height 36/44, motion 140/220/280/1100.
+  - Glass HUD and popover surfaces on 17 components; all component colours tokenized (one-off
+    `scripts/dev/tokenize_vue_colors.py` over 10 files, manual fixes for text on accent, toggles and thumbs).
+  - Scene recolour: `planarTheme` (land, walls, coast, border, ghost, ocean), globe map colours and the MapLibre
+    basemap under V3.
+  - Primitives: `SegmentedControl` (arrow keys, `aria-pressed`), `GlassPanel`, `HudChip`, `DetailCard`,
+    `ProgressTrack` (`role="progressbar"`). `ViewModeSwitch` uses `SegmentedControl`.
+  - Phone header (≤ 479 px): compact grid, search expands on focus.
+  - `SearchCombobox`: `/` pressed while the catalog loads queues focus until the field is enabled (the
+    journey test hit this race once the font import lengthened first load).
+- **Tested:**
+  - `npm run typecheck` → exit 0. `npx vitest run` → 365 passed (23 files), including `v3tokens.test.ts`.
+  - First `npx playwright test` → 67 passed, 18 failed, 22 skipped, 5 did not run:
+    - 16 failures were the pixel baselines (expected after the retheme);
+    - `port3d` berth schedule: the forecast fill now computes as `color(srgb … / 0.32)`; the assertion accepts
+      both notations (same 30 % alpha);
+    - `journey` search focus: the race above, fixed in the app.
+  - `npx playwright test port3d.spec.ts:88 journey.spec.ts:184 --project=chromium` → 2 passed.
+  - `npx playwright test visual --project=chromium --update-snapshots=all` → 16 passed; baselines regenerated on
+    purpose for V3.
+  - `V3CAPTURE=g1 npx playwright test v3capture --project=chromium` → 16 images in `docs/qa/v3-g1/`.
+  - `npx playwright test` (full, rerun) → 90 passed, 22 skipped (opt-in capture and perf specs), 0 failed, 5.0 min.
+- **Gate:** P0 #1 (visual system) PASS. Next gate unblocked.
+- **Blockers:** none.
+

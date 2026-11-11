@@ -176,7 +176,9 @@ function pickBar(berthId: string, vesselId: string) {
   display: grid;
   gap: 4px;
   padding: 6px 10px 6px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -213,7 +215,7 @@ function pickBar(berthId: string, vesselId: string) {
 .gantt__sim {
   padding: 1px 6px;
   border-radius: var(--radius-chip);
-  background: var(--color-muted, #f0f1ef);
+  background: var(--color-panel-secondary);
   color: var(--color-ink-secondary);
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -221,7 +223,7 @@ function pickBar(berthId: string, vesselId: string) {
   font-size: 10px;
 }
 .gantt__conflicts {
-  color: #8a5a0c;
+  color: var(--color-warning-ink);
   font-weight: 600;
 }
 .gantt__legend {
@@ -245,30 +247,30 @@ function pickBar(berthId: string, vesselId: string) {
 }
 .swatch--actual,
 .gantt__bar--actual {
-  background: #2f7f89;
+  background: var(--color-data-observed);
 }
 .swatch--planned,
 .gantt__bar--planned {
-  background: repeating-linear-gradient(135deg, rgba(127, 139, 148, 0.85) 0 3px, rgba(127, 139, 148, 0.25) 3px 6px);
-  border: 1px solid #7f8b94;
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--color-data-planned) 85%, transparent) 0 3px, color-mix(in srgb, var(--color-data-planned) 25%, transparent) 3px 6px);
+  border: 1px solid var(--color-data-planned);
 }
 .swatch--forecast,
 .gantt__bar--forecast {
-  background: rgba(166, 169, 180, 0.32);
-  border: 1px dashed #8a8e9a;
+  background: color-mix(in srgb, var(--color-data-uncertain) 32%, transparent);
+  border: 1px dashed var(--color-data-uncertain);
 }
 .swatch--requested {
   width: 0;
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 7px solid #13191e;
+  border-top: 7px solid var(--color-ink);
   border-radius: 0;
 }
 .swatch--conflict,
 .gantt__conflict {
-  background: rgba(212, 154, 46, 0.22);
-  outline: 2px solid #b67b17;
+  background: color-mix(in srgb, var(--color-warning) 22%, transparent);
+  outline: 2px solid var(--color-warning);
   outline-offset: -2px;
 }
 .gantt__windows {
@@ -328,8 +330,8 @@ function pickBar(berthId: string, vesselId: string) {
   border-radius: 3px;
 }
 .gantt__row--active {
-  background: rgba(230, 106, 45, 0.1);
-  box-shadow: inset 2px 0 0 #e66a2d;
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  box-shadow: inset 2px 0 0 var(--color-accent);
 }
 .gantt__label {
   display: inline-flex;
@@ -354,24 +356,24 @@ function pickBar(berthId: string, vesselId: string) {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #a6a9b4;
+  background: var(--color-data-uncertain);
 }
 .gantt__dot--occupied {
-  background: #2f7f89;
+  background: var(--color-data-observed);
 }
 .gantt__dot--reserved {
-  background: #7f8b94;
+  background: var(--color-data-planned);
 }
 .gantt__dot--free {
-  background: #147a66;
+  background: var(--color-healthy);
 }
 .gantt__dot--unavailable {
-  background: #c63b3b;
+  background: var(--color-critical);
 }
 .gantt__track {
   position: relative;
   border-bottom: 1px solid var(--color-border);
-  background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 8 - 1px), rgba(19, 25, 30, 0.04) calc(100% / 8 - 1px) calc(100% / 8));
+  background: repeating-linear-gradient(90deg, transparent 0 calc(100% / 8 - 1px), color-mix(in srgb, var(--color-ink) 4%, transparent) calc(100% / 8 - 1px) calc(100% / 8));
   cursor: pointer;
 }
 .gantt__bar {
@@ -383,7 +385,7 @@ function pickBar(berthId: string, vesselId: string) {
   border: 0;
   border-radius: 3px;
   overflow: hidden;
-  color: #fff;
+  color: var(--color-on-accent);
   font-size: 10px;
   line-height: 14px;
   text-align: left;
@@ -414,7 +416,7 @@ function pickBar(berthId: string, vesselId: string) {
   border-bottom-right-radius: 0;
 }
 .gantt__bar:focus-visible {
-  outline: 2px solid #e66a2d;
+  outline: 2px solid var(--color-accent);
   outline-offset: 1px;
 }
 .gantt__bar-text {
@@ -431,7 +433,7 @@ function pickBar(berthId: string, vesselId: string) {
   transform: translateX(-5px);
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 7px solid #13191e;
+  border-top: 7px solid var(--color-ink);
   pointer-events: auto;
 }
 .gantt__conflict {
@@ -449,7 +451,7 @@ function pickBar(berthId: string, vesselId: string) {
   top: 0;
   bottom: 18px;
   width: 0;
-  border-left: 2px solid #13191e;
+  border-left: 2px solid var(--color-ink);
   pointer-events: none;
 }
 .gantt__now-label {
@@ -458,8 +460,8 @@ function pickBar(berthId: string, vesselId: string) {
   left: 3px;
   padding: 0 4px;
   border-radius: 2px;
-  background: #13191e;
-  color: #fff;
+  background: var(--color-ink);
+  color: var(--color-panel);
   font-size: 10px;
   line-height: 13px;
 }

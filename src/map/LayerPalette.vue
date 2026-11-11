@@ -173,7 +173,9 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
 .palette {
   display: grid;
   padding: 2px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -194,8 +196,8 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
   background: var(--color-panel-secondary);
 }
 .palette__btn[aria-pressed='true'] {
-  color: var(--color-accent-ink);
-  background: var(--color-accent-subtle);
+  color: var(--toggle-on-ink);
+  background: var(--toggle-on-bg);
 }
 .palette__btn:disabled {
   cursor: not-allowed;
@@ -301,7 +303,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
   width: 18px;
   height: 12px;
   border-radius: 2px;
-  background: #071a27;
+  background: var(--color-map-ocean);
   position: relative;
 }
 .swatch::after {
@@ -321,7 +323,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
   height: 8px;
   background: var(--sw);
   transform: rotate(45deg);
-  outline: 1px solid #e8eef2;
+  outline: 1px solid var(--color-ink-on-dark);
 }
 .swatch--ring::after {
   width: 8px;
@@ -343,10 +345,10 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
   border-top-style: dashed;
 }
 .swatch--fill {
-  background: color-mix(in srgb, var(--sw) 55%, #071a27);
+  background: color-mix(in srgb, var(--sw) 55%, var(--color-map-ocean));
 }
 .swatch--hatch {
-  background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--sw) 60%, #071a27) 0 3px, color-mix(in srgb, var(--sw) 85%, #fff) 3px 4px);
+  background: repeating-linear-gradient(-45deg, color-mix(in srgb, var(--sw) 60%, var(--color-map-ocean)) 0 3px, color-mix(in srgb, var(--sw) 85%, var(--color-ink-on-dark)) 3px 4px);
 }
 .layer-note {
   margin: 10px 0 0;
@@ -389,7 +391,7 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #fff;
+  background: var(--color-ink-on-dark);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: transform var(--motion-hover);
 }

@@ -94,6 +94,163 @@
   --motion-focus: 280ms;
   --motion-scope: 900ms;
   --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Material tiers (V3 spec 02/05). In V2 every tier is the opaque panel. */
+  --surface-hud: var(--color-panel);
+  --surface-inspector: var(--color-panel);
+  --surface-popover: var(--color-panel);
+  --hud-border: var(--color-border);
+  --hud-filter: none;
+  --color-on-accent: #ffffff;
+  --color-on-critical: #ffffff;
+  --color-hover: var(--color-panel-secondary);
+  /* On/off state of a toggle (layers, view mode). V3 keeps orange for selection only (spec 02/02 B04). */
+  --toggle-on-bg: var(--color-accent-subtle);
+  --toggle-on-ink: var(--color-accent-ink);
+  /* On-map roles: label backplates and line work over the ocean, and marker hues matching map/theme.ts. */
+  --color-space: #03080d;
+  --map-scrim: #071a27;
+  --map-line: #cfe1ea;
+  --map-accent: #e66a2d;
+  --map-incident: #d97a72;
+  --map-risk: #c98a4f;
+  --map-delayed: #dcb27f;
+  --map-warning-soft: #e7a64f;
+  --map-caution: #d9c46a;
+  --radius-card: var(--radius-panel);
+  --control-h: 32px;
+}
+
+/* PORTOS V3 (D-041): set by main.ts when flags.v3Glass. Values mirror src/styles/tokens.v3.json (checked by
+   tests/unit/v3tokens.test.ts). Graphite/teal canvas, off-white text, orange only for selection and action. */
+:root[data-theme='v3'] {
+  color-scheme: dark;
+  --color-accent: #f09a58;
+  --color-accent-hover: #f5b07a;
+  --color-accent-subtle: #3a2a1f;
+  --color-accent-ink: #f09a58;
+  --color-accent-fill: #f09a58;
+  --color-on-accent: #07161b;
+  --color-on-critical: #07161b;
+  --color-space: #03090b;
+  --map-scrim: #0a1a1e;
+  --map-line: #d5e4df;
+  --map-accent: #f09a58;
+  --map-incident: #ea8584;
+  --map-risk: #e6a873;
+  --map-delayed: #e8c486;
+  --map-warning-soft: #e8bd72;
+  --map-caution: #dccb7a;
+
+  --color-app: #07161b;
+  --color-panel: #0e1b1f;
+  --color-panel-secondary: #15282b;
+  --color-border: rgba(231, 242, 237, 0.1);
+  --color-border-strong: rgba(231, 242, 237, 0.18);
+  --color-hover: rgba(255, 255, 255, 0.065);
+  --toggle-on-bg: #1b3a40;
+  --toggle-on-ink: #bfe0e5;
+  --color-map-ocean: #081b21;
+  --color-map-ocean-mid: #0c252b;
+  --color-map-land: #26352f;
+  --color-map-land-outline: #5a6f66;
+  --color-route-base: #8fa6a9;
+  --color-route-selected: #f09a58;
+
+  --color-ink: #edf3f0;
+  --color-ink-secondary: #a7b9b8;
+  --color-ink-on-dark: #edf3f0;
+  --color-ink-muted: #829594;
+  --color-warning-ink: #e3b86a;
+  --color-unknown-ink: #a7b9b8;
+
+  --color-healthy: #9ccdb0;
+  --color-healthy-subtle: #16302a;
+  --color-warning: #e3b86a;
+  --color-warning-subtle: #33291a;
+  --color-critical: #e87170;
+  --color-critical-subtle: #3a1f22;
+  --color-info: #80bfc9;
+  --color-info-subtle: #132d33;
+  --color-unknown: #93a4a3;
+  --color-unknown-subtle: #1c2b2e;
+  --color-selected: #f09a58;
+
+  --color-data-observed: #80bfc9;
+  --color-data-planned: #8e9f9e;
+  --color-data-uncertain: #a6a9b4;
+
+  --font-ui: 'Urbanist Variable', 'Urbanist', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --text-11: 12px;
+  --text-12: 12px;
+  --text-13: 14px;
+  --text-14: 14px;
+  --text-16: 16px;
+  --text-18: 18px;
+  --text-20: 22px;
+  --text-24: 28px;
+  --text-28: 28px;
+
+  --radius-chip: 6px;
+  --radius-input: 8px;
+  --radius-card: 12px;
+  --radius-panel: 16px;
+
+  --surface-hud: rgba(14, 26, 29, 0.82);
+  --surface-inspector: rgba(14, 26, 29, 0.92);
+  --surface-popover: rgba(16, 33, 37, 0.96);
+  --hud-border: rgba(231, 242, 237, 0.1);
+  --hud-filter: blur(18px) saturate(110%);
+
+  --shell-header-h: 64px;
+  --inspector-w: clamp(360px, 29vw, 464px);
+  --inspector-w-expanded: clamp(400px, 34vw, 464px);
+  --map-control-gap: 20px;
+  --control-h: 36px;
+
+  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px rgba(0, 0, 0, 0.32);
+  --shadow-drawer: 0 16px 40px rgba(0, 0, 0, 0.42);
+  --focus-ring: 0 0 0 2px var(--color-app), 0 0 0 4px var(--color-accent);
+
+  --motion-hover: 140ms;
+  --motion-panel: 220ms;
+  --motion-focus: 280ms;
+  --motion-scope: 1100ms;
+  --ease-standard: cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+@media (max-width: 767px) {
+  :root[data-theme='v3'] {
+    --shell-header-h: 56px;
+    --map-control-gap: 12px;
+    --control-h: 44px;
+  }
+}
+
+/* No backdrop filter, or the user asked for less transparency: solid tiers (spec 02/05 B04). */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  :root[data-theme='v3'] {
+    --surface-hud: rgba(24, 38, 41, 0.96);
+    --surface-inspector: rgba(24, 38, 41, 0.97);
+    --hud-filter: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-theme='v3'] {
+    --surface-hud: rgba(24, 38, 41, 0.96);
+    --surface-inspector: rgba(24, 38, 41, 0.97);
+    --surface-popover: rgba(24, 38, 41, 0.98);
+    --hud-filter: none;
+  }
+}
+@media (forced-colors: active) {
+  :root[data-theme='v3'] {
+    --hud-filter: none;
+    --surface-hud: Canvas;
+    --surface-inspector: Canvas;
+    --surface-popover: Canvas;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

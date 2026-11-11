@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { bearingDeg, haversineDistanceNm, offsetMeters } from '@/core/geo';
 import type { GeoPoint } from '@/core/types';
+import { tokens } from '@/styles/tokens';
 import type { PortTwinModel, TwinBerth, TwinBerthStatus, TwinTerminal } from '@/selectors/portTwin';
 import type { PlanarSceneLayer } from '../Region3DScene';
 import { CONTAINER_COLORS, containerGeometry, stsCraneGeometry } from './twinGeometry';
@@ -28,7 +29,7 @@ export const BERTH_STATUS_COLOR: Record<TwinBerthStatus, string> = {
   unavailable: '#A84444',
   unknown: '#A6A9B4',
 };
-const FOCUS = new THREE.Color('#E66A2D');
+const FOCUS = new THREE.Color(tokens.status.selected);
 const CONFLICT = new THREE.Color('#D49A2E');
 const CRANE_IDLE = new THREE.Color('#ffffff');
 

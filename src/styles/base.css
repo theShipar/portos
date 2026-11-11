@@ -59,6 +59,26 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
+/* V3: numbers stay in Urbanist with tabular figures; canonical IDs keep the monospace face (spec 02/03 B04). */
+:root[data-theme='v3'] .mono {
+  font-family: var(--font-ui);
+  font-weight: 500;
+}
+
+:root[data-theme='v3'] .mono-id {
+  font-family: var(--font-data);
+  font-size: 0.92em;
+}
+
+:root[data-theme='v3'] body {
+  line-height: 21px;
+}
+
+:root[data-theme='v3'] h1,
+:root[data-theme='v3'] h2 {
+  letter-spacing: -0.02em;
+}
+
 .num {
   font-variant-numeric: tabular-nums;
 }
@@ -89,18 +109,22 @@ p {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  height: 32px;
+  height: var(--control-h);
   padding: 0 var(--space-3);
   border-radius: var(--radius-input);
   border: 1px solid var(--color-border);
   background: var(--color-panel);
   font-size: var(--text-13);
   font-weight: 500;
-  transition: background var(--motion-hover), border-color var(--motion-hover);
+  transition: background var(--motion-hover), border-color var(--motion-hover), transform var(--motion-hover);
 }
 
 .btn:hover:not(:disabled) {
-  background: var(--color-panel-secondary);
+  background: var(--color-hover);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .btn:disabled {
@@ -111,12 +135,19 @@ p {
 .btn--primary {
   background: var(--color-accent-fill);
   border-color: var(--color-accent-fill);
-  color: #fff;
+  color: var(--color-on-accent);
+  font-weight: 600;
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: var(--color-accent-ink);
-  border-color: var(--color-accent-ink);
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+}
+
+.btn--danger {
+  background: var(--color-critical-subtle);
+  border-color: var(--color-critical);
+  color: var(--color-critical);
 }
 
 .btn--ghost {
@@ -149,7 +180,7 @@ p {
 }
 
 .icon-btn:hover:not(:disabled) {
-  background: var(--color-panel-secondary);
+  background: var(--color-hover);
   color: var(--color-ink);
 }
 
@@ -158,9 +189,11 @@ p {
   place-items: center;
   width: 34px;
   height: 34px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--hud-border);
   border-radius: var(--radius-input);
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   color: var(--color-ink-secondary);
   box-shadow: var(--shadow-panel);
 }
@@ -170,11 +203,23 @@ p {
   background: var(--color-panel-secondary);
 }
 
-.panel {
-  background: var(--color-panel);
-  border: 1px solid var(--color-border);
+/* Floating HUD material (V3 spec 02/05): blurred backplate behind each card, never a fullscreen filter. */
+.panel,
+.glass {
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
+  border: 1px solid var(--hud-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
+}
+
+.glass--dense {
+  background: var(--surface-inspector);
+}
+
+.glass--popover {
+  background: var(--surface-popover);
 }
 
 /* Forms (workflow panels) */

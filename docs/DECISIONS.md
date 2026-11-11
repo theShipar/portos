@@ -663,3 +663,31 @@ Supersedes the Phase 1 note in D-031 that every scope is a camera goal on the gl
   - *Data scale:* first-slice scale (existing 500 vessels / 100 ports / 200 voyages; new cargo and trade data in
     `sample-data/v3/` at about 1,000 containers and 80 trade flows).
 - **Consequences:** V2 behaviour stays reachable with `?v3=0` for comparison and rollback at every gate.
+
+## D-041 V3 palette, Urbanist and glass material tiers
+
+- **Context:**
+  - V3 spec 13–15 asks for a dark teal canvas, Urbanist, three glass tiers (HUD, inspector, popover), larger
+    radii, 64 / 56 px headers and an inspector of `clamp(360px, 29vw, 464px)`.
+  - D-038 made `tokens.v2.json` the palette source and kept `tokens.json` as the unedited kit copy.
+- **Decision:**
+  - *Source:* `src/styles/tokens.v3.json` holds the kit's V3 colours unchanged, plus the derived roles the kit
+    leaves open (hover, subtle status fills, map land / wall / ghost tones, chart series). `tokens.json` and
+    `tokens.v2.json` are untouched.
+  - *Switch:* `main.ts` sets `<html data-theme="v3">` when `flags.v3Glass`. `tokens.css` keeps the V2 values on
+    `:root` and overrides them under `:root[data-theme='v3']`; TS consumers branch on `V3` from `tokens.ts`
+    (`tokens`, `mapColors`, `planarTheme`, the MapLibre basemap). `?v3=0` restores V2 in one step.
+  - *Material tiers:* `--surface-hud` (0.82), `--surface-inspector` (0.92), `--surface-popover` (0.96) with
+    `--hud-filter: blur(18px) saturate(110%)`. Fallbacks: opaque surfaces without `backdrop-filter`, with
+    `prefers-reduced-transparency` and in forced colours.
+  - *Type:* Urbanist Variable from `@fontsource-variable/urbanist` (OFL-1.1), self-hosted by Vite. Numbers use
+    tabular figures; IDs stay monospace (`.mono-id`).
+  - *Colour hygiene:* component styles use tokens only. A unit lint fails on raw hex / rgba in Vue styles and
+    templates; `scripts/dev/tokenize_vue_colors.py` did the one-off conversion to `color-mix()` over tokens.
+  - *Text on accent:* `--color-on-accent` / `--color-on-critical` (white in V2, `#07161B` in V3) because white on
+    the V3 orange is 2.4:1.
+  - *Primitives:* `SegmentedControl`, `GlassPanel`, `HudChip`, `DetailCard`, `ProgressTrack` in
+    `src/components/ui/`. `ViewModeSwitch` uses `SegmentedControl` now; the others are adopted by Gates 5, 7 and 8.
+- **Consequences:**
+  - The 16 pixel baselines in `tests/visual/` were regenerated on purpose for the V3 theme.
+  - Selection orange is reserved for selection and primary actions; toggles use the teal `--toggle-on-*` pair.

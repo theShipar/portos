@@ -129,12 +129,14 @@ function confirm() {
   padding: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
-  background: var(--color-panel);
+  background: var(--surface-popover);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   color: var(--color-ink);
   box-shadow: var(--shadow-panel);
 }
 .dlg::backdrop {
-  background: rgba(10, 18, 28, 0.45);
+  background: color-mix(in srgb, var(--map-scrim) 45%, transparent);
 }
 .dlg__body {
   display: grid;
@@ -213,7 +215,7 @@ function confirm() {
 .btn--danger {
   background: var(--color-critical);
   border-color: var(--color-critical);
-  color: #fff;
+  color: var(--color-on-critical);
 }
 .btn--danger:hover:not(:disabled) {
   background: var(--color-critical);

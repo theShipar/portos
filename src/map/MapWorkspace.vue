@@ -153,8 +153,8 @@ defineExpose({ earth, earthView, map2d });
   padding: 4px 10px;
   list-style: none;
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.72);
-  color: rgba(247, 250, 252, 0.86);
+  background: color-mix(in srgb, var(--map-scrim) 72%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 86%, transparent);
   font-size: var(--text-11);
   line-height: 16px;
 }
@@ -176,8 +176,8 @@ defineExpose({ earth, earthView, map2d });
   margin: 0;
   padding: 2px 8px;
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.6);
-  color: rgba(247, 250, 252, 0.7);
+  background: color-mix(in srgb, var(--map-scrim) 60%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 70%, transparent);
   font-size: var(--text-11);
   line-height: 16px;
 }

@@ -241,7 +241,7 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
   padding: 0 5px;
   border-radius: var(--radius-pill);
   background: var(--color-accent-fill);
-  color: #fff;
+  color: var(--color-on-accent);
   font-size: var(--text-11);
   line-height: 18px;
   text-align: center;
@@ -263,7 +263,9 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
   grid-template-rows: auto minmax(0, 1fr);
   width: 420px;
   max-height: calc(100vh - var(--shell-header-h) - 24px);
-  background: var(--color-panel);
+  background: var(--surface-popover);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -341,9 +343,9 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
   cursor: pointer;
 }
 .fchip[aria-pressed='true'] {
-  border-color: var(--color-accent);
-  background: var(--color-accent-subtle);
-  color: var(--color-accent-ink);
+  border-color: var(--toggle-on-ink);
+  background: var(--toggle-on-bg);
+  color: var(--toggle-on-ink);
 }
 .control--sm {
   height: 28px;

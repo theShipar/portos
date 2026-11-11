@@ -19,6 +19,7 @@
     "data:validate": "python3 scripts/validate_data.py"
   },
   "dependencies": {
+    "@fontsource-variable/urbanist": "^5.3.0",
     "gsap": "^3.15.1",
     "maplibre-gl": "^6.17.0",
     "pinia": "^3.0.4",

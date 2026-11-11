@@ -34,7 +34,7 @@ onMounted(() => heading.value?.focus({ preventScroll: true }));
 </script>
 
 <template>
-  <aside class="drawer panel" :class="{ 'drawer--expanded': expanded }" :aria-labelledby="`drawer-title-${uid}`" data-testid="inspector">
+  <aside class="drawer panel glass--dense" :class="{ 'drawer--expanded': expanded }" :aria-labelledby="`drawer-title-${uid}`" data-testid="inspector">
     <div class="drawer__head">
       <div class="drawer__titles">
         <span class="micro-label">{{ kindLabel }}</span>
@@ -171,6 +171,6 @@ onMounted(() => heading.value?.focus({ preventScroll: true }));
 .drawer__foot {
   padding: var(--space-3) var(--space-5);
   border-top: 1px solid var(--color-border);
-  background: var(--color-panel);
+  background: var(--surface-inspector);
 }
 </style>

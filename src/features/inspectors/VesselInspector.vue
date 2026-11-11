@@ -256,7 +256,7 @@ function openPort(portId: string) {
   gap: 10px;
   margin: 0 var(--space-5) var(--space-3);
   padding: 10px 12px;
-  border: 1px solid #f1c9c4;
+  border: 1px solid color-mix(in srgb, var(--color-critical) 40%, transparent);
   border-radius: var(--radius-input);
   background: var(--color-critical-subtle);
 }

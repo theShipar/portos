@@ -105,7 +105,8 @@ test.describe('Port twin (spec 07)', () => {
     });
     expect(styles.actual).toBe('none');
     expect(styles.planned).toContain('repeating-linear-gradient');
-    expect(styles.forecast).toMatch(/rgba\(.*0\.3\d*\)/);
+    // Translucent forecast fill (~30 % alpha); tokenized colours compute as rgba() or color(srgb … / a).
+    expect(styles.forecast).toMatch(/(rgba\(.*|color\(srgb .*\/ )0\.3\d*\)/);
     await gantt.getByTestId('gantt-window-24').click();
     await expect(gantt.getByTestId('gantt-window-24')).toHaveAttribute('aria-pressed', 'true');
     await gantt.getByTestId('gantt-toggle').click();

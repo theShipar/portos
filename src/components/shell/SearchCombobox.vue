@@ -115,11 +115,26 @@ function onBlur() {
   }, 120);
 }
 
+/** `/` pressed while the catalog is still loading focuses the field as soon as it is enabled. */
+let focusWhenReady = false;
 async function focus() {
+  if (catalog.status !== 'ready') {
+    focusWhenReady = true;
+    return;
+  }
   await nextTick();
   input.value?.focus();
   input.value?.select();
 }
+watch(
+  () => catalog.status,
+  (s) => {
+    if (s === 'ready' && focusWhenReady) {
+      focusWhenReady = false;
+      void focus();
+    }
+  },
+);
 
 defineExpose({ focus });
 </script>

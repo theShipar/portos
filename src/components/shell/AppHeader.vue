@@ -21,7 +21,7 @@ defineExpose({ focusSearch: () => search.value?.focus() });
       <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
         <rect width="26" height="26" rx="6" fill="var(--color-ink)" />
         <path d="M6 16.5h14l-1.6 3.5H7.6L6 16.5Z" fill="var(--color-accent)" />
-        <path d="M8 15.5v-4l5-2.2 5 2.2v4M13 9.3V5.5" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M8 15.5v-4l5-2.2 5 2.2v4M13 9.3V5.5" stroke="var(--color-app)" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
       <span class="brand__name">PORTOS</span>
       <span class="brand__tag">Maritime exceptions</span>
@@ -123,6 +123,39 @@ defineExpose({ focusSearch: () => search.value?.focus() });
   .header :deep(.stamp__text),
   .header :deep(.search__kbd) {
     display: none;
+  }
+}
+/* Phone (V3 spec 02/06, 08/01): 56 px bar; search shrinks to its icon and expands across the bar while focused. */
+@media (max-width: 479px) {
+  .header {
+    grid-template-columns: auto minmax(44px, 1fr) auto;
+    gap: var(--space-2);
+    padding: 0 var(--space-3);
+  }
+  .header__right {
+    gap: 2px;
+  }
+  .header :deep(.search input) {
+    height: 40px;
+    padding-right: 8px;
+  }
+  .header :deep(.search input::placeholder) {
+    color: transparent;
+  }
+  .header__center:focus-within {
+    position: absolute;
+    inset: 8px var(--space-3);
+    z-index: 5;
+  }
+  .header__center:focus-within :deep(.search) {
+    width: 100%;
+  }
+  .header__center:focus-within :deep(.search input::placeholder) {
+    color: var(--color-ink-muted);
+  }
+  .header :deep(.stamp__btn) {
+    gap: 4px;
+    padding: 0 4px;
   }
 }
 </style>

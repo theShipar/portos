@@ -162,7 +162,9 @@ watch(
   min-height: 0;
   max-height: 100%;
   padding: 8px 10px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -236,9 +238,9 @@ watch(
   cursor: pointer;
 }
 .fchip[aria-pressed='true'] {
-  border-color: var(--color-accent);
-  background: var(--color-accent-subtle);
-  color: var(--color-accent-ink);
+  border-color: var(--toggle-on-ink);
+  background: var(--toggle-on-bg);
+  color: var(--toggle-on-ink);
 }
 .fchip .num {
   margin-left: 2px;
@@ -296,7 +298,7 @@ watch(
   background: var(--color-warning);
 }
 .qrow__tone--delayed {
-  background: #c9a227;
+  background: var(--color-warning);
 }
 .qrow__tone--onPlan {
   background: var(--color-healthy);

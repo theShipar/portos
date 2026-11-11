@@ -11,7 +11,7 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 
 | # | P0 requirement | Gate | Status |
 |---|---|---|---|
-| 1 | Visual: map ≥ 75 % at 1440×900, Urbanist, token spacing, quiet glass | G1 | pending |
+| 1 | Visual: map ≥ 75 % at 1440×900, Urbanist, token spacing, quiet glass | G1 | PASS (G1) |
 | 2 | Geographic: whole continent, no rectangular cutout, rotatable, country hover lifts top + sidewall, city/port drilldown | G2, G3 | pending |
 | 3 | Vessel: type-differentiated near and far LOD, no popping, heading/status match, no wake when moored | G4 | pending |
 | 4 | Inspection: 3D preview, origin → destination tracker, container/hold selection from fixture, correct shipment | G5 | pending |
@@ -35,3 +35,32 @@ Result vocabulary: **PASS** = asserted by a passing automated test or verified o
 - **Known deviations:** the kit is referenced in place at the repo root instead of copied to `docs/portos-v3/`
   (D-040).
 - **Rollback:** revert the gate commit; flags default on but gate nothing yet.
+
+## Gate 1 — Design system and shell
+
+- **Source paths:** `src/styles/tokens.v3.json`, `src/styles/tokens.css` (`data-theme="v3"` block, glass tiers,
+  fallbacks), `src/styles/tokens.ts`, `src/styles/base.css`, `src/styles/layout.ts`, `src/main.ts` (Urbanist,
+  theme switch), `src/map/theme.ts`, `src/map/port2d/basemapStyle.ts`, `src/components/ui/{SegmentedControl,
+  GlassPanel,HudChip,DetailCard,ProgressTrack}.vue`, `src/map/ViewModeSwitch.vue`, `src/components/shell/*`,
+  HUD components (KPI rail, breadcrumb, layer palette, peek, follow bar, replay rail, queue shelf, Gantt, ribbon),
+  `src/components/shell/SearchCombobox.vue` (`/` before the catalog loads focuses once ready).
+- **Acceptance:**
+  - Map ≥ 75 % of the 1440×900 viewport with the KPI rail and inspector closed: PASS (`v3design.spec.ts`).
+  - Urbanist loaded and applied; header 64 px desktop, 56 px phone: PASS (`v3design.spec.ts`, `v3tokens.test.ts`).
+  - Glass tiers with an 18 px blur and opaque fallbacks: PASS (KPI rail computed `backdrop-filter` in e2e;
+    fallback blocks asserted in `v3tokens.test.ts`).
+  - Inspector `clamp(360px, 29vw, 464px)` → 418 px at 1440: PASS (unit and e2e).
+  - AA text contrast on canvas, surfaces and glass over the lightest land tone; 3:1 for map graphics on the
+    ocean; selection orange not reused for status: PASS (`v3tokens.test.ts`).
+  - No raw hex / rgba in component styles: PASS (token lint in `v3tokens.test.ts`).
+  - Keyboard: `/` focuses search, Escape returns; icon-only controls have names: PASS (`v3design.spec.ts`).
+  - Phone 390×844: header fits without horizontal overflow; SIMULATED badge visible; search expands: PASS.
+  - `?v3=0` restores the V2 look and flags: PASS (`v3design.spec.ts`).
+  - Screenshots: 16 images in `docs/qa/v3-g1/` (`desktop-port-sin.png`, `desktop-earth.png` reviewed).
+- **PARTIAL:** `HudChip`, `DetailCard` and `ProgressTrack` exist with tests through their consumers in later gates
+  (vessel sidebar G5, port twin G7, analytics G8). The phone map is still covered by the "needs 768 px" note
+  (Gate 9). The region still shows the rectangular cutout (Gate 2).
+- **Known deviations:** `tokens.v3.json` added beside `tokens.json` / `tokens.v2.json`; derived colour roles
+  (D-041, TECHNICAL_DEVIATIONS).
+- **Rollback:** `?v3=0` or `VITE_V3_GLASS=0`; or revert the gate commit.
+

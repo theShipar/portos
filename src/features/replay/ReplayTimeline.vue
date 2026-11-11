@@ -395,7 +395,9 @@ function saveNote() {
   height: var(--rail-h);
   padding: 6px 10px;
   overflow: hidden;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -449,8 +451,8 @@ function saveNote() {
   border-left: 1px solid var(--color-border);
 }
 .seg__btn[aria-pressed='true'] {
-  background: var(--color-accent-subtle);
-  color: var(--color-accent-ink);
+  background: var(--toggle-on-bg);
+  color: var(--toggle-on-ink);
   font-weight: 600;
 }
 .rail__time {
@@ -594,7 +596,7 @@ function saveNote() {
   border: 0;
   border-radius: 50%;
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-accent);
   cursor: pointer;
   pointer-events: auto;
 }
@@ -623,7 +625,7 @@ function saveNote() {
   width: 14px;
   height: 14px;
   margin-top: -5.5px;
-  border: 2px solid #fff;
+  border: 2px solid var(--color-ink-on-dark);
   border-radius: 50%;
   background: var(--color-accent);
   box-shadow: 0 0 0 1px var(--color-accent);
@@ -635,7 +637,7 @@ function saveNote() {
 .track__input::-moz-range-thumb {
   width: 12px;
   height: 12px;
-  border: 2px solid #fff;
+  border: 2px solid var(--color-ink-on-dark);
   border-radius: 50%;
   background: var(--color-accent);
 }
@@ -777,7 +779,7 @@ function saveNote() {
   position: absolute;
   top: 0;
   bottom: 19px;
-  background: repeating-linear-gradient(135deg, transparent 0 5px, rgba(127, 139, 148, 0.12) 5px 7px);
+  background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--color-data-planned) 12%, transparent) 5px 7px);
   border-left: 1px dashed var(--color-border);
   pointer-events: none;
 }

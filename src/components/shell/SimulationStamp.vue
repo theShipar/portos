@@ -85,7 +85,7 @@ const manifest = computed(() => catalog.catalog?.manifest ?? null);
   padding: 3px 7px;
   border-radius: var(--radius-chip);
   background: var(--color-ink);
-  color: var(--color-ink-on-dark);
+  color: var(--color-app);
   font-size: var(--text-11);
   font-weight: 600;
   letter-spacing: 0.04em;

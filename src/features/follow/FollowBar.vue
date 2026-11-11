@@ -69,7 +69,9 @@ const name = computed(() => (view.follow ? (catalog.catalog?.byId.vessel.get(vie
   align-items: center;
   gap: 8px;
   padding: 6px 6px 6px 10px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -105,8 +107,8 @@ const name = computed(() => (view.follow ? (catalog.catalog?.byId.vessel.get(vie
   border-left: 1px solid var(--color-border);
 }
 .seg__btn[aria-pressed='true'] {
-  background: var(--color-accent-subtle);
-  color: var(--color-accent-ink);
+  background: var(--toggle-on-bg);
+  color: var(--toggle-on-ink);
   font-weight: 600;
 }
 .follow__chip {
@@ -117,7 +119,9 @@ const name = computed(() => (view.follow ? (catalog.catalog?.byId.vessel.get(vie
   padding: 5px 10px;
   border: 1px solid var(--color-accent);
   border-radius: 999px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   color: var(--color-accent-ink);
   font-size: var(--text-12);
   font-weight: 600;

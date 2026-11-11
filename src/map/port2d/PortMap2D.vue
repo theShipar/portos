@@ -889,31 +889,31 @@ defineExpose({ getView, resetView, map });
   height: 30px;
   padding: 0 7px;
   border-radius: 15px;
-  border: 1.5px solid rgba(247, 250, 252, 0.7);
-  background: rgba(7, 26, 39, 0.88);
-  color: #f7fafc;
+  border: 1.5px solid color-mix(in srgb, var(--color-ink-on-dark) 70%, transparent);
+  background: color-mix(in srgb, var(--map-scrim) 88%, transparent);
+  color: var(--color-ink-on-dark);
   font: 600 var(--text-12) / 1 var(--font-sans);
   cursor: pointer;
 }
 .m2d-cluster--incident {
   border-color: var(--color-critical);
-  box-shadow: 0 0 0 2px rgba(201, 58, 58, 0.35);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-critical) 35%, transparent);
 }
 .m2d-cluster--atRisk {
-  border-color: #e7a64f;
+  border-color: var(--map-warning-soft);
 }
 .m2d-cluster--delayed {
-  border-color: #d9c46a;
+  border-color: var(--map-caution);
 }
 .m2d-terminal,
 .m2d-zone {
   display: grid;
   gap: 1px;
   padding: 4px 8px;
-  border: 1px solid rgba(159, 193, 209, 0.45);
+  border: 1px solid color-mix(in srgb, var(--map-line) 45%, transparent);
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.86);
-  color: #f7fafc;
+  background: color-mix(in srgb, var(--map-scrim) 86%, transparent);
+  color: var(--color-ink-on-dark);
   font-size: var(--text-11);
   line-height: 14px;
   text-align: left;
@@ -922,13 +922,13 @@ defineExpose({ getView, resetView, map });
 }
 .m2d-terminal span,
 .m2d-zone span {
-  color: rgba(247, 250, 252, 0.72);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 72%, transparent);
 }
 .m2d-zone {
   border-style: dashed;
 }
 .m2d-zone--crowded {
-  border-color: #c98a4f;
+  border-color: var(--map-risk);
 }
 .m2d-port {
   display: flex;
@@ -937,8 +937,8 @@ defineExpose({ getView, resetView, map });
   padding: 2px 8px 2px 4px;
   border: 0;
   border-radius: var(--radius-chip);
-  background: rgba(7, 26, 39, 0.78);
-  color: #f7fafc;
+  background: color-mix(in srgb, var(--map-scrim) 78%, transparent);
+  color: var(--color-ink-on-dark);
   font-size: var(--text-12);
   line-height: 16px;
   cursor: pointer;
@@ -947,7 +947,7 @@ defineExpose({ getView, resetView, map });
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  border: 1.5px solid #071a27;
+  border: 1.5px solid var(--color-map-ocean);
   background: var(--color-unknown);
 }
 .m2d-port__dot--healthy {
@@ -976,20 +976,20 @@ defineExpose({ getView, resetView, map });
   max-width: 300px;
   padding: 8px 10px;
   border-radius: var(--radius-input);
-  background: rgba(7, 26, 39, 0.94);
-  color: rgba(247, 250, 252, 0.8);
+  background: color-mix(in srgb, var(--map-scrim) 94%, transparent);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 80%, transparent);
   font-size: var(--text-12);
   line-height: 16px;
   pointer-events: none;
 }
 .m2d-tip strong {
-  color: #f7fafc;
+  color: var(--color-ink-on-dark);
 }
 .m2d-card__conflicts {
   padding: 6px 8px;
   border-radius: var(--radius-input);
-  background: rgba(212, 154, 46, 0.12);
-  border: 1px solid rgba(182, 123, 23, 0.45);
+  background: color-mix(in srgb, var(--color-warning) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-warning) 45%, transparent);
 }
 .m2d-card {
   position: absolute;
@@ -1000,7 +1000,9 @@ defineExpose({ getView, resetView, map });
   gap: 8px;
   width: 300px;
   padding: 12px 14px;
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
@@ -1095,7 +1097,7 @@ defineExpose({ getView, resetView, map });
   place-content: center;
   justify-items: center;
   gap: 6px;
-  color: rgba(247, 250, 252, 0.8);
+  color: color-mix(in srgb, var(--color-ink-on-dark) 80%, transparent);
   text-align: center;
 }
 .m2d-state--error {
@@ -1113,7 +1115,9 @@ defineExpose({ getView, resetView, map });
   translate: -50% 0;
   padding: 8px 12px;
   border-radius: var(--radius-panel);
-  background: var(--color-panel);
+  background: var(--surface-hud);
+  -webkit-backdrop-filter: var(--hud-filter);
+  backdrop-filter: var(--hud-filter);
   border: 1px solid var(--color-warning);
   box-shadow: var(--shadow-panel);
   font-size: var(--text-12);
