@@ -5,7 +5,7 @@
 
 A desktop maritime operations prototype for exploring fleet exceptions, port congestion, vessel cargo, and simulated decisions in one spatial workspace.
 
-[**Open the demo ↗**](https://portos-shipar.vercel.app) · [Screenshot gallery](docs/SHOWCASE.md) · [Developer guide](docs/DEVELOPER_GUIDE.md) · [Deployment guide](docs/DEPLOYMENT.md)
+[**Open the demo ↗**](https://portos-os.vercel.app) · [Screenshot gallery](docs/SHOWCASE.md) · [Developer guide](docs/DEVELOPER_GUIDE.md) · [Deployment guide](docs/DEPLOYMENT.md)
 
 **Vue 3 · TypeScript · Three.js · MapLibre · Pinia · Vite**
 
