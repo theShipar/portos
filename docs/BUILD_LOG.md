@@ -1173,3 +1173,25 @@ blockers. Status values: implemented / tested / blocked.
     --project=chromium` → 8 images in `docs/qa/v3-g6/`.
 - **Gate:** P0 #5 PASS (D-046).
 - **Blockers:** none.
+
+## 2026-11-17 — Browser feedback: inspector and vessel inspection UI
+
+- LayerPalette: 8px outer padding, 4px control gaps, separated legend action.
+- tokens.css and App.vue: expanded inspector is 40vw; dependent map safe areas inherit that width.
+- AppSelect: shared styled listbox with keyboard navigation, typeahead, disabled choices, outside-click/Escape dismissal, focus restoration and modal-aware placement. Migrated identity, cargo, replay, incident, comparison and workflow selects. Preserves numeric/null models and existing change-event values.
+- VesselWorkshop / VesselWorkshopScene: move the same canvas into a native modal dialog with a blurred backdrop, responsive layout, automatic framing and Fit vessel. Native dialog contains keyboard focus and makes the background inert.
+- VesselInspector / CargoPanel / new CargoDetail: bottom cargo picker and complete, wrapping annotation share the existing selection and selector data. Fixed empty-slot copy incorrectly applying to compartments without a manifest.
+- Tests: added AppSelect interaction coverage; migrated existing E2E select actions to the visible listbox. Corrected an optional-chain type error in the already modified v3capture test that blocked the production build.
+- Verification: `python3 scripts/validate_data.py` PASS; `npm run build` PASS (typecheck and Vite); `npx vitest run tests/unit/appSelect.test.ts tests/unit/cargo.test.ts` PASS, 24 tests. Existing full E2E suite and visual baselines were not run/refreshed.
+- Real in-app browser: inspected toolbar spacing and custom identity menu; changing identity updated the role and was restored. Expanded inspector measured 677.59375px at 1694px viewport (40%). Opened modal, selected Hold 5 and confirmed annotation/URL update, dismissed with Escape without closing inspector. Checked 1099px viewport with no horizontal dialog overflow, verified fit framing, and selected Hold 2 on the container vessel through the custom dropdown inside the modal (URL updated). Restored viewport and original bulk-vessel route; left expanded preview open. Screenshots reviewed inline during verification.
+- Existing terminal-operations/data/geography edits in the working tree were preserved.
+
+
+## Desktop preview publication — 17 November 2026
+
+- Published production deployment `dpl_4jBn2rpYVSZu4WEVJRLxdPZnNtxj` on Vercel; status READY.
+- Public address: https://portos-shipar.vercel.app. The requested portos.vercel.app belongs to another team.
+- Verified public deep-link HTTP 200 and loaded the production vessel inspection dialog, selected a container, and checked its complete annotation.
+- Added seven current screenshots, README showcase, developer/deployment guides, release notes, and explicit mobile-not-ready notice.
+- Unit suite: 421 tests passed in 27 files. Fixture validation passed. Full Playwright suite was not rerun for publication.
+- Fixed deployment packaging after the initial build excluded design-token fixtures required by TypeScript tests; kept both kit directories in deployment inputs.

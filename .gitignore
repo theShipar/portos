@@ -9,3 +9,11 @@ playwright-report/
 
 # Natural Earth downloads (scripts/build_geo.py)
 .cache/
+
+# Local deployment links and credentials
+.vercel/
+.env
+.env.*
+!.env.example
+.vercel
+.env*

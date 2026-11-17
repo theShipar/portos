@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppSelect from '@/components/ui/AppSelect.vue';
 import { computed, ref, useId } from 'vue';
 import { formatUtc } from '@/core/format';
 import { useCatalogStore } from '@/stores/catalog';
@@ -72,9 +73,9 @@ async function copy(d: NotificationDraft) {
     <form v-else class="form draft-form" novalidate data-testid="draft-form" @submit.prevent="save" @keydown.esc.stop.prevent="editing = null">
       <p class="micro-label">{{ KIND_LABEL[editing.kind] }} · draft prepared locally</p>
       <label class="field" :for="ids.recipient">Recipient role
-        <select :id="ids.recipient" v-model="editing.recipientRole" class="control">
+        <AppSelect :id="ids.recipient" v-model="editing.recipientRole" class="control">
           <option v-for="r in recipients" :key="r" :value="r">{{ RECIPIENT_LABEL[r] }}</option>
-        </select>
+        </AppSelect>
       </label>
       <label class="field" :for="ids.subject">Subject
         <input :id="ids.subject" v-model="editing.subject" class="control" maxlength="200" />

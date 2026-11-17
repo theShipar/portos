@@ -18,6 +18,8 @@ export interface SurfacePointerHit {
   country: Country | null;
   /** Port twin berth under the pointer (port scenes only). */
   berthId?: string;
+  /** Port twin equipment under the pointer (V3 typed twins). */
+  equipmentId?: string;
 }
 
 export interface SurfaceEvents {

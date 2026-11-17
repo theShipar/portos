@@ -13,6 +13,7 @@ import MapKpiRail from '@/components/shell/MapKpiRail.vue';
 import NoticeStack from '@/components/shell/NoticeStack.vue';
 import PortKpiRow from '@/components/shell/PortKpiRow.vue';
 import PortInspector from '@/features/port/PortInspector.vue';
+import TerminalOpsPanel from '@/features/port/TerminalOpsPanel.vue';
 import BerthGantt from '@/features/port/BerthGantt.vue';
 import PortQueueShelf from '@/features/port/PortQueueShelf.vue';
 import IncidentRibbon from '@/features/workflow/IncidentRibbon.vue';
@@ -34,6 +35,7 @@ const crumbs = ref<InstanceType<typeof ScopeBreadcrumb> | null>(null);
 const railOpen = computed(() => catalog.status === 'ready' && (view.replayOpen || clock.phase !== 'now'));
 /** Port-scope panels avoid the queue shelf (left) and the inspector (right). */
 const workspaceVars = computed(() => ({
+  ...(view.inspectorExpanded ? { '--inspector-w': 'var(--inspector-w-expanded)' } : {}),
   '--shelf-w': snap.portView && view.queueShelfOpen && view.queueTrayOpen ? '340px' : '0px',
   '--card-right': view.inspectorOpen && !view.sheetLayout ? 'calc(var(--inspector-w) + var(--map-control-gap))' : '0px',
   '--gantt-right': view.inspectorOpen && !view.sheetLayout ? 'calc(var(--inspector-w) + 96px)' : '84px',
@@ -89,6 +91,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKey));
       </div>
       <BerthGantt v-if="catalog.status === 'ready' && snap.portTwin" />
       <PortInspector v-if="catalog.status === 'ready' && snap.portTwin && view.berthId && view.viewMode === '3d'" />
+      <TerminalOpsPanel v-else-if="catalog.status === 'ready' && snap.portTwin && view.equipmentId && view.viewMode === '3d'" />
       <EntityInspector v-if="catalog.status === 'ready'" />
       <ReplayTimeline v-if="railOpen" />
       <div v-if="catalog.status === 'loading' || catalog.status === 'idle'" class="state" role="status">

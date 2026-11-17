@@ -1,4 +1,5 @@
 import { boundsCenter, haversineDistanceNm, offsetMeters } from '@/core/geo';
+import type { TerminalType } from '@/core/terminalTypes';
 import type { Bounds, GeoPoint, LayoutTerminal, PortLayout } from '@/core/types';
 import type { Catalog } from '@/data/catalog';
 import { berthTimeline, type BerthConflict, type BerthTimelineRow } from '@/engines/berthTimeline';
@@ -15,6 +16,7 @@ export interface TwinBerth {
   name: string;
   terminalId: string;
   terminalName: string;
+  terminalType: TerminalType;
   center: GeoPoint;
   /** Along the quay, degrees true. */
   quayBearingDeg: number;
@@ -32,13 +34,16 @@ export interface TwinBerth {
 export interface TwinTerminal {
   terminalId: string;
   name: string;
+  terminalType: TerminalType;
+  /** LNG: berth line (jetty heads) to shore distance; 0 for a quay. */
+  jettyOffsetM: number;
   quayLine: GeoPoint[];
   quayBearingDeg: number;
   landwardDeg: number;
   yardDepthM: number;
   /** Declared simulated box count drawn in the yard. */
   yardContainers: number;
-  /** Quay line plus its landward offset, closed ring. */
+  /** Shore line plus its landward offset, closed ring (the quay line itself unless a jetty sits offshore). */
   footprint: GeoPoint[];
   berthIds: string[];
 }
@@ -162,16 +167,20 @@ export function buildPortTwin(c: Catalog, portId: string, t: number): PortTwinMo
   for (const lt of layout.terminals) {
     const landwardDeg = landwardBearing(lt);
     const seawardDeg = wrap(landwardDeg + 180);
-    const back = [...lt.quayLine].reverse().map((p) => offsetMeters(p, landwardDeg, lt.yardDepthMeters));
+    const jettyOffsetM = lt.jettyOffsetMeters ?? 0;
+    const shore = lt.quayLine.map((p) => (jettyOffsetM ? offsetMeters(p, landwardDeg, jettyOffsetM) : p));
+    const back = [...shore].reverse().map((p) => offsetMeters(p, landwardDeg, lt.yardDepthMeters));
     terminals.push({
       terminalId: lt.terminalId,
       name: lt.name,
+      terminalType: lt.terminalType ?? 'container',
+      jettyOffsetM,
       quayLine: lt.quayLine,
       quayBearingDeg: lt.quayBearingDeg,
       landwardDeg,
       yardDepthM: lt.yardDepthMeters,
       yardContainers: lt.yardContainers,
-      footprint: [...lt.quayLine, ...back],
+      footprint: [...shore, ...back],
       berthIds: lt.berths.map((b) => b.berthId),
     });
     for (const lb of lt.berths) {
@@ -184,6 +193,7 @@ export function buildPortTwin(c: Catalog, portId: string, t: number): PortTwinMo
         name: record?.name ?? lb.berthId,
         terminalId: lt.terminalId,
         terminalName: lt.name,
+        terminalType: lt.terminalType ?? 'container',
         center: lb.center,
         quayBearingDeg: lb.quayBearingDeg,
         seawardDeg,

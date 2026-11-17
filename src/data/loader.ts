@@ -1,7 +1,13 @@
+import { flags } from '@/core/flags';
+import type { TerminalOpsModule } from '@/core/terminalTypes';
 import { DATASET_KEYS, V2_KEYS, type RawDataset, type V2Module } from '@/core/types';
 import { buildCatalog, type Catalog } from './catalog';
 
-const urls = import.meta.glob(['../../sample-data/*.json', '../../sample-data/v2/*.json'], { query: '?url', import: 'default', eager: true }) as Record<
+const urls = import.meta.glob(['../../sample-data/*.json', '../../sample-data/v2/*.json', '../../sample-data/v3/terminalOps.json'], {
+  query: '?url',
+  import: 'default',
+  eager: true,
+}) as Record<
   string,
   string
 >;
@@ -32,6 +38,17 @@ async function loadV2(signal?: AbortSignal): Promise<V2Module | null> {
   }
 }
 
+/** V3 typed terminals (~20 KB) load with the catalog under `v3PortTwin`; without them the V2 twins stay as they were. */
+async function loadTerminalOps(signal?: AbortSignal): Promise<TerminalOpsModule | null> {
+  if (!flags.v3PortTwin) return null;
+  try {
+    return await fetchJson<TerminalOpsModule>('v3/terminalOps', signal);
+  } catch (e) {
+    if (signal?.aborted) throw e;
+    return null;
+  }
+}
+
 /** Load every fixture, validate references and return the immutable catalog. */
 export async function loadCatalog(signal?: AbortSignal): Promise<Catalog> {
   const missing: string[] = [];
@@ -40,13 +57,15 @@ export async function loadCatalog(signal?: AbortSignal): Promise<Catalog> {
     missing.push(k);
     return [];
   };
-  const [manifest, v2, ...rows] = await Promise.all([
+  const [manifest, v2, terminalOps, ...rows] = await Promise.all([
     fetchJson<RawDataset['manifest']>('manifest', signal),
     loadV2(signal),
+    loadTerminalOps(signal),
     ...DATASET_KEYS.map((k) => fetchJson<unknown[]>(k, signal).catch(optional(k))),
   ]);
   if (!v2) missing.push('v2');
-  const raw = { manifest, v2 } as RawDataset;
+  if (flags.v3PortTwin && !terminalOps) missing.push('v3/terminalOps');
+  const raw = { manifest, v2, terminalOps } as RawDataset;
   DATASET_KEYS.forEach((k, i) => {
     (raw as unknown as Record<string, unknown>)[k] = rows[i];
   });

@@ -1,3 +1,4 @@
+import { selectOption } from './selectOption';
 import { mkdirSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { inspector, open } from './helpers';
@@ -39,7 +40,32 @@ async function workshopReady(page: Page) {
   await expect(page.getByTestId('cargo-summary')).toBeVisible({ timeout: 20_000 });
 }
 
+/** Port twin at a scenario time, optionally framed with the Survey camera. */
+async function twinShot(page: Page, path: string, survey: boolean) {
+  await open(page, path);
+  const portId = /\/ops\/port\/(PRT-[A-Z]+)/.exec(path)?.[1];
+  await page.waitForFunction(
+    (id) => {
+      const w = window as unknown as { __portos?: { twin(): { portId: string } | null; director(): { phase: string } | null } };
+      return w.__portos?.twin()?.portId === id && w.__portos?.director()?.phase === 'idle';
+    },
+    portId,
+    { timeout: 30_000 },
+  );
+  await settle(page, 1200);
+  if (survey && (page.viewportSize()?.width ?? 1440) >= 768) {
+    await page.getByTestId('view-preset-survey').click({ force: true });
+    await settle(page, 1200);
+  }
+}
+
 export const V3_SHOTS: { name: string; go: (page: Page) => Promise<void> }[] = [
+  { name: 'port-sin-cranes', go: (page) => twinShot(page, '/ops/port/PRT-SIN?equip=QC-SIN-W3-2&time=2026-11-09T11:52:00Z', true) },
+  { name: 'port-ssz-bulk', go: (page) => twinShot(page, '/ops/port/PRT-SSZ?equip=SL-SSZ-1&time=2026-11-09T12:00:00Z', true) },
+  { name: 'port-dlc-lng', go: (page) => twinShot(page, '/ops/port/PRT-DLC?equip=LA-DLC-1A&time=2026-11-09T13:40:00Z', true) },
+  { name: 'port-sou-roro', go: (page) => twinShot(page, '/ops/port/PRT-SOU?equip=RP-SOU-1&time=2026-11-09T12:00:00Z', true) },
+  { name: 'port-survey', go: (page) => twinShot(page, '/ops/port/PRT-SIN?time=2026-11-09T11:52:00Z', true) },
+  { name: 'port-ssz-overview', go: (page) => twinShot(page, '/ops/port/PRT-SSZ?time=2026-11-09T12:00:00Z', false) },
   { name: 'earth', go: async (page) => { await open(page, '/ops/earth'); await settle(page, 2500); } },
   { name: 'region-sea', go: async (page) => { await open(page, '/ops/region/REG-SEA'); await settle(page); } },
   { name: 'region-sea-focus', go: async (page) => { await open(page, '/ops/region/REG-SEA'); await settle(page); await page.getByTestId('country-pin-VNM').focus(); await page.waitForTimeout(600); } },
@@ -69,7 +95,7 @@ export const V3_SHOTS: { name: string; go: (page: Page) => Promise<void> }[] = [
       await settle(page, 1200);
       if ((page.viewportSize()?.width ?? 1440) < 768) return;
       await page.getByTestId('vessel-follow').click();
-      await page.getByTestId('replay-rate').selectOption('100');
+      await selectOption(page, page.getByTestId('replay-rate'), '100');
       await page.getByTestId('replay-play').click();
       await page.waitForTimeout(2500);
     },
@@ -81,7 +107,7 @@ export const V3_SHOTS: { name: string; go: (page: Page) => Promise<void> }[] = [
       await workshopReady(page);
       await settle(page, 800);
       if ((page.viewportSize()?.width ?? 1440) < 768) return;
-      await page.getByTestId('replay-rate').selectOption('100');
+      await selectOption(page, page.getByTestId('replay-rate'), '100');
       await page.getByTestId('replay-play').click();
       await page.waitForFunction(() => (window as unknown as { __portos: { clock(): { timeMs: number } } }).__portos.clock().timeMs > Date.parse('2026-11-09T12:04:00Z'), null, { timeout: 20_000 });
       await page.getByTestId('replay-play').click();

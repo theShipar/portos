@@ -172,7 +172,8 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
 }
 .palette {
   display: grid;
-  padding: 2px;
+  padding: 8px;
+  gap: 4px;
   background: var(--surface-hud);
   -webkit-backdrop-filter: var(--hud-filter);
   backdrop-filter: var(--hud-filter);
@@ -205,7 +206,8 @@ onBeforeUnmount(() => document.removeEventListener('pointerdown', onDocPointer, 
 }
 .palette__btn--details {
   border-top: 1px solid var(--color-border);
-  border-radius: 0 0 var(--radius-input) var(--radius-input);
+  margin-top: 4px;
+  border-radius: var(--radius-input);
   color: var(--color-ink-secondary);
 }
 .palette__btn--open {

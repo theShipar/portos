@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppSelect from '@/components/ui/AppSelect.vue';
 import { useNavigation } from '@/router/useRouteSync';
 import { computed, nextTick, ref, useId } from 'vue';
 import { fromUtcInputValue, HOUR, toUtcInputValue } from '@/core/time';
@@ -158,10 +159,10 @@ function openComparison() {
 
       <form v-if="panel === 'resolve'" class="form sub-form" novalidate data-testid="resolve-form" @submit.prevent="submitResolve" @keydown.esc.stop.prevent="panel = null">
         <label class="field" :for="ids.reason">Resolution reason
-          <select :id="ids.reason" ref="firstField" v-model="resolveForm.reason" class="control" data-testid="resolve-reason">
+          <AppSelect :id="ids.reason" ref="firstField" v-model="resolveForm.reason" class="control" data-testid="resolve-reason">
             <option value="" disabled>Choose a reason</option>
             <option v-for="r in RESOLUTION_REASONS" :key="r" :value="r">{{ RESOLUTION_LABEL[r] }}</option>
-          </select>
+          </AppSelect>
         </label>
         <label class="field" :for="ids.evidence">Supporting evidence{{ model.needsVerification ? ' (required: inputs need verification)' : '' }}
           <textarea :id="ids.evidence" v-model="resolveForm.evidence" class="control" rows="2" maxlength="1000" placeholder="Source or assumption you verified" />
@@ -178,9 +179,9 @@ function openComparison() {
 
       <form v-if="panel === 'escalate'" class="form sub-form" novalidate data-testid="escalate-form" @submit.prevent="submitEscalate" @keydown.esc.stop.prevent="panel = null">
         <label class="field" :for="ids.escSeverity">New severity
-          <select :id="ids.escSeverity" ref="firstField" v-model="escalation.severity" class="control" data-testid="escalate-severity">
+          <AppSelect :id="ids.escSeverity" ref="firstField" v-model="escalation.severity" class="control" data-testid="escalate-severity">
             <option v-for="sv in model.escalateTo" :key="sv" :value="sv">{{ statusStyle('severity', sv).label }}</option>
-          </select>
+          </AppSelect>
         </label>
         <label class="field" :for="ids.escReason">Which facts changed
           <textarea :id="ids.escReason" v-model="escalation.reason" class="control" rows="2" maxlength="1000" data-testid="escalate-reason" />
@@ -207,10 +208,10 @@ function openComparison() {
       <form class="form" novalidate data-testid="assign-form" @submit.prevent="submitAssign">
         <div class="form-row form-row--2">
           <label class="field" :for="ids.assignee">Coordinator
-            <select :id="ids.assignee" v-model="assign.user" class="control" :disabled="!!block || !model.can.assign.ok" data-testid="assign-user">
+            <AppSelect :id="ids.assignee" v-model="assign.user" class="control" :disabled="!!block || !model.can.assign.ok" data-testid="assign-user">
               <option value="">Unassigned</option>
               <option v-for="u in assignees" :key="u.userId" :value="u.userId">{{ u.displayName }} · {{ u.title }}</option>
-            </select>
+            </AppSelect>
           </label>
           <label class="field" :for="ids.due">Due (UTC)
             <input :id="ids.due" v-model="assign.due" type="datetime-local" class="control mono" :disabled="!!block || !model.can.assign.ok" />

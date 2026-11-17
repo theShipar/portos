@@ -143,6 +143,9 @@ CITIES = [
     {'id': 'CTY-SIN', 'label': 'Singapore', 'iso3': 'SGP', 'bbox': (103.58, 1.1, 104.14, 1.48)},
     {'id': 'CTY-RTM', 'label': 'Rotterdam', 'iso3': 'NLD', 'bbox': (3.95, 51.74, 4.82, 52.04)},
     {'id': 'CTY-GOA', 'label': 'Genoa', 'iso3': 'ITA', 'bbox': (8.62, 44.22, 9.28, 44.52)},
+    {'id': 'CTY-SSZ', 'label': 'Santos', 'iso3': 'BRA', 'bbox': (-46.62, -24.14, -46.06, -23.82)},
+    {'id': 'CTY-DLC', 'label': 'Dalian', 'iso3': 'CHN', 'bbox': (121.4, 38.72, 122.02, 39.06)},
+    {'id': 'CTY-SOU', 'label': 'Southampton', 'iso3': 'GBR', 'bbox': (-1.72, 50.7, -1.1, 51.0)},
 ]
 ILLUSTRATIVE = {'REG-MED', 'REG-WAF'}
 # Frame padding (fraction of the span on each side), Douglas-Peucker divisor and coordinate decimals per level.

@@ -1,158 +1,110 @@
-# PORTOS — maritime exception management prototype (V2)
+<div align="center">
 
-PORTOS is a map-first operations prototype. A WebGL Earth hands off to extruded 3D geography (region, country,
-city), then to a Singapore port twin with berths, cranes and anchorages. Recognisable 3D ships move on one scenario
-clock from 1× to 100×, and a case workflow lets you investigate, compare responses and save decisions for
-voyages at risk of delay. It runs entirely in the browser on **synthetic data**.
+# PORTOS
+### Maritime operations, from globe to cargo hold.
 
-> **Simulated data only. Not live AIS. Not navigation guidance.** Every vessel, position, port queue, berth,
-> weather hazard, incident and dollar figure is generated demo data on a simulated clock (2026-11-09, 00:00–12:00
-> UTC, "Now" = 12:00 UTC). Extruded coastlines, port layouts and anchorages are illustrative, not nautical charts.
-> Exposure figures are modelled estimates, not invoices or demurrage claims. Decisions are stored in your browser
-> and never sent anywhere.
+A desktop maritime operations prototype for exploring fleet exceptions, port congestion, vessel cargo, and simulated decisions in one spatial workspace.
 
-![Singapore port twin with the berth queue](docs/qa/v2-phase9/04-port-twin.png)
+[**Open the demo ↗**](https://portos-shipar.vercel.app) · [Screenshot gallery](docs/SHOWCASE.md) · [Developer guide](docs/DEVELOPER_GUIDE.md) · [Deployment guide](docs/DEPLOYMENT.md)
 
-## Quick start
+**Vue 3 · TypeScript · Three.js · MapLibre · Pinia · Vite**
 
-Requires Node `^20.19` or `>=22.12` and Python 3 (for the fixture tools).
+</div>
+
+> **Desktop preview — mobile is not ready yet.** Use a desktop or laptop with a modern WebGL-capable browser. Small-screen layouts are experimental and are not a supported mobile experience.
+>
+> **All operational data is simulated.** PORTOS is a portfolio prototype, not live AIS, a navigation tool, or a production terminal system.
+
+![PORTOS global fleet and exception overview](docs/screenshots/01-global-fleet.jpg)
+
+## Explore the product
+
+| Experience | What you can do |
+| --- | --- |
+| Global fleet | Explore 500 synthetic vessels across 11 operational regions; inspect exceptions, routes, and weather overlays. |
+| Geographic drilldown | Move from Earth into extruded regions, countries, cities, and illustrative port twins. |
+| Port operations | Inspect berth queues, occupancy, schedules, terminal equipment, and simulated cargo transfer activity. |
+| Vessel intelligence | Investigate voyage progress, forecast ETA shifts, modelled delay exposure, and supporting evidence. |
+| Cargo inspection | Open a large 3D vessel viewer, orbit or explode the model, and select holds, tanks, decks, or container slots to read their manifests. |
+| Case workflows | Investigate incidents, compare responses, and record decisions, tasks, and drafts locally in your browser. |
+| Scenario replay | Follow vessels and replay a shared deterministic simulation clock at speeds up to 100×. |
+
+### A closer look
+
+<table>
+<tr><td><img src="docs/screenshots/02-regional-operations.jpg" alt="Southeast Asia regional operations" /><br/><b>Regional operations</b></td><td><img src="docs/screenshots/03-singapore-port.jpg" alt="Singapore port twin and berth queue" /><br/><b>Port twin</b></td></tr>
+<tr><td><img src="docs/screenshots/04-vessel-inspector.jpg" alt="Expanded vessel inspector" /><br/><b>Vessel intelligence</b></td><td><img src="docs/screenshots/05-cargo-inspection.jpg" alt="Expanded 3D cargo inspection with compartment details" /><br/><b>Cargo inspection</b></td></tr>
+</table>
+
+See [the full screenshot gallery](docs/SHOWCASE.md) for routes, descriptions, and more states. These are captures of the working app, not design mockups.
+
+## Try a short demo
+
+1. Open [the globe](https://portos-shipar.vercel.app/ops/earth) and select Southeast Asia.
+2. Visit [Singapore port](https://portos-shipar.vercel.app/ops/port/PRT-SIN) to explore the twin and berth queue.
+3. Inspect [MV Pacific Horizon](https://portos-shipar.vercel.app/ops/earth?vessel=VSL-0001): its flagship scenario has an 18-hour forecast delay and $24,000 modelled exposure.
+4. Open [MV Ocean Merchant 003](https://portos-shipar.vercel.app/ops/earth?vessel=VSL-0003&cargo=CMP-0003-H2), press **Expand**, then select a hold below the model. The annotation shows the selected compartment and simulated manifest.
+5. Open [the incident](https://portos-shipar.vercel.app/ops/earth?incident=INC-0001), inspect its evidence, and compare possible responses.
+
+## Run locally
+
+Requires Node.js **20.19+ (20.x)** or **22.12+**, npm, and Python 3 for fixture validation.
 
 ```bash
+git clone https://github.com/theShipar/portos.git
+cd portos
 npm ci
-npm run dev            # http://127.0.0.1:5173 → /ops/earth
+npm run dev
 ```
 
-The 2D port basemap loads tiles from OpenFreeMap (no key). Copy `.env.example` to `.env` to point it at another
-MapLibre style or tile source. The V2 spatial scenes can be switched off with `VITE_SPATIAL_V2=0` at build time or
-`?spatialV2=0` in the first URL (V1 globe-only behaviour).
+Open the local URL printed by Vite (normally `http://127.0.0.1:5173`). No API key is required. Optional map configuration is documented in `.env.example`.
 
-## Routes
-
-| Route | View |
-|---|---|
-| `/ops/earth` | Global fleet on the Earth globe |
-| `/ops/region/:regionId` | Extruded regional scene, e.g. `/ops/region/REG-SEA` |
-| `/ops/country/:countryId` | Extruded country scene, e.g. `/ops/country/CNT-VNM` |
-| `/ops/city/:cityId` | City / coastal scene, e.g. `/ops/city/CTY-SIN` |
-| `/ops/port/:portId` | Port twin (Singapore, Rotterdam, Genoa) or 2D port map |
-
-Query keys carry the rest of the state: `vessel`, `voyage`, `incident`, `route`, `hazard`, `panel=compare|replay`,
-`time`, `view=3d|2d`, `layers` and `kpi`. All V1 URLs (`/operations`, `/region/…`, `/port/…`, `/vessel/…`,
-`/voyage/…`, `/incidents/…`, `/corridors/…`, `/weather/…`, `/compare/…`, `/replay/…`) redirect to their `/ops`
-equivalent.
-
-## Commands
-
-| Command | What it does |
-|---|---|
-| `npm run dev` | Vite dev server on 127.0.0.1:5173 |
-| `npm run build` | Typecheck (`vue-tsc`) and production build into `dist/` |
-| `npm run preview` | Serve `dist/` on 127.0.0.1:4173 |
-| `npm run typecheck` | Strict TypeScript check of `src/` |
-| `npm test` | Vitest unit tests (engines, clock, projections, ships, port twin, workflow, UI selectors) |
-| `npx playwright install chromium` | One-time browser download for E2E |
-| `npm run test:e2e` | Playwright: builds `--mode e2e`, serves it, runs the flagship journey, acceptance rows, handoff, ships, port twin, follow, routes, layout, resilience and visual specs |
-| `PORTOS_EVIDENCE=1 npx playwright test flagship acceptance` | Re-record the browser evidence in `docs/qa/v2-phase9/` |
-| `npx playwright test visual --update-snapshots=all` | Re-baseline the 16 visual snapshots in `tests/visual/` |
-| `PERF=1 PERF_ANGLE=metal npx playwright test perf --project=chromium` | Performance probe → `docs/perf/*.json` (add `PERF_ROUND_TRIPS=30` for 60 scope switches) |
-| `npm run data:generate` | Regenerate fixtures (deterministic) from `scripts/generate_demo_data.py` |
-| `npm run data:validate` | Validate `sample-data/` against the contracts and the Singapore scenario |
-| `python3 scripts/build_geo.py all` | Rebuild the Natural Earth scene geometry in `public/geo/` |
-
-## Five-minute demo (the flagship journey)
-
-1. **Earth**: `/ops/earth` shows the simulated fleet, the incident ribbon (top 3 cases) and the KPI rail.
-2. **Region**: click *Southeast Asia*. The globe dives and hands off to an extruded 3D region. Drag to orbit, drag
-   up to tilt, and scroll to zoom.
-3. **City**: click *Singapore* for the city-state scene.
-4. **Port**: click *Singapore port* for the twin: terminals, berths, cranes, anchorages and the berth queue.
-   Click a berth to see its schedule; switch to **2D** at any time.
-5. **Vessel**: search `VSL-0001` (*MV Pacific Horizon*), which is at anchor. The forecast ETA is **+18.0 h** and the
-   exposure **$24,000** (18 h × $32,000/day). The berth estimate is *unconfirmed*.
-6. **Incident**: *Investigate* opens `INC-0001` with its evidence and timestamps.
-7. **Follow**: open `VSL-0047` (*MV Emerald Star 047*, underway Singapore → Manila) and press *Follow*. Set
-   *Simulation ×1 / ×10 / ×100*: at 100×, one real second is 100 scenario seconds.
-8. **Compare**: *Compare responses* shows the original plan and up to two options side by side, marked
-   "Simulated outcomes, not confirmed."
-9. **Decide**: propose an option. A local decision branch records the baseline and the simulated outcome.
-10. **Replay**: `/replay/VYG-0001` puts the decision on the timeline as a bookmark. Step back to *INC-0001 opened*
-    (10:59 UTC), expand the timeline and compare that moment with Now.
-
-## How it is built
-
-- **Vue 3 + TypeScript (strict) + Vite + Pinia + vue-router.** The URL is the source of truth for scene, selection,
-  time, view mode and panel.
-- **Spatial layer** (`src/spatial`):
-  - `SpatialDirector` owns scene lifecycle, the one render loop and input.
-  - `SceneCache` keeps warm scenes and disposes the rest.
-  - `EarthGeographyBridge` runs the single-renderer handoff.
-  - `Region3DScene` extrudes Natural Earth geometry through reversible projections; the port twin is a variant of it.
-- **Globe**: a Three.js scene adapted from the
-  [Three Scope Map skill](https://github.com/songsummer920-dazzle/three-scope-map-skill) (GPL-3.0-or-later): Earth
-  textures, batched outlines and GSAP camera flights.
-- **Ships** (`src/map/vessels3d`): a procedural 3D library with six categories at LOD0–2, a heading contract,
-  wakes only when underway, and instanced batches.
-- **Clock and engines**:
-  - `src/core/scenarioClock.ts` and `src/engines/world.ts` give every screen the same deterministic frame for any
-    time and rate.
-  - Engines (`src/engines`) are pure: ETA, ETA variance, congestion, exposure, JIT, service chain, route
-    feasibility, berth timeline, KPIs and the event fold.
-- **Workflow**: the V2 case lifecycle (untriaged → investigating → option proposed → approved for simulation →
-  monitoring → resolved → closed), decision branches, tasks, drafts and an audit log, all in `localStorage`.
-- **Port 2D**: MapLibre GL JS over OpenFreeMap tiles.
-- **Design tokens**: `src/styles/tokens.v2.json` → `tokens.css` / `tokens.ts`. The kit's `tokens.json` is kept for
-  provenance.
-
-```
-src/
-  core/        types, time, scenario clock, case stages, layers, follow rules
-  data/        fixture loader and indexed catalog (base + sample-data/v2)
-  engines/     pure business logic (no Vue, no Three)
-  selectors/   read models for the UI (no arithmetic in templates or scenes)
-  spatial/     director, scene cache, input router, projections, handoff bridge, extruded and port-twin scenes
-  stores/      Pinia: catalog, clock, view, snapshot, workflow, session, notices
-  map/         Earth view, maritime overlay, 3D ship library, port 2D, layer palette, entity peek
-  features/    inspectors, incident, compare, port, replay timeline, follow, workflow
-  components/  shell (header, KPI rail, inspector drawer, breadcrumb) and UI primitives
-public/geo/    Natural Earth scene geometry (+ PROVENANCE.md)
-sample-data/   generated fixtures (do not hand-edit)
-tests/         unit (Vitest), e2e (Playwright), visual baselines
-docs/          build log, decisions, deviations, QA evidence, changelog, performance, screenshots
+```bash
+npm run build            # TypeScript check + production build
+npm run preview          # Serve the built app
+npm test                 # Unit and component tests
+npm run data:validate    # Fixture relationships and scenario integrity
+npm run test:e2e         # Playwright journeys (requires browser installation)
 ```
 
-## Verification status
+## Architecture
 
-| Check | Result (2026-11-11) |
-|---|---|
-| `python3 scripts/validate_data.py` | pass (Singapore scenario and V2 module verified) |
-| `npx vue-tsc --noEmit`, `npm run build` | pass |
-| `npx vitest run` | 329 tests pass |
-| `npx playwright test` | 84 pass, 6 skipped (opt-in perf and capture), including the flagship journey, the spec 19 acceptance rows and 16 visual baselines |
-| Spec 19 matrix M01–M20 | all PASS in automated browser runs; see `docs/PORTOS_V2_QA_EVIDENCE.md` for evidence and what was not run |
-| Performance (Apple M4 Pro, Chromium/Metal) | 59.9 fps p50 during flights and orbit; first interactive 0.64 s; flat GPU memory over 60 scope switches (`docs/PERF_REPORT.md`) |
+The application runs in the browser. Vue owns the interface, Pinia owns shared state, and URL parameters preserve scope and selection. Pure simulation engines feed selectors used by both the interface and 3D scenes. Three.js renders the globe, spatial scenes, ships, and cargo workshop; MapLibre provides the optional 2D map.
 
-Details: `docs/PORTOS_V2_CHANGELOG.md`, `docs/PORTOS_V2_QA_EVIDENCE.md`, `docs/BUILD_LOG.md`, `docs/PERF_REPORT.md`,
-`docs/KNOWN_LIMITATIONS.md`, `docs/DECISIONS.md`, `docs/TECHNICAL_DEVIATIONS.md`.
+```text
+src/core/          Shared types and scenario clock
+src/data/          Fixture loading and indexed catalogs
+src/engines/       Pure simulation and operational calculations
+src/selectors/     Consistent view models for UI and scenes
+src/stores/        Shared state, session, selection, workflow
+src/spatial/       Scene director, projections, port twins, cargo viewer
+src/features/      Inspectors, cargo, incidents, comparison, replay
+sample-data/       Generated synthetic datasets
+public/geo/        Natural Earth-derived geometry
+```
 
-## Prototype vs. production
+## Status and limitations
 
-| Area | This prototype | A production system would need |
-|---|---|---|
-| Vessel positions | Synthetic tracks, interpolated between reports; reporting gaps shown as unverified | Licensed AIS/satellite feeds, deduplication, spoofing and gap detection, data-quality SLAs |
-| Clock | Fixed 12-hour simulated window, 1–100× playback and replay | Real time, event streaming, late-arriving data, retention policies |
-| ETA, congestion, exposure | Transparent deterministic formulas on fixture inputs | Validated models, calibration against outcomes, contractual rates, laytime/demurrage rules |
-| Weather | 15 illustrative hazard polygons | Licensed forecasts, ensemble uncertainty, update cadence, and no routing advice without certification |
-| Geography and port layout | Natural Earth coastlines; invented terminals, berths and anchorages | Port authority data, surveyed quay geometry, berth schedules, terminal operating system integration |
-| 3D ships | Procedural models by vessel category | Licensed or measured models per class where fidelity matters |
-| Identity and permissions | Demo identity switcher; UI-only guards | Authentication (SSO), server-side authorisation, tenancy |
-| Workflow storage | Browser `localStorage`, local audit log, local decision branches | Server persistence, concurrency control, immutable audit, notifications, integrations (email, TOS, ERP) |
-| Maps | OpenFreeMap public tiles, no SLA | Hosted tiles with an SLA, offline packs, chart licensing where relevant |
-| Quality | Chromium E2E, visual baselines, perf probe on one machine | Cross-browser matrix, load and soak tests, monitoring, accessibility audit with users |
+- **Mobile is not ready yet.** Desktop is the intended experience; touch interactions and small-screen workflows need further work.
+- All vessels, manifests, incidents, financial estimates, and terminal operations are synthetic.
+- Demo identity switching is not authentication. Workflow records are local to your browser and are not shared with other users.
+- Port geometry and ship models are illustrative and are not suitable for navigation or operational planning.
+- WebGL performance depends on the device. Public 2D basemap tiles require an internet connection.
+- This is an evolving prototype; production authentication, persistence, live data ingestion, and monitoring are not implemented.
 
-## Licensing and attribution
+See [known limitations](docs/KNOWN_LIMITATIONS.md) and [release verification](docs/RELEASE.md). Historical QA reports describe their original builds and are not claims about the latest release.
 
-PORTOS is released under **GPL-3.0-or-later** because the globe and the extruded-scene code derive from the Three
-Scope Map skill by 宋夏天Dazzle. `third_party/three-scope-map/` holds its LICENSE, NOTICE and CITATION, and the
-derived source files keep their GPL notices. Boundaries and coastlines come from Natural Earth (public domain; see
-`public/geo/PROVENANCE.md`). The 2D map data is © OpenStreetMap contributors (ODbL), via OpenFreeMap and
-OpenMapTiles. Attribution is shown on the map in every view.
+## Documentation
+
+- [Screenshot showcase](docs/SHOWCASE.md)
+- [Developer guide and detailed walkthrough](docs/DEVELOPER_GUIDE.md)
+- [Vercel deployment and release procedure](docs/DEPLOYMENT.md)
+- [Architecture decisions](docs/DECISIONS.md)
+- [Build log](docs/BUILD_LOG.md)
+- [Known limitations](docs/KNOWN_LIMITATIONS.md)
+
+## License and credits
+
+**GPL-3.0-or-later.** The geographic renderer builds on techniques from [Three Scope Map](https://github.com/songsummer920-dazzle/three-scope-map-skill) by 宋夏天Dazzle. Derived source retains its notices; see [third-party attribution](third_party/three-scope-map/).
+
+Geographic boundaries come from [Natural Earth](https://www.naturalearthdata.com/) (public domain). The optional 2D map uses OpenFreeMap, OpenMapTiles, and © OpenStreetMap contributors. Attribution remains visible in the application.

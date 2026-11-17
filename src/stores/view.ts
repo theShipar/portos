@@ -29,6 +29,10 @@ export const useViewStore = defineStore('view', () => {
   const selection = ref<EntityRef | null>(null);
   /** Port twin berth in focus (3D twin, 2D port map, berth Gantt); local to the port scope. */
   const berthId = ref<string | null>(null);
+  /** V3 typed twin equipment in focus; mirrored from the `equip` URL query. */
+  const equipmentId = ref<string | null>(null);
+  /** LNG illustrative safety-zone outline on the twin (user toggle). */
+  const twinHazard = ref(true);
   /** Height of panels docked along the map's bottom edge (berth schedule); scenes keep their focus above it. */
   const bottomInsetPx = ref(0);
   const hover = ref<EntityRef | null>(null);
@@ -115,11 +119,16 @@ export const useViewStore = defineStore('view', () => {
     if (scopeKey(s) === scopeKey(scope.value)) return;
     scope.value = s;
     berthId.value = null;
+    equipmentId.value = null;
     stopFollow();
   }
 
   function selectBerth(id: string | null) {
     berthId.value = id;
+  }
+
+  function selectEquipment(id: string | null) {
+    equipmentId.value = id;
   }
 
   function toggleLayer(id: LayerId, on?: boolean) {
@@ -135,6 +144,7 @@ export const useViewStore = defineStore('view', () => {
     scope.value = { level: 'earth' };
     selection.value = null;
     berthId.value = null;
+    equipmentId.value = null;
     viewMode.value = '3d';
     kpiDrill.value = null;
     replayOpen.value = false;
@@ -153,6 +163,9 @@ export const useViewStore = defineStore('view', () => {
     selection,
     berthId,
     selectBerth,
+    equipmentId,
+    selectEquipment,
+    twinHazard,
     bottomInsetPx,
     hover,
     inspectorTab,

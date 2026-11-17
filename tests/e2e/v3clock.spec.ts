@@ -1,3 +1,4 @@
+import { selectOption } from './selectOption';
 import { expect, test, type Page } from '@playwright/test';
 import { flightDone, globeReady, inspector, open } from './helpers';
 
@@ -43,7 +44,7 @@ test.describe('V3 unified clock (Gate 6)', () => {
     const rate = page.getByTestId('replay-rate');
     const values = await rate.locator('option').evaluateAll((os) => os.map((o) => Number((o as HTMLOptionElement).value)));
     expect(values).toEqual([0.25, 1, 2, 5, 10, 25, 50, 100]);
-    await rate.selectOption('0.25');
+    await selectOption(page, rate, '0.25');
     await expect.poll(() => page.evaluate(() => window.__portos!.clock().rate)).toBe(0.25);
     await expect(rate).toContainText('Simulation ×0.25');
   });
@@ -52,7 +53,7 @@ test.describe('V3 unified clock (Gate 6)', () => {
     await open(page, '/ops/region/REG-SEA?vessel=VSL-0047&panel=replay');
     await regionReady(page);
     await expect(inspector(page).getByTestId('vessel-position')).toBeVisible();
-    await page.getByTestId('replay-rate').selectOption('100');
+    await selectOption(page, page.getByTestId('replay-rate'), '100');
     await page.getByTestId('replay-play').click();
     await expect.poll(() => page.evaluate(() => window.__portos!.clock().mode)).toBe('playing');
 
@@ -84,7 +85,7 @@ test.describe('V3 unified clock (Gate 6)', () => {
   test('pause, step away and step back: the same instant reproduces the same map and sidebar', async ({ page }) => {
     await open(page, '/ops/region/REG-SEA?vessel=VSL-0047&panel=replay');
     await regionReady(page);
-    await page.getByTestId('replay-rate').selectOption('100');
+    await selectOption(page, page.getByTestId('replay-rate'), '100');
     await page.getByTestId('replay-play').click();
     await page.waitForTimeout(1200);
     await page.getByTestId('replay-play').click();
@@ -110,7 +111,7 @@ test.describe('V3 unified clock (Gate 6)', () => {
     await regionReady(page);
     await page.getByTestId('vessel-follow').click();
     await expect.poll(() => page.evaluate(() => window.__portos!.follow().follow?.vesselId ?? null)).toBe('VSL-0047');
-    await page.getByTestId('replay-rate').selectOption('100');
+    await selectOption(page, page.getByTestId('replay-rate'), '100');
     await page.getByTestId('replay-play').click();
     for (let i = 0; i < 6; i++) {
       await page.waitForTimeout(300);
@@ -129,7 +130,7 @@ test.describe('V3 unified clock (Gate 6)', () => {
     await globeReady(page);
     await expect(page.getByTestId('vessel-workshop')).toHaveAttribute('data-ready', '1', { timeout: 20_000 });
     await expect(page.getByTestId('cargo-head-on-board')).toHaveText('520 boxes');
-    await page.getByTestId('replay-rate').selectOption('100');
+    await selectOption(page, page.getByTestId('replay-rate'), '100');
     await page.getByTestId('replay-play').click();
     await expect.poll(() => page.evaluate(() => window.__portos!.clock().timeMs), { timeout: 15_000 }).toBeGreaterThan(Date.parse('2026-11-09T12:02:00Z'));
     await page.getByTestId('replay-play').click();
@@ -154,7 +155,7 @@ test.describe('V3 unified clock (Gate 6)', () => {
   test('a reload never resumes 100× playback on its own', async ({ page }) => {
     await open(page, '/ops/region/REG-SEA?panel=replay');
     await globeReady(page);
-    await page.getByTestId('replay-rate').selectOption('100');
+    await selectOption(page, page.getByTestId('replay-rate'), '100');
     await page.getByTestId('replay-play').click();
     await expect.poll(() => page.evaluate(() => window.__portos!.clock().mode)).toBe('playing');
     await page.reload();

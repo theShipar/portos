@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppSelect from '@/components/ui/AppSelect.vue';
 import { computed, ref, useId } from 'vue';
 import { fromUtcInputValue, HOUR, toUtcInputValue } from '@/core/time';
 import { taskRow } from '@/selectors/incident';
@@ -113,16 +114,16 @@ const NEXT: Record<TaskStatus, { status: TaskStatus; label: string }[]> = {
       <button v-if="!creating" type="button" class="btn btn--sm" :disabled="!!disabledReason" :aria-describedby="disabledReason ? ids.reason : undefined" data-testid="task-new" @click="open">New task</button>
       <form v-else class="form task-form" novalidate data-testid="task-form" @submit.prevent="submit" @keydown.esc.stop.prevent="creating = false">
         <label class="field" :for="ids.type">Type
-          <select :id="ids.type" v-model="form.type" class="control">
+          <AppSelect :id="ids.type" v-model="form.type" class="control">
             <option v-for="t in TASK_TYPES" :key="t" :value="t">{{ TASK_TYPE_LABEL[t] }}</option>
-          </select>
+          </AppSelect>
         </label>
         <div class="form-row form-row--2">
           <label class="field" :for="ids.assignee">Assignee
-            <select :id="ids.assignee" v-model="form.assignee" class="control" data-testid="task-assignee">
+            <AppSelect :id="ids.assignee" v-model="form.assignee" class="control" data-testid="task-assignee">
               <option value="" disabled>Choose a coordinator</option>
               <option v-for="u in assignees" :key="u.userId" :value="u.userId">{{ u.displayName }} · {{ u.title }}</option>
-            </select>
+            </AppSelect>
           </label>
           <label class="field" :for="ids.due">Due (UTC)
             <input :id="ids.due" v-model="form.due" type="datetime-local" class="control mono" />

@@ -14,6 +14,7 @@ export function loadRaw(): RawDataset {
   const v2: Record<string, unknown> = {};
   for (const k of V2_KEYS) if (existsSync(resolve(dir, 'v2', `${k}.json`))) v2[k] = read(`v2/${k}`);
   raw.v2 = V2_KEYS.every((k) => k in v2) ? (v2 as unknown as V2Module) : null;
+  raw.terminalOps = existsSync(resolve(dir, 'v3', 'terminalOps.json')) ? read('v3/terminalOps') : null;
   return raw;
 }
 

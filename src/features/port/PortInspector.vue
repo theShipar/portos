@@ -9,6 +9,8 @@ import { useViewStore } from '@/stores/view';
 import { statusStyle } from '@/styles/tokens';
 import Icon from '@/components/ui/Icon.vue';
 import StatusChip from '@/components/ui/StatusChip.vue';
+import TerminalOpsSection from './TerminalOpsSection.vue';
+import { useTerminalOps } from './useTerminalOps';
 
 const catalog = useCatalogStore();
 const snap = useSnapshotStore();
@@ -22,16 +24,22 @@ const portName = computed(() => (snap.portTwin ? (catalog.catalog?.byId.port.get
 const anchored = computed(() => snap.portView?.kpis.atAnchor ?? null);
 const queued = computed(() => snap.portView?.kpis.awaitingBerth ?? null);
 const chip = computed(() => (card.value ? statusStyle('berth', card.value.status === 'reserved' ? 'scheduled' : card.value.status) : null));
+const { opsView, equipmentCard } = useTerminalOps();
+
+function close() {
+  view.selectBerth(null);
+  if (view.equipmentId) void nav.setEquipment(null);
+}
 </script>
 
 <template>
-  <aside v-if="card && chip" class="berth-card" aria-label="Port and berth details" data-testid="berth-card" @keydown.esc.stop="view.selectBerth(null)">
+  <aside v-if="card && chip" class="berth-card" aria-label="Port and berth details" data-testid="berth-card" :style="{ maxHeight: `calc(100% - ${view.bottomInsetPx + 28}px)` }" @keydown.esc.stop="close">
     <header class="berth-card__head">
       <div>
         <p class="berth-card__kicker">{{ portName }} · {{ card.terminalName }} · Simulated</p>
         <h2 class="berth-card__title" data-testid="berth-card-title">{{ card.name }}</h2>
       </div>
-      <button type="button" class="berth-card__close" aria-label="Close berth details" data-testid="berth-card-close" @click="view.selectBerth(null)">
+      <button type="button" class="berth-card__close" aria-label="Close berth details" data-testid="berth-card-close" @click="close">
         <Icon name="close" :size="14" />
       </button>
     </header>
@@ -81,6 +89,7 @@ const chip = computed(() => (card.value ? statusStyle('berth', card.value.status
         <li v-for="x in card.conflicts" :key="x.key">{{ x.text }}</li>
       </ul>
     </section>
+    <TerminalOpsSection v-if="opsView" :ops="opsView" :card="equipmentCard" />
     <p class="berth-card__note">{{ card.note }} Illustrative terminal configuration.</p>
   </aside>
 </template>
@@ -102,6 +111,8 @@ const chip = computed(() => (card.value ? statusStyle('berth', card.value.status
   border-radius: var(--radius-panel);
   box-shadow: var(--shadow-panel);
   font-size: var(--text-12);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .berth-card__head {
   display: flex;

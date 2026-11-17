@@ -1,3 +1,4 @@
+import { selectOption } from './selectOption';
 import { expect, test } from '@playwright/test';
 import { expectHeading, flightDone, globeReady, inspector, open, search } from './helpers';
 
@@ -59,7 +60,7 @@ test.describe('Failure paths', () => {
     await expectHeading(page, /Forecast ETA shift/);
     await expect(page.getByRole('status').filter({ hasText: /saved|storage|could not/i }).first()).toBeVisible();
     await inspector(page).getByRole('tab', { name: 'Actions' }).click();
-    await page.getByTestId('assign-user').selectOption('USR-002');
+    await selectOption(page, page.getByTestId('assign-user'), 'USR-002');
     await page.getByTestId('assign-submit').click();
     await page.reload();
     await expect(page.getByTestId('incident-owner')).toContainText('Jordan Lee');

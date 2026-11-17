@@ -806,6 +806,45 @@
    "contextVertices": 0,
    "bytes": 4987,
    "sha1": "254502c6ad3d"
+  },
+  {
+   "id": "CTY-SSZ",
+   "type": "city",
+   "path": "/geo/city/CTY-SSZ.json",
+   "dataset": "ne_10m_admin_0_countries",
+   "features": 1,
+   "rings": 4,
+   "vertices": 298,
+   "contextFeatures": 0,
+   "contextVertices": 0,
+   "bytes": 6906,
+   "sha1": "6444bbffdc9a"
+  },
+  {
+   "id": "CTY-DLC",
+   "type": "city",
+   "path": "/geo/city/CTY-DLC.json",
+   "dataset": "ne_10m_admin_0_countries",
+   "features": 1,
+   "rings": 10,
+   "vertices": 444,
+   "contextFeatures": 0,
+   "contextVertices": 0,
+   "bytes": 9662,
+   "sha1": "005a81fc0449"
+  },
+  {
+   "id": "CTY-SOU",
+   "type": "city",
+   "path": "/geo/city/CTY-SOU.json",
+   "dataset": "ne_10m_admin_0_countries",
+   "features": 1,
+   "rings": 3,
+   "vertices": 235,
+   "contextFeatures": 0,
+   "contextVertices": 0,
+   "bytes": 5049,
+   "sha1": "563a27b4616b"
   }
  ]
 }

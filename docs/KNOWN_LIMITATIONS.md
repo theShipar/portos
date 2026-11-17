@@ -47,6 +47,8 @@ routing advisory or a safety-critical system. Everything below is a known gap, n
 
 ## Layout and accessibility
 
+- **The mobile version is not ready yet.** Use a desktop or laptop. Existing responsive fallbacks are experimental, not a supported mobile product.
+
 - Supported desktop widths start at 1024 px; 768–1023 px uses a bottom-sheet inspector; below 768 px the map is
   hidden and the app runs as a list (queue, search, inspector).
 - At tablet widths with both the replay rail and the inspector open, the visible map band is small; closing either

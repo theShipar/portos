@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppSelect from '@/components/ui/AppSelect.vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { formatDuration, formatLocal, formatUtc } from '@/core/format';
 import { HOUR } from '@/core/time';
@@ -206,9 +207,9 @@ function saveNote() {
         </button>
       </template>
       <label :for="ids.rate" class="sr-only">Playback rate</label>
-      <select :id="ids.rate" class="control rail__rate num" :value="clock.rate" data-testid="replay-rate" @change="onRate">
+      <AppSelect :id="ids.rate" class="control rail__rate num" :value="clock.rate" data-testid="replay-rate" @change="onRate">
         <option v-for="r in PLAYBACK_RATES" :key="r" :value="r">Simulation {{ rateLabel(r) }}</option>
-      </select>
+      </AppSelect>
       <button type="button" class="icon-btn" aria-label="Previous event" :disabled="!markers.length" data-testid="replay-prev" @click="stepEvent(-1)">
         <Icon name="chevron-left" :size="16" />
       </button>

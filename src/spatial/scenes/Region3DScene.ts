@@ -67,6 +67,8 @@ export const VIEW_PRESETS = {
   fit: null,
   iso: { polarDeg: 50, azimuthDeg: 35 },
   top: { polarDeg: 4, azimuthDeg: 0 },
+  /** Port Survey (V3 Gate 7): low oblique from the water, looking landward across the quay; set by `applySurvey`. */
+  survey: { polarDeg: 62, azimuthDeg: 0 },
 } as const;
 export type ViewPresetId = keyof typeof VIEW_PRESETS;
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
@@ -81,7 +83,7 @@ export const portSceneKey = (portId: string) => `port3d:${portId}`;
 /** Host-owned scene content (port twin): rendered with the scene, picked before land, disposed with it. */
 export interface PlanarSceneLayer {
   readonly object: THREE.Object3D;
-  pick?(raycaster: THREE.Raycaster): { distance: number; berthId?: string } | null;
+  pick?(raycaster: THREE.Raycaster): { distance: number; berthId?: string; equipmentId?: string } | null;
   /** Per-frame animation; returns true when the frame must be redrawn. */
   update?(nowMs: number, dtMs: number): boolean;
   dispose(): void;
@@ -681,6 +683,20 @@ export class Region3DScene implements SpatialScene, MapSurface {
     return this.flyToOrbit(goal, this.reducedMotion ? 0 : 0.6);
   }
 
+  /**
+   * Port Survey (V3 Gate 7): a low oblique view of a working berth from the water side, looking landward across the
+   * ship, quay equipment and yard. `seawardDeg` is the quay normal towards the water; `spanM` the ground to frame.
+   */
+  applySurvey(lat: number, lon: number, seawardDeg: number, spanM: number): Promise<boolean> {
+    if (!this.proj) return Promise.resolve(false);
+    const target = this.toWorld(lat, lon);
+    const r = seawardDeg * DEG;
+    const sea = this.toWorld(lat + Math.cos(r) * 0.001, lon + (Math.sin(r) * 0.001) / Math.cos(lat * DEG));
+    const azimuth = Math.atan2(sea.x - target.x, sea.z - target.z);
+    const distance = Math.max(this.controls.minDistance, Math.min(this.controls.maxDistance, (spanM / 1000) * 1.15));
+    return this.flyToOrbit({ target, distance, polar: Math.min(MAX_POLAR, VIEW_PRESETS.survey.polarDeg * DEG), azimuth }, this.reducedMotion ? 0 : 0.8);
+  }
+
   // ---- camera ---------------------------------------------------------------------------------------------------
 
   private orbit(): Orbit {
@@ -1018,6 +1034,13 @@ export class Region3DScene implements SpatialScene, MapSurface {
     return { x: ((p.x + 1) / 2) * this.width, y: ((1 - p.y) / 2) * this.height, visible: p.z > -1 && p.z < 1 };
   }
 
+  /** Screen point of a geographic position at a height in metres (port twin equipment). */
+  projectHeight(lat: number, lon: number, heightM: number): ScreenPoint | null {
+    if (!this.proj) return null;
+    const p = this.geoToWorld(lat, lon, heightM).project(this.camera);
+    return { x: ((p.x + 1) / 2) * this.width, y: ((1 - p.y) / 2) * this.height, visible: p.z > -1 && p.z < 1 };
+  }
+
   /**
    * Overlay anchors sit just above the land tops so berths drawn inside coarse coastlines stay visible; port twins
    * float ships on the water.
@@ -1104,12 +1127,14 @@ export class Region3DScene implements SpatialScene, MapSurface {
     const g = this.proj.worldToLonLat(ground.x, ground.z);
     const iso3 = hits[0]?.object.userData.iso3 as string | undefined;
     let berthId: string | undefined;
+    let equipmentId: string | undefined;
     let nearest = Infinity;
     for (const l of this.layers) {
       const h = l.pick?.(this.raycaster);
-      if (h?.berthId && h.distance < nearest) {
+      if ((h?.berthId || h?.equipmentId) && h.distance < nearest) {
         nearest = h.distance;
         berthId = h.berthId;
+        equipmentId = h.equipmentId;
       }
     }
     return {
@@ -1119,6 +1144,7 @@ export class Region3DScene implements SpatialScene, MapSurface {
       screenY: clientY - rect.top,
       country: iso3 ? (this.features.find((f) => f.doc.iso3 === iso3)?.country ?? null) : null,
       ...(berthId ? { berthId } : {}),
+      ...(equipmentId ? { equipmentId } : {}),
     };
   }
 

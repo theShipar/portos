@@ -1,3 +1,4 @@
+import { selectOption } from './selectOption';
 import { expect, test } from '@playwright/test';
 import { expectHeading, flightDone, globeReady, inspector, open, search } from './helpers';
 
@@ -134,7 +135,7 @@ test.describe('Core Singapore journey', () => {
       await triage.click();
       await expect(status).toContainText(/Investigating/i);
     }
-    await page.getByTestId('assign-user').selectOption('USR-002');
+    await selectOption(page, page.getByTestId('assign-user'), 'USR-002');
     await page.getByTestId('assign-submit').click();
     await expect(page.getByTestId('incident-owner')).toContainText('Jordan Lee');
 
@@ -192,7 +193,7 @@ test.describe('Core Singapore journey', () => {
   test('full demo reset returns to first-load state', async ({ page }) => {
     await open(page, '/incidents/INC-0001');
     await inspector(page).getByRole('tab', { name: 'Actions' }).click();
-    await page.getByTestId('assign-user').selectOption('USR-003');
+    await selectOption(page, page.getByTestId('assign-user'), 'USR-003');
     await page.getByTestId('assign-submit').click();
     await expect(page.getByTestId('incident-owner')).toContainText('Mina Rahman');
     await page.getByTestId('reset-open').click();

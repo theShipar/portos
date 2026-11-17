@@ -93,5 +93,22 @@
       "transfers": 0
     },
     "disclosure": "Simulated cargo, stowage and transfer plan. Not a real manifest, booking or terminal operating system record."
+  },
+  "v3Terminals": {
+    "path": "v3/terminalOps.json",
+    "version": "3.2",
+    "typedPorts": {
+      "PRT-SSZ": "dry_bulk",
+      "PRT-DLC": "lng",
+      "PRT-SOU": "roro"
+    },
+    "counts": {
+      "layouts": 3,
+      "berthCalls": 3,
+      "equipment": 25,
+      "operations": 4,
+      "hazardZones": 1
+    },
+    "disclosure": "Simulated terminal operations. Not a terminal operating system, safety system or control record."
   }
 }

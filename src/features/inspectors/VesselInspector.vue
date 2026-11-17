@@ -21,6 +21,7 @@ import ShipSilhouette from '@/components/ui/ShipSilhouette.vue';
 import StatusChip from '@/components/ui/StatusChip.vue';
 import ProgressTrack from '@/components/ui/ProgressTrack.vue';
 import CargoPanel from './CargoPanel.vue';
+import CargoDetail from './CargoDetail.vue';
 import PortCallCard from './PortCallCard.vue';
 import VesselWorkshop from './VesselWorkshop.vue';
 import VoyageImpactCard from './VoyageImpactCard.vue';
@@ -129,6 +130,7 @@ function openPort(portId: string) {
     <section v-if="view.inspectorTab === 'overview' && v3" class="stack" data-testid="vessel-overview-v3">
       <div class="identity" data-testid="vessel-identity">
         <VesselWorkshop
+          :vessel-name="model.name"
           :vessel-type="model.vesselType"
           :model-key="modelKey"
           :plan="cargoPlan"
@@ -141,7 +143,16 @@ function openPort(portId: string) {
           @pick="setFocus"
           @update:mode="setMode"
           @update:exploded="setExploded"
-        />
+        >
+          <template #annotation>
+            <CargoDetail v-if="cargoDetail" :detail="cargoDetail" :focus="cargoFocus" @focus="setFocus" />
+            <p v-else class="empty">Select a compartment or cargo slot in the model or the picker below to view its details.</p>
+          </template>
+          <template #cargo>
+            <CargoPanel v-if="cargoSummary && cargoPlan" :summary="cargoSummary" :plan="cargoPlan" :section="baySection" :bay="cargoBay" :hold="cargoHold" :focus="cargoFocus" :detail="cargoDetail" hide-detail @focus="setFocus" @hold="setHold" @bay="setBay" />
+            <p v-else class="empty">No cargo modelled for this vessel in the simulated dataset.</p>
+          </template>
+        </VesselWorkshop>
         <div class="identity__line">
           <span class="identity__note">Procedural inspection model · not to scale</span>
           <button

@@ -53,6 +53,9 @@ export const CITIES: readonly CityRow[] = [
   { id: 'CTY-SIN', label: 'Singapore', countryId: 'CNT-SGP', regionId: 'REG-SEA', bbox: { west: 103.58, south: 1.1, east: 104.14, north: 1.48 }, portIds: ['PRT-SIN'] },
   { id: 'CTY-RTM', label: 'Rotterdam', countryId: 'CNT-NLD', regionId: 'REG-NEU', bbox: { west: 3.95, south: 51.74, east: 4.82, north: 52.04 }, portIds: ['PRT-RTM'] },
   { id: 'CTY-GOA', label: 'Genoa', countryId: 'CNT-ITA', regionId: 'REG-MED', bbox: { west: 8.62, south: 44.22, east: 9.28, north: 44.52 }, portIds: ['PRT-GOA'] },
+  { id: 'CTY-SSZ', label: 'Santos', countryId: 'CNT-BRA', regionId: 'REG-LAT', bbox: { west: -46.62, south: -24.14, east: -46.06, north: -23.82 }, portIds: ['PRT-SSZ'] },
+  { id: 'CTY-DLC', label: 'Dalian', countryId: 'CNT-CHN', regionId: 'REG-EAS', bbox: { west: 121.4, south: 38.72, east: 122.02, north: 39.06 }, portIds: ['PRT-DLC'] },
+  { id: 'CTY-SOU', label: 'Southampton', countryId: 'CNT-GBR', regionId: 'REG-NEU', bbox: { west: -1.72, south: 50.7, east: -1.1, north: 51.0 }, portIds: ['PRT-SOU'] },
 ];
 
 /** Countries represented by a single city entry (no separate country level). */

@@ -1,4 +1,6 @@
 import { parseUtc } from '@/core/time';
+import type { TerminalOpsModule } from '@/core/terminalTypes';
+import { buildOpsIndex, type OpsIndex } from '@/engines/terminalOps';
 import type {
   Anchorage,
   Berth,
@@ -102,6 +104,8 @@ export interface Catalog {
   missingDatasets: string[];
   /** V2 scenario module (null when it failed to load: base fixture only). */
   v2: V2Index | null;
+  /** V3 typed terminals (null without `v3PortTwin`, without V2, or when the file failed to load). */
+  terminalOps: OpsIndex | null;
   /** Scenario window the clock may move in: the V2 window, or the base replay range without V2. */
   windowMinMs: number;
   windowMaxMs: number;
@@ -219,7 +223,10 @@ export function buildCatalog(raw: RawDataset, missingDatasets: string[] = []): C
     if (!byId.vessel.has(vid)) issues.push(`positions for unknown vessel ${vid}`);
     arr.sort((a, b) => a.t - b.t);
   }
-  const v2 = raw.v2 ? indexV2(raw.v2, byId.vessel, byId.berth, issues) : null;
+  const typed = raw.v2 && raw.terminalOps ? raw.terminalOps : null;
+  const v2 = raw.v2 ? indexV2(raw.v2, byId.vessel, byId.berth, issues, typed) : null;
+  if (typed) for (const e of typed.equipment) need(byId.terminal, e.terminalId, `equipment ${e.equipmentId}`);
+  if (typed) for (const o of typed.operations) need(byId.vessel, o.vesselId, `operation ${o.operationId}`);
   if (v2) for (const ft of v2.flagshipTracks.values()) mergeKeyframes(tracks, ft);
 
   if (issues.length) throw new CatalogValidationError(issues);
@@ -258,6 +265,7 @@ export function buildCatalog(raw: RawDataset, missingDatasets: string[] = []): C
     replayStartMs,
     replayEndMs,
     v2,
+    terminalOps: typed ? buildOpsIndex(typed) : null,
     windowMinMs: v2?.windowMinMs ?? replayStartMs,
     windowMaxMs: v2?.windowMaxMs ?? replayEndMs,
     regions: raw.regions,
@@ -289,7 +297,8 @@ export function buildCatalog(raw: RawDataset, missingDatasets: string[] = []): C
   }) as Catalog;
 }
 
-function indexV2(m: V2Module, vessels: Map<string, Vessel>, berths: Map<string, Berth>, issues: string[]): V2Index {
+/** V2 layouts and berth schedule, plus the V3 typed terminals' layouts and berth calls when they are loaded. */
+function indexV2(m: V2Module, vessels: Map<string, Vessel>, berths: Map<string, Berth>, issues: string[], typed: TerminalOpsModule | null): V2Index {
   const windowMinMs = parseUtc(m.scenario.window.minUtc);
   const windowMaxMs = parseUtc(m.scenario.window.maxUtc);
   if (windowMinMs === null || windowMaxMs === null) issues.push('v2 scenario: invalid window');
@@ -297,7 +306,9 @@ function indexV2(m: V2Module, vessels: Map<string, Vessel>, berths: Map<string, 
   const bookingsByPort = new Map<string, BerthBooking[]>();
   const bookingsByVessel = new Map<string, BerthBooking[]>();
   const bookingsByBerth = new Map<string, BerthBooking[]>();
-  for (const b of m.berthSchedule) {
+  const bookings = typed ? [...m.berthSchedule, ...typed.berthCalls] : m.berthSchedule;
+  const layouts: PortLayout[] = typed ? [...m.portLayouts, ...typed.layouts] : m.portLayouts;
+  for (const b of bookings) {
     if (!vessels.has(b.vesselId)) issues.push(`booking ${b.bookingId} → missing vessel ${b.vesselId}`);
     if (b.berthId && !berths.has(b.berthId)) issues.push(`booking ${b.bookingId} → missing berth ${b.berthId}`);
     const portId = b.berthId ? berths.get(b.berthId)?.portId : b.terminalId ? 'PRT-' + b.terminalId.split('-')[1] : null;
@@ -311,8 +322,8 @@ function indexV2(m: V2Module, vessels: Map<string, Vessel>, berths: Map<string, 
     windowMaxMs: windowMaxMs ?? 0,
     flagship: new Set(m.scenario.flagshipVesselIds),
     flagshipTracks: new Map(m.flagshipTracks.map((t) => [t.vesselId, t] as const)),
-    layoutByPort: new Map(m.portLayouts.map((l) => [l.portId, l] as const)),
-    bookings: m.berthSchedule,
+    layoutByPort: new Map(layouts.map((l) => [l.portId, l] as const)),
+    bookings,
     bookingsByPort,
     bookingsByVessel,
     bookingsByBerth,

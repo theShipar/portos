@@ -1,3 +1,4 @@
+import { selectOption } from './selectOption';
 import { expect, test, type Page } from '@playwright/test';
 import { globeReady, inspector, open } from './helpers';
 
@@ -69,7 +70,7 @@ test.describe('V3 vessel cargo workshop (Gate 5)', () => {
 
   test('bay grid → slot → manifest, persisted in the URL and mirrored in 3D', async ({ page }) => {
     await ready(page, `${FLAG}&time=${BEFORE}`);
-    await page.getByTestId('cargo-bay').selectOption('18');
+    await selectOption(page, page.getByTestId('cargo-bay'), '18');
     await page.getByTestId('slot-180284').click();
     await expect(page).toHaveURL(/[?&]cargo=180284/);
     await expect(page.getByTestId('cargo-detail')).toHaveAttribute('data-focus', '180284');
@@ -125,9 +126,9 @@ test.describe('V3 vessel cargo workshop (Gate 5)', () => {
 
   test('hold filter and exploded view ghost the hull and dim the other holds', async ({ page }) => {
     await ready(page, `${FLAG}&time=${BEFORE}`);
-    await page.getByTestId('cargo-hold').selectOption('3');
+    await selectOption(page, page.getByTestId('cargo-hold'), '3');
     await expect(page).toHaveURL(/[?&]hold=3/);
-    await expect(page.getByTestId('cargo-bay')).toHaveValue('18');
+    await expect(page.getByTestId('cargo-bay')).toContainText('Bay 18');
     await expect.poll(async () => (await ws(page)).hold).toBe(3);
 
     await page.getByTestId('workshop-explode').click();

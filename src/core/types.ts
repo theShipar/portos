@@ -1,3 +1,5 @@
+import type { TerminalOpsModule } from './terminalTypes';
+
 export type GeoPoint = { lon: number; lat: number };
 export type Bounds = { west: number; south: number; east: number; north: number };
 export type IsoUtc = string;
@@ -320,6 +322,10 @@ export interface LayoutTerminal {
   /** Declared simulated box count drawn in the yard (not inferred from capacity). */
   yardContainers: number;
   berths: LayoutBerth[];
+  /** V3 typed terminals only; V2 layouts are container terminals. */
+  terminalType?: 'container' | 'dry_bulk' | 'lng' | 'roro';
+  /** LNG: distance from the jetty-head berth line to the shore, bridged by a trestle (metres). */
+  jettyOffsetMeters?: number;
 }
 
 export interface PortLayout {
@@ -385,6 +391,8 @@ export interface RawDataset {
   manifest: Manifest;
   /** Optional: without it the app runs on the base fixture only. */
   v2?: V2Module | null;
+  /** Optional V3 typed terminals (`v3PortTwin`); merged into the V2 layouts and berth schedule. */
+  terminalOps?: TerminalOpsModule | null;
   regions: Region[];
   ports: Port[];
   terminals: Terminal[];

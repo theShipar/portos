@@ -1,3 +1,4 @@
+import { selectOption } from './selectOption';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { expectHeading, flightDone, globeReady, inspector, open, search } from './helpers';
@@ -242,7 +243,7 @@ test.describe('Spec 19 acceptance rows (Phase 9)', () => {
       await flightDone(page);
       expect(await page.evaluate(() => window.__portos!.reducedMotion())).toBe(true);
       await page.getByTestId('replay-rate').focus();
-      await page.getByTestId('replay-rate').selectOption('100');
+      await selectOption(page, page.getByTestId('replay-rate'), '100');
       await page.getByTestId('replay-play').focus();
       await page.keyboard.press('Enter');
       await expect.poll(() => page.evaluate(() => window.__portos!.clock().mode)).toBe('playing');

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
+import { nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue';
 import type { StowagePlan } from '@/core/cargoTypes';
 import type { ShipModelKey } from '@/map/vessels3d/categories';
 import { VesselWorkshopScene, type WorkshopCameraMode, type WorkshopStats } from '@/spatial/scenes/VesselWorkshopScene';
@@ -13,6 +13,7 @@ import ShipSilhouette from '@/components/ui/ShipSilhouette.vue';
  * All cargo state arrives through props from selectors; the canvas only draws and reports picks.
  */
 const props = defineProps<{
+  vesselName?: string;
   vesselType: string;
   modelKey: ShipModelKey;
   plan: StowagePlan | null;
@@ -30,6 +31,22 @@ const host = ref<HTMLDivElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
 const scene = shallowRef<VesselWorkshopScene | null>(null);
 const failed = ref(false);
+const expanded = ref(false);
+const dialog = ref<HTMLDialogElement | null>(null);
+const expandButton = ref<HTMLButtonElement | null>(null);
+async function expand() {
+  expanded.value = true;
+  await nextTick();
+  dialog.value?.showModal();
+  const bounds = host.value?.getBoundingClientRect();
+  if (bounds) scene.value?.resize(bounds.width, bounds.height);
+  scene.value?.fitView();
+}
+function collapse() {
+  dialog.value?.close();
+  expanded.value = false;
+  nextTick(() => expandButton.value?.focus());
+}
 let ro: ResizeObserver | null = null;
 let down: { x: number; y: number } | null = null;
 
@@ -114,7 +131,16 @@ function onUp(e: PointerEvent) {
 </script>
 
 <template>
-  <div class="workshop" data-testid="vessel-workshop" :data-model="modelKey" :data-mode="mode" :data-exploded="exploded ? '1' : '0'" :data-ready="scene ? '1' : '0'">
+  <Teleport to="body">
+    <dialog ref="dialog" class="workshop-dialog" aria-label="Expanded vessel inspection" @cancel.prevent="collapse" @keydown.esc.stop.prevent="collapse" @click="($event.target === dialog) && collapse()" />
+  </Teleport>
+  <Teleport :to="expanded && dialog ? dialog : 'body'" :disabled="!expanded">
+  <div class="workshop" :class="{ 'workshop--expanded': expanded }" data-testid="vessel-workshop" :data-model="modelKey" :data-mode="mode" :data-exploded="exploded ? '1' : '0'" :data-ready="scene ? '1' : '0'">
+    <header v-if="expanded" class="workshop__header">
+      <div><span class="micro-label">Vessel inspection · Simulated</span><h2>{{ vesselName ?? vesselType }}</h2><p>Explore the model. Select a compartment or cargo slot below to inspect its details.</p></div>
+      <button type="button" class="icon-btn" aria-label="Close expanded vessel view" @click="collapse"><Icon name="close" /></button>
+    </header>
+    <div class="workshop__view">
     <div ref="host" class="workshop__stage">
       <canvas
         v-show="!failed"
@@ -130,8 +156,12 @@ function onUp(e: PointerEvent) {
         <span>3D preview unavailable in this browser.</span>
       </div>
       <span class="workshop__tag">Simulated</span>
+      <button v-if="!expanded" ref="expandButton" type="button" class="btn btn--sm workshop__expand" aria-label="Expand vessel preview" @click="expand"><Icon name="expand" :size="14" /> Expand</button>
+    </div>
+    <aside v-if="expanded" class="workshop__annotation" aria-label="Selected cargo annotation" aria-live="polite"><slot name="annotation"><p>Select a compartment to see its information.</p></slot></aside>
     </div>
     <div class="workshop__bar">
+      <button v-if="expanded" type="button" class="btn btn--sm" @click="scene?.fitView()"><Icon name="expand" :size="14" /> Fit vessel</button>
       <SegmentedControl :options="modes" :model-value="mode" label="Preview camera" size="sm" @update:model-value="emit('update:mode', $event)" />
       <button
         type="button"
@@ -146,10 +176,34 @@ function onUp(e: PointerEvent) {
         <Icon name="cube" :size="14" /> Explode
       </button>
     </div>
+    <div v-if="expanded" class="workshop__cargo"><slot name="cargo" /></div>
   </div>
+  </Teleport>
 </template>
 
 <style scoped>
+.workshop-dialog { width: min(1400px, calc(100vw - 64px)); max-width: none; max-height: calc(100dvh - 64px); margin: auto; padding: 0; border: 1px solid var(--color-border); border-radius: 20px; background: var(--color-panel); color: var(--color-ink); box-shadow: var(--shadow-drawer); overflow: auto; }
+.workshop-dialog::backdrop { background: color-mix(in srgb, var(--color-space) 70%, transparent); backdrop-filter: blur(12px); }
+.workshop__view { min-width: 0; }
+.workshop--expanded { padding: 24px; gap: 20px; }
+.workshop__header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.workshop__header h2 { margin: 4px 0 8px; font-size: 24px; }
+.workshop__header p { margin: 0; color: var(--color-ink-secondary); font-size: var(--text-13); }
+.workshop--expanded .workshop__view { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 340px); gap: 20px; align-items: start; }
+.workshop--expanded .workshop__stage { height: clamp(280px, 45vh, 560px); border: 1px solid var(--color-border); border-radius: 12px; }
+.workshop__annotation { min-width: 0; max-height: 56vh; overflow: auto; padding: 2px; }
+.workshop__annotation > p { padding: 20px; color: var(--color-ink-secondary); }
+.workshop__expand { position: absolute; right: 12px; top: 12px; background: var(--color-panel); }
+.workshop__cargo { display: grid; gap: 20px; padding-top: 20px; border-top: 1px solid var(--color-border); }
+.workshop__cargo :deep(.cmp) { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 8px; }
+.workshop__cargo :deep(.cmp__btn) { min-height: 48px; padding: 12px; }
+@media(max-width: 760px) {
+ .workshop-dialog { width: calc(100vw - 24px); max-height: calc(100dvh - 24px); }
+ .workshop--expanded { padding: 16px; }
+ .workshop--expanded .workshop__view { grid-template-columns: 1fr; }
+ .workshop__annotation { max-height: none; }
+}
+
 .workshop {
   display: grid;
   gap: 8px;

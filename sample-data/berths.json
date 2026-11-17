@@ -683,13 +683,13 @@
     "berthId": "BRH-SOU-1",
     "portId": "PRT-SOU",
     "terminalId": "TRM-SOU",
-    "name": "Berth 1",
+    "name": "Ro-Ro Berth 1",
     "location": {
-      "lon": -1.39,
-      "lat": 50.905
+      "lon": -1.403264,
+      "lat": 50.883118
     },
-    "status": "free",
-    "occupiedByVesselId": null,
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0432",
     "scheduledVesselId": null,
     "scheduledWindowStartUtc": null,
     "scheduledWindowEndUtc": null,
@@ -700,10 +700,10 @@
     "berthId": "BRH-SOU-2",
     "portId": "PRT-SOU",
     "terminalId": "TRM-SOU",
-    "name": "Berth 2",
+    "name": "Ro-Ro Berth 2",
     "location": {
-      "lon": -1.38,
-      "lat": 50.905
+      "lon": -1.395023,
+      "lat": 50.877118
     },
     "status": "free",
     "occupiedByVesselId": null,
@@ -1771,13 +1771,13 @@
     "berthId": "BRH-DLC-1",
     "portId": "PRT-DLC",
     "terminalId": "TRM-DLC",
-    "name": "Berth 1",
+    "name": "LNG Jetty 1",
     "location": {
-      "lon": 121.63,
-      "lat": 38.915
+      "lon": 121.703928,
+      "lat": 38.90139
     },
-    "status": "scheduled",
-    "occupiedByVesselId": null,
+    "status": "occupied",
+    "occupiedByVesselId": "VSL-0496",
     "scheduledVesselId": null,
     "scheduledWindowStartUtc": null,
     "scheduledWindowEndUtc": null,
@@ -1788,12 +1788,12 @@
     "berthId": "BRH-DLC-2",
     "portId": "PRT-DLC",
     "terminalId": "TRM-DLC",
-    "name": "Berth 2",
+    "name": "LNG Jetty 2",
     "location": {
-      "lon": 121.64,
-      "lat": 38.915
+      "lon": 121.708628,
+      "lat": 38.89139
     },
-    "status": "scheduled",
+    "status": "unavailable",
     "occupiedByVesselId": null,
     "scheduledVesselId": null,
     "scheduledWindowStartUtc": null,
@@ -2791,13 +2791,13 @@
     "berthId": "BRH-SSZ-1",
     "portId": "PRT-SSZ",
     "terminalId": "TRM-SSZ",
-    "name": "Berth 1",
+    "name": "Grain Berth 1",
     "location": {
-      "lon": -46.32,
-      "lat": -23.935
+      "lon": -46.302082,
+      "lat": -23.958922
     },
     "status": "occupied",
-    "occupiedByVesselId": null,
+    "occupiedByVesselId": "VSL-0306",
     "scheduledVesselId": null,
     "scheduledWindowStartUtc": null,
     "scheduledWindowEndUtc": null,
@@ -2808,12 +2808,12 @@
     "berthId": "BRH-SSZ-2",
     "portId": "PRT-SSZ",
     "terminalId": "TRM-SSZ",
-    "name": "Berth 2",
+    "name": "Grain Berth 2",
     "location": {
-      "lon": -46.31,
-      "lat": -23.935
+      "lon": -46.298919,
+      "lat": -23.964922
     },
-    "status": "unknown",
+    "status": "free",
     "occupiedByVesselId": null,
     "scheduledVesselId": null,
     "scheduledWindowStartUtc": null,

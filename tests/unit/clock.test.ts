@@ -235,7 +235,7 @@ describe('deriveWorldSnapshot', () => {
     expect(w.timeMs).toBe(t1);
     expect(w.snapshot.timeMs).toBe(t1);
     expect(w.events.count).toBe(c.events.filter((e) => c.eventMs.get(e.eventId)! <= t1).length);
-    expect(w.berths.map((b) => b.portId)).toEqual(['PRT-GOA', 'PRT-RTM', 'PRT-SIN']);
+    expect(w.berths.map((b) => b.portId)).toEqual(['PRT-DLC', 'PRT-GOA', 'PRT-RTM', 'PRT-SIN', 'PRT-SOU', 'PRT-SSZ']);
     const sin = w.berths.find((b) => b.portId === 'PRT-SIN')!;
     expect(sin.occupied + sin.reserved + sin.free).toBe(10);
     expect(w.kpis.length).toBeGreaterThan(0);

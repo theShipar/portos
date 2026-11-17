@@ -1,3 +1,4 @@
+import { selectOption } from './selectOption';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { expectHeading, flightDone, globeReady, inspector, open, search } from './helpers';
@@ -97,7 +98,7 @@ test.describe('Flagship V2 journey (Phase 9)', () => {
     await expect(page.getByTestId('follow-bar')).toContainText('MV Emerald Star 047');
     await expect.poll(() => offCentre(page), { timeout: 5_000 }).toBeLessThan(24);
     for (const rate of [1, 10, 100]) {
-      await page.getByTestId('replay-rate').selectOption(String(rate));
+      await selectOption(page, page.getByTestId('replay-rate'), String(rate));
       await expect(page.getByTestId('replay-rate').locator('option:checked')).toHaveText(`Simulation ×${rate}`);
       if (!(await page.evaluate(() => window.__portos!.clock().mode === 'playing'))) await page.getByTestId('replay-play').click();
       const ratio = await measureRatio(page, 1200);

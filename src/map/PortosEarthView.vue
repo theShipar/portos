@@ -46,6 +46,9 @@ import { planarSceneKey, planarToGlobeDistance, portSceneKey, Region3DScene, sce
 import SegmentedControl, { type SegmentOption } from '@/components/ui/SegmentedControl.vue';
 import { PortTwinLayer } from '@/spatial/scenes/portTwin/PortTwinLayer';
 import { BERTH_STATUS_LABEL, buildPortTwin, TWIN_CAPTION, type PortTwinModel } from '@/selectors/portTwin';
+import { CRANE_PHASE_LABEL, twinOpsFrame, yardOccupancyAt } from '@/selectors/terminalOps';
+import { EQUIPMENT_KIND_LABEL, EQUIPMENT_STATUS_LABEL } from '@/core/terminalTypes';
+import { useCargoStore } from '@/stores/cargo';
 import { SpatialDirector } from '@/spatial/SpatialDirector';
 import type { SceneTarget, SpatialScene } from '@/spatial/types';
 import { boundsPreset, distanceToFitBounds, EARTH_PRESET, EARTH_RADIUS, pointPreset, regionPreset, type CameraPose, type CameraPreset } from './earth/camera';
@@ -64,6 +67,7 @@ const snapStore = useSnapshotStore();
 const view = useViewStore();
 const clock = useClockStore();
 const session = useSessionStore();
+const cargo = useCargoStore();
 const nav = useNavigation();
 const router = useRouter();
 
@@ -239,11 +243,23 @@ function openCountry(countryId: string) {
 }
 
 const viewPreset = ref<ViewPresetId | null>('fit');
-const VIEW_PRESET_OPTIONS: SegmentOption<ViewPresetId>[] = [
+const BASE_PRESET_OPTIONS: SegmentOption<ViewPresetId>[] = [
   { id: 'fit', label: 'Fit', title: 'Frame the whole scope', testid: 'view-preset-fit' },
   { id: 'iso', label: 'Iso', title: 'Isometric view (50° tilt)', testid: 'view-preset-iso' },
   { id: 'top', label: 'Top', title: 'Top-down view', testid: 'view-preset-top' },
 ];
+const SURVEY_OPTION: SegmentOption<ViewPresetId> = { id: 'survey', label: 'Survey', title: 'Port Survey: low oblique view of the working berth from the water', testid: 'view-preset-survey' };
+/** Port twins add the Survey camera (V3 Gate 7). */
+const VIEW_PRESET_OPTIONS = computed(() => (activeTwin.value && flags.v3PortTwin ? [...BASE_PRESET_OPTIONS, SURVEY_OPTION] : BASE_PRESET_OPTIONS));
+
+/** Berth the Survey camera frames: the focused one, else an occupied berth with typed equipment, else any occupied. */
+function surveyBerth(model: PortTwinModel) {
+  const pick = view.berthId ?? (view.equipmentId ? (catalog.catalog?.terminalOps?.equipment.get(view.equipmentId)?.berthId ?? null) : null);
+  if (pick) return model.berths.find((b) => b.berthId === pick) ?? null;
+  const ops = catalog.catalog?.terminalOps;
+  const equipped = model.berths.filter((b) => (ops?.equipmentByTerminal.get(b.terminalId) ?? []).some((e) => e.berthId === b.berthId));
+  return equipped.find((b) => b.status === 'occupied') ?? equipped[0] ?? model.berths.find((b) => b.status === 'occupied') ?? model.berths[0] ?? null;
+}
 /** Back to a scope restores its preset only if the cached camera came back with the same orientation. */
 const presetMemory = new Map<string, { id: ViewPresetId; orbit: { polarDeg: number; azimuthDeg: number } }>();
 let pendingPreset: { id: ViewPresetId; orbit: { polarDeg: number; azimuthDeg: number }; focusId: string } | null = null;
@@ -259,7 +275,10 @@ function setViewPreset(id: ViewPresetId) {
   if (!(sc instanceof Region3DScene)) return;
   viewPreset.value = id;
   if (id === 'fit') void sc.flyTo(presetFor(view.scope, sc));
-  else void sc.applyViewPreset(id);
+  else if (id === 'survey') {
+    const b = activeTwin.value ? surveyBerth(activeTwin.value.model) : null;
+    if (b) void sc.applySurvey(b.center.lat, b.center.lon, b.seawardDeg, b.lengthM * 1.25 + 180);
+  } else void sc.applyViewPreset(id);
 }
 
 function openCity(cityId: string) {
@@ -435,6 +454,17 @@ function onHover(hit: SurfacePointerHit | null, e: PointerEvent) {
     canvas.style.cursor = '';
     return;
   }
+  const equip = hit.equipmentId ? c.terminalOps?.equipment.get(hit.equipmentId) : undefined;
+  if (equip) {
+    sc.setHoverHighlight(null);
+    canvas.style.cursor = 'pointer';
+    const layer = activeTwin.value?.layer;
+    const pose = layer?.cranePose(equip.equipmentId);
+    const status = activeTwin.value ? twinFrameAt(clock.timeMs)?.equipment.get(equip.equipmentId) : undefined;
+    const state = pose ? CRANE_PHASE_LABEL[pose.phase as keyof typeof CRANE_PHASE_LABEL] : status ? EQUIPMENT_STATUS_LABEL[status] : '';
+    setTooltip(x, y, equip.label, [`${EQUIPMENT_KIND_LABEL[equip.kind]}${state ? ` · ${state}` : ''}`, `${equip.equipmentId} · Simulated`, 'Click for equipment details']);
+    return;
+  }
   const berth = hit.berthId ? activeTwin.value?.model.berths.find((b) => b.berthId === hit.berthId) : undefined;
   if (berth) {
     sc.setHoverHighlight(null);
@@ -547,8 +577,16 @@ function onClick(hit: SurfacePointerHit | null, e: PointerEvent) {
     return;
   }
   if (!hit) return;
+  if (hit.equipmentId) {
+    tooltip.value = null;
+    if (hit.berthId) view.selectBerth(hit.berthId);
+    void nav.setEquipment(view.equipmentId === hit.equipmentId ? null : hit.equipmentId);
+    return;
+  }
   if (hit.berthId) {
     tooltip.value = null;
+    const eb = view.equipmentId ? catalog.catalog?.terminalOps?.equipment.get(view.equipmentId)?.berthId : undefined;
+    if (eb && eb !== hit.berthId) void nav.setEquipment(null);
     view.selectBerth(hit.berthId);
     return;
   }
@@ -940,17 +978,44 @@ function attachTwin(surf: Region3DScene, portId: string) {
   const c = catalog.catalog;
   const model = c ? buildPortTwin(c, portId, clock.timeMs) : null;
   if (!model) return;
-  const layer = markRaw(new PortTwinLayer(model, (lat, lon, h) => surf.geoToWorld(lat, lon, h)));
+  const ops = flags.v3PortTwin ? c!.terminalOps : null;
+  const typed = ops ? { equipment: [...ops.equipment.values()], zones: ops.module.hazardZones } : null;
+  const layer = markRaw(new PortTwinLayer(model, (lat, lon, h) => surf.geoToWorld(lat, lon, h), typed));
+  layer.setHazardVisible(view.twinHazard);
+  if (typed) {
+    layer.setOpsSource((now) => (snapStore.portTwin?.portId === portId ? twinFrameAt(clock.frameTimeAt(now)) : null));
+    if (typed.equipment.some((e) => e.kind === 'sts_crane' && model.terminals.some((t) => t.terminalId === e.terminalId))) void cargo.ensure();
+  }
   surf.addLayer(layer);
   twinLayers.set(surf, { portId, layer, coreBounds: model.coreBounds });
   twinVersion.value++;
   syncTwin(surf, model);
+  syncYard();
+}
+
+/** Typed terminal state at a scenario instant for the port twin in scope (same selector the inspector reads). */
+function twinFrameAt(t: number) {
+  const c = catalog.catalog;
+  const model = snapStore.portTwin;
+  return c && model ? twinOpsFrame(c, model, cargo.index, t) : null;
+}
+
+/** Event-sourced yard boxes at the committed time (10 Hz), once the cargo module is loaded. */
+function syncYard() {
+  const idx = cargo.index;
+  if (!idx) return;
+  for (const [surf, t] of twinLayers) {
+    const terminalId = t.layer.yardTerminalId;
+    if (!terminalId) continue;
+    t.layer.setYard([...idx.yard.values()], yardOccupancyAt(idx, terminalId, clock.timeMs));
+    surf.invalidate();
+  }
 }
 
 function syncTwin(surf: Region3DScene, model: PortTwinModel | null) {
   const t = twinLayers.get(surf);
   if (!t || !model || model.portId !== t.portId) return;
-  t.layer.setState(model, view.berthId);
+  t.layer.setState(model, view.berthId, view.equipmentId);
   surf.invalidate();
 }
 
@@ -1095,6 +1160,16 @@ function exposeTestAdapter(sc: EarthScene) {
       const b = activeTwin.value?.model.berths.find((x) => x.berthId === id);
       return b ? pointOf(b.center.lat, b.center.lon) : null;
     },
+    twinOps: () => activeTwin.value?.layer.opsStats() ?? null,
+    cranePose: (id: string) => activeTwin.value?.layer.cranePose(id) ?? null,
+    equipmentPoint: (id: string) => {
+      const a = activeTwin.value?.layer.equipmentAnchor(id);
+      const s = surface.value;
+      const r = host.value?.getBoundingClientRect();
+      if (!a || !(s instanceof Region3DScene) || !r) return null;
+      const p = s.projectHeight(a.point.lat, a.point.lon, a.heightM);
+      return p ? { x: r.left + p.x, y: r.top + p.y, visible: p.visible } : null;
+    },
     portPoint: (id: string) => {
       const m = ports.value.find((p) => p.portId === id);
       return m ? pointOf(m.point.lat, m.point.lon) : null;
@@ -1190,6 +1265,22 @@ watch(
   () => view.berthId,
   (id) => focusBerth(id),
 );
+watch(
+  () => view.equipmentId,
+  () => {
+    for (const surf of twinLayers.keys()) syncTwin(surf, snapStore.portTwin);
+  },
+);
+watch(
+  () => view.twinHazard,
+  (on) => {
+    for (const [surf, t] of twinLayers) {
+      t.layer.setHazardVisible(on);
+      surf.invalidate();
+    }
+  },
+);
+watch(() => [clock.timeMs, cargo.index] as const, syncYard);
 watch(
   () => view.bottomInsetPx,
   (px) => {

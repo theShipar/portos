@@ -78,7 +78,7 @@
 
   --shell-header-h: 64px;
   --inspector-w: min(400px, 34vw);
-  --inspector-w-expanded: min(440px, 40vw);
+  --inspector-w-expanded: 40vw;
   --replay-rail-h: 60px;
   --replay-collapsed-h: 60px;
   --replay-expanded-h: 116px;
@@ -205,7 +205,7 @@
 
   --shell-header-h: 64px;
   --inspector-w: clamp(360px, 29vw, 464px);
-  --inspector-w-expanded: clamp(400px, 34vw, 464px);
+  --inspector-w-expanded: 40vw;
   --map-control-gap: 20px;
   --control-h: 36px;
 

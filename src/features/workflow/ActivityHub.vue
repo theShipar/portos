@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppSelect from '@/components/ui/AppSelect.vue';
 import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { toIsoUtc } from '@/core/time';
 import { downloadJson } from '@/core/download';
@@ -140,10 +141,10 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
             <button type="button" class="fchip" :aria-pressed="mine" data-testid="tasks-mine" @click="mine = true">Mine</button>
           </div>
           <label :for="ids.region" class="sr-only">Region</label>
-          <select :id="ids.region" v-model="regionId" class="control control--sm">
+          <AppSelect :id="ids.region" v-model="regionId" class="control control--sm">
             <option :value="null">All regions</option>
             <option v-for="r in regions" :key="r.regionId" :value="r.regionId">{{ r.name }}</option>
-          </select>
+          </AppSelect>
         </div>
         <ul class="list">
           <li v-for="r in tasks" :key="r.task.taskId" class="item">
@@ -178,15 +179,15 @@ defineExpose({ openTab: (t: Tab) => ((tab.value = t), (open.value = true)) });
       <div v-else role="tabpanel" class="hub__body" aria-label="Audit">
         <div class="hub__filters hub__filters--grid">
           <label :for="ids.actor" class="sr-only">Actor</label>
-          <select :id="ids.actor" v-model="filter.actorUserId" class="control control--sm" data-testid="audit-actor">
+          <AppSelect :id="ids.actor" v-model="filter.actorUserId" class="control control--sm" data-testid="audit-actor">
             <option :value="null">Any actor</option>
             <option v-for="u in users" :key="u.userId" :value="u.userId">{{ u.displayName }}</option>
-          </select>
+          </AppSelect>
           <label :for="ids.action" class="sr-only">Action</label>
-          <select :id="ids.action" v-model="filter.actionType" class="control control--sm" data-testid="audit-action">
+          <AppSelect :id="ids.action" v-model="filter.actionType" class="control control--sm" data-testid="audit-action">
             <option :value="null">Any action</option>
             <option v-for="a in actionTypes" :key="a" :value="a">{{ AUDIT_ACTION_LABEL[a] }}</option>
-          </select>
+          </AppSelect>
           <label :for="ids.entity" class="sr-only">Entity ID</label>
           <input :id="ids.entity" v-model="filter.entity" type="search" class="control control--sm" placeholder="Entity ID, e.g. INC-0001" data-testid="audit-entity" />
         </div>

@@ -258,10 +258,10 @@
   {
     "terminalId": "TRM-SOU",
     "portId": "PRT-SOU",
-    "name": "Southampton Demo Terminal",
+    "name": "Southampton Demo Vehicle Terminal",
     "location": {
-      "lon": -1.385,
-      "lat": 50.905
+      "lon": -1.401833,
+      "lat": 50.878643
     },
     "berthIds": [
       "BRH-SOU-1",
@@ -706,10 +706,10 @@
   {
     "terminalId": "TRM-DLC",
     "portId": "PRT-DLC",
-    "name": "Dalian Demo Terminal",
+    "name": "Dalian Demo LNG Terminal",
     "location": {
-      "lon": 121.635,
-      "lat": 38.915
+      "lon": 121.697591,
+      "lat": 38.893929
     },
     "berthIds": [
       "BRH-DLC-1",
@@ -1126,10 +1126,10 @@
   {
     "terminalId": "TRM-SSZ",
     "portId": "PRT-SSZ",
-    "name": "Santos Demo Terminal",
+    "name": "Santos Demo Grain Terminal",
     "location": {
-      "lon": -46.315,
-      "lat": -23.935
+      "lon": -46.302711,
+      "lat": -23.962908
     },
     "berthIds": [
       "BRH-SSZ-1",

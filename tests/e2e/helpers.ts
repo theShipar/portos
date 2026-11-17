@@ -22,7 +22,24 @@ export interface PortosAdapter {
     anchorages: number;
     conflicts: number;
     selected: string | null;
+    equipment: number;
+    selectedEquipment: string | null;
+    yardBoxes: number;
+    opsAtMs: number | null;
   } | null;
+  twinOps(): {
+    atMs: number | null;
+    loaders: Record<string, number>;
+    arms: Record<string, 'connected' | 'stowed'>;
+    ramps: Record<string, 'lowered' | 'raised'>;
+    piles: Record<string, number>;
+    tanks: Record<string, number>;
+    lanes: Record<string, number>;
+    belts: number[];
+    hazard: { berthId: string; visible: boolean; active: boolean }[];
+  } | null;
+  cranePose(id: string): { phase: string; trolley: number; hoist: number; carrying: boolean; cargoUnitId: string | null } | null;
+  equipmentPoint(id: string): { x: number; y: number; visible: boolean } | null;
   loseContext(): void;
   spatialV2: boolean;
   flags: Record<'spatialV2' | 'v3Glass' | 'v3RegionExtrusion' | 'v3ShipPreview' | 'v3PortTwin' | 'v3TradeBI' | 'v3Mobile', boolean>;

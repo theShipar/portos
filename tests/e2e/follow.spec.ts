@@ -1,3 +1,4 @@
+import { selectOption } from './selectOption';
 import { expect, test, type Page } from '@playwright/test';
 import { flightDone, globeReady, open } from './helpers';
 
@@ -37,7 +38,7 @@ test.describe('Scenario clock and follow camera (specs 09–10)', () => {
     await expect.poll(() => offCentre(page), { timeout: 5_000 }).toBeLessThan(24);
 
     for (const rate of [1, 10, 100]) {
-      await page.getByTestId('replay-rate').selectOption(String(rate));
+      await selectOption(page, page.getByTestId('replay-rate'), String(rate));
       const before = await page.evaluate(() => window.__portos!.vesselPose('VSL-0047')!);
       if (!(await page.evaluate(() => window.__portos!.clock().mode === 'playing'))) await page.getByTestId('replay-play').click();
       const ratio = await measureRatio(page, 1200);
@@ -94,7 +95,7 @@ test.describe('Scenario clock and follow camera (specs 09–10)', () => {
     // Park 40 scenario seconds before the end and play at 100×: it stops on the last instant.
     await rail.getByTestId('replay-scrubber').focus();
     await page.keyboard.press('End');
-    await rail.getByTestId('replay-rate').selectOption('100');
+    await selectOption(page, rail.getByTestId('replay-rate'), '100');
     await rail.getByTestId('replay-step-back').click();
     await rail.getByTestId('replay-play').click();
     await expect.poll(() => page.evaluate(() => window.__portos!.clock().mode), { timeout: 8_000 }).toBe('paused');

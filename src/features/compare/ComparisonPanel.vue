@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppSelect from '@/components/ui/AppSelect.vue';
 import { computed, ref, useId, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { downloadJson } from '@/core/download';
@@ -193,9 +194,9 @@ function backToCase() {
 
       <div class="form-row">
         <label class="field" :for="ids.assignee">Follow-up task goes to
-          <select :id="ids.assignee" v-model="followUp" class="control">
+          <AppSelect :id="ids.assignee" v-model="followUp" class="control">
             <option v-for="u in assignees" :key="u.userId" :value="u.userId">{{ u.displayName }} · {{ u.title }}</option>
-          </select>
+          </AppSelect>
         </label>
       </div>
       <p v-if="!canPropose.ok" class="form-hint">{{ canPropose.reason }}</p>

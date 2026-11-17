@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import AppSelect from '@/components/ui/AppSelect.vue';
 import { computed, ref } from 'vue';
 import type { StowagePlan } from '@/core/cargoTypes';
 import { CARGO_DISCLOSURE, type BaySection, type CargoSummaryModel, type CompartmentDetailModel, type SlotDetailModel } from '@/selectors/vesselCargo';
 import { CARGO_SWATCHES } from '@/spatial/scenes/VesselWorkshopScene';
-import DetailCard from '@/components/ui/DetailCard.vue';
-import FieldList from '@/components/ui/FieldList.vue';
-import StatusChip from '@/components/ui/StatusChip.vue';
+import CargoDetail from './CargoDetail.vue';
 
 /** Cargo summary, bay/row/tier (or hold) picker and the manifest card of the focused slot (V3 spec 04/04, 05). */
 const props = defineProps<{
+  hideDetail?: boolean;
   summary: CargoSummaryModel;
   plan: StowagePlan;
   section: BaySection | null;
@@ -88,16 +88,16 @@ function onGridKey(e: KeyboardEvent, li: number, ci: number) {
       <div class="cargo__pickers">
         <label>
           <span class="micro-label">Hold</span>
-          <select data-testid="cargo-hold" :value="hold ?? ''" @change="emit('hold', ($event.target as HTMLSelectElement).value ? Number(($event.target as HTMLSelectElement).value) : null)">
+          <AppSelect data-testid="cargo-hold" :value="hold ?? ''" @change="emit('hold', ($event.target as HTMLSelectElement).value ? Number(($event.target as HTMLSelectElement).value) : null)">
             <option value="">All holds</option>
             <option v-for="h in holdOptions(summary.holdCount)" :key="h" :value="h">Hold {{ h }}</option>
-          </select>
+          </AppSelect>
         </label>
         <label>
           <span class="micro-label">Bay</span>
-          <select data-testid="cargo-bay" :value="bay ?? ''" @change="emit('bay', Number(($event.target as HTMLSelectElement).value))">
+          <AppSelect data-testid="cargo-bay" :value="bay ?? ''" @change="emit('bay', Number(($event.target as HTMLSelectElement).value))">
             <option v-for="b in plan.grid.bays" :key="b" :value="b">Bay {{ pad(b) }}</option>
-          </select>
+          </AppSelect>
         </label>
       </div>
       <div v-if="section" ref="grid" class="bay" :style="{ '--rows': section.rows.length }" role="grid" :aria-label="section.ariaLabel" data-testid="cargo-bay-grid">
@@ -141,20 +141,7 @@ function onGridKey(e: KeyboardEvent, li: number, ci: number) {
       </li>
     </ul>
 
-    <div v-if="detail" class="cargo__detail" data-testid="cargo-detail" :data-focus="focus">
-      <p class="cargo__slot mono">{{ detail.label }}<template v-if="detail.kind === 'slot'"> · Hold {{ detail.hold }}</template></p>
-      <FieldList v-if="detail.kind === 'compartment'" :fields="detail.fields" />
-      <DetailCard v-if="detail.manifest" :title="detail.manifest.title" :eyebrow="detail.manifest.eyebrow" :caption="detail.manifest.caption" selected data-testid="cargo-manifest">
-        <template v-if="detail.manifest.chips.length" #status>
-          <StatusChip v-for="ch in detail.manifest.chips" :key="ch.label" :status="ch" dense />
-        </template>
-        <p class="cargo__where" data-testid="cargo-location">{{ detail.manifest.locationText }}</p>
-        <p v-if="detail.manifest.nextText" class="cargo__next">Next: {{ detail.manifest.nextText }}</p>
-        <FieldList :fields="detail.manifest.fields" />
-      </DetailCard>
-      <p v-else class="empty" data-testid="cargo-empty-slot">Empty slot at this time.</p>
-      <button type="button" class="btn btn--sm" @click="emit('focus', null)">Clear selection</button>
-    </div>
+    <CargoDetail v-if="!hideDetail" :detail="detail" :focus="focus" @focus="emit('focus', $event)" />
     <p class="cargo__disclosure">{{ CARGO_DISCLOSURE }}</p>
   </section>
 </template>

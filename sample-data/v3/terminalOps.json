@@ -1,0 +1,1199 @@
+{
+  "version": "3.2",
+  "window": {
+    "minUtc": "2026-11-05T12:00:00Z",
+    "maxUtc": "2026-11-12T12:00:00Z"
+  },
+  "terminalTypes": {
+    "TRM-DLC": "lng",
+    "TRM-GOA": "container",
+    "TRM-RTM": "container",
+    "TRM-SIN-C": "container",
+    "TRM-SIN-E": "container",
+    "TRM-SIN-W": "container",
+    "TRM-SOU": "roro",
+    "TRM-SSZ": "dry_bulk"
+  },
+  "layouts": [
+    {
+      "portId": "PRT-SSZ",
+      "detail": "procedural",
+      "cityId": "CTY-SSZ",
+      "bounds": {
+        "west": -46.3805,
+        "south": -24.0219,
+        "east": -46.2205,
+        "north": -23.9019
+      },
+      "terminals": [
+        {
+          "terminalId": "TRM-SSZ",
+          "name": "Santos Demo Grain Terminal",
+          "terminalType": "dry_bulk",
+          "quayBearingDeg": 154,
+          "quayLine": [
+            {
+              "lon": -46.302082,
+              "lat": -23.958922
+            },
+            {
+              "lon": -46.298919,
+              "lat": -23.964922
+            }
+          ],
+          "landSide": "west",
+          "yardDepthMeters": 420,
+          "jettyOffsetMeters": 0,
+          "yardContainers": 0,
+          "berths": [
+            {
+              "berthId": "BRH-SSZ-1",
+              "center": {
+                "lon": -46.302082,
+                "lat": -23.958922
+              },
+              "quayBearingDeg": 154,
+              "lengthMeters": 280,
+              "depthMeters": 15.0,
+              "craneCount": 0,
+              "constraintsValidated": false
+            },
+            {
+              "berthId": "BRH-SSZ-2",
+              "center": {
+                "lon": -46.298919,
+                "lat": -23.964922
+              },
+              "quayBearingDeg": 154,
+              "lengthMeters": 280,
+              "depthMeters": 15.0,
+              "craneCount": 0,
+              "constraintsValidated": false
+            }
+          ]
+        }
+      ],
+      "anchorages": [
+        {
+          "anchorageId": "ANC-SSZ",
+          "name": "Santos Demo Anchorage",
+          "polygon": [
+            {
+              "lon": -46.12,
+              "lat": -24.06
+            },
+            {
+              "lon": -46.133369,
+              "lat": -24.027084
+            },
+            {
+              "lon": -46.168369,
+              "lat": -24.006741
+            },
+            {
+              "lon": -46.211631,
+              "lat": -24.006741
+            },
+            {
+              "lon": -46.246631,
+              "lat": -24.027084
+            },
+            {
+              "lon": -46.26,
+              "lat": -24.06
+            },
+            {
+              "lon": -46.246631,
+              "lat": -24.092916
+            },
+            {
+              "lon": -46.211631,
+              "lat": -24.113259
+            },
+            {
+              "lon": -46.168369,
+              "lat": -24.113259
+            },
+            {
+              "lon": -46.133369,
+              "lat": -24.092916
+            }
+          ],
+          "usage": "waiting"
+        }
+      ],
+      "pilotBoardingPlace": {
+        "lon": -46.3,
+        "lat": -24.03
+      },
+      "sourceType": "synthetic-illustrative-layout-not-for-navigation"
+    },
+    {
+      "portId": "PRT-DLC",
+      "detail": "procedural",
+      "cityId": "CTY-DLC",
+      "bounds": {
+        "west": 121.6263,
+        "south": 38.8364,
+        "east": 121.7863,
+        "north": 38.9564
+      },
+      "terminals": [
+        {
+          "terminalId": "TRM-DLC",
+          "name": "Dalian Demo LNG Terminal",
+          "terminalType": "lng",
+          "quayBearingDeg": 160,
+          "quayLine": [
+            {
+              "lon": 121.703928,
+              "lat": 38.90139
+            },
+            {
+              "lon": 121.708628,
+              "lat": 38.89139
+            }
+          ],
+          "landSide": "west",
+          "yardDepthMeters": 520,
+          "jettyOffsetMeters": 450,
+          "yardContainers": 0,
+          "berths": [
+            {
+              "berthId": "BRH-DLC-1",
+              "center": {
+                "lon": 121.703928,
+                "lat": 38.90139
+              },
+              "quayBearingDeg": 160,
+              "lengthMeters": 340,
+              "depthMeters": 15.5,
+              "craneCount": 0,
+              "constraintsValidated": false
+            },
+            {
+              "berthId": "BRH-DLC-2",
+              "center": {
+                "lon": 121.708628,
+                "lat": 38.89139
+              },
+              "quayBearingDeg": 160,
+              "lengthMeters": 340,
+              "depthMeters": 15.5,
+              "craneCount": 0,
+              "constraintsValidated": false
+            }
+          ]
+        }
+      ],
+      "anchorages": [
+        {
+          "anchorageId": "ANC-DLC",
+          "name": "Dalian Demo Anchorage",
+          "polygon": [
+            {
+              "lon": 121.83,
+              "lat": 38.79
+            },
+            {
+              "lon": 121.816631,
+              "lat": 38.822916
+            },
+            {
+              "lon": 121.781631,
+              "lat": 38.843259
+            },
+            {
+              "lon": 121.738369,
+              "lat": 38.843259
+            },
+            {
+              "lon": 121.703369,
+              "lat": 38.822916
+            },
+            {
+              "lon": 121.69,
+              "lat": 38.79
+            },
+            {
+              "lon": 121.703369,
+              "lat": 38.757084
+            },
+            {
+              "lon": 121.738369,
+              "lat": 38.736741
+            },
+            {
+              "lon": 121.781631,
+              "lat": 38.736741
+            },
+            {
+              "lon": 121.816631,
+              "lat": 38.757084
+            }
+          ],
+          "usage": "waiting"
+        }
+      ],
+      "pilotBoardingPlace": {
+        "lon": 121.69,
+        "lat": 38.85
+      },
+      "sourceType": "synthetic-illustrative-layout-not-for-navigation"
+    },
+    {
+      "portId": "PRT-SOU",
+      "detail": "procedural",
+      "cityId": "CTY-SOU",
+      "bounds": {
+        "west": -1.4791,
+        "south": 50.8201,
+        "east": -1.3191,
+        "north": 50.9401
+      },
+      "terminals": [
+        {
+          "terminalId": "TRM-SOU",
+          "name": "Southampton Demo Vehicle Terminal",
+          "terminalType": "roro",
+          "quayBearingDeg": 139,
+          "quayLine": [
+            {
+              "lon": -1.403264,
+              "lat": 50.883118
+            },
+            {
+              "lon": -1.395023,
+              "lat": 50.877118
+            }
+          ],
+          "landSide": "west",
+          "yardDepthMeters": 380,
+          "jettyOffsetMeters": 0,
+          "yardContainers": 0,
+          "berths": [
+            {
+              "berthId": "BRH-SOU-1",
+              "center": {
+                "lon": -1.403264,
+                "lat": 50.883118
+              },
+              "quayBearingDeg": 139,
+              "lengthMeters": 240,
+              "depthMeters": 11.5,
+              "craneCount": 0,
+              "constraintsValidated": false
+            },
+            {
+              "berthId": "BRH-SOU-2",
+              "center": {
+                "lon": -1.395023,
+                "lat": 50.877118
+              },
+              "quayBearingDeg": 139,
+              "lengthMeters": 240,
+              "depthMeters": 11.5,
+              "craneCount": 0,
+              "constraintsValidated": false
+            }
+          ]
+        }
+      ],
+      "anchorages": [
+        {
+          "anchorageId": "ANC-SOU",
+          "name": "Southampton Demo Anchorage",
+          "polygon": [
+            {
+              "lon": -1.19,
+              "lat": 50.78
+            },
+            {
+              "lon": -1.203369,
+              "lat": 50.812916
+            },
+            {
+              "lon": -1.238369,
+              "lat": 50.833259
+            },
+            {
+              "lon": -1.281631,
+              "lat": 50.833259
+            },
+            {
+              "lon": -1.316631,
+              "lat": 50.812916
+            },
+            {
+              "lon": -1.33,
+              "lat": 50.78
+            },
+            {
+              "lon": -1.316631,
+              "lat": 50.747084
+            },
+            {
+              "lon": -1.281631,
+              "lat": 50.726741
+            },
+            {
+              "lon": -1.238369,
+              "lat": 50.726741
+            },
+            {
+              "lon": -1.203369,
+              "lat": 50.747084
+            }
+          ],
+          "usage": "waiting"
+        }
+      ],
+      "pilotBoardingPlace": {
+        "lon": -1.33,
+        "lat": 50.84
+      },
+      "sourceType": "synthetic-illustrative-layout-not-for-navigation"
+    }
+  ],
+  "berthCalls": [
+    {
+      "bookingId": "BKG-V3-001",
+      "portCallId": "BCL-SSZ-0306",
+      "vesselId": "VSL-0306",
+      "berthId": "BRH-SSZ-1",
+      "terminalId": "TRM-SSZ",
+      "status": "at_berth",
+      "bufferMinutes": 60,
+      "milestones": [
+        {
+          "eventType": "ARRIVAL",
+          "location": "BERTH",
+          "classifier": "ACT",
+          "atUtc": "2026-11-08T22:00:00Z",
+          "recordedAtUtc": "2026-11-08T22:00:00Z"
+        },
+        {
+          "eventType": "DEPARTURE",
+          "location": "BERTH",
+          "classifier": "PLN",
+          "atUtc": "2026-11-10T16:00:00Z",
+          "recordedAtUtc": "2026-11-09T00:00:00Z"
+        },
+        {
+          "eventType": "DEPARTURE",
+          "location": "BERTH",
+          "classifier": "EST",
+          "atUtc": "2026-11-10T16:00:00Z",
+          "recordedAtUtc": "2026-11-09T11:40:00Z"
+        }
+      ]
+    },
+    {
+      "bookingId": "BKG-V3-002",
+      "portCallId": "BCL-DLC-0496",
+      "vesselId": "VSL-0496",
+      "berthId": "BRH-DLC-1",
+      "terminalId": "TRM-DLC",
+      "status": "at_berth",
+      "bufferMinutes": 60,
+      "milestones": [
+        {
+          "eventType": "ARRIVAL",
+          "location": "BERTH",
+          "classifier": "ACT",
+          "atUtc": "2026-11-08T23:30:00Z",
+          "recordedAtUtc": "2026-11-08T23:30:00Z"
+        },
+        {
+          "eventType": "DEPARTURE",
+          "location": "BERTH",
+          "classifier": "PLN",
+          "atUtc": "2026-11-10T02:00:00Z",
+          "recordedAtUtc": "2026-11-09T01:30:00Z"
+        },
+        {
+          "eventType": "DEPARTURE",
+          "location": "BERTH",
+          "classifier": "EST",
+          "atUtc": "2026-11-10T02:00:00Z",
+          "recordedAtUtc": "2026-11-09T11:40:00Z"
+        }
+      ]
+    },
+    {
+      "bookingId": "BKG-V3-003",
+      "portCallId": "BCL-SOU-0432",
+      "vesselId": "VSL-0432",
+      "berthId": "BRH-SOU-1",
+      "terminalId": "TRM-SOU",
+      "status": "at_berth",
+      "bufferMinutes": 60,
+      "milestones": [
+        {
+          "eventType": "ARRIVAL",
+          "location": "BERTH",
+          "classifier": "ACT",
+          "atUtc": "2026-11-08T23:00:00Z",
+          "recordedAtUtc": "2026-11-08T23:00:00Z"
+        },
+        {
+          "eventType": "DEPARTURE",
+          "location": "BERTH",
+          "classifier": "PLN",
+          "atUtc": "2026-11-09T19:00:00Z",
+          "recordedAtUtc": "2026-11-09T01:00:00Z"
+        },
+        {
+          "eventType": "DEPARTURE",
+          "location": "BERTH",
+          "classifier": "EST",
+          "atUtc": "2026-11-09T19:00:00Z",
+          "recordedAtUtc": "2026-11-09T11:40:00Z"
+        }
+      ]
+    }
+  ],
+  "equipment": [
+    {
+      "equipmentId": "QC-SIN-W3-1",
+      "terminalId": "TRM-SIN-W",
+      "berthId": "BRH-SIN-W-3",
+      "kind": "sts_crane",
+      "label": "Quay crane W3-1",
+      "ratedCapacity": 30,
+      "capacityUnit": "moves/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "QC-SIN-W3-2",
+      "terminalId": "TRM-SIN-W",
+      "berthId": "BRH-SIN-W-3",
+      "kind": "sts_crane",
+      "label": "Quay crane W3-2",
+      "ratedCapacity": 30,
+      "capacityUnit": "moves/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "QC-SIN-W3-3",
+      "terminalId": "TRM-SIN-W",
+      "berthId": "BRH-SIN-W-3",
+      "kind": "sts_crane",
+      "label": "Quay crane W3-3",
+      "ratedCapacity": 30,
+      "capacityUnit": "moves/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "QC-SIN-W3-4",
+      "terminalId": "TRM-SIN-W",
+      "berthId": "BRH-SIN-W-3",
+      "kind": "sts_crane",
+      "label": "Quay crane W3-4",
+      "ratedCapacity": 30,
+      "capacityUnit": "moves/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "SL-SSZ-1",
+      "terminalId": "TRM-SSZ",
+      "berthId": "BRH-SSZ-1",
+      "kind": "ship_loader",
+      "label": "Ship loader 1",
+      "ratedCapacity": 2500,
+      "capacityUnit": "t/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "SL-SSZ-2",
+      "terminalId": "TRM-SSZ",
+      "berthId": "BRH-SSZ-2",
+      "kind": "ship_loader",
+      "label": "Ship loader 2",
+      "ratedCapacity": 2500,
+      "capacityUnit": "t/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "CV-SSZ-1",
+      "terminalId": "TRM-SSZ",
+      "berthId": null,
+      "kind": "conveyor",
+      "label": "Quay conveyor",
+      "ratedCapacity": 3000,
+      "capacityUnit": "t/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "CV-SSZ-2",
+      "terminalId": "TRM-SSZ",
+      "berthId": null,
+      "kind": "conveyor",
+      "label": "Yard conveyor",
+      "ratedCapacity": 3000,
+      "capacityUnit": "t/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "SP-SSZ-A",
+      "terminalId": "TRM-SSZ",
+      "berthId": null,
+      "kind": "stockpile",
+      "label": "Stockpile A (soybeans)",
+      "ratedCapacity": 60000,
+      "capacityUnit": "t",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "SP-SSZ-B",
+      "terminalId": "TRM-SSZ",
+      "berthId": null,
+      "kind": "stockpile",
+      "label": "Stockpile B (soybeans)",
+      "ratedCapacity": 60000,
+      "capacityUnit": "t",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "SI-SSZ-1",
+      "terminalId": "TRM-SSZ",
+      "berthId": null,
+      "kind": "silo",
+      "label": "Silo row",
+      "ratedCapacity": null,
+      "capacityUnit": null,
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "LA-DLC-1A",
+      "terminalId": "TRM-DLC",
+      "berthId": "BRH-DLC-1",
+      "kind": "loading_arm",
+      "label": "Liquid arm 1A",
+      "ratedCapacity": 4000,
+      "capacityUnit": "m3/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "LA-DLC-1B",
+      "terminalId": "TRM-DLC",
+      "berthId": "BRH-DLC-1",
+      "kind": "loading_arm",
+      "label": "Liquid arm 1B",
+      "ratedCapacity": 4000,
+      "capacityUnit": "m3/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "LA-DLC-1C",
+      "terminalId": "TRM-DLC",
+      "berthId": "BRH-DLC-1",
+      "kind": "loading_arm",
+      "label": "Liquid arm 1C",
+      "ratedCapacity": 4000,
+      "capacityUnit": "m3/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "VA-DLC-1",
+      "terminalId": "TRM-DLC",
+      "berthId": "BRH-DLC-1",
+      "kind": "vapour_arm",
+      "label": "Vapour return arm 1",
+      "ratedCapacity": null,
+      "capacityUnit": null,
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "LA-DLC-2A",
+      "terminalId": "TRM-DLC",
+      "berthId": "BRH-DLC-2",
+      "kind": "loading_arm",
+      "label": "Liquid arm 2A",
+      "ratedCapacity": 4000,
+      "capacityUnit": "m3/h",
+      "maintenance": [
+        {
+          "startUtc": "2026-11-05T12:00:00Z",
+          "endUtc": "2026-11-12T12:00:00Z",
+          "reason": "Arm seal replacement (simulated maintenance window)"
+        }
+      ],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "LA-DLC-2B",
+      "terminalId": "TRM-DLC",
+      "berthId": "BRH-DLC-2",
+      "kind": "loading_arm",
+      "label": "Liquid arm 2B",
+      "ratedCapacity": 4000,
+      "capacityUnit": "m3/h",
+      "maintenance": [
+        {
+          "startUtc": "2026-11-05T12:00:00Z",
+          "endUtc": "2026-11-12T12:00:00Z",
+          "reason": "Arm seal replacement (simulated maintenance window)"
+        }
+      ],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "LA-DLC-2C",
+      "terminalId": "TRM-DLC",
+      "berthId": "BRH-DLC-2",
+      "kind": "loading_arm",
+      "label": "Liquid arm 2C",
+      "ratedCapacity": 4000,
+      "capacityUnit": "m3/h",
+      "maintenance": [
+        {
+          "startUtc": "2026-11-05T12:00:00Z",
+          "endUtc": "2026-11-12T12:00:00Z",
+          "reason": "Arm seal replacement (simulated maintenance window)"
+        }
+      ],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "PL-DLC-1",
+      "terminalId": "TRM-DLC",
+      "berthId": null,
+      "kind": "pipeline",
+      "label": "Jetty trestle pipeline",
+      "ratedCapacity": 12000,
+      "capacityUnit": "m3/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "TK-DLC-1",
+      "terminalId": "TRM-DLC",
+      "berthId": null,
+      "kind": "lng_tank",
+      "label": "LNG tank 1",
+      "ratedCapacity": 180000,
+      "capacityUnit": "m3",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "TK-DLC-2",
+      "terminalId": "TRM-DLC",
+      "berthId": null,
+      "kind": "lng_tank",
+      "label": "LNG tank 2",
+      "ratedCapacity": 180000,
+      "capacityUnit": "m3",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "RP-SOU-1",
+      "terminalId": "TRM-SOU",
+      "berthId": "BRH-SOU-1",
+      "kind": "ramp",
+      "label": "Linkspan ramp 1",
+      "ratedCapacity": 400,
+      "capacityUnit": "vehicles/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "RP-SOU-2",
+      "terminalId": "TRM-SOU",
+      "berthId": "BRH-SOU-2",
+      "kind": "ramp",
+      "label": "Linkspan ramp 2",
+      "ratedCapacity": 400,
+      "capacityUnit": "vehicles/h",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "LN-SOU-IMP",
+      "terminalId": "TRM-SOU",
+      "berthId": null,
+      "kind": "staging_lanes",
+      "label": "Import staging lanes",
+      "ratedCapacity": 1400,
+      "capacityUnit": "vehicles",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    },
+    {
+      "equipmentId": "LN-SOU-EXP",
+      "terminalId": "TRM-SOU",
+      "berthId": null,
+      "kind": "staging_lanes",
+      "label": "Export staging lanes",
+      "ratedCapacity": 1000,
+      "capacityUnit": "vehicles",
+      "maintenance": [],
+      "sourceType": "synthetic-terminal-equipment"
+    }
+  ],
+  "operations": [
+    {
+      "operationId": "OPS-SSZ-0306",
+      "bookingId": "BKG-V3-001",
+      "portCallId": "BCL-SSZ-0306",
+      "vesselId": "VSL-0306",
+      "berthId": "BRH-SSZ-1",
+      "terminalId": "TRM-SSZ",
+      "portId": "PRT-SSZ",
+      "terminalType": "dry_bulk",
+      "direction": "load",
+      "commodity": "soybeans",
+      "unit": "t",
+      "rateUnit": "t/h",
+      "segments": [
+        {
+          "startUtc": "2026-11-08T22:00:00Z",
+          "endUtc": "2026-11-08T23:30:00Z",
+          "status": "moored",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Initial draft survey and hatch opening"
+        },
+        {
+          "startUtc": "2026-11-08T23:30:00Z",
+          "endUtc": "2026-11-09T08:00:00Z",
+          "status": "transferring",
+          "ratePerHour": 1800,
+          "shoreStoreId": "SP-SSZ-A",
+          "note": null
+        },
+        {
+          "startUtc": "2026-11-09T08:00:00Z",
+          "endUtc": "2026-11-09T09:30:00Z",
+          "status": "paused",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Rain stop: hatches closed"
+        },
+        {
+          "startUtc": "2026-11-09T09:30:00Z",
+          "endUtc": "2026-11-09T21:00:00Z",
+          "status": "transferring",
+          "ratePerHour": 1800,
+          "shoreStoreId": "SP-SSZ-A",
+          "note": null
+        },
+        {
+          "startUtc": "2026-11-09T21:00:00Z",
+          "endUtc": "2026-11-10T08:00:00Z",
+          "status": "transferring",
+          "ratePerHour": 1800,
+          "shoreStoreId": "SP-SSZ-B",
+          "note": "Reclaim switched to stockpile B"
+        },
+        {
+          "startUtc": "2026-11-10T08:00:00Z",
+          "endUtc": "2026-11-10T16:00:00Z",
+          "status": "moored",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Trimming, final draft survey and documents"
+        }
+      ],
+      "shipCompartments": [
+        {
+          "compartmentId": "CMP-0306-H1",
+          "kind": "hold",
+          "label": "Hold 1",
+          "capacity": 13500,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0306-H2",
+          "kind": "hold",
+          "label": "Hold 2",
+          "capacity": 13500,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0306-H3",
+          "kind": "hold",
+          "label": "Hold 3",
+          "capacity": 13500,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0306-H4",
+          "kind": "hold",
+          "label": "Hold 4",
+          "capacity": 13500,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0306-H5",
+          "kind": "hold",
+          "label": "Hold 5",
+          "capacity": 13500,
+          "startQuantity": 0
+        }
+      ],
+      "shoreStores": [
+        {
+          "equipmentId": "SP-SSZ-A",
+          "startQuantity": 36000
+        },
+        {
+          "equipmentId": "SP-SSZ-B",
+          "startQuantity": 30000
+        }
+      ],
+      "equipmentIds": [
+        "SL-SSZ-1",
+        "CV-SSZ-1",
+        "CV-SSZ-2",
+        "SP-SSZ-A",
+        "SP-SSZ-B"
+      ],
+      "classifier": "EST",
+      "sourceType": "synthetic-terminal-operation"
+    },
+    {
+      "operationId": "OPS-DLC-0496",
+      "bookingId": "BKG-V3-002",
+      "portCallId": "BCL-DLC-0496",
+      "vesselId": "VSL-0496",
+      "berthId": "BRH-DLC-1",
+      "terminalId": "TRM-DLC",
+      "portId": "PRT-DLC",
+      "terminalType": "lng",
+      "direction": "discharge",
+      "commodity": "liquefied natural gas",
+      "unit": "m3",
+      "rateUnit": "m3/h",
+      "segments": [
+        {
+          "startUtc": "2026-11-08T23:30:00Z",
+          "endUtc": "2026-11-09T02:00:00Z",
+          "status": "moored",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Mooring, arm connection and leak test"
+        },
+        {
+          "startUtc": "2026-11-09T02:00:00Z",
+          "endUtc": "2026-11-09T03:00:00Z",
+          "status": "transferring",
+          "ratePerHour": 1500,
+          "shoreStoreId": "TK-DLC-1",
+          "note": "Cooldown at reduced rate"
+        },
+        {
+          "startUtc": "2026-11-09T03:00:00Z",
+          "endUtc": "2026-11-09T13:30:00Z",
+          "status": "transferring",
+          "ratePerHour": 11000,
+          "shoreStoreId": "TK-DLC-1",
+          "note": null
+        },
+        {
+          "startUtc": "2026-11-09T13:30:00Z",
+          "endUtc": "2026-11-09T13:50:00Z",
+          "status": "hazard",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Simulated gas-detector alarm check: transfer stopped"
+        },
+        {
+          "startUtc": "2026-11-09T13:50:00Z",
+          "endUtc": "2026-11-09T14:30:00Z",
+          "status": "paused",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Shore tank switchover"
+        },
+        {
+          "startUtc": "2026-11-09T14:30:00Z",
+          "endUtc": "2026-11-09T17:30:00Z",
+          "status": "transferring",
+          "ratePerHour": 11000,
+          "shoreStoreId": "TK-DLC-2",
+          "note": null
+        },
+        {
+          "startUtc": "2026-11-09T17:30:00Z",
+          "endUtc": "2026-11-09T19:00:00Z",
+          "status": "transferring",
+          "ratePerHour": 3000,
+          "shoreStoreId": "TK-DLC-2",
+          "note": "Ramp-down"
+        },
+        {
+          "startUtc": "2026-11-09T19:00:00Z",
+          "endUtc": "2026-11-10T02:00:00Z",
+          "status": "moored",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Arm purge, disconnection and documents"
+        }
+      ],
+      "shipCompartments": [
+        {
+          "compartmentId": "CMP-0496-T1",
+          "kind": "tank",
+          "label": "Tank 1",
+          "capacity": 43500,
+          "startQuantity": 42630
+        },
+        {
+          "compartmentId": "CMP-0496-T2",
+          "kind": "tank",
+          "label": "Tank 2",
+          "capacity": 43500,
+          "startQuantity": 42630
+        },
+        {
+          "compartmentId": "CMP-0496-T3",
+          "kind": "tank",
+          "label": "Tank 3",
+          "capacity": 43500,
+          "startQuantity": 42630
+        },
+        {
+          "compartmentId": "CMP-0496-T4",
+          "kind": "tank",
+          "label": "Tank 4",
+          "capacity": 43500,
+          "startQuantity": 42630
+        }
+      ],
+      "shoreStores": [
+        {
+          "equipmentId": "TK-DLC-1",
+          "startQuantity": 62000
+        },
+        {
+          "equipmentId": "TK-DLC-2",
+          "startQuantity": 41000
+        }
+      ],
+      "equipmentIds": [
+        "LA-DLC-1A",
+        "LA-DLC-1B",
+        "LA-DLC-1C",
+        "VA-DLC-1",
+        "PL-DLC-1",
+        "TK-DLC-1",
+        "TK-DLC-2"
+      ],
+      "classifier": "EST",
+      "sourceType": "synthetic-terminal-operation"
+    },
+    {
+      "operationId": "OPS-SOU-0432-D",
+      "bookingId": "BKG-V3-003",
+      "portCallId": "BCL-SOU-0432",
+      "vesselId": "VSL-0432",
+      "berthId": "BRH-SOU-1",
+      "terminalId": "TRM-SOU",
+      "portId": "PRT-SOU",
+      "terminalType": "roro",
+      "direction": "discharge",
+      "commodity": "passenger vehicles",
+      "unit": "vehicles",
+      "rateUnit": "vehicles/h",
+      "segments": [
+        {
+          "startUtc": "2026-11-08T23:00:00Z",
+          "endUtc": "2026-11-09T00:30:00Z",
+          "status": "moored",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Mooring and ramp lowering"
+        },
+        {
+          "startUtc": "2026-11-09T00:30:00Z",
+          "endUtc": "2026-11-09T05:30:00Z",
+          "status": "transferring",
+          "ratePerHour": 210,
+          "shoreStoreId": "LN-SOU-IMP",
+          "note": null
+        }
+      ],
+      "shipCompartments": [
+        {
+          "compartmentId": "CMP-0432-D1",
+          "kind": "deck",
+          "label": "Deck 1",
+          "capacity": 310,
+          "startQuantity": 175
+        },
+        {
+          "compartmentId": "CMP-0432-D2",
+          "kind": "deck",
+          "label": "Deck 2",
+          "capacity": 310,
+          "startQuantity": 175
+        },
+        {
+          "compartmentId": "CMP-0432-D3",
+          "kind": "deck",
+          "label": "Deck 3",
+          "capacity": 310,
+          "startQuantity": 175
+        },
+        {
+          "compartmentId": "CMP-0432-D4",
+          "kind": "deck",
+          "label": "Deck 4",
+          "capacity": 310,
+          "startQuantity": 175
+        },
+        {
+          "compartmentId": "CMP-0432-D5",
+          "kind": "deck",
+          "label": "Deck 5",
+          "capacity": 310,
+          "startQuantity": 175
+        },
+        {
+          "compartmentId": "CMP-0432-D6",
+          "kind": "deck",
+          "label": "Deck 6",
+          "capacity": 310,
+          "startQuantity": 175
+        }
+      ],
+      "shoreStores": [
+        {
+          "equipmentId": "LN-SOU-IMP",
+          "startQuantity": 140
+        }
+      ],
+      "equipmentIds": [
+        "RP-SOU-1",
+        "LN-SOU-IMP"
+      ],
+      "classifier": "EST",
+      "sourceType": "synthetic-terminal-operation"
+    },
+    {
+      "operationId": "OPS-SOU-0432-L",
+      "bookingId": "BKG-V3-003",
+      "portCallId": "BCL-SOU-0432",
+      "vesselId": "VSL-0432",
+      "berthId": "BRH-SOU-1",
+      "terminalId": "TRM-SOU",
+      "portId": "PRT-SOU",
+      "terminalType": "roro",
+      "direction": "load",
+      "commodity": "passenger vehicles",
+      "unit": "vehicles",
+      "rateUnit": "vehicles/h",
+      "segments": [
+        {
+          "startUtc": "2026-11-09T05:30:00Z",
+          "endUtc": "2026-11-09T07:00:00Z",
+          "status": "paused",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Deck lashing check and lane change"
+        },
+        {
+          "startUtc": "2026-11-09T07:00:00Z",
+          "endUtc": "2026-11-09T15:00:00Z",
+          "status": "transferring",
+          "ratePerHour": 110,
+          "shoreStoreId": "LN-SOU-EXP",
+          "note": null
+        },
+        {
+          "startUtc": "2026-11-09T15:00:00Z",
+          "endUtc": "2026-11-09T19:00:00Z",
+          "status": "moored",
+          "ratePerHour": 0,
+          "shoreStoreId": null,
+          "note": "Lashing, ramp raising and departure checks"
+        }
+      ],
+      "shipCompartments": [
+        {
+          "compartmentId": "CMP-0432-D1",
+          "kind": "deck",
+          "label": "Deck 1",
+          "capacity": 310,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0432-D2",
+          "kind": "deck",
+          "label": "Deck 2",
+          "capacity": 310,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0432-D3",
+          "kind": "deck",
+          "label": "Deck 3",
+          "capacity": 310,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0432-D4",
+          "kind": "deck",
+          "label": "Deck 4",
+          "capacity": 310,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0432-D5",
+          "kind": "deck",
+          "label": "Deck 5",
+          "capacity": 310,
+          "startQuantity": 0
+        },
+        {
+          "compartmentId": "CMP-0432-D6",
+          "kind": "deck",
+          "label": "Deck 6",
+          "capacity": 310,
+          "startQuantity": 0
+        }
+      ],
+      "shoreStores": [
+        {
+          "equipmentId": "LN-SOU-EXP",
+          "startQuantity": 880
+        }
+      ],
+      "equipmentIds": [
+        "RP-SOU-1",
+        "LN-SOU-EXP"
+      ],
+      "classifier": "EST",
+      "sourceType": "synthetic-terminal-operation"
+    }
+  ],
+  "hazardZones": [
+    {
+      "zoneId": "HZ-DLC-1",
+      "terminalId": "TRM-DLC",
+      "berthId": "BRH-DLC-1",
+      "radiusMeters": 250,
+      "label": "Illustrative safety exclusion zone · Simulated",
+      "sourceType": "synthetic-illustrative-zone"
+    }
+  ],
+  "disclosure": "Simulated terminal operations. Not a terminal operating system, safety system or control record."
+}

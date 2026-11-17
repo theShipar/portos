@@ -6416,8 +6416,8 @@
     "navStatus": "moored",
     "currentVoyageId": null,
     "lastKnownPosition": {
-      "lon": -46.203259,
-      "lat": -24.078358
+      "lon": -46.301892,
+      "lat": -23.958837
     },
     "sogKn": 0.0,
     "cogDeg": null,
@@ -9062,8 +9062,8 @@
     "navStatus": "moored",
     "currentVoyageId": null,
     "lastKnownPosition": {
-      "lon": -1.310813,
-      "lat": 50.822701
+      "lon": -1.403065,
+      "lat": 50.883227
     },
     "sogKn": 0.0,
     "cogDeg": null,
@@ -10406,8 +10406,8 @@
     "navStatus": "moored",
     "currentVoyageId": null,
     "lastKnownPosition": {
-      "lon": 121.758009,
-      "lat": 38.814442
+      "lon": 121.704221,
+      "lat": 38.901473
     },
     "sogKn": 0.0,
     "cogDeg": null,

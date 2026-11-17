@@ -98,6 +98,7 @@ export function useRouteSync() {
     }
     view.setScope(scope);
     view.select(loc.selection);
+    applyEquipment(c, scope, r.query.equip);
 
     const requested = loc.view;
     view.viewMode = requested && supportsViewMode(scope, requested) ? requested : defaultViewMode(scope, twinPredicate(c));
@@ -105,6 +106,16 @@ export function useRouteSync() {
     view.comparing = loc.panel === 'compare' && loc.selection?.kind === 'voyage';
     if (view.comparing) clock.pause();
     if (loc.panel === 'replay') view.replayOpen = true;
+  }
+
+  /** `equip=` focuses a typed-twin equipment item of the port in scope, and its berth. */
+  function applyEquipment(c: Catalog, scope: Scope, raw: unknown) {
+    const id = typeof raw === 'string' && raw ? raw : null;
+    const e = id ? c.terminalOps?.equipment.get(id) : undefined;
+    const here = !!e && scope.level === 'port' && c.byId.terminal.get(e.terminalId)?.portId === scope.portId;
+    if (id && !here && view.equipmentId !== id) notices.push(`Equipment ${id} is not in this port's simulated terminal data.`, 'warning', { timeoutMs: 8000 });
+    view.selectEquipment(here ? e!.equipmentId : null);
+    if (here && e!.berthId) view.selectBerth(e!.berthId);
   }
 
   function applyTime(loc: OpsLocation) {
@@ -230,6 +241,13 @@ export function useNavigation() {
         if (patch.hold !== undefined) patch.hold ? (q.hold = String(patch.hold)) : delete q.hold;
         if (patch.cam !== undefined) patch.cam ? (q.cam = patch.cam) : delete q.cam;
         if (patch.explode !== undefined) patch.explode ? (q.explode = '1') : delete q.explode;
+      });
+    },
+    /** Typed twin equipment focus (`equip`); replaces history like the other in-scene inspection keys. */
+    setEquipment(id: string | null) {
+      return replaceQuery((q) => {
+        if (id) q.equip = id;
+        else delete q.equip;
       });
     },
     setViewMode(mode: ViewMode) {

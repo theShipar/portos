@@ -222,6 +222,152 @@ def loc_key(loc):
     return None
 
 
+TERMINAL_TYPES = {'container', 'dry_bulk', 'lng', 'roro'}
+TERMINAL_VESSEL_TYPE = {'dry_bulk': 'Bulk carrier', 'lng': 'LNG carrier', 'roro': 'RoRo'}
+TERMINAL_UNITS = {'dry_bulk': ('t', 't/h'), 'lng': ('m3', 'm3/h'), 'roro': ('vehicles', 'vehicles/h')}
+OP_STATUS = {'moored', 'transferring', 'paused', 'hazard'}
+EQUIPMENT_KINDS = {'sts_crane', 'ship_loader', 'conveyor', 'stockpile', 'silo', 'loading_arm', 'vapour_arm', 'pipeline', 'lng_tank', 'ramp', 'staging_lanes'}
+
+
+def offset_m(p, bearing, metres):
+    import math
+    r = 6371008.8
+    b = math.radians(bearing)
+    return {'lon': p['lon'] + math.degrees(metres * math.sin(b) / (r * math.cos(math.radians(p['lat'])))),
+            'lat': p['lat'] + math.degrees(metres * math.cos(b) / r)}
+
+
+def validate_v3_terminals(root: Path, by, manifest, window, vessel_samples):
+    """Typed terminal module (sample-data/v3/terminalOps.json)."""
+    errors = []
+    try:
+        m = json.loads((root / 'v3' / 'terminalOps.json').read_text('utf-8'))
+        v2_bookings = json.loads((root / 'v2' / 'berthSchedule.json').read_text('utf-8'))
+        v2_layouts = json.loads((root / 'v2' / 'portLayouts.json').read_text('utf-8'))
+        transfers = json.loads((root / 'v3' / 'transferEvents.json').read_text('utf-8'))
+    except Exception as e:
+        return [f'v3/terminalOps: {e}']
+    w_min, w_max = window
+    meta = manifest.get('v3Terminals') or {}
+    if meta.get('version') != m.get('version') or any(meta.get('counts', {}).get(k) != len(m.get(k, [])) for k in ('layouts', 'berthCalls', 'equipment', 'operations', 'hazardZones')):
+        errors.append('v3/terminalOps: version or counts differ from manifest.v3Terminals')
+    types = m.get('terminalTypes', {})
+    for l in v2_layouts:
+        for t in l['terminals']:
+            if types.get(t['terminalId']) != 'container':
+                errors.append(f'v3/terminalOps: V2 layout terminal {t["terminalId"]} must be typed container')
+    layout_berths = {}
+    for l in m['layouts']:
+        if l['portId'] in {x['portId'] for x in v2_layouts} or l['portId'] not in by['ports']:
+            errors.append(f'v3/terminalOps: layout {l["portId"]} must be a new port with a base record')
+        for t in l['terminals']:
+            tt = t.get('terminalType')
+            if tt not in TERMINAL_TYPES or types.get(t['terminalId']) != tt or tt == 'container':
+                errors.append(f'v3/terminalOps: terminal {t["terminalId"]} needs a non-container type that matches terminalTypes')
+            base = by['terminals'].get(t['terminalId'])
+            if not base or base['portId'] != l['portId'] or [b['berthId'] for b in t['berths']] != base['berthIds']:
+                errors.append(f'v3/terminalOps: terminal {t["terminalId"]} berths must equal the base terminal record')
+            for b in t['berths']:
+                rec = by['berths'].get(b['berthId'])
+                if not rec or rec['location'] != b['center'] or b['craneCount'] != 0 or b['constraintsValidated'] is not False:
+                    errors.append(f'v3/terminalOps: berth {b["berthId"]} must sit at the base berth location, without STS cranes')
+                layout_berths[b['berthId']] = (t, b)
+    calls = {}
+    occupancy = defaultdict(list)
+    for bk in v2_bookings:
+        ms = {(x['eventType'], x['classifier']): parse(x['atUtc']) for x in bk['milestones']}
+        a, d = ms.get(('ARRIVAL', 'ACT')) or ms.get(('ARRIVAL', 'PLN')), ms.get(('DEPARTURE', 'PLN'))
+        if bk.get('berthId') and a and d:
+            occupancy[bk['berthId']].append((a, d, bk['vesselId']))
+    for c in m['berthCalls']:
+        tb = layout_berths.get(c['berthId'])
+        v = by['vessels'].get(c['vesselId'])
+        ms = {(x['eventType'], x['classifier']): parse(x['atUtc']) for x in c['milestones']}
+        a, d = ms.get(('ARRIVAL', 'ACT')), ms.get(('DEPARTURE', 'PLN'))
+        if not tb or not v or c['status'] != 'at_berth' or not a or not d or not (w_min <= a < d <= w_max):
+            errors.append(f'v3/terminalOps {c["bookingId"]}: call needs a typed berth, a vessel, ACT arrival < PLN departure inside the window')
+            continue
+        if TERMINAL_VESSEL_TYPE.get(tb[0]['terminalType']) != v['vesselType']:
+            errors.append(f'v3/terminalOps {c["bookingId"]}: {v["vesselType"]} cannot call at a {tb[0]["terminalType"]} terminal')
+        if v['lengthMeters'] > tb[1]['lengthMeters'] + 40:
+            errors.append(f'v3/terminalOps {c["bookingId"]}: {v["lengthMeters"]} m vessel exceeds berth length envelope')
+        for a2, d2, other in occupancy[c['berthId']]:
+            if a < d2 and a2 < d:
+                errors.append(f'v3/terminalOps {c["bookingId"]}: berth {c["berthId"]} also holds {other}')
+        occupancy[c['berthId']].append((a, d, c['vesselId']))
+        if any(bk['vesselId'] == c['vesselId'] for bk in v2_bookings):
+            errors.append(f'v3/terminalOps {c["bookingId"]}: vessel {c["vesselId"]} also has a V2 booking')
+        calls[c['bookingId']] = (c, a, d)
+        # Alongside fixes: every base sample inside the call sits at the moored pose (beam / 2 + 4 m fenders).
+        t, b = tb
+        pose = offset_m(b['center'], (t['quayBearingDeg'] - 90) % 360, v['beamMeters'] / 2 + 4)
+        for s in vessel_samples.get(c['vesselId'], []):
+            ts = parse(s['timestampUtc'])
+            if a <= ts <= d and (abs(s['location']['lon'] - pose['lon']) > 2e-5 or abs(s['location']['lat'] - pose['lat']) > 2e-5 or s['navStatus'] != 'moored'):
+                errors.append(f'v3/terminalOps {c["bookingId"]}: {s["positionId"]} is not at the alongside pose')
+                break
+    equipment = {e['equipmentId']: e for e in m['equipment']}
+    if len(equipment) != len(m['equipment']):
+        errors.append('v3/terminalOps: duplicate equipmentId')
+    for e in m['equipment']:
+        if e['kind'] not in EQUIPMENT_KINDS or e['terminalId'] not in by['terminals'] or (e['berthId'] and by['berths'].get(e['berthId'], {}).get('terminalId') != e['terminalId']):
+            errors.append(f'v3/terminalOps {e["equipmentId"]}: unknown kind or terminal/berth mismatch')
+    for tr in transfers:
+        crane = tr.get('craneId')
+        if crane and (equipment.get(crane, {}).get('kind') != 'sts_crane' or equipment[crane]['berthId'] != tr.get('berthId')):
+            errors.append(f'v3/terminalOps: transfer {tr["transferEventId"]} crane {crane} is not an STS crane at {tr.get("berthId")}')
+            break
+    by_berth = defaultdict(list)
+    for o in m['operations']:
+        ctx = calls.get(o['bookingId'])
+        tag = f'v3/terminalOps {o["operationId"]}'
+        if not ctx or ctx[0]['vesselId'] != o['vesselId'] or ctx[0]['berthId'] != o['berthId']:
+            errors.append(f'{tag}: must belong to a berth call with the same vessel and berth')
+            continue
+        c, a, d = ctx
+        tt = layout_berths[o['berthId']][0]['terminalType']
+        if o['terminalType'] != tt or (o['unit'], o['rateUnit']) != TERMINAL_UNITS[tt]:
+            errors.append(f'{tag}: {o["unit"]} and {o["rateUnit"]} are not the units of a {tt} terminal')
+        segs = o['segments']
+        times = [(parse(s['startUtc']), parse(s['endUtc'])) for s in segs]
+        if not segs or times[0][0] < a or times[-1][1] > d or any(x[0] >= x[1] for x in times) or any(times[i][1] != times[i + 1][0] for i in range(len(times) - 1)):
+            errors.append(f'{tag}: segments must be contiguous and inside the berth call')
+            continue
+        by_berth[o['berthId']].append((times[0][0], times[-1][1], o['operationId']))
+        stores = {s['equipmentId']: s['startQuantity'] for s in o['shoreStores']}
+        for sid in list(stores) + o['equipmentIds']:
+            if equipment.get(sid, {}).get('terminalId') != o['terminalId']:
+                errors.append(f'{tag}: equipment {sid} is not at {o["terminalId"]}')
+        ship_cap = sum(x['capacity'] for x in o['shipCompartments'])
+        ship_qty = sum(x['startQuantity'] for x in o['shipCompartments'])
+        total = ship_qty + sum(stores.values())
+        sign = 1 if o['direction'] == 'load' else -1
+        for s, (t0, t1) in zip(segs, times):
+            if s['status'] not in OP_STATUS or (s['status'] == 'transferring') != (s['ratePerHour'] > 0) or (s['status'] == 'transferring') != (s['shoreStoreId'] is not None):
+                errors.append(f'{tag}: segment {s["startUtc"]} status, rate and shore store disagree')
+                continue
+            if s['shoreStoreId'] and s['shoreStoreId'] not in stores:
+                errors.append(f'{tag}: segment routes to undeclared store {s["shoreStoreId"]}')
+                continue
+            qty = s['ratePerHour'] * (t1 - t0).total_seconds() / 3600
+            if s['shoreStoreId']:
+                stores[s['shoreStoreId']] -= sign * qty
+                ship_qty += sign * qty
+                cap = equipment[s['shoreStoreId']]['ratedCapacity']
+                if not (-1e-6 <= stores[s['shoreStoreId']] <= cap + 1e-6) or not (-1e-6 <= ship_qty <= ship_cap + 1e-6):
+                    errors.append(f'{tag}: segment {s["startUtc"]} takes a store or the ship outside 0 … capacity')
+            if abs(ship_qty + sum(stores.values()) - total) > 1e-6:
+                errors.append(f'{tag}: ship + shore quantity not conserved at {s["endUtc"]}')
+    for bid, spans in by_berth.items():
+        spans.sort()
+        if any(spans[i][1] > spans[i + 1][0] for i in range(len(spans) - 1)):
+            errors.append(f'v3/terminalOps: operations overlap at {bid}')
+    for z in m.get('hazardZones', []):
+        if z['berthId'] not in layout_berths or layout_berths[z['berthId']][0]['terminalType'] != 'lng' or 'Simulated' not in z['label']:
+            errors.append(f'v3/terminalOps {z["zoneId"]}: hazard zones belong to LNG berths and say Simulated')
+    return errors
+
+
 def validate_v3(folder: Path, by, manifest, window):
     errors, data, idx = [], {}, {}
     for name, fld in V3_FILES.items():
@@ -772,6 +918,7 @@ def run(folder: Path):
     try:
         window = (parse(w['minUtc']), parse(w['maxUtc']))
         errors += validate_v3(folder / 'v3', by, manifest, window)
+        errors += validate_v3_terminals(folder, by, manifest, window, vessel_samples)
     except KeyError:
         errors.append('manifest.v2Module.window missing; cannot validate the v3 module')
 
@@ -787,6 +934,8 @@ def run(folder: Path):
     print('Scenario: MV Pacific Horizon +18h, USD 24,000 modeled delay exposure — verified')
     print('V2 module: VSL-0001 holds at anchor, PCL-0001 34 h queue / 26 h remaining, VSL-0047 follow demo keyframes — verified')
     print('V3 module: VSL-0255 800-slot crane unload at BRH-SIN-W-3, VSL-0001 static stow at anchor, single-occupancy transfers, one location per unit per instant, delay exposure formula — verified')
+    print('V3 terminals: dry bulk Santos, LNG Dalian, Ro-Ro Southampton; ship types match terminals, exclusive berths, '
+          'contiguous rate segments, ship + shore quantities conserved within capacity, alongside fixes at the berth — verified')
     return 0
 
 

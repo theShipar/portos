@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppSelect from '@/components/ui/AppSelect.vue';
 import { computed } from 'vue';
 import { useCatalogStore } from '@/stores/catalog';
 import { useSessionStore } from '@/stores/session';
@@ -20,9 +21,9 @@ const initials = computed(() =>
     <span class="user__avatar" aria-hidden="true">{{ initials }}</span>
     <label class="user__label">
       <span class="sr-only">Demo identity (changes permissions only; not authentication)</span>
-      <select :value="session.user?.userId" :disabled="!users.length" @change="session.switchUser(($event.target as HTMLSelectElement).value)">
+      <AppSelect :value="session.user?.userId" :disabled="!users.length" @change="session.switchUser(($event.target as HTMLSelectElement).value)">
         <option v-for="u in users" :key="u.userId" :value="u.userId">{{ u.displayName }} · {{ u.title }}</option>
-      </select>
+      </AppSelect>
       <span class="user__role">Demo role: {{ session.user?.role ?? '—' }}</span>
     </label>
   </div>
@@ -49,18 +50,13 @@ const initials = computed(() =>
 .user__label {
   display: grid;
   min-width: 0;
+  max-width: 220px;
   line-height: 15px;
 }
-select {
-  max-width: 150px;
-  text-overflow: ellipsis;
-  border: none;
-  background: transparent;
+.user__label :deep(.app-select__trigger) {
+  min-height: 28px;
+  padding: 4px 8px;
   font-size: var(--text-12);
-  font-weight: 600;
-  color: var(--color-ink);
-  padding: 0;
-  cursor: pointer;
 }
 .user__role {
   font-size: var(--text-11);

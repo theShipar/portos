@@ -345,6 +345,16 @@ export class VesselWorkshopScene {
     this.requestRender();
   }
 
+  fitView() {
+    if (!this.key) return;
+    this.tween = null;
+    this.setMode('free', { animate: false, emit: true });
+    const pose = workshopCameraPose('free', this.key, this.width / this.height);
+    pose.position.sub(pose.target).multiplyScalar(1.4).add(pose.target);
+    this.applyPose(pose);
+    this.requestRender();
+  }
+
   resize(width: number, height: number) {
     this.width = Math.max(1, width);
     this.height = Math.max(1, height);

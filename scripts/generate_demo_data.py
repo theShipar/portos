@@ -268,6 +268,33 @@ SIN_TERMINALS = [
     ('TRM-SIN-C', 'Singapore Demo Terminal Central', (103.834, 1.262), [(103.828, 1.263), (103.834, 1.261), (103.840, 1.259)]),
     ('TRM-SIN-E', 'Singapore Demo Terminal East', (103.853, 1.262), [(103.848, 1.262), (103.853, 1.261), (103.858, 1.260)]),
 ]
+# V3 typed terminals (Gate 7). Berth points are the Natural Earth 10m shoreline of each city file (bisected at the
+# berth latitude) moved seaward: 20 m for a quay, 450 m for an LNG jetty head. Land lies behind every berth and open
+# water in front, checked in tests/unit/terminalOps.test.ts. Illustrative positions, not real terminal frontage.
+TYPED_TERMINALS = {
+    'PRT-SSZ': {'type': 'dry_bulk', 'name': 'Santos Demo Grain Terminal', 'berths': [(-46.302082, -23.958922), (-46.298919, -23.964922)],
+                'names': ['Grain Berth 1', 'Grain Berth 2'], 'status2': 'free', 'inland_m': 250, 'jetty_m': 0, 'pilot': (-46.30, -24.03)},
+    'PRT-DLC': {'type': 'lng', 'name': 'Dalian Demo LNG Terminal', 'berths': [(121.703928, 38.90139), (121.708628, 38.89139)],
+                'names': ['LNG Jetty 1', 'LNG Jetty 2'], 'status2': 'unavailable', 'inland_m': 800, 'jetty_m': 450, 'pilot': (121.69, 38.85)},
+    'PRT-SOU': {'type': 'roro', 'name': 'Southampton Demo Vehicle Terminal', 'berths': [(-1.403264, 50.883118), (-1.395023, 50.877118)],
+                'names': ['Ro-Ro Berth 1', 'Ro-Ro Berth 2'], 'status2': 'free', 'inland_m': 250, 'jetty_m': 0, 'pilot': (-1.33, 50.84)},
+}
+# (vessel, berth, ARRIVAL BERTH ACT, DEPARTURE BERTH PLN): each call spans the base sample window of 9 Nov.
+TYPED_CALLS = [
+    ('VSL-0306', 'BRH-SSZ-1', datetime(2026, 11, 8, 22, tzinfo=UTC), datetime(2026, 11, 10, 16, tzinfo=UTC)),
+    ('VSL-0496', 'BRH-DLC-1', datetime(2026, 11, 8, 23, 30, tzinfo=UTC), datetime(2026, 11, 10, 2, tzinfo=UTC)),
+    ('VSL-0432', 'BRH-SOU-1', datetime(2026, 11, 8, 23, tzinfo=UTC), datetime(2026, 11, 9, 19, tzinfo=UTC)),
+]
+
+
+def offset_m(p, bearing, metres):
+    """Local flat offset, the same formula as src/core/geo.ts offsetMeters."""
+    r = 6371008.8
+    b = math.radians(bearing)
+    d_lat = metres * math.cos(b) / r
+    d_lon = metres * math.sin(b) / (r * math.cos(math.radians(p['lat'])))
+    return point(norm_lon(p['lon'] + math.degrees(d_lon)), p['lat'] + math.degrees(d_lat))
+
 
 def anchorage_polygon(lon, lat, rad=0.07):
     return [point(lon + rad * math.cos(math.pi * 2 * i / 10), lat + rad * 0.8 * math.sin(math.pi * 2 * i / 10)) for i in range(10)]
@@ -328,15 +355,24 @@ def gen(seed=92026):
                                'polygon': [point(a, b) for a, b in SIN_ANCHORAGE_V2], 'capacityEstimate': 45, 'sourceType': 'synthetic-not-for-navigation'})
             continue
         tid = 'TRM-' + p['portId'][4:]
+        typed = TYPED_TERMINALS.get(p['portId'])
         bids = []
         for b in range(1, 3):
             bid = f'BRH-{p["portId"][4:]}-{b}'
             bids.append(bid)
-            berths.append({'berthId': bid, 'portId': p['portId'], 'terminalId': tid, 'name': f'Berth {b}',
-                           'location': point(l['lon'] + 0.01 * b, l['lat'] + 0.005), 'status': rng.choice(['occupied', 'scheduled', 'free', 'unknown']),
+            status = rng.choice(['occupied', 'scheduled', 'free', 'unknown'])
+            berths.append({'berthId': bid, 'portId': p['portId'], 'terminalId': tid, 'name': typed['names'][b - 1] if typed else f'Berth {b}',
+                           'location': point(*typed['berths'][b - 1]) if typed else point(l['lon'] + 0.01 * b, l['lat'] + 0.005),
+                           'status': (typed['status2'] if b == 2 else 'occupied') if typed else status,
                            'occupiedByVesselId': None, 'scheduledVesselId': None, 'scheduledWindowStartUtc': None, 'scheduledWindowEndUtc': None,
                            'lastUpdatedUtc': iso(ANCHOR - timedelta(minutes=rng.randint(1, 45))), 'sourceType': 'synthetic-layout'})
-        terminals.append({'terminalId': tid, 'portId': p['portId'], 'name': p['name'] + ' Demo Terminal', 'location': point(l['lon'] + 0.015, l['lat'] + 0.005), 'berthIds': bids, 'sourceType': 'synthetic-layout'})
+        if typed:
+            (alon, alat), (blon, blat) = typed['berths']
+            # Every typed quay runs north-west → south-east with land to the west, so landward is the bearing + 90°.
+            loc = offset_m(point((alon + blon) / 2, (alat + blat) / 2), (bearing_deg(point(alon, alat), point(blon, blat)) + 90) % 360, typed['inland_m'])
+        else:
+            loc = point(l['lon'] + 0.015, l['lat'] + 0.005)
+        terminals.append({'terminalId': tid, 'portId': p['portId'], 'name': typed['name'] if typed else p['name'] + ' Demo Terminal', 'location': loc, 'berthIds': bids, 'sourceType': 'synthetic-layout'})
         p['terminalIds'].append(tid)
         anchorages.append({'anchorageId': 'ANC-' + p['portId'][4:], 'portId': p['portId'], 'name': p['name'] + ' Demo Anchorage',
                            'polygon': anchorage_polygon(l['lon'] + 0.14, l['lat'] - 0.12), 'capacityEstimate': None, 'sourceType': 'synthetic-not-for-navigation'})
@@ -786,6 +822,18 @@ def gen(seed=92026):
     for ev in evidence:
         ev['sourceId'] = alias.get(ev['sourceId'], ev['sourceId'])
 
+    # V3 typed terminals: the three typed-terminal ships are alongside berth 1 for every base sample (their V3 berth
+    # calls span the base window), so their fixes sit at the alongside pose the port twin draws. No random draws.
+    for vid, bid, _start, _end in TYPED_CALLS:
+        b = berth_map[bid]
+        pts = [berth_map[x]['location'] for x in next(t for t in terminals if t['terminalId'] == b['terminalId'])['berthIds']]
+        pose = offset_m(b['location'], (berth_bearing(pts) - 90) % 360, vessel_map[vid]['beamMeters'] / 2 + 4)
+        b['occupiedByVesselId'] = vid
+        vessel_map[vid]['lastKnownPosition'] = pose
+        for p in positions:
+            if p['vesselId'] == vid:
+                p.update(location=pose, sogKn=0.0, navStatus='moored')
+
     data = {'regions.json': regions, 'ports.json': ports, 'terminals.json': terminals, 'berths.json': berths, 'anchorages.json': anchorages,
             'routes.json': routes, 'vessels.json': vessels, 'voyages.json': voyages, 'positions.json': positions, 'portCalls.json': portcalls,
             'incidents.json': incidents, 'evidence.json': evidence, 'weatherHazards.json': weather, 'events.json': events, 'users.json': users}
@@ -1216,6 +1264,144 @@ def gen_v3(data, ctx, v2, seed):
             'yardSlots.json': [dict(y, occupiedInWindow=y['yardSlotId'] in used_yard) for y in yard]}
 
 
+# ---------------- V3 typed terminals ----------------
+V3_TERMINALS_VERSION = '3.2'
+TERMINAL_UNITS = {'dry_bulk': ('t', 't/h'), 'lng': ('m3', 'm3/h'), 'roro': ('vehicles', 'vehicles/h')}
+
+
+def gen_v3_terminals(data, ctx, v2):
+    """Typed terminal module (spec 05/03–05/06): layouts for a dry bulk, an LNG and a Ro-Ro terminal, their berth calls,
+    equipment and rate-segment operations. Quantities are event-sourced: a store's level at t is its start level plus
+    the rate × time of every elapsed transfer segment routed to it, so ship + shore totals are conserved.
+    """
+    berth_map, vessel_map, port_map = ctx['berthMap'], ctx['vesselMap'], ctx['portMap']
+    terminals = {t['terminalId']: t for t in data['terminals.json']}
+    h = lambda d, hh, mm=0: datetime(2026, 11, d, hh, mm, tzinfo=UTC)
+    types = {t['terminalId']: 'container' for l in v2['portLayouts.json'] for t in l['terminals']}
+    layouts = []
+    for pid, spec in TYPED_TERMINALS.items():
+        tid = 'TRM-' + pid[4:]
+        t = terminals[tid]
+        types[tid] = spec['type']
+        pts = [berth_map[b]['location'] for b in t['berthIds']]
+        bearing = berth_bearing(pts)
+        mid = point((pts[0]['lon'] + pts[1]['lon']) / 2, (pts[0]['lat'] + pts[1]['lat']) / 2)
+        length = {'dry_bulk': 280, 'lng': 340, 'roro': 240}[spec['type']]
+        depth = {'dry_bulk': 15.0, 'lng': 15.5, 'roro': 11.5}[spec['type']]
+        layouts.append({
+            'portId': pid, 'detail': 'procedural', 'cityId': 'CTY-' + pid[4:],
+            'bounds': {'west': round(mid['lon'] - 0.08, 4), 'south': round(mid['lat'] - 0.06, 4), 'east': round(mid['lon'] + 0.08, 4), 'north': round(mid['lat'] + 0.06, 4)},
+            'terminals': [{'terminalId': tid, 'name': t['name'], 'terminalType': spec['type'], 'quayBearingDeg': bearing, 'quayLine': pts, 'landSide': 'west',
+                           'yardDepthMeters': {'dry_bulk': 420, 'lng': 520, 'roro': 380}[spec['type']], 'jettyOffsetMeters': spec['jetty_m'], 'yardContainers': 0,
+                           'berths': [{'berthId': bid, 'center': berth_map[bid]['location'], 'quayBearingDeg': bearing, 'lengthMeters': length,
+                                       'depthMeters': depth, 'craneCount': 0, 'constraintsValidated': False} for bid in t['berthIds']]}],
+            'anchorages': [{'anchorageId': a['anchorageId'], 'name': a['name'], 'polygon': a['polygon'], 'usage': 'waiting'}
+                           for a in data['anchorages.json'] if a['portId'] == pid],
+            'pilotBoardingPlace': point(*spec['pilot']),
+            'sourceType': 'synthetic-illustrative-layout-not-for-navigation',
+        })
+
+    def ms(event, classifier, at, recorded):
+        return {'eventType': event, 'location': 'BERTH', 'classifier': classifier, 'atUtc': iso(at), 'recordedAtUtc': iso(min(recorded, ANCHOR))}
+
+    calls = []
+    for k, (vid, bid, start, end) in enumerate(TYPED_CALLS, 1):
+        b = berth_map[bid]
+        calls.append({'bookingId': f'BKG-V3-{k:03d}', 'portCallId': f'BCL-{bid[4:7]}-{vid[4:]}', 'vesselId': vid, 'berthId': bid, 'terminalId': b['terminalId'],
+                      'status': 'at_berth', 'bufferMinutes': 60,
+                      'milestones': [ms('ARRIVAL', 'ACT', start, start), ms('DEPARTURE', 'PLN', end, start + timedelta(hours=2)),
+                                     ms('DEPARTURE', 'EST', end, ANCHOR - timedelta(minutes=20))]})
+
+    def eq(eid, tid, bid, kind, label, rated=None, unit=None, maintenance=()):
+        return {'equipmentId': eid, 'terminalId': tid, 'berthId': bid, 'kind': kind, 'label': label, 'ratedCapacity': rated, 'capacityUnit': unit,
+                'maintenance': [{'startUtc': iso(a), 'endUtc': iso(z), 'reason': r} for a, z, r in maintenance], 'sourceType': 'synthetic-terminal-equipment'}
+
+    equipment = [eq(f'QC-SIN-W3-{c}', 'TRM-SIN-W', 'BRH-SIN-W-3', 'sts_crane', f'Quay crane W3-{c}', 30, 'moves/h') for c in range(1, 5)]
+    equipment += [
+        eq('SL-SSZ-1', 'TRM-SSZ', 'BRH-SSZ-1', 'ship_loader', 'Ship loader 1', 2500, 't/h'),
+        eq('SL-SSZ-2', 'TRM-SSZ', 'BRH-SSZ-2', 'ship_loader', 'Ship loader 2', 2500, 't/h'),
+        eq('CV-SSZ-1', 'TRM-SSZ', None, 'conveyor', 'Quay conveyor', 3000, 't/h'),
+        eq('CV-SSZ-2', 'TRM-SSZ', None, 'conveyor', 'Yard conveyor', 3000, 't/h'),
+        eq('SP-SSZ-A', 'TRM-SSZ', None, 'stockpile', 'Stockpile A (soybeans)', 60000, 't'),
+        eq('SP-SSZ-B', 'TRM-SSZ', None, 'stockpile', 'Stockpile B (soybeans)', 60000, 't'),
+        eq('SI-SSZ-1', 'TRM-SSZ', None, 'silo', 'Silo row', None, None),
+        eq('LA-DLC-1A', 'TRM-DLC', 'BRH-DLC-1', 'loading_arm', 'Liquid arm 1A', 4000, 'm3/h'),
+        eq('LA-DLC-1B', 'TRM-DLC', 'BRH-DLC-1', 'loading_arm', 'Liquid arm 1B', 4000, 'm3/h'),
+        eq('LA-DLC-1C', 'TRM-DLC', 'BRH-DLC-1', 'loading_arm', 'Liquid arm 1C', 4000, 'm3/h'),
+        eq('VA-DLC-1', 'TRM-DLC', 'BRH-DLC-1', 'vapour_arm', 'Vapour return arm 1', None, None),
+        *[eq(f'LA-DLC-2{x}', 'TRM-DLC', 'BRH-DLC-2', 'loading_arm', f'Liquid arm 2{x}', 4000, 'm3/h',
+             [(V2_MIN, V2_MAX, 'Arm seal replacement (simulated maintenance window)')]) for x in 'ABC'],
+        eq('PL-DLC-1', 'TRM-DLC', None, 'pipeline', 'Jetty trestle pipeline', 12000, 'm3/h'),
+        eq('TK-DLC-1', 'TRM-DLC', None, 'lng_tank', 'LNG tank 1', 180000, 'm3'),
+        eq('TK-DLC-2', 'TRM-DLC', None, 'lng_tank', 'LNG tank 2', 180000, 'm3'),
+        eq('RP-SOU-1', 'TRM-SOU', 'BRH-SOU-1', 'ramp', 'Linkspan ramp 1', 400, 'vehicles/h'),
+        eq('RP-SOU-2', 'TRM-SOU', 'BRH-SOU-2', 'ramp', 'Linkspan ramp 2', 400, 'vehicles/h'),
+        eq('LN-SOU-IMP', 'TRM-SOU', None, 'staging_lanes', 'Import staging lanes', 1400, 'vehicles'),
+        eq('LN-SOU-EXP', 'TRM-SOU', None, 'staging_lanes', 'Export staging lanes', 1000, 'vehicles'),
+    ]
+
+    def seg(a, z, status, rate=0, store=None, note=None):
+        return {'startUtc': iso(a), 'endUtc': iso(z), 'status': status, 'ratePerHour': rate, 'shoreStoreId': store, 'note': note}
+
+    def ship(prefix, kind, count, capacity, start_each):
+        return [{'compartmentId': f'{prefix}-{kind[0].upper()}{i}', 'kind': kind, 'label': f'{kind.title()} {i}', 'capacity': capacity, 'startQuantity': start_each}
+                for i in range(1, count + 1)]
+
+    def op(oid, call, ttype, direction, commodity, segments, ship_comps, shore, equipment_ids):
+        unit, rate_unit = TERMINAL_UNITS[ttype]
+        return {'operationId': oid, 'bookingId': call['bookingId'], 'portCallId': call['portCallId'], 'vesselId': call['vesselId'], 'berthId': call['berthId'],
+                'terminalId': call['terminalId'], 'portId': berth_map[call['berthId']]['portId'], 'terminalType': ttype, 'direction': direction,
+                'commodity': commodity, 'unit': unit, 'rateUnit': rate_unit, 'segments': segments, 'shipCompartments': ship_comps,
+                'shoreStores': [{'equipmentId': e, 'startQuantity': q} for e, q in shore], 'equipmentIds': equipment_ids,
+                'classifier': 'EST', 'sourceType': 'synthetic-terminal-operation'}
+
+    ssz, dlc, sou = calls
+    operations = [
+        op('OPS-SSZ-0306', ssz, 'dry_bulk', 'load', 'soybeans', [
+            seg(h(8, 22), h(8, 23, 30), 'moored', note='Initial draft survey and hatch opening'),
+            seg(h(8, 23, 30), h(9, 8), 'transferring', 1800, 'SP-SSZ-A'),
+            seg(h(9, 8), h(9, 9, 30), 'paused', note='Rain stop: hatches closed'),
+            seg(h(9, 9, 30), h(9, 21), 'transferring', 1800, 'SP-SSZ-A'),
+            seg(h(9, 21), h(10, 8), 'transferring', 1800, 'SP-SSZ-B', 'Reclaim switched to stockpile B'),
+            seg(h(10, 8), h(10, 16), 'moored', note='Trimming, final draft survey and documents'),
+        ], ship('CMP-0306', 'hold', 5, 13500, 0), [('SP-SSZ-A', 36000), ('SP-SSZ-B', 30000)],
+            ['SL-SSZ-1', 'CV-SSZ-1', 'CV-SSZ-2', 'SP-SSZ-A', 'SP-SSZ-B']),
+        op('OPS-DLC-0496', dlc, 'lng', 'discharge', 'liquefied natural gas', [
+            seg(h(8, 23, 30), h(9, 2), 'moored', note='Mooring, arm connection and leak test'),
+            seg(h(9, 2), h(9, 3), 'transferring', 1500, 'TK-DLC-1', 'Cooldown at reduced rate'),
+            seg(h(9, 3), h(9, 13, 30), 'transferring', 11000, 'TK-DLC-1'),
+            seg(h(9, 13, 30), h(9, 13, 50), 'hazard', note='Simulated gas-detector alarm check: transfer stopped'),
+            seg(h(9, 13, 50), h(9, 14, 30), 'paused', note='Shore tank switchover'),
+            seg(h(9, 14, 30), h(9, 17, 30), 'transferring', 11000, 'TK-DLC-2'),
+            seg(h(9, 17, 30), h(9, 19), 'transferring', 3000, 'TK-DLC-2', 'Ramp-down'),
+            seg(h(9, 19), h(10, 2), 'moored', note='Arm purge, disconnection and documents'),
+        ], ship('CMP-0496', 'tank', 4, 43500, 42630), [('TK-DLC-1', 62000), ('TK-DLC-2', 41000)],
+            ['LA-DLC-1A', 'LA-DLC-1B', 'LA-DLC-1C', 'VA-DLC-1', 'PL-DLC-1', 'TK-DLC-1', 'TK-DLC-2']),
+        op('OPS-SOU-0432-D', sou, 'roro', 'discharge', 'passenger vehicles', [
+            seg(h(8, 23), h(9, 0, 30), 'moored', note='Mooring and ramp lowering'),
+            seg(h(9, 0, 30), h(9, 5, 30), 'transferring', 210, 'LN-SOU-IMP'),
+        ], ship('CMP-0432', 'deck', 6, 310, 175), [('LN-SOU-IMP', 140)], ['RP-SOU-1', 'LN-SOU-IMP']),
+        op('OPS-SOU-0432-L', sou, 'roro', 'load', 'passenger vehicles', [
+            seg(h(9, 5, 30), h(9, 7), 'paused', note='Deck lashing check and lane change'),
+            seg(h(9, 7), h(9, 15), 'transferring', 110, 'LN-SOU-EXP'),
+            seg(h(9, 15), h(9, 19), 'moored', note='Lashing, ramp raising and departure checks'),
+        ], ship('CMP-0432', 'deck', 6, 310, 0), [('LN-SOU-EXP', 880)], ['RP-SOU-1', 'LN-SOU-EXP']),
+    ]
+    hazard_zones = [{'zoneId': 'HZ-DLC-1', 'terminalId': 'TRM-DLC', 'berthId': 'BRH-DLC-1', 'radiusMeters': 250,
+                     'label': 'Illustrative safety exclusion zone · Simulated', 'sourceType': 'synthetic-illustrative-zone'}]
+    return {
+        'version': V3_TERMINALS_VERSION,
+        'window': {'minUtc': iso(V2_MIN), 'maxUtc': iso(V2_MAX)},
+        'terminalTypes': dict(sorted(types.items())),
+        'layouts': layouts,
+        'berthCalls': calls,
+        'equipment': equipment,
+        'operations': operations,
+        'hazardZones': hazard_zones,
+        'disclosure': 'Simulated terminal operations. Not a terminal operating system, safety system or control record.',
+    }
+
+
 COMPACT = {'positions.json', 'flagshipTracks.json', 'cargoUnits.json', 'stowagePlans.json', 'shipments.json', 'transferEvents.json', 'yardSlots.json'}
 
 
@@ -1229,6 +1415,7 @@ def main():
     datasets, ctx = gen(args.seed)
     v2 = gen_v2(datasets, ctx, args.seed)
     v3 = gen_v3(datasets, ctx, v2, args.seed)
+    v3t = gen_v3_terminals(datasets, ctx, v2)
 
     def write(path, rows):
         if path.name in COMPACT:
@@ -1245,6 +1432,7 @@ def main():
     (out / 'v3').mkdir(exist_ok=True)
     for name, rows in v3.items():
         write(out / 'v3' / name, rows)
+    write(out / 'v3' / 'terminalOps.json', v3t)
     manifest = {'dataset': 'PORTOS Synthetic Maritime Operations Demo', 'version': FIXTURE_VERSION, 'scenarioVersion': SCENARIO_VERSION, 'seed': args.seed,
                 'fixedScenarioTimeUtc': iso(ANCHOR), 'generatedAtUtc': iso(ANCHOR),
                 'replayRange': {'startUtc': iso(REPLAY_START), 'endUtc': iso(ANCHOR)},
@@ -1259,7 +1447,11 @@ def main():
                              'counts': {name.replace('.json', ''): len(rows) for name, rows in v3.items()},
                              'flagshipStowage': {'vesselId': 'VSL-0255', 'stowagePlanId': 'STW-VSL-0255', 'slotCount': 800, 'terminalId': 'TRM-SIN-W', 'berthId': 'BRH-SIN-W-3'},
                              'anchoredStowage': {'vesselId': 'VSL-0001', 'stowagePlanId': 'STW-VSL-0001', 'slotCount': 800, 'transfers': 0},
-                             'disclosure': 'Simulated cargo, stowage and transfer plan. Not a real manifest, booking or terminal operating system record.'}}
+                             'disclosure': 'Simulated cargo, stowage and transfer plan. Not a real manifest, booking or terminal operating system record.'},
+                'v3Terminals': {'path': 'v3/terminalOps.json', 'version': V3_TERMINALS_VERSION,
+                                'typedPorts': {pid: spec['type'] for pid, spec in TYPED_TERMINALS.items()},
+                                'counts': {k: len(v3t[k]) for k in ('layouts', 'berthCalls', 'equipment', 'operations', 'hazardZones')},
+                                'disclosure': v3t['disclosure']}}
     (out / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n', encoding='utf-8')
     print('Generated', len(datasets), 'datasets:', manifest['counts'])
     print('V2 module:', {k: len(v) if isinstance(v, list) else 'object' for k, v in v2.items()})

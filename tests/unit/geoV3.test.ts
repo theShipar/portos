@@ -87,7 +87,7 @@ describe('V3 whole-geometry extrusion (Gate 2)', () => {
 
   it('clips city land only to a wide frame far beyond the camera clamp', () => {
     const cities = docs.filter((d) => d.entry.type === 'city');
-    expect(cities.map((d) => d.doc.id).sort()).toEqual(['CTY-GOA', 'CTY-RTM', 'CTY-SIN']);
+    expect(cities.map((d) => d.doc.id).sort()).toEqual(['CTY-DLC', 'CTY-GOA', 'CTY-RTM', 'CTY-SIN', 'CTY-SOU', 'CTY-SSZ']);
     for (const { doc } of cities) {
       expect(doc.clip).toBe('wide-frame');
       let inFrameCuts = 0;
